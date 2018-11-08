@@ -267,11 +267,23 @@ class SCBillService extends PSIBaseExService {
 		 */
 		$html = '
 				<table>
-					<tr><td colspan="2">单号：' . $ref . '</td></tr>
-					<tr><td colspan="2">客户：' . $bill["customerName"] . '</td></tr>
-					<tr><td>业务日期：' . $bill["bizDT"] . '</td><td>交货地址:' . $bill["dealAddress"] . '</td></tr>
-					<tr><td>业务员：' . $bill["bizUserName"] . '</td><td></td></tr>
-					<tr><td colspan="2">销售金额:' . $bill["saleMoney"] . '</td></tr>
+					<tr><td>合同号：' . $ref . '</td><td>合同期限：' . $bill["beginDT"] . ' - ' . $bill["endDT"] . '</td></tr>
+					<tr><td>甲方客户：' . $bill["customerName"] . '</td><td>乙方组织：' . $bill["orgName"] . '</td></tr>
+					<tr><td>合同签订日期：' . $bill["bizDT"] . '</td><td>业务员：' . $bill["bizUserName"] . '</td></tr>
+					<tr><td>交货日期：' . $bill["dealDate"] . '</td><td>交货地址:' . $bill["dealAddress"] . '</td></tr>
+					<tr><td colspan="2">合同金额:' . $bill["goodsMoney"] . '  税金： ' . $bill["tax"] . '  价税合计：' . $bill["moneyWithTax"] . '</td></tr>
+					<tr><td colspan="2"></td></tr>
+					<tr><td colspan="2">品质条款</td></tr>
+					<tr><td colspan="2">' . $bill["qualityClause"] . '</td></tr>
+					<tr><td colspan="2"></td></tr>
+					<tr><td colspan="2">保险条款</td></tr>
+					<tr><td colspan="2">' . $bill["insuranceClause"] . '</td></tr>
+					<tr><td colspan="2"></td></tr>
+					<tr><td colspan="2">运输条款</td></tr>
+					<tr><td colspan="2">' . $bill["transportClause"] . '</td></tr>
+					<tr><td colspan="2"></td></tr>
+					<tr><td colspan="2">其他条款</td></tr>
+					<tr><td colspan="2">' . $bill["otherClause"] . '</td></tr>
 				</table>
 				';
 		$pdf->writeHTML($html);

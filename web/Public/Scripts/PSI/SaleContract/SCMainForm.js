@@ -132,6 +132,23 @@ Ext.define("PSI.SaleContract.SCMainForm", {
 					hidden : me.getPermission().genPDF == "0",
 					xtype : "tbseparator"
 				}, {
+					text : "打印",
+					hidden : me.getPermission().print == "0",
+					menu : [{
+								text : "打印预览",
+								iconCls : "PSI-button-print-preview",
+								scope : me,
+								handler : me.onPrintPreview
+							}, "-", {
+								text : "直接打印",
+								iconCls : "PSI-button-print",
+								scope : me,
+								handler : me.onPrint
+							}]
+				}, {
+					xtype : "tbseparator",
+					hidden : me.getPermission().print == "0"
+				}, {
 					text : "帮助",
 					handler : function() {
 						me.showInfo("TODO");
@@ -998,5 +1015,61 @@ Ext.define("PSI.SaleContract.SCMainForm", {
 
 		var url = me.URL("Home/SaleContract/scBillPdf?ref=" + bill.get("ref"));
 		window.open(url);
+	},
+
+	onPrintPreview : function() {
+		var lodop = getLodop();
+		if (!lodop) {
+			PSI.MsgBox.showInfo("没有安装Lodop控件，无法打印");
+			return;
+		}
+
+		var me = this;
+
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("没有选择要打印的销售合同");
+			return;
+		}
+		var bill = item[0];
+
+		var el = Ext.getBody();
+		el.mask("数据加载中...");
+		var r = {
+			url : me.URL("Home/SaleContract/genSCBillPrintPage"),
+			params : {
+				id : bill.get("id")
+			},
+			callback : function(options, success, response) {
+				el.unmask();
+
+				if (success) {
+					var data = response.responseText;
+					me.previewSCBill(bill.get("ref"), data);
+				} else {
+					me.showInfo("网络错误");
+				}
+			}
+		};
+		me.ajax(r);
+	},
+
+	PRINT_PAGE_WIDTH : "200mm",
+	PRINT_PAGE_HEIGHT : "95mm",
+
+	previewSCBill : function(ref, data) {
+		var me = this;
+
+		var lodop = getLodop();
+		if (!lodop) {
+			PSI.MsgBox.showInfo("Lodop打印控件没有正确安装");
+			return;
+		}
+
+		lodop.PRINT_INIT("销售合同" + ref);
+		lodop.SET_PRINT_PAGESIZE(1, me.PRINT_PAGE_WIDTH, me.PRINT_PAGE_HEIGHT,
+				"");
+		lodop.ADD_PRINT_HTM("0mm", "0mm", "100%", "100%", data);
+		var result = lodop.PREVIEW("_blank");
 	}
 });

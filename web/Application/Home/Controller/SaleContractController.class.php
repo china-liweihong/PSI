@@ -153,4 +153,21 @@ class SaleContractController extends PSIBaseController {
 		$ws = new SCBillService();
 		$ws->pdf($params);
 	}
+	
+	/**
+	 * 生成打印销售合同的页面
+	 */
+	public function genSCBillPrintPage() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id")
+			];
+			
+			$service = new SCBillService();
+			$data = $service->getSCBillDataForLodopPrint($params);
+			$this->assign("data", $data);
+			$this->display();
+		}
+	}
+	
 }

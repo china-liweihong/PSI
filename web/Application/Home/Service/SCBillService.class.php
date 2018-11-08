@@ -314,4 +314,20 @@ class SCBillService extends PSIBaseExService {
 		
 		$pdf->Output("$ref.pdf", "I");
 	}
+
+	/**
+	 * 查询销售合同的数据，用于Lodop打印
+	 *
+	 * @param array $params        	
+	 */
+	public function getSCBillDataForLodopPrint($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$params["companyId"] = $this->getCompanyId();
+		
+		$dao = new SCBillDAO($this->db());
+		return $dao->getSCBillDataForLodopPrint($params);
+	}
 }

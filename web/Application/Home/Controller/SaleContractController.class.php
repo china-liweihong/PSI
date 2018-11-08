@@ -153,7 +153,7 @@ class SaleContractController extends PSIBaseController {
 		$ws = new SCBillService();
 		$ws->pdf($params);
 	}
-	
+
 	/**
 	 * 生成打印销售合同的页面
 	 */
@@ -169,5 +169,4 @@ class SaleContractController extends PSIBaseController {
 			$this->display();
 		}
 	}
-	
 }

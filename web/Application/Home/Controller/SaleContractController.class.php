@@ -141,4 +141,16 @@ class SaleContractController extends PSIBaseController {
 			$this->ajaxReturn($service->cancelConfirmSCBill($params));
 		}
 	}
+
+	/**
+	 * 销售合同生成pdf文件
+	 */
+	public function scBillPdf() {
+		$params = [
+				"ref" => I("get.ref")
+		];
+		
+		$ws = new SCBillService();
+		$ws->pdf($params);
+	}
 }

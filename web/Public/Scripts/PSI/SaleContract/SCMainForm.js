@@ -989,6 +989,14 @@ Ext.define("PSI.SaleContract.SCMainForm", {
 
 	onPDF : function() {
 		var me = this;
-		me.showInfo("TODO");
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("没有选择要生成pdf文件的销售合同");
+			return;
+		}
+		var bill = item[0];
+
+		var url = me.URL("Home/SaleContract/scBillPdf?ref=" + bill.get("ref"));
+		window.open(url);
 	}
 });

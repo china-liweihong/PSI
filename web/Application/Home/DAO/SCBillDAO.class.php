@@ -819,4 +819,101 @@ class SCBillDAO extends PSIBaseExDAO {
 		$params["ref"] = $ref;
 		return null;
 	}
+
+	/**
+	 * 为销售合同生成PDF文件查询数据
+	 *
+	 * @param array $params        	
+	 */
+	public function getDataForPDF($params) {
+		$db = $this->db;
+		
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->emptyResult();
+		}
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
+		$ref = $params["ref"];
+		
+		$sql = "select s.id, s.bill_status, c.name as customer_name,
+					u.name as input_user_name, g.full_name as org_name,
+					s.begin_dt, s.end_dt, s.goods_money, s.tax, s.money_with_tax,
+					s.deal_date, s.deal_address, s.bill_memo, s.discount,
+					u2.name as biz_user_name, s.biz_dt, s.date_created,
+					s.quality_clause, s.insurance_clause, s.transport_clause, s.other_clause
+				from t_sc_bill s, t_customer c, t_user u, t_org g, t_user u2
+				where (s.customer_id = c.id) and (s.input_user_id = u.id)
+					and (s.org_id = g.id) and (s.biz_user_id = u2.id) 
+					and (s.ref = '%s')";
+		$data = $db->query($sql, $ref);
+		if (! $data) {
+			return $this->emptyResult();
+		}
+		
+		$v = $data[0];
+		
+		$id = $v["id"];
+		
+		$result = [
+				"ref" => $ref,
+				"billStatus" => $v["bill_status"],
+				"customerName" => $v["customer_name"],
+				"orgName" => $v["org_name"],
+				"beginDT" => $this->toYMD($v["begin_dt"]),
+				"endDT" => $this->toYMD($v["end_dt"]),
+				"goodsMoney" => $v["goods_money"],
+				"tax" => $v["tax"],
+				"moneyWithTax" => $v["money_with_tax"],
+				"dealDate" => $this->toYMD($v["deal_date"]),
+				"dealAddress" => $v["deal_address"],
+				"discount" => $v["discount"],
+				"bizUserName" => $v["biz_user_name"],
+				"bizDT" => $this->toYMD($v["biz_dt"]),
+				"billMemo" => $v["bill_memo"],
+				"inputUserName" => $v["input_user_name"],
+				"dateCreated" => $v["date_created"],
+				"qualityClause" => $v["quality_clause"],
+				"insuranceClause" => $v["insurance_clause"],
+				"transportClause" => $v["transport_clause"],
+				"otherClause" => $v["other_clause"]
+		
+		];
+		
+		$sql = "select g.code, g.name, g.spec, convert(s.goods_count, " . $fmt . ") as goods_count,
+					s.goods_price, s.goods_money,
+					s.tax_rate, s.tax, s.money_with_tax, u.name as unit_name,
+					convert(s.so_count, " . $fmt . ") as so_count,
+					convert(s.left_count, " . $fmt . ") as left_count, s.memo
+				from t_sc_bill_detail s, t_goods g, t_goods_unit u
+				where s.scbill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
+				order by s.show_order";
+		$items = [];
+		$data = $db->query($sql, $id);
+		
+		foreach ( $data as $v ) {
+			$items[] = [
+					"goodsCode" => $v["code"],
+					"goodsName" => $v["name"],
+					"goodsSpec" => $v["spec"],
+					"goodsCount" => $v["goods_count"],
+					"goodsPrice" => $v["goods_price"],
+					"goodsMoney" => $v["goods_money"],
+					"taxRate" => $v["tax_rate"],
+					"tax" => $v["tax"],
+					"moneyWithTax" => $v["money_with_tax"],
+					"unitName" => $v["unit_name"],
+					"soCount" => $v["so_count"],
+					"leftCount" => $v["left_count"],
+					"memo" => $v["memo"]
+			];
+		}
+		
+		$result["items"] = $items;
+		
+		return $result;
+	}
 }

@@ -974,8 +974,8 @@ class SCBillDAO extends PSIBaseExDAO {
 				"qualityClause" => $v["quality_clause"],
 				"insuranceClause" => $v["insurance_clause"],
 				"transportClause" => $v["transport_clause"],
-				"otherClause" => $v["other_clause"]
-		
+				"otherClause" => $v["other_clause"],
+				"printDT" => date("Y-m-d H:i:s")
 		];
 		
 		$sql = "select g.code, g.name, g.spec, convert(s.goods_count, " . $fmt . ") as goods_count,

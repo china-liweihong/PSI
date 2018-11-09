@@ -326,6 +326,10 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 								// 甲乙双方就不能再编辑
 								editCustomer.setReadOnly(true);
 								Ext.getCmp("editOrg").setReadOnly(true);
+
+								Ext.getCmp("columnActionDelete").hide();
+								Ext.getCmp("columnActionAdd").hide();
+								Ext.getCmp("columnActionAppend").hide();
 							}
 
 							if (data.ref) {

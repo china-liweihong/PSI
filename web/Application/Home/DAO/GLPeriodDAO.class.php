@@ -2,8 +2,6 @@
 
 namespace Home\DAO;
 
-use Home\Common\FIdConst;
-
 /**
  * 会计期间 DAO
  *

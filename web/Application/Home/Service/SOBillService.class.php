@@ -98,7 +98,14 @@ class SOBillService extends PSIBaseExService {
 			$id = $bill["id"];
 			$ref = $bill["ref"];
 			
-			$log = "新建销售订单，单号：{$ref}";
+			$scbillRef = $bill["scbillRef"];
+			if ($scbillRef) {
+				// 从销售合同生成销售订单
+				$log = "从销售合同(合同号：{$scbillRef})生成销售订单: 单号 = {$ref}";
+			} else {
+				// 手工创建销售订单
+				$log = "新建销售订单，单号：{$ref}";
+			}
 		}
 		
 		// 记录业务日志

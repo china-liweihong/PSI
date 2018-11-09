@@ -311,6 +311,19 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 						if (success) {
 							var data = Ext.JSON.decode(response.responseText);
 
+							if (data.genBill == "1") {
+								var editCustomer = Ext.getCmp("editCustomer");
+								editCustomer.setIdValue(data.customerId);
+								editCustomer.setValue(data.customerName);
+								Ext.getCmp("editDealDate")
+										.setValue(data.dealDate);
+								Ext.getCmp("editDealAddress")
+										.setValue(data.dealAddress);
+								Ext.getCmp("editOrg").setIdValue(data.orgId);
+								Ext.getCmp("editOrg")
+										.setValue(data.orgFullName);
+							}
+
 							if (data.ref) {
 								Ext.getCmp("editRef").setValue(data.ref);
 								var editCustomer = Ext.getCmp("editCustomer");

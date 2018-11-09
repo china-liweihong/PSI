@@ -359,7 +359,9 @@ class SaleController extends PSIBaseController {
 	public function soBillInfo() {
 		if (IS_POST) {
 			$params = array(
-					"id" => I("post.id")
+					"id" => I("post.id"),
+					"genBill" => I("post.genBill"),
+					"scbillRef" => I("post.scbillRef")
 			);
 			
 			$ps = new SOBillService();

@@ -592,6 +592,10 @@ class SOBillDAO extends PSIBaseExDAO {
 		
 		$id = $params["id"];
 		
+		// 销售合同号
+		// 当从销售合同创建销售订单的时候，这个值就不为空
+		$scbillRef = $params["scbillRef"];
+		
 		$companyId = $params["companyId"];
 		if ($this->companyIdNotExists($companyId)) {
 			return $this->emptyResult();
@@ -637,10 +641,10 @@ class SOBillDAO extends PSIBaseExDAO {
 				// 明细表
 				$sql = "select s.id, s.goods_id, g.code, g.name, g.spec, 
 							convert(s.goods_count, " . $fmt . ") as goods_count, s.goods_price, s.goods_money,
-					s.tax_rate, s.tax, s.money_with_tax, u.name as unit_name, s.memo
-				from t_so_bill_detail s, t_goods g, t_goods_unit u
-				where s.sobill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
-				order by s.show_order";
+							s.tax_rate, s.tax, s.money_with_tax, u.name as unit_name, s.memo
+						from t_so_bill_detail s, t_goods g, t_goods_unit u
+						where s.sobill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
+						order by s.show_order";
 				$items = array();
 				$data = $db->query($sql, $id);
 				
@@ -666,17 +670,75 @@ class SOBillDAO extends PSIBaseExDAO {
 			}
 		} else {
 			// 新建销售订单
-			$loginUserId = $params["loginUserId"];
-			$result["bizUserId"] = $loginUserId;
-			$result["bizUserName"] = $params["loginUserName"];
 			
-			$sql = "select o.id, o.full_name
+			if ($scbillRef) {
+				// 从销售合同创建销售订单
+				$sql = "select s.id, s.deal_date, s.deal_address,
+							s.customer_id, c.name as customer_name,
+							s.org_id, g.full_name as org_full_name
+						from t_sc_bill s, t_customer c, t_org g
+						where s.ref = '%s' and s.customer_id = c.id
+							and s.org_id = g.id";
+				$data = $db->query($sql, $scbillRef);
+				if (! $data) {
+					// 这个时候多半是参数传递错误了
+					return $this->emptyResult();
+				}
+				$v = $data[0];
+				$result["genBill"] = 1;
+				$result["customerId"] = $v["customer_id"];
+				$result["customerName"] = $v["customer_name"];
+				$result["dealDate"] = $this->toYMD($v["deal_date"]);
+				$result["dealAddress"] = $v["deal_address"];
+				$result["orgId"] = $v["org_id"];
+				$result["orgFullName"] = $v["org_full_name"];
+				
+				$scBillId = $v["id"];
+				// 从销售合同查询商品明细
+				$sql = "select s.id, s.goods_id, g.code, g.name, g.spec,
+							convert(s.left_count, " . $fmt . ") as goods_count, s.goods_price, s.goods_money,
+							s.tax_rate, s.tax, s.money_with_tax, u.name as unit_name
+						from t_sc_bill_detail s, t_goods g, t_goods_unit u
+						where s.scbill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
+						order by s.show_order";
+				$items = [];
+				$data = $db->query($sql, $scBillId);
+				
+				foreach ( $data as $v ) {
+					$items[] = [
+							"id" => $v["id"],
+							"goodsId" => $v["goods_id"],
+							"goodsCode" => $v["code"],
+							"goodsName" => $v["name"],
+							"goodsSpec" => $v["spec"],
+							"goodsCount" => $v["goods_count"],
+							"goodsPrice" => $v["goods_price"],
+							"goodsMoney" => $v["goods_money"],
+							"taxRate" => $v["tax_rate"],
+							"tax" => $v["tax"],
+							"moneyWithTax" => $v["money_with_tax"],
+							"unitName" => $v["unit_name"]
+					];
+				}
+				
+				$result["items"] = $items;
+				
+				$loginUserId = $params["loginUserId"];
+				$result["bizUserId"] = $loginUserId;
+				$result["bizUserName"] = $params["loginUserName"];
+			} else {
+				$loginUserId = $params["loginUserId"];
+				$result["bizUserId"] = $loginUserId;
+				$result["bizUserName"] = $params["loginUserName"];
+				
+				$sql = "select o.id, o.full_name
 					from t_org o, t_user u
 					where o.id = u.org_id and u.id = '%s' ";
-			$data = $db->query($sql, $loginUserId);
-			if ($data) {
-				$result["orgId"] = $data[0]["id"];
-				$result["orgFullName"] = $data[0]["full_name"];
+				$data = $db->query($sql, $loginUserId);
+				if ($data) {
+					$result["orgId"] = $data[0]["id"];
+					$result["orgFullName"] = $data[0]["full_name"];
+				}
 			}
 			
 			// 默认收款方式

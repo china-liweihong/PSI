@@ -333,6 +333,9 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 							}
 
 							if (data.ref) {
+								// 编辑状态
+								me.setGenBill(data.genBill == "1");
+
 								Ext.getCmp("editRef").setValue(data.ref);
 								var editCustomer = Ext.getCmp("editCustomer");
 								editCustomer.setIdValue(data.customerId);
@@ -477,6 +480,10 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 		me.__cellEditing = Ext.create("PSI.UX.CellEditing", {
 					clicksToEdit : 1,
 					listeners : {
+						beforeedit : {
+							fn : me.cellEditingBeforeEdit,
+							scope : me
+						},
 						edit : {
 							fn : me.cellEditingAfterEdit,
 							scope : me
@@ -709,6 +716,17 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 		goods.set("goodsPrice", data.salePrice);
 
 		me.calcMoney(goods);
+	},
+
+	cellEditingBeforeEdit : function(editor, e) {
+		var me = this;
+		var fieldName = e.field;
+		if (fieldName == "goodsCode") {
+			if (me.getGenBill()) {
+				// 当由销售合同创建销售订单的时候，不允许修改商品
+				return false;
+			}
+		}
 	},
 
 	cellEditingAfterEdit : function(editor, e) {

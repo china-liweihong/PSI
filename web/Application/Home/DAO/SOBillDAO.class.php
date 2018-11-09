@@ -694,6 +694,12 @@ class SOBillDAO extends PSIBaseExDAO {
 				}
 				
 				$result["items"] = $items;
+				
+				// 查询当前销售订单是不是由销售合同创建
+				$sql = "select count(*) as cnt from t_sc_so where so_id = '%s' ";
+				$data = $db->query($sql, $id);
+				$cnt = $data[0]["cnt"];
+				$result["genBill"] = $cnt > 0 ? "1" : "0";
 			}
 		} else {
 			// 新建销售订单

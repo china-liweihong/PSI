@@ -2,7 +2,6 @@
 
 namespace Home\DAO;
 
-use Home\Common\FIdConst;
 use Home\Service\PinyinService;
 
 /**

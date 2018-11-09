@@ -795,6 +795,7 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 	},
 
 	getSaveData : function() {
+		var me = this;
 		var result = {
 			id : Ext.getCmp("hiddenId").getValue(),
 			dealDate : Ext.Date.format(Ext.getCmp("editDealDate").getValue(),
@@ -808,6 +809,7 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 			bizUserId : Ext.getCmp("editBizUser").getIdValue(),
 			receivingType : Ext.getCmp("editReceivingType").getValue(),
 			billMemo : Ext.getCmp("editBillMemo").getValue(),
+			scbillRef : me.getScbillRef(),
 			items : []
 		};
 

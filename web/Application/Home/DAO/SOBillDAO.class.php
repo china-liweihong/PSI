@@ -300,6 +300,10 @@ class SOBillDAO extends PSIBaseExDAO {
 			return $this->badParam("loginUserId");
 		}
 		
+		// 销售合同号
+		// 当销售订单是由销售合同创建的时候，销售合同号就不为空
+		$scbillRef = $bill["scbillRef"];
+		
 		$bcDAO = new BizConfigDAO($db);
 		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
 		$fmt = "decimal(19, " . $dataScale . ")";
@@ -375,6 +379,22 @@ class SOBillDAO extends PSIBaseExDAO {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
 		
+		// 关联销售合同和销售订单
+		if ($scbillRef) {
+			$sql = "select id from t_sc_bill where ref = '%s' ";
+			$data = $db->query($sql, $scbillRef);
+			if ($data) {
+				$scbillId = $data[0]["id"];
+				
+				$sql = "insert into t_sc_so(sc_id, so_id) values ('%s', '%s')";
+				$rc = $db->execute($sql, $scbillId, $id);
+				if ($rc === false) {
+					return $this->sqlError(__METHOD__, __LINE__);
+				}
+			}
+		}
+		
+		// 操作成功
 		$bill["id"] = $id;
 		$bill["ref"] = $ref;
 		

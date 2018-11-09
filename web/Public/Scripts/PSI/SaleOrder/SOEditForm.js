@@ -322,6 +322,10 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 								Ext.getCmp("editOrg").setIdValue(data.orgId);
 								Ext.getCmp("editOrg")
 										.setValue(data.orgFullName);
+
+								// 甲乙双方就不能再编辑
+								editCustomer.setReadOnly(true);
+								Ext.getCmp("editOrg").setReadOnly(true);
 							}
 
 							if (data.ref) {

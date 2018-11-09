@@ -596,6 +596,13 @@ class SOBillDAO extends PSIBaseExDAO {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
 		
+		// 删除销售订单和销售合同的关联
+		$sql = "delete from t_sc_so where so_id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
 		$params["ref"] = $ref;
 		
 		return null;

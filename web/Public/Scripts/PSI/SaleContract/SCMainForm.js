@@ -1001,7 +1001,23 @@ Ext.define("PSI.SaleContract.SCMainForm", {
 	onGenSOBill : function() {
 		var me = this;
 
-		me.showInfo("TODO");
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("没有选择要生成销售订单的销售合同");
+			return;
+		}
+		var bill = item[0];
+
+		if (bill.get("billStatus") < 1000) {
+			me.showInfo("当前销售合同还没有审核，无法生成销售订单");
+			return;
+		}
+
+		var form = Ext.create("PSI.SaleOrder.SOEditForm", {
+					genBill : true,
+					scbillRef : bill.get("ref")
+				});
+		form.show();
 	},
 
 	onPDF : function() {

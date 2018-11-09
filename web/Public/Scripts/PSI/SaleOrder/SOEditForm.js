@@ -6,6 +6,12 @@
 Ext.define("PSI.SaleOrder.SOEditForm", {
 	extend : "PSI.AFX.BaseDialogForm",
 
+	config : {
+		// genBill - true的时候，是从销售合同生成销售订单
+		genBill : false,
+		scbillRef : null
+	},
+
 	/**
 	 * 初始化组件
 	 */

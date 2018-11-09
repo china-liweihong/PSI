@@ -300,7 +300,9 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 		Ext.Ajax.request({
 					url : PSI.Const.BASE_URL + "Home/Sale/soBillInfo",
 					params : {
-						id : Ext.getCmp("hiddenId").getValue()
+						id : Ext.getCmp("hiddenId").getValue(),
+						genBill : me.getGenBill() ? "1" : "0",
+						scbillRef : me.getScbillRef()
 					},
 					method : "POST",
 					callback : function(options, success, response) {
@@ -700,7 +702,7 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 		var oldValue = e.originalValue;
 		if (fieldName == "memo") {
 			var store = me.getGoodsGrid().getStore();
-			if (e.rowIdx == store.getCount() - 1) {
+			if (!me.getGenBill() && (e.rowIdx == store.getCount() - 1)) {
 				store.add({
 							taxRate : me.__taxRate
 						});

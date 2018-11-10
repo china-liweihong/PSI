@@ -1300,7 +1300,8 @@ class WSBillDAO extends PSIBaseExDAO {
 			
 			// 同步销售订单中的出库量
 			$sql = "select convert(goods_count, $fmt) as goods_count, 
-							convert(ws_count, $fmt) as ws_count
+							convert(ws_count, $fmt) as ws_count,
+							scbilldetail_id
 					from t_so_bill_detail
 					where id = '%s' ";
 			$soDetail = $db->query($sql, $soBillDetailId);
@@ -1308,6 +1309,7 @@ class WSBillDAO extends PSIBaseExDAO {
 				// 不是由销售订单创建的出库单
 				continue;
 			}
+			$scbillDetailId = $soDetail[0]["scbilldetail_id"];
 			
 			$totalGoodsCount = $soDetail[0]["goods_count"];
 			$totalWSCount = $soDetail[0]["ws_count"];
@@ -1319,6 +1321,32 @@ class WSBillDAO extends PSIBaseExDAO {
 			$rc = $db->execute($sql, $totalWSCount, $totalLeftCount, $soBillDetailId);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
+			}
+			
+			// 同步销售合同中的订单执行量
+			if ($scbillDetailId) {
+				$sql = "select convert(goods_count, $fmt) as goods_count, 
+							convert(so_count, $fmt) as so_count
+						from t_sc_bill_detail
+						where id = '%s' ";
+				$data = $db->query($sql, $scbillDetailId);
+				if (! $data) {
+					// 如果执行到这里，多半是数据库数据错误了
+					continue;
+				}
+				
+				$scGoodsCount = $data[0]["goods_count"];
+				$scSoCount = $data[0]["so_count"];
+				$scSoCount += $goodsCount;
+				$scLeftCount = $scGoodsCount - $scSoCount;
+				
+				$sql = "update t_sc_bill_detail
+						set so_count = convert(%f, $fmt), left_count = convert(%f, $fmt)
+						where id = '%s' ";
+				$rc = $db->execute($sql, $scSoCount, $scLeftCount, $scbillDetailId);
+				if ($rc === false) {
+					return $this->sqlError(__METHOD__, __LINE__);
+				}
 			}
 		}
 		

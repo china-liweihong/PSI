@@ -338,15 +338,16 @@ class SOBillDAO extends PSIBaseExDAO {
 			$tax = $v["tax"];
 			$moneyWithTax = $v["moneyWithTax"];
 			$memo = $v["memo"];
+			$scbillDetailId = $v["scbillDetailId"];
 			
 			$sql = "insert into t_so_bill_detail(id, date_created, goods_id, goods_count, goods_money,
 						goods_price, sobill_id, tax_rate, tax, money_with_tax, ws_count, left_count,
-						show_order, data_org, company_id, memo)
+						show_order, data_org, company_id, memo, scbilldetail_id)
 					values ('%s', now(), '%s', convert(%f, $fmt), %f,
-						%f, '%s', %d, %f, %f, 0, convert(%f, $fmt), %d, '%s', '%s', '%s')";
+						%f, '%s', %d, %f, %f, 0, convert(%f, $fmt), %d, '%s', '%s', '%s', '%s')";
 			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsMoney, 
 					$goodsPrice, $id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i, $dataOrg, 
-					$companyId, $memo);
+					$companyId, $memo, $scbillDetailId);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
@@ -510,15 +511,16 @@ class SOBillDAO extends PSIBaseExDAO {
 			$tax = $v["tax"];
 			$moneyWithTax = $v["moneyWithTax"];
 			$memo = $v["memo"];
+			$scbillDetailId = $v["scbillDetailId"];
 			
 			$sql = "insert into t_so_bill_detail(id, date_created, goods_id, goods_count, goods_money,
 						goods_price, sobill_id, tax_rate, tax, money_with_tax, ws_count, left_count,
-						show_order, data_org, company_id, memo)
+						show_order, data_org, company_id, memo, scbilldetail_id)
 					values ('%s', now(), '%s', convert(%f, $fmt), %f,
-						%f, '%s', %d, %f, %f, 0, convert(%f, $fmt), %d, '%s', '%s', '%s')";
+						%f, '%s', %d, %f, %f, 0, convert(%f, $fmt), %d, '%s', '%s', '%s', '%s')";
 			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsMoney, 
 					$goodsPrice, $id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i, $dataOrg, 
-					$companyId, $memo);
+					$companyId, $memo, $scbillDetailId);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
@@ -668,7 +670,7 @@ class SOBillDAO extends PSIBaseExDAO {
 				// 明细表
 				$sql = "select s.id, s.goods_id, g.code, g.name, g.spec, 
 							convert(s.goods_count, " . $fmt . ") as goods_count, s.goods_price, s.goods_money,
-							s.tax_rate, s.tax, s.money_with_tax, u.name as unit_name, s.memo
+							s.tax_rate, s.tax, s.money_with_tax, u.name as unit_name, s.memo, s.scbilldetail_id
 						from t_so_bill_detail s, t_goods g, t_goods_unit u
 						where s.sobill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
 						order by s.show_order";
@@ -688,7 +690,8 @@ class SOBillDAO extends PSIBaseExDAO {
 							"tax" => $v["tax"],
 							"moneyWithTax" => $v["money_with_tax"],
 							"unitName" => $v["unit_name"],
-							"memo" => $v["memo"]
+							"memo" => $v["memo"],
+							"scbillDetailId" => $v["scbilldetail_id"]
 					);
 					$items[] = $item;
 				}
@@ -752,7 +755,8 @@ class SOBillDAO extends PSIBaseExDAO {
 							"taxRate" => $v["tax_rate"],
 							"tax" => $tax,
 							"moneyWithTax" => $goodsMoney + $tax,
-							"unitName" => $v["unit_name"]
+							"unitName" => $v["unit_name"],
+							"scbillDetailId" => $v["id"]
 					];
 				}
 				

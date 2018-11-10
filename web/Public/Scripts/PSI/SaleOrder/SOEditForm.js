@@ -469,7 +469,7 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 							}, {
 								name : "moneyWithTax",
 								type : "float"
-							}, "memo"]
+							}, "memo", "scbillDetailId"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -843,7 +843,8 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 						tax : item.get("tax"),
 						taxRate : item.get("taxRate"),
 						moneyWithTax : item.get("moneyWithTax"),
-						memo : item.get("memo")
+						memo : item.get("memo"),
+						scbillDetailId : item.get("scbillDetailId")
 					});
 		}
 

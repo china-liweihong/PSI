@@ -1263,6 +1263,69 @@ class InstallService extends PSIBaseExService {
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
 		$db->execute($sql);
+		
+		// t_wsp_bill
+		$sql = "CREATE TABLE IF NOT EXISTS `t_wsp_bill` (
+				  `id` varchar(255) NOT NULL,
+				  `ref` varchar(255) NOT NULL,
+				  `from_warehouse_id` varchar(255) NOT NULL,
+				  `to_warehouse_id` varchar(255) NOT NULL,
+				  `bill_status` int(11) NOT NULL,
+				  `bizdt` datetime NOT NULL,
+				  `biz_user_id` varchar(255) NOT NULL,
+				  `date_created` datetime DEFAULT NULL,
+				  `input_user_id` varchar(255) NOT NULL,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_wsp_bill_detail
+		$sql = "CREATE TABLE IF NOT EXISTS `t_wsp_bill_detail` (
+				  `id` varchar(255) NOT NULL,
+				  `wspbill_id` varchar(255) NOT NULL,
+				  `show_order` int(11) NOT NULL,
+				  `goods_id` varchar(255) NOT NULL,
+				  `goods_count` decimal(19,8) NOT NULL,
+				  `date_created` datetime DEFAULT NULL,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_wsp_bill_detail_ex
+		$sql = "CREATE TABLE IF NOT EXISTS `t_wsp_bill_detail_ex` (
+				  `id` varchar(255) NOT NULL,
+				  `wspbill_id` varchar(255) NOT NULL,
+				  `show_order` int(11) NOT NULL,
+				  `goods_id` varchar(255) NOT NULL,
+				  `goods_count` decimal(19,8) NOT NULL,
+				  `date_created` datetime DEFAULT NULL,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  `from_goods_id` varchar(255) NOT NULL,
+				  `wspbilldetail_id` varchar(255) NOT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_wsp_bill_bom
+		$sql = "CREATE TABLE IF NOT EXISTS `t_wsp_bill_detail_bom` (
+				  `id` varchar(255) NOT NULL,
+				  `wspbilldetail_id` varchar(255) NOT NULL,
+				  `goods_id` varchar(255) NOT NULL,
+				  `sub_goods_id` varchar(255) NOT NULL,
+				  `parent_id` varchar(255) DEFAULT NULL,
+				  `sub_goods_count` decimal(19,8) NOT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
 	}
 
 	/**

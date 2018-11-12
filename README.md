@@ -1,11 +1,8 @@
 # 关于PSI
 
-
 PSI是一款基于SaaS模式(Software as a Service软件即服务)的企业管理软件。PSI以商贸企业的核心业务：采购、销售、库存（进销存）为切入点，最终目标是行业化的ERP解决方案。
 
-
 # PSI演示
-
 
 PSI的演示见：<a target="_blank" href="https://psi.sturgeon.mopaasapp.com">https://psi.sturgeon.mopaasapp.com</a>
 
@@ -14,7 +11,6 @@ PC端请用`360浏览器`或者是`谷歌浏览器`访问
 移动端扫码访问![移动端扫码访问](PSI_Mobile_URL.png)
 
 # PSI的开源协议
-
 
 PSI的开源协议为GPL v3
 
@@ -30,8 +26,11 @@ PSI的开源协议为GPL v3
 
 商务合作QQ: 1569352868
 
-# 致谢
+# 技术支持
 
+如有技术方面的问题，可以提出Issue一起讨论：https://gitee.com/crm8000/PSI/issues
+
+# 致谢
 
 PSI使用了如下开源软件，没有你们，就没有PSI
  

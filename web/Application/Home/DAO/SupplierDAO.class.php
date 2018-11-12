@@ -686,6 +686,7 @@ class SupplierDAO extends PSIBaseExDAO {
 		}
 		
 		$categoryId = $params["categoryId"];
+		$py = $params["py"];
 		
 		// 检查编码是否已经存在
 		$sql = "select count(*) as cnt from t_supplier where code = '%s'  and id <> '%s' ";

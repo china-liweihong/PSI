@@ -191,6 +191,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20181104_01();
 		$this->update_20181107_01();
 		$this->update_20181110_01();
+		$this->update_20181112_01();
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -211,6 +212,82 @@ class UpdateDBService extends PSIBaseService {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// ============================================
 	private function notForgot() {
+	}
+
+	private function update_20181112_01() {
+		// 本次更新：新增表 t_wsp_bill、t_wsp_bill_detail、t_wsp_bill_detail_ex、t_wsp_bill_detail_bom
+		$db = $this->db;
+		
+		$tableName = "t_wsp_bill";
+		if (! $this->tableExists($db, $tableName)) {
+			$sql = "CREATE TABLE IF NOT EXISTS `t_wsp_bill` (
+					  `id` varchar(255) NOT NULL,
+					  `ref` varchar(255) NOT NULL,
+					  `from_warehouse_id` varchar(255) NOT NULL,
+					  `to_warehouse_id` varchar(255) NOT NULL,
+					  `bill_status` int(11) NOT NULL,
+					  `bizdt` datetime NOT NULL,
+					  `biz_user_id` varchar(255) NOT NULL,
+					  `date_created` datetime DEFAULT NULL,
+					  `input_user_id` varchar(255) NOT NULL,
+					  `data_org` varchar(255) DEFAULT NULL,
+					  `company_id` varchar(255) DEFAULT NULL,
+					  PRIMARY KEY (`id`)
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+			";
+			$db->execute($sql);
+		}
+		
+		$tableName = "t_wsp_bill_detail";
+		if (! $this->tableExists($db, $tableName)) {
+			$sql = "CREATE TABLE IF NOT EXISTS `t_wsp_bill_detail` (
+					  `id` varchar(255) NOT NULL,
+					  `wspbill_id` varchar(255) NOT NULL,
+					  `show_order` int(11) NOT NULL,
+					  `goods_id` varchar(255) NOT NULL,
+					  `goods_count` decimal(19,8) NOT NULL,
+					  `date_created` datetime DEFAULT NULL,
+					  `data_org` varchar(255) DEFAULT NULL,
+					  `company_id` varchar(255) DEFAULT NULL,
+					  PRIMARY KEY (`id`)
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+			";
+			$db->execute($sql);
+		}
+		
+		$tableName = "t_wsp_bill_detail_ex";
+		if (! $this->tableExists($db, $tableName)) {
+			$sql = "CREATE TABLE IF NOT EXISTS `t_wsp_bill_detail_ex` (
+					  `id` varchar(255) NOT NULL,
+					  `wspbill_id` varchar(255) NOT NULL,
+					  `show_order` int(11) NOT NULL,
+					  `goods_id` varchar(255) NOT NULL,
+					  `goods_count` decimal(19,8) NOT NULL,
+					  `date_created` datetime DEFAULT NULL,
+					  `data_org` varchar(255) DEFAULT NULL,
+					  `company_id` varchar(255) DEFAULT NULL,
+					  `from_goods_id` varchar(255) NOT NULL,
+					  `wspbilldetail_id` varchar(255) NOT NULL,
+					  PRIMARY KEY (`id`)
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+			";
+			$db->execute($sql);
+		}
+		
+		$tableName = "t_wsp_bill_detail_bom";
+		if (! $this->tableExists($db, $tableName)) {
+			$sql = "CREATE TABLE IF NOT EXISTS `t_wsp_bill_detail_bom` (
+					  `id` varchar(255) NOT NULL,
+					  `wspbilldetail_id` varchar(255) NOT NULL,
+					  `goods_id` varchar(255) NOT NULL,
+					  `sub_goods_id` varchar(255) NOT NULL,
+					  `parent_id` varchar(255) DEFAULT NULL,
+					  `sub_goods_count` decimal(19,8) NOT NULL,
+					  PRIMARY KEY (`id`)
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+			";
+			$db->execute($sql);
+		}
 	}
 
 	private function update_20181110_01() {

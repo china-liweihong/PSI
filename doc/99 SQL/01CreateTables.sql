@@ -182,6 +182,7 @@ CREATE TABLE IF NOT EXISTS `t_goods` (
   `memo` varchar(500) DEFAULT NULL,
   `company_id` varchar(255) DEFAULT NULL,
   `brand_id` varchar(255) DEFAULT NULL,
+  `record_status` int(11) DEFAULT 1000,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

@@ -246,7 +246,7 @@ Ext.define("PSI.Goods.MainForm", {
 					fields : ["id", "code", "name", "spec", "unitId",
 							"unitName", "categoryId", "salePrice",
 							"purchasePrice", "barCode", "memo", "dataOrg",
-							"brandFullName"]
+							"brandFullName", "recordStatus"]
 				});
 
 		var store = Ext.create("Ext.data.Store", {
@@ -384,6 +384,18 @@ Ext.define("PSI.Goods.MainForm", {
 								dataIndex : "dataOrg",
 								menuDisabled : true,
 								sortable : false
+							}, {
+								header : "状态",
+								dataIndex : "recordStatus",
+								menuDisabled : true,
+								sortable : false,
+								renderer : function(value) {
+									if (parseInt(value) == 1000) {
+										return "启用";
+									} else {
+										return "<span style='color:red'>停用</span>";
+									}
+								}
 							}],
 					store : store,
 					listeners : {

@@ -278,137 +278,144 @@ Ext.define("PSI.Goods.MainForm", {
 				});
 
 		me.__mainGrid = Ext.create("Ext.grid.Panel", {
-					cls : "PSI",
-					viewConfig : {
-						enableTextSelection : true
-					},
-					header : {
-						height : 30,
-						title : me.formatGridHeaderTitle("商品列表")
-					},
-					bbar : ["->", {
-								id : "pagingToolbar",
-								border : 0,
-								xtype : "pagingtoolbar",
-								store : store
-							}, "-", {
-								xtype : "displayfield",
-								value : "每页显示"
-							}, {
-								id : "comboCountPerPage",
-								xtype : "combobox",
-								editable : false,
-								width : 60,
-								store : Ext.create("Ext.data.ArrayStore", {
-											fields : ["text"],
-											data : [["20"], ["50"], ["100"],
-													["300"], ["1000"]]
-										}),
-								value : 20,
-								listeners : {
-									change : {
-										fn : function() {
-											store.pageSize = Ext
-													.getCmp("comboCountPerPage")
-													.getValue();
-											store.currentPage = 1;
-											Ext.getCmp("pagingToolbar")
-													.doRefresh();
-										},
-										scope : me
-									}
-								}
-							}, {
-								xtype : "displayfield",
-								value : "条记录"
-							}],
-					columnLines : true,
-					columns : [Ext.create("Ext.grid.RowNumberer", {
-										text : "序号",
-										width : 40
-									}), {
-								header : "商品编码",
-								dataIndex : "code",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "品名",
-								dataIndex : "name",
-								menuDisabled : true,
-								sortable : false,
-								width : 300
-							}, {
-								header : "规格型号",
-								dataIndex : "spec",
-								menuDisabled : true,
-								sortable : false,
-								width : 200
-							}, {
-								header : "计量单位",
-								dataIndex : "unitName",
-								menuDisabled : true,
-								sortable : false,
-								width : 80
-							}, {
-								header : "品牌",
-								dataIndex : "brandFullName",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "销售基准价",
-								dataIndex : "salePrice",
-								menuDisabled : true,
-								sortable : false,
-								align : "right",
-								xtype : "numbercolumn"
-							}, {
-								header : "建议采购价",
-								dataIndex : "purchasePrice",
-								menuDisabled : true,
-								sortable : false,
-								align : "right",
-								xtype : "numbercolumn"
-							}, {
-								header : "条形码",
-								dataIndex : "barCode",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "备注",
-								dataIndex : "memo",
-								menuDisabled : true,
-								sortable : false,
-								width : 300
-							}, {
-								header : "数据域",
-								dataIndex : "dataOrg",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "状态",
-								dataIndex : "recordStatus",
-								menuDisabled : true,
-								sortable : false,
-								renderer : function(value) {
-									if (parseInt(value) == 1000) {
-										return "启用";
-									} else {
-										return "<span style='color:red'>停用</span>";
-									}
-								}
-							}],
-					store : store,
-					listeners : {
-						itemdblclick : {
-							fn : me.onEditGoods,
-							scope : me
-						},
-						select : {
-							fn : me.onGoodsSelect,
-							scope : me
+			cls : "PSI",
+			viewConfig : {
+				enableTextSelection : true
+			},
+			header : {
+				height : 30,
+				title : me.formatGridHeaderTitle("商品列表")
+			},
+			bbar : ["->", {
+						id : "pagingToolbar",
+						border : 0,
+						xtype : "pagingtoolbar",
+						store : store
+					}, "-", {
+						xtype : "displayfield",
+						value : "每页显示"
+					}, {
+						id : "comboCountPerPage",
+						xtype : "combobox",
+						editable : false,
+						width : 60,
+						store : Ext.create("Ext.data.ArrayStore", {
+									fields : ["text"],
+									data : [["20"], ["50"], ["100"], ["300"],
+											["1000"]]
+								}),
+						value : 20,
+						listeners : {
+							change : {
+								fn : function() {
+									store.pageSize = Ext
+											.getCmp("comboCountPerPage")
+											.getValue();
+									store.currentPage = 1;
+									Ext.getCmp("pagingToolbar").doRefresh();
+								},
+								scope : me
+							}
 						}
-					}
-				});
+					}, {
+						xtype : "displayfield",
+						value : "条记录"
+					}],
+			columnLines : true,
+			columns : [Ext.create("Ext.grid.RowNumberer", {
+								text : "序号",
+								width : 40
+							}), {
+						header : "商品编码",
+						dataIndex : "code",
+						menuDisabled : true,
+						sortable : false,
+						renderer : function(value, metaData, record) {
+							if (parseInt(record.get("recordStatus")) == 1000) {
+								return value;
+							} else {
+								return "<span style='color:gray;text-decoration:line-through;'>"
+										+ value + "</span>";
+							}
+						}
+					}, {
+						header : "品名",
+						dataIndex : "name",
+						menuDisabled : true,
+						sortable : false,
+						width : 300
+					}, {
+						header : "规格型号",
+						dataIndex : "spec",
+						menuDisabled : true,
+						sortable : false,
+						width : 200
+					}, {
+						header : "计量单位",
+						dataIndex : "unitName",
+						menuDisabled : true,
+						sortable : false,
+						width : 80
+					}, {
+						header : "品牌",
+						dataIndex : "brandFullName",
+						menuDisabled : true,
+						sortable : false
+					}, {
+						header : "销售基准价",
+						dataIndex : "salePrice",
+						menuDisabled : true,
+						sortable : false,
+						align : "right",
+						xtype : "numbercolumn"
+					}, {
+						header : "建议采购价",
+						dataIndex : "purchasePrice",
+						menuDisabled : true,
+						sortable : false,
+						align : "right",
+						xtype : "numbercolumn"
+					}, {
+						header : "条形码",
+						dataIndex : "barCode",
+						menuDisabled : true,
+						sortable : false
+					}, {
+						header : "备注",
+						dataIndex : "memo",
+						menuDisabled : true,
+						sortable : false,
+						width : 300
+					}, {
+						header : "数据域",
+						dataIndex : "dataOrg",
+						menuDisabled : true,
+						sortable : false
+					}, {
+						header : "状态",
+						dataIndex : "recordStatus",
+						menuDisabled : true,
+						sortable : false,
+						renderer : function(value) {
+							if (parseInt(value) == 1000) {
+								return "启用";
+							} else {
+								return "<span style='color:red'>停用</span>";
+							}
+						}
+					}],
+			store : store,
+			listeners : {
+				itemdblclick : {
+					fn : me.onEditGoods,
+					scope : me
+				},
+				select : {
+					fn : me.onGoodsSelect,
+					scope : me
+				}
+			}
+		});
 
 		return me.__mainGrid;
 	},

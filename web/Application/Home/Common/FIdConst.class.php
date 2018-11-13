@@ -820,6 +820,13 @@ class FIdConst {
 	 */
 	const SALE_CONTRACT_PRINT = "2032-07";
 	
+	/**
+	 * 存货拆分
+	 *
+	 * @var string
+	 */
+	const WSP = "2033";
+	
 	// -------------------------
 	// 财务总账系统GL fid使用2100段
 	// -------------------------

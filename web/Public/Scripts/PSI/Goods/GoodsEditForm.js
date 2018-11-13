@@ -321,6 +321,8 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 		me.editPurchasePrice = Ext
 				.getCmp("PSI_Goods_GoodsEditForm_editPurchasePrice");
 		me.editMemo = Ext.getCmp("PSI_Goods_GoodsEditForm_editMemo");
+		me.editRecordStatus = Ext
+				.getCmp("PSI_Goods_GoodsEditForm_editRecordStatus");
 
 		me.__editorList = [me.editCategory, me.editCode, me.editName,
 				me.editSpec, me.editUnit, me.editBarCode, me.editBrand,
@@ -379,6 +381,8 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 									editBrand.setIdValue(brandId);
 									editBrand.setValue(data.brandFullName);
 								}
+								me.editRecordStatus
+										.setValue(parseInt(data.recordStatus));
 							} else {
 								// 新增商品
 								if (unitStore.getCount() > 0) {

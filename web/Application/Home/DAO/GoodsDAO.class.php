@@ -628,7 +628,7 @@ class GoodsDAO extends PSIBaseExDAO {
 		$categoryId = $params["categoryId"];
 		
 		$sql = "select category_id, code, name, spec, unit_id, sale_price, purchase_price,
-					bar_code, memo, brand_id
+					bar_code, memo, brand_id, record_status
 				from t_goods
 				where id = '%s' ";
 		$data = $db->query($sql, $id);
@@ -654,6 +654,7 @@ class GoodsDAO extends PSIBaseExDAO {
 			
 			$result["barCode"] = $data[0]["bar_code"];
 			$result["memo"] = $data[0]["memo"];
+			$result["recordStatus"] = $data[0]["record_status"];
 			
 			$sql = "select full_name from t_goods_category where id = '%s' ";
 			$data = $db->query($sql, $categoryId);

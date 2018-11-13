@@ -89,7 +89,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 				height : 40
 			},
 			width : 460,
-			height : 370,
+			height : 410,
 			layout : "border",
 			items : [{
 						region : "north",
@@ -276,6 +276,19 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 									},
 									colspan : 2,
 									width : 430
+								}, {
+									id : "PSI_Goods_GoodsEditForm_editRecordStatus",
+									xtype : "combo",
+									queryMode : "local",
+									editable : false,
+									valueField : "id",
+									fieldLabel : "状态",
+									name : "recordStatus",
+									store : Ext.create("Ext.data.ArrayStore", {
+												fields : ["id", "text"],
+												data : [[1000, "启用"], [0, "停用"]]
+											}),
+									value : 1000
 								}],
 						buttons : buttons
 					}],

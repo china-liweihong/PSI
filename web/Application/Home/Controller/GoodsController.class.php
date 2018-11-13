@@ -261,7 +261,8 @@ class GoodsController extends PSIBaseController {
 					"purchasePrice" => I("post.purchasePrice"),
 					"barCode" => I("post.barCode"),
 					"brandId" => I("post.brandId"),
-					"memo" => I("post.memo")
+					"memo" => I("post.memo"),
+					"recordStatus" => I("post.recordStatus")
 			);
 			$gs = new GoodsService();
 			$this->ajaxReturn($gs->editGoods($params));

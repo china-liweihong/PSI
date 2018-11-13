@@ -157,6 +157,7 @@ class GoodsDAO extends PSIBaseExDAO {
 		$barCode = $params["barCode"];
 		$memo = $params["memo"];
 		$brandId = $params["brandId"];
+		$recordStatus = $params["recordStatus"];
 		
 		$dataOrg = $params["dataOrg"];
 		$companyId = $params["companyId"];
@@ -211,11 +212,14 @@ class GoodsDAO extends PSIBaseExDAO {
 		
 		$id = $this->newId();
 		$sql = "insert into t_goods (id, code, name, spec, category_id, unit_id, sale_price,
-					py, purchase_price, bar_code, memo, data_org, company_id, spec_py, brand_id)
+					py, purchase_price, bar_code, memo, data_org, company_id, spec_py, brand_id,
+					record_status)
 				values ('%s', '%s', '%s', '%s', '%s', '%s', %f, '%s', %f, '%s', '%s', '%s', '%s', '%s',
-					if('%s' = '', null, '%s'))";
+					if('%s' = '', null, '%s'),
+					%d)";
 		$rc = $db->execute($sql, $id, $code, $name, $spec, $categoryId, $unitId, $salePrice, $py, 
-				$purchasePrice, $barCode, $memo, $dataOrg, $companyId, $specPY, $brandId, $brandId);
+				$purchasePrice, $barCode, $memo, $dataOrg, $companyId, $specPY, $brandId, $brandId, 
+				$recordStatus);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -246,6 +250,7 @@ class GoodsDAO extends PSIBaseExDAO {
 		$barCode = $params["barCode"];
 		$memo = $params["memo"];
 		$brandId = $params["brandId"];
+		$recordStatus = $params["recordStatus"];
 		
 		$py = $params["py"];
 		$specPY = $params["specPY"];
@@ -299,11 +304,12 @@ class GoodsDAO extends PSIBaseExDAO {
 				set code = '%s', name = '%s', spec = '%s', category_id = '%s',
 				    unit_id = '%s', sale_price = %f, py = '%s', purchase_price = %f,
 					bar_code = '%s', memo = '%s', spec_py = '%s',
-					brand_id = if('%s' = '', null, '%s')
+					brand_id = if('%s' = '', null, '%s'),
+					record_status = %d
 				where id = '%s' ";
 		
 		$rc = $db->execute($sql, $code, $name, $spec, $categoryId, $unitId, $salePrice, $py, 
-				$purchasePrice, $barCode, $memo, $specPY, $brandId, $brandId, $id);
+				$purchasePrice, $barCode, $memo, $specPY, $brandId, $brandId, $recordStatus, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}

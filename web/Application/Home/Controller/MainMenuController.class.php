@@ -237,6 +237,10 @@ class MainMenuController extends Controller {
 				// 销售合同
 				redirect(__ROOT__ . "/Home/SaleContract/index");
 				break;
+			case FIdConst::WSP :
+				// 存货拆分
+				redirect(__ROOT__ . "/Home/WSP/index");
+				break;
 			default :
 				redirect(__ROOT__ . "/Home");
 		}

@@ -341,7 +341,7 @@ Ext.define("PSI.Supplier.MainForm", {
 							"mobile02", "qq02", "categoryId", "initPayables",
 							"initPayablesDT", "address", "addressShipping",
 							"bankName", "bankAccount", "tax", "fax", "note",
-							"dataOrg", "taxRate"]
+							"dataOrg", "taxRate", "recordStatus"]
 				});
 
 		var store = Ext.create("Ext.data.Store", {
@@ -380,177 +380,196 @@ Ext.define("PSI.Supplier.MainForm", {
 				});
 
 		me.__mainGrid = Ext.create("Ext.grid.Panel", {
-					cls : "PSI",
-					viewConfig : {
-						enableTextSelection : true
-					},
-					header : {
-						height : 30,
-						title : "供应商列表"
-					},
-					columnLines : true,
-					columns : [Ext.create("Ext.grid.RowNumberer", {
-										text : "序号",
-										width : 40
-									}), {
-								header : "供应商编码",
-								locked : true,
-								dataIndex : "code",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "供应商名称",
-								locked : true,
-								dataIndex : "name",
-								menuDisabled : true,
-								sortable : false,
-								width : 300
-							}, {
-								header : "地址",
-								dataIndex : "address",
-								menuDisabled : true,
-								sortable : false,
-								width : 300
-							}, {
-								header : "联系人",
-								dataIndex : "contact01",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "手机",
-								dataIndex : "mobile01",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "固话",
-								dataIndex : "tel01",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "QQ",
-								dataIndex : "qq01",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "备用联系人",
-								dataIndex : "contact02",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "备用联系人手机",
-								dataIndex : "mobile02",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "备用联系人固话",
-								dataIndex : "tel02",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "备用联系人QQ",
-								dataIndex : "qq02",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "发货地址",
-								dataIndex : "addressShipping",
-								menuDisabled : true,
-								sortable : false,
-								width : 300
-							}, {
-								header : "开户行",
-								dataIndex : "bankName",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "开户行账号",
-								dataIndex : "bankAccount",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "税号",
-								dataIndex : "tax",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "传真",
-								dataIndex : "fax",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "税率(%)",
-								align : "right",
-								dataIndex : "taxRate",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "应付期初余额",
-								dataIndex : "initPayables",
-								align : "right",
-								xtype : "numbercolumn",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "应付期初余额日期",
-								dataIndex : "initPayablesDT",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "备注",
-								dataIndex : "note",
-								menuDisabled : true,
-								sortable : false,
-								width : 400
-							}, {
-								header : "数据域",
-								dataIndex : "dataOrg",
-								menuDisabled : true,
-								sortable : false
-							}],
-					store : store,
-					bbar : ["->", {
-								id : "pagingToolbar",
-								border : 0,
-								xtype : "pagingtoolbar",
-								store : store
-							}, "-", {
-								xtype : "displayfield",
-								value : "每页显示"
-							}, {
-								id : "comboCountPerPage",
-								xtype : "combobox",
-								editable : false,
-								width : 60,
-								store : Ext.create("Ext.data.ArrayStore", {
-											fields : ["text"],
-											data : [["20"], ["50"], ["100"],
-													["300"], ["1000"]]
-										}),
-								value : 20,
-								listeners : {
-									change : {
-										fn : function() {
-											store.pageSize = Ext
-													.getCmp("comboCountPerPage")
-													.getValue();
-											store.currentPage = 1;
-											Ext.getCmp("pagingToolbar")
-													.doRefresh();
-										},
-										scope : me
-									}
-								}
-							}, {
-								xtype : "displayfield",
-								value : "条记录"
-							}],
-					listeners : {
-						itemdblclick : {
-							fn : me.onEditSupplier,
-							scope : me
+			cls : "PSI",
+			viewConfig : {
+				enableTextSelection : true
+			},
+			header : {
+				height : 30,
+				title : "供应商列表"
+			},
+			columnLines : true,
+			columns : [Ext.create("Ext.grid.RowNumberer", {
+								text : "序号",
+								width : 40
+							}), {
+						header : "供应商编码",
+						locked : true,
+						dataIndex : "code",
+						menuDisabled : true,
+						sortable : false,
+						renderer : function(value, metaData, record) {
+							if (parseInt(record.get("recordStatus")) == 1000) {
+								return value;
+							} else {
+								return "<span style='color:gray;text-decoration:line-through;'>"
+										+ value + "</span>";
+							}
 						}
-					}
-				});
+					}, {
+						header : "供应商名称",
+						locked : true,
+						dataIndex : "name",
+						menuDisabled : true,
+						sortable : false,
+						width : 300
+					}, {
+						header : "地址",
+						dataIndex : "address",
+						menuDisabled : true,
+						sortable : false,
+						width : 300
+					}, {
+						header : "联系人",
+						dataIndex : "contact01",
+						menuDisabled : true,
+						sortable : false
+					}, {
+						header : "手机",
+						dataIndex : "mobile01",
+						menuDisabled : true,
+						sortable : false
+					}, {
+						header : "固话",
+						dataIndex : "tel01",
+						menuDisabled : true,
+						sortable : false
+					}, {
+						header : "QQ",
+						dataIndex : "qq01",
+						menuDisabled : true,
+						sortable : false
+					}, {
+						header : "备用联系人",
+						dataIndex : "contact02",
+						menuDisabled : true,
+						sortable : false
+					}, {
+						header : "备用联系人手机",
+						dataIndex : "mobile02",
+						menuDisabled : true,
+						sortable : false
+					}, {
+						header : "备用联系人固话",
+						dataIndex : "tel02",
+						menuDisabled : true,
+						sortable : false
+					}, {
+						header : "备用联系人QQ",
+						dataIndex : "qq02",
+						menuDisabled : true,
+						sortable : false
+					}, {
+						header : "发货地址",
+						dataIndex : "addressShipping",
+						menuDisabled : true,
+						sortable : false,
+						width : 300
+					}, {
+						header : "开户行",
+						dataIndex : "bankName",
+						menuDisabled : true,
+						sortable : false
+					}, {
+						header : "开户行账号",
+						dataIndex : "bankAccount",
+						menuDisabled : true,
+						sortable : false
+					}, {
+						header : "税号",
+						dataIndex : "tax",
+						menuDisabled : true,
+						sortable : false
+					}, {
+						header : "传真",
+						dataIndex : "fax",
+						menuDisabled : true,
+						sortable : false
+					}, {
+						header : "税率(%)",
+						align : "right",
+						dataIndex : "taxRate",
+						menuDisabled : true,
+						sortable : false
+					}, {
+						header : "应付期初余额",
+						dataIndex : "initPayables",
+						align : "right",
+						xtype : "numbercolumn",
+						menuDisabled : true,
+						sortable : false
+					}, {
+						header : "应付期初余额日期",
+						dataIndex : "initPayablesDT",
+						menuDisabled : true,
+						sortable : false
+					}, {
+						header : "备注",
+						dataIndex : "note",
+						menuDisabled : true,
+						sortable : false,
+						width : 400
+					}, {
+						header : "数据域",
+						dataIndex : "dataOrg",
+						menuDisabled : true,
+						sortable : false
+					}, {
+						header : "状态",
+						dataIndex : "recordStatus",
+						menuDisabled : true,
+						sortable : false,
+						renderer : function(value) {
+							if (parseInt(value) == 1000) {
+								return "启用";
+							} else {
+								return "<span style='color:red'>停用</span>";
+							}
+						}
+					}],
+			store : store,
+			bbar : ["->", {
+						id : "pagingToolbar",
+						border : 0,
+						xtype : "pagingtoolbar",
+						store : store
+					}, "-", {
+						xtype : "displayfield",
+						value : "每页显示"
+					}, {
+						id : "comboCountPerPage",
+						xtype : "combobox",
+						editable : false,
+						width : 60,
+						store : Ext.create("Ext.data.ArrayStore", {
+									fields : ["text"],
+									data : [["20"], ["50"], ["100"], ["300"],
+											["1000"]]
+								}),
+						value : 20,
+						listeners : {
+							change : {
+								fn : function() {
+									store.pageSize = Ext
+											.getCmp("comboCountPerPage")
+											.getValue();
+									store.currentPage = 1;
+									Ext.getCmp("pagingToolbar").doRefresh();
+								},
+								scope : me
+							}
+						}
+					}, {
+						xtype : "displayfield",
+						value : "条记录"
+					}],
+			listeners : {
+				itemdblclick : {
+					fn : me.onEditSupplier,
+					scope : me
+				}
+			}
+		});
 
 		return me.__mainGrid;
 	},

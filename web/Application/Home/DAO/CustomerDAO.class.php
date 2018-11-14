@@ -854,8 +854,9 @@ class CustomerDAO extends PSIBaseExDAO {
 		$sql = "select id, code, name, mobile01, tel01, fax, address_receipt, contact01,
 					sales_warehouse_id
 				from t_customer
-				where (code like '%s' or name like '%s' or py like '%s'
-					or mobile01 like '%s' or mobile02 like '%s' ) ";
+				where (record_status = 1000) 
+					and (code like '%s' or name like '%s' or py like '%s'
+							or mobile01 like '%s' or mobile02 like '%s' ) ";
 		$queryParams = [];
 		$key = "%{$queryKey}%";
 		$queryParams[] = $key;

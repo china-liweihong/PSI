@@ -847,7 +847,8 @@ class SupplierDAO extends PSIBaseExDAO {
 		
 		$sql = "select id, code, name, tel01, fax, address_shipping, contact01, tax_rate
 				from t_supplier
-				where (code like '%s' or name like '%s' or py like '%s') ";
+				where (record_status = 1000)
+					and (code like '%s' or name like '%s' or py like '%s') ";
 		$queryParams = array();
 		$key = "%{$queryKey}%";
 		$queryParams[] = $key;

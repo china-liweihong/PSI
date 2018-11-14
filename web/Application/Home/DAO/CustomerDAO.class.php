@@ -344,6 +344,8 @@ class CustomerDAO extends PSIBaseExDAO {
 			return $this->badParam("companyId");
 		}
 		
+		$recordStatus = $params["recordStatus"];
+		
 		// 检查编码是否已经存在
 		$sql = "select count(*) as cnt from t_customer where code = '%s' ";
 		$data = $db->query($sql, $code);
@@ -356,14 +358,17 @@ class CustomerDAO extends PSIBaseExDAO {
 		$params["id"] = $id;
 		
 		$sql = "insert into t_customer (id, category_id, code, name, py, contact01,
-				qq01, tel01, mobile01, contact02, qq02, tel02, mobile02, address, address_receipt,
-				bank_name, bank_account, tax_number, fax, note, data_org, company_id, sales_warehouse_id)
+					qq01, tel01, mobile01, contact02, qq02, tel02, mobile02, address, address_receipt,
+					bank_name, bank_account, tax_number, fax, note, data_org, company_id, sales_warehouse_id,
+					record_status)
 				values ('%s', '%s', '%s', '%s', '%s', '%s',
 						'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
-						'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')  ";
+						'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
+						%d)  ";
 		$rc = $db->execute($sql, $id, $categoryId, $code, $name, $py, $contact01, $qq01, $tel01, 
 				$mobile01, $contact02, $qq02, $tel02, $mobile02, $address, $addressReceipt, 
-				$bankName, $bankAccount, $tax, $fax, $note, $dataOrg, $companyId, $warehouseId);
+				$bankName, $bankAccount, $tax, $fax, $note, $dataOrg, $companyId, $warehouseId, 
+				$recordStatus);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -532,6 +537,8 @@ class CustomerDAO extends PSIBaseExDAO {
 		$py = $params["py"];
 		$categoryId = $params["categoryId"];
 		
+		$recordStatus = $params["recordStatus"];
+		
 		// 检查编码是否已经存在
 		$sql = "select count(*) as cnt from t_customer where code = '%s'  and id <> '%s' ";
 		$data = $db->query($sql, $code, $id);
@@ -541,17 +548,18 @@ class CustomerDAO extends PSIBaseExDAO {
 		}
 		
 		$sql = "update t_customer
-				set code = '%s', name = '%s', category_id = '%s', py = '%s',
-				contact01 = '%s', qq01 = '%s', tel01 = '%s', mobile01 = '%s',
-				contact02 = '%s', qq02 = '%s', tel02 = '%s', mobile02 = '%s',
-				address = '%s', address_receipt = '%s',
-				bank_name = '%s', bank_account = '%s', tax_number = '%s',
-				fax = '%s', note = '%s', sales_warehouse_id = '%s'
+					set code = '%s', name = '%s', category_id = '%s', py = '%s',
+					contact01 = '%s', qq01 = '%s', tel01 = '%s', mobile01 = '%s',
+					contact02 = '%s', qq02 = '%s', tel02 = '%s', mobile02 = '%s',
+					address = '%s', address_receipt = '%s',
+					bank_name = '%s', bank_account = '%s', tax_number = '%s',
+					fax = '%s', note = '%s', sales_warehouse_id = '%s',
+					record_status = %d
 				where id = '%s'  ";
 		
 		$rc = $db->execute($sql, $code, $name, $categoryId, $py, $contact01, $qq01, $tel01, 
 				$mobile01, $contact02, $qq02, $tel02, $mobile02, $address, $addressReceipt, 
-				$bankName, $bankAccount, $tax, $fax, $note, $warehouseId, $id);
+				$bankName, $bankAccount, $tax, $fax, $note, $warehouseId, $recordStatus, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -912,7 +920,8 @@ class CustomerDAO extends PSIBaseExDAO {
 		$sql = "select category_id, code, name, contact01, qq01, mobile01, tel01,
 					contact02, qq02, mobile02, tel02, address, address_receipt,
 					init_receivables, init_receivables_dt,
-					bank_name, bank_account, tax_number, fax, note, sales_warehouse_id
+					bank_name, bank_account, tax_number, fax, note, sales_warehouse_id,
+					record_status
 				from t_customer
 				where id = '%s' ";
 		$data = $db->query($sql, $id);
@@ -940,6 +949,7 @@ class CustomerDAO extends PSIBaseExDAO {
 			$result["tax"] = $data[0]["tax_number"];
 			$result["fax"] = $data[0]["fax"];
 			$result["note"] = $data[0]["note"];
+			$result["recordStatus"] = $data[0]["record_status"];
 			
 			$result["warehouseId"] = null;
 			$result["warehouseName"] = null;

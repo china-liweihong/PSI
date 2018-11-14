@@ -155,7 +155,8 @@ class CustomerController extends PSIBaseController {
 					"categoryId" => I("post.categoryId"),
 					"initReceivables" => I("post.initReceivables"),
 					"initReceivablesDT" => I("post.initReceivablesDT"),
-					"warehouseId" => I("post.warehouseId")
+					"warehouseId" => I("post.warehouseId"),
+					"recordStatus" => I("post.recordStatus")
 			];
 			$cs = new CustomerService();
 			$this->ajaxReturn($cs->editCustomer($params));

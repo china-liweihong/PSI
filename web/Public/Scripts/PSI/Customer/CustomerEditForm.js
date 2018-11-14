@@ -61,7 +61,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 				height : 40
 			},
 			width : 550,
-			height : 530,
+			height : 570,
 			layout : "border",
 			items : [{
 						region : "north",
@@ -376,6 +376,19 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 									},
 									width : 510,
 									colspan : 2
+								}, {
+									id : "PSI_Customer_CustomerEditForm_editRecordStatus",
+									xtype : "combo",
+									queryMode : "local",
+									editable : false,
+									valueField : "id",
+									fieldLabel : "状态",
+									name : "recordStatus",
+									store : Ext.create("Ext.data.ArrayStore", {
+												fields : ["id", "text"],
+												data : [[1000, "启用"], [0, "停用"]]
+											}),
+									value : 1000
 								}],
 						buttons : buttons
 					}],
@@ -429,6 +442,8 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 		me.editWarehouseId = Ext
 				.getCmp("PSI_Customer_CustomerEditForm_editWarehouseId");
 		me.editNote = Ext.getCmp("PSI_Customer_CustomerEditForm_editNote");
+		me.editRecordStatus = Ext
+				.getCmp("PSI_Customer_CustomerEditForm_editRecordStatus");
 
 		me.__editorList = [me.editCategory, me.editCode, me.editName,
 				me.editAddress, me.editContact01, me.editMobile01,
@@ -492,6 +507,9 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 									me.editWarehouse
 											.setValue(data.warehouseName);
 								}
+
+								me.editRecordStatus
+										.setValue(parseInt(data.recordStatus));
 							}
 
 							el.unmask();

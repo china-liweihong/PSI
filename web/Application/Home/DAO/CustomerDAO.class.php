@@ -681,7 +681,7 @@ class CustomerDAO extends PSIBaseExDAO {
 		$sql = "select id, category_id, code, name, address, contact01, qq01, tel01, mobile01,
 				 	contact02, qq02, tel02, mobile02, init_receivables, init_receivables_dt,
 					address_receipt, bank_name, bank_account, tax_number, fax, note, data_org,
-					sales_warehouse_id
+					sales_warehouse_id, record_status
 				 from t_customer where (category_id = '%s') ";
 		$queryParam = [];
 		$queryParam[] = $categoryId;
@@ -766,7 +766,8 @@ class CustomerDAO extends PSIBaseExDAO {
 					"fax" => $v["fax"],
 					"note" => $v["note"],
 					"dataOrg" => $v["data_org"],
-					"warehouseName" => $warehouseName
+					"warehouseName" => $warehouseName,
+					"recordStatus" => $v["record_status"]
 			];
 		}
 		

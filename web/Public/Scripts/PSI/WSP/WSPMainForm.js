@@ -1,4 +1,6 @@
+//
 // 存货拆分 - 主界面
+//
 Ext.define("PSI.WSP.WSPMainForm", {
 	extend : "PSI.AFX.BaseMainExForm",
 
@@ -257,5 +259,40 @@ Ext.define("PSI.WSP.WSPMainForm", {
 		}
 
 		return result;
+	},
+
+	onAddBill : function() {
+		var me = this;
+		me.showInfo("TODO");
+	},
+
+	onEditBill : function() {
+		var me = this;
+		me.showInfo("TODO");
+	},
+
+	onDeleteBill : function() {
+		var me = this;
+		me.showInfo("TODO");
+	},
+
+	onCommit : function() {
+		var me = this;
+		me.showInfo("TODO");
+	},
+
+	onPDF : function() {
+		var me = this;
+		me.showInfo("TODO");
+	},
+
+	onPrintPreview : function() {
+		var me = this;
+		me.showInfo("TODO");
+	},
+
+	onPrint : function() {
+		var me = this;
+		me.showInfo("TODO");
 	}
 });

@@ -42,7 +42,7 @@ Ext.define("PSI.WSP.WSPMainForm", {
 											region : "center",
 											layout : "fit",
 											border : 0,
-											items : []
+											items : [me.getDetailGrid()]
 										}]
 							}]
 				});
@@ -416,6 +416,71 @@ Ext.define("PSI.WSP.WSPMainForm", {
 				});
 
 		return me.__mainGrid;
+	},
+
+	getDetailGrid : function() {
+		var me = this;
+		if (me.__detailGrid) {
+			return me.__detailGrid;
+		}
+
+		var modelName = "PSIWSPBillDetail";
+		Ext.define(modelName, {
+					extend : "Ext.data.Model",
+					fields : ["id", "goodsCode", "goodsName", "goodsSpec",
+							"unitName", "goodsCount"]
+				});
+		var store = Ext.create("Ext.data.Store", {
+					autoLoad : false,
+					model : modelName,
+					data : []
+				});
+
+		me.__detailGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
+					viewConfig : {
+						enableTextSelection : true
+					},
+					header : {
+						height : 30,
+						title : me.formatGridHeaderTitle("拆分单明细")
+					},
+					columnLines : true,
+					columns : {
+						defaults : {
+							menuDisabled : true,
+							sortable : false
+						},
+						items : [Ext.create("Ext.grid.RowNumberer", {
+											text : "序号",
+											width : 40
+										}), {
+									header : "商品编码",
+									dataIndex : "goodsCode",
+									width : 120
+								}, {
+									header : "商品名称",
+									dataIndex : "goodsName",
+									width : 200
+								}, {
+									header : "规格型号",
+									dataIndex : "goodsSpec",
+									width : 200
+								}, {
+									header : "拆分数量",
+									dataIndex : "goodsCount",
+									width : 120,
+									align : "right"
+								}, {
+									header : "单位",
+									dataIndex : "unitName",
+									width : 60
+								}]
+					},
+					store : store
+				});
+
+		return me.__detailGrid;
 	},
 
 	gotoMainGridRecord : function(id) {

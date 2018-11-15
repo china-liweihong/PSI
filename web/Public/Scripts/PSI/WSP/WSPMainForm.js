@@ -31,7 +31,19 @@ Ext.define("PSI.WSP.WSPMainForm", {
 								region : "center",
 								layout : "border",
 								border : 0,
-								items : []
+								items : [{
+											region : "north",
+											height : "40%",
+											split : true,
+											layout : "fit",
+											border : 0,
+											items : [me.getMainGrid()]
+										}, {
+											region : "center",
+											layout : "fit",
+											border : 0,
+											items : []
+										}]
 							}]
 				});
 
@@ -259,6 +271,168 @@ Ext.define("PSI.WSP.WSPMainForm", {
 		}
 
 		return result;
+	},
+
+	getMainGrid : function() {
+		var me = this;
+		if (me.__mainGrid) {
+			return me.__mainGrid;
+		}
+
+		var modelName = "PSIWSPBill";
+		Ext.define(modelName, {
+					extend : "Ext.data.Model",
+					fields : ["id", "ref", "bizDate", "fromWarehouseName",
+							"toWarehouseName", "inputUserName", "bizUserName",
+							"billStatus", "dateCreated"]
+				});
+		var store = Ext.create("Ext.data.Store", {
+					autoLoad : false,
+					model : modelName,
+					data : [],
+					pageSize : 20,
+					proxy : {
+						type : "ajax",
+						actionMethods : {
+							read : "POST"
+						},
+						url : PSI.Const.BASE_URL + "Home/WSP/wspbillList",
+						reader : {
+							root : 'dataList',
+							totalProperty : 'totalCount'
+						}
+					}
+				});
+		store.on("beforeload", function() {
+					store.proxy.extraParams = me.getQueryParam();
+				});
+		store.on("load", function(e, records, successful) {
+					if (successful) {
+						me.gotoMainGridRecord(me.__lastId);
+					}
+				});
+
+		me.__mainGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
+					viewConfig : {
+						enableTextSelection : true
+					},
+					border : 1,
+					columnLines : true,
+					columns : {
+						defaults : {
+							menuDisabled : true,
+							sortable : false
+						},
+						items : [{
+									xtype : "rownumberer",
+									width : 50
+								}, {
+									header : "状态",
+									dataIndex : "billStatus",
+									width : 60,
+									renderer : function(value) {
+										return value == "待调拨"
+												? "<span style='color:red'>"
+														+ value + "</span>"
+												: value;
+									}
+								}, {
+									header : "单号",
+									dataIndex : "ref",
+									width : 110
+								}, {
+									header : "业务日期",
+									dataIndex : "bizDate"
+								}, {
+									header : "仓库",
+									dataIndex : "fromWarehouseName",
+									width : 150
+								}, {
+									header : "拆分后入库仓库",
+									dataIndex : "toWarehouseName",
+									width : 150
+								}, {
+									header : "业务员",
+									dataIndex : "bizUserName"
+								}, {
+									header : "制单人",
+									dataIndex : "inputUserName"
+								}, {
+									header : "制单时间",
+									dataIndex : "dateCreated",
+									width : 140
+								}]
+					},
+					listeners : {
+						select : {
+							fn : me.onMainGridSelect,
+							scope : me
+						},
+						itemdblclick : {
+							fn : me.getPermission().edit == "1"
+									? me.onEditBill
+									: Ext.emptyFn,
+							scope : me
+						}
+					},
+					store : store,
+					bbar : ["->", {
+								id : "pagingToobar",
+								xtype : "pagingtoolbar",
+								border : 0,
+								store : store
+							}, "-", {
+								xtype : "displayfield",
+								value : "每页显示"
+							}, {
+								id : "comboCountPerPage",
+								xtype : "combobox",
+								editable : false,
+								width : 60,
+								store : Ext.create("Ext.data.ArrayStore", {
+											fields : ["text"],
+											data : [["20"], ["50"], ["100"],
+													["300"], ["1000"]]
+										}),
+								value : 20,
+								listeners : {
+									change : {
+										fn : function() {
+											store.pageSize = Ext
+													.getCmp("comboCountPerPage")
+													.getValue();
+											store.currentPage = 1;
+											Ext.getCmp("pagingToobar")
+													.doRefresh();
+										},
+										scope : me
+									}
+								}
+							}, {
+								xtype : "displayfield",
+								value : "条记录"
+							}]
+				});
+
+		return me.__mainGrid;
+	},
+
+	gotoMainGridRecord : function(id) {
+		var me = this;
+		var grid = me.getMainGrid();
+		grid.getSelectionModel().deselectAll();
+		var store = grid.getStore();
+		if (id) {
+			var r = store.findExact("id", id);
+			if (r != -1) {
+				grid.getSelectionModel().select(r);
+			} else {
+				grid.getSelectionModel().select(0);
+			}
+		} else {
+			grid.getSelectionModel().select(0);
+		}
 	},
 
 	onAddBill : function() {

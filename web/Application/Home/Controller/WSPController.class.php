@@ -4,6 +4,7 @@ namespace Home\Controller;
 
 use Home\Common\FIdConst;
 use Home\Service\UserService;
+use Home\Service\WSPBillService;
 
 /**
  * 存货拆分Controller
@@ -27,6 +28,19 @@ class WSPController extends PSIBaseController {
 			$this->display();
 		} else {
 			$this->gotoLoginPage("/Home/WSP/index");
+		}
+	}
+
+	/**
+	 * 获得某个拆分单的商品构成
+	 */
+	public function goodsBOM() {
+		if (IS_POST) {
+			
+			$params = [];
+			
+			$service = new WSPBillService();
+			$this->ajaxReturn($service->goodsBOM($params));
 		}
 	}
 }

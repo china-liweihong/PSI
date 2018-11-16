@@ -40,9 +40,29 @@ Ext.define("PSI.WSP.WSPMainForm", {
 											items : [me.getMainGrid()]
 										}, {
 											region : "center",
-											layout : "fit",
+											xtype : "tabpanel",
 											border : 0,
-											items : [me.getDetailGrid()]
+											items : [{
+												xtype : "panel",
+												title : "拆分单明细",
+												layout : "border",
+												border : 0,
+												items : [{
+															region : "center",
+															layout : "fit",
+															border : 0,
+															items : me
+																	.getDetailGrid()
+														}, {
+															region : "east",
+															layout : "fit",
+															border : 0,
+															width : "40%",
+															split : true,
+															items : me
+																	.getGoodsBOMGrid()
+														}]
+											}, me.getDetailGridEx()]
 										}]
 							}]
 				});
@@ -481,6 +501,159 @@ Ext.define("PSI.WSP.WSPMainForm", {
 				});
 
 		return me.__detailGrid;
+	},
+
+	getGoodsBOMGrid : function() {
+		var me = this;
+		if (me.__goodsBOMGrid) {
+			return me.__goodsBOMGrid;
+		}
+
+		var modelName = "PSIGoodsBOM";
+		Ext.define(modelName, {
+					extend : "Ext.data.Model",
+					fields : ["id", "goodsCode", "goodsName", "goodsSpec",
+							"unitName", "bomCount", "goodsCount", "leaf",
+							"children"]
+				});
+
+		var store = Ext.create("Ext.data.TreeStore", {
+					model : modelName,
+					proxy : {
+						type : "ajax",
+						actionMethods : {
+							read : "POST"
+						},
+						url : me.URL("Home/WSP/goodsBOM")
+					},
+					listeners : {
+						beforeload : {
+							fn : function() {
+								store.proxy.extraParams = me
+										.getQueryParamForBOM();
+							},
+							scope : me
+						}
+					}
+				});
+
+		me.__goodsBOMGrid = Ext.create("Ext.tree.Panel", {
+					cls : "PSI",
+					header : {
+						height : 30,
+						title : me.formatGridHeaderTitle("商品构成")
+					},
+					store : store,
+					rootVisible : false,
+					useArrows : true,
+					viewConfig : {
+						loadMask : true
+					},
+					columns : {
+						defaults : {
+							sortable : false,
+							menuDisabled : true,
+							draggable : false
+						},
+						items : [{
+									xtype : "treecolumn",
+									text : "商品编码",
+									dataIndex : "code",
+									width : 100
+								}, {
+									header : "商品名称",
+									dataIndex : "goodsName",
+									width : 200
+								}, {
+									header : "规格型号",
+									dataIndex : "goodsSpec",
+									width : 200
+								}, {
+									header : "标准数量",
+									dataIndex : "bomCount",
+									width : 120,
+									align : "right"
+								}, {
+									header : "拆分数量",
+									dataIndex : "goodsCount",
+									width : 120,
+									align : "right"
+								}, {
+									header : "单位",
+									dataIndex : "unitName",
+									width : 60
+								}]
+					}
+				});
+
+		return me.__goodsBOMGrid;
+	},
+
+	getQueryParamForBOM : function() {
+		var result = {};
+		return result;
+	},
+
+	getDetailGridEx : function() {
+		var me = this;
+		if (me.__detailGridEx) {
+			return me.__detailGridEx;
+		}
+
+		var modelName = "PSIWSPBillDetailEx";
+		Ext.define(modelName, {
+					extend : "Ext.data.Model",
+					fields : ["id", "goodsCode", "goodsName", "goodsSpec",
+							"unitName", "goodsCount"]
+				});
+		var store = Ext.create("Ext.data.Store", {
+					autoLoad : false,
+					model : modelName,
+					data : []
+				});
+
+		me.__detailGridEx = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
+					viewConfig : {
+						enableTextSelection : true
+					},
+					title : "拆分后商品明细",
+					columnLines : true,
+					columns : {
+						defaults : {
+							menuDisabled : true,
+							sortable : false
+						},
+						items : [Ext.create("Ext.grid.RowNumberer", {
+											text : "序号",
+											width : 40
+										}), {
+									header : "商品编码",
+									dataIndex : "goodsCode",
+									width : 120
+								}, {
+									header : "商品名称",
+									dataIndex : "goodsName",
+									width : 200
+								}, {
+									header : "规格型号",
+									dataIndex : "goodsSpec",
+									width : 200
+								}, {
+									header : "拆分后数量",
+									dataIndex : "goodsCount",
+									width : 120,
+									align : "right"
+								}, {
+									header : "单位",
+									dataIndex : "unitName",
+									width : 60
+								}]
+					},
+					store : store
+				});
+
+		return me.__detailGridEx;
 	},
 
 	gotoMainGridRecord : function(id) {

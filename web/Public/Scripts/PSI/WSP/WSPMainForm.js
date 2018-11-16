@@ -171,7 +171,7 @@ Ext.define("PSI.WSP.WSPMainForm", {
 					value : -1
 				}, {
 					id : "editQueryRef",
-					labelWidth : 60,
+					labelWidth : 120,
 					labelAlign : "right",
 					labelSeparator : "",
 					fieldLabel : "单号",
@@ -208,7 +208,7 @@ Ext.define("PSI.WSP.WSPMainForm", {
 					showModal : true,
 					labelAlign : "right",
 					labelSeparator : "",
-					labelWidth : 60,
+					labelWidth : 120,
 					margin : "5, 0, 0, 0",
 					fieldLabel : "拆分后调入仓库"
 				}, {

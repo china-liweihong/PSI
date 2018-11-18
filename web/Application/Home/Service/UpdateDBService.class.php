@@ -196,6 +196,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20181113_02();
 		$this->update_20181114_01();
 		$this->update_20181114_02();
+		$this->update_20181118_01();
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -216,6 +217,39 @@ class UpdateDBService extends PSIBaseService {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// ============================================
 	private function notForgot() {
+	}
+
+	private function update_20181118_01() {
+		// 本次更新：t_goods_brand新增字段py, t_goods_unit新增字段code
+		$db = $this->db;
+		
+		$tableName = "t_goods_brand";
+		$columnName = "py";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} varchar(255) DEFAULT NULL;";
+			$db->execute($sql);
+		}
+		// 把t_goods_barnd的py字段初始化
+		$ps = new PinyinService();
+		$sql = "select id, name from t_goods_brand where py is null or py = '' ";
+		$data = $db->query($sql);
+		foreach ( $data as $v ) {
+			$id = $v["id"];
+			$name = $v["name"];
+			$py = $ps->toPY($name);
+			
+			$sql = "update t_goods_brand
+					set py = '%s'
+					where id = '%s' ";
+			$db->execute($sql, $py, $id);
+		}
+		
+		$tableName = "t_goods_unit";
+		$columnName = "code";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} varchar(255) DEFAULT NULL;";
+			$db->execute($sql);
+		}
 	}
 
 	private function update_20181114_02() {

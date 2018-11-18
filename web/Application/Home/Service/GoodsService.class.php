@@ -531,6 +531,9 @@ class GoodsService extends PSIBaseExService {
 		$id = $params["id"];
 		$name = $params["name"];
 		
+		$ps = new PinyinService();
+		$params["py"] = $ps->toPY($name);
+		
 		$db = $this->db();
 		$db->startTrans();
 		

@@ -24,14 +24,27 @@ class WSPBillDAO extends PSIBaseExDAO {
 	public function wspBillInfo($params) {
 		$db = $this->db;
 		
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->emptyResult();
+		}
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
+		$result = [];
+		
 		$id = $params["id"];
 		
 		if ($id) {
 			// 编辑
 		} else {
 			// 新建
+			$result["bizUserId"] = $params["loginUserId"];
+			$result["bizUserName"] = $params["loginUserName"];
 		}
 		
-		return $this->emptyResult();
+		return $result;
 	}
 }

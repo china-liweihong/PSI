@@ -30,6 +30,10 @@ class WSPBillService extends PSIBaseExService {
 			return $this->emptyResult();
 		}
 		
+		$params["loginUserId"] = $this->getLoginUserId();
+		$params["loginUserName"] = $this->getLoginUserName();
+		$params["companyId"] = $this->getCompanyId();
+		
 		$dao = new WSPBillDAO($this->db());
 		return $dao->wspBillInfo($params);
 	}

@@ -14,11 +14,23 @@ class WSPBillService extends PSIBaseExService {
 
 	/**
 	 * 获得某个拆分单的商品构成
-	 * 
+	 *
 	 * @param array $params        	
 	 */
 	public function goodsBOM($params) {
 		$dao = new WSPBillDAO($this->db());
 		return $dao->goodsBOM($params);
+	}
+
+	/**
+	 * 拆分单详情
+	 */
+	public function wspBillInfo($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new WSPBillDAO($this->db());
+		return $dao->wspBillInfo($params);
 	}
 }

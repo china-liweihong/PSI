@@ -675,7 +675,12 @@ Ext.define("PSI.WSP.WSPMainForm", {
 
 	onAddBill : function() {
 		var me = this;
-		me.showInfo("TODO");
+		
+		var form = Ext.create("PSI.WSP.WSPEditForm", {
+					parentForm : me
+				});
+
+		form.show();
 	},
 
 	onEditBill : function() {

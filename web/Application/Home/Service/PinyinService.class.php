@@ -10,6 +10,6 @@ require __DIR__ . '/../Common/Pinyin/pinyin.php';
  */
 class PinyinService {
 	public function toPY($s) {
-		return strtoupper(pinyin($s, "first"));
+		return strtoupper(pinyin($s, "first", ""));
 	}
 }

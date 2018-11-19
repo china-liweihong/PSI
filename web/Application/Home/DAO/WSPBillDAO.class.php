@@ -47,4 +47,22 @@ class WSPBillDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 新建拆分单
+	 * 
+	 * @param array $bill        	
+	 */
+	public function addWSPBill(& $bill) {
+		return $this->todo();
+	}
+
+	/**
+	 * 编辑拆分单
+	 * 
+	 * @param array $bill        	
+	 */
+	public function updateWSPBill(& $bill) {
+		return $this->todo();
+	}
 }

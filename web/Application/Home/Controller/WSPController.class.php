@@ -56,4 +56,15 @@ class WSPController extends PSIBaseController {
 			$this->ajaxReturn($service->wspBillInfo($params));
 		}
 	}
+
+	/**
+	 * 新增或编辑拆分单
+	 */
+	public function editWSPBill() {
+		if (IS_POST) {
+			$json = I("post.jsonStr");
+			$ps = new WSPBillService();
+			$this->ajaxReturn($ps->editWSPBill($json));
+		}
+	}
 }

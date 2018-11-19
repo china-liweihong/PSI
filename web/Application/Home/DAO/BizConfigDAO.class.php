@@ -214,6 +214,13 @@ class BizConfigDAO extends PSIBaseExDAO {
 						"value" => "SC",
 						"note" => "",
 						"showOrder" => 609
+				],
+				[
+						"id" => "9003-10",
+						"name" => "拆分单单号前缀",
+						"value" => "WSP",
+						"note" => "",
+						"showOrder" => 610
 				]
 		];
 	}
@@ -487,7 +494,8 @@ class BizConfigDAO extends PSIBaseExDAO {
 				"9003-06",
 				"9003-07",
 				"9003-08",
-				"9003-09"
+				"9003-09",
+				"9003-10"
 		);
 		
 		// 检查值是否合法

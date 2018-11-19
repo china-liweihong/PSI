@@ -97,7 +97,8 @@ class BizConfigController extends PSIBaseController {
 					"9003-06" => I("post.value9003-06"),
 					"9003-07" => I("post.value9003-07"),
 					"9003-08" => I("post.value9003-08"),
-					"9003-09" => I("post.value9003-09")
+					"9003-09" => I("post.value9003-09"),
+					"9003-10" => I("post.value9003-10")
 			);
 			
 			$this->ajaxReturn($bs->edit($params));

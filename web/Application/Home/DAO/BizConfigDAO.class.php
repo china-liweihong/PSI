@@ -1100,6 +1100,32 @@ class BizConfigDAO extends PSIBaseExDAO {
 	}
 
 	/**
+	 * 获得拆分单单号前缀
+	 *
+	 * @param string $companyId        	
+	 * @return string
+	 */
+	public function getWSPBillRefPre($companyId) {
+		$result = "WSP";
+		
+		$db = $this->db;
+		
+		$id = "9003-10";
+		$sql = "select value from t_config
+				where id = '%s' and company_id = '%s' ";
+		$data = $db->query($sql, $id, $companyId);
+		if ($data) {
+			$result = $data[0]["value"];
+			
+			if ($result == null || $result == "") {
+				$result = "WSP";
+			}
+		}
+		
+		return $result;
+	}
+
+	/**
 	 * 获得采购入库数量控制设置项
 	 *
 	 * @param string $companyId        	

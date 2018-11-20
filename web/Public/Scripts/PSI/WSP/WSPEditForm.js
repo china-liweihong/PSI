@@ -62,9 +62,9 @@ Ext.define("PSI.WSP.WSPEditForm", {
 						border : 0,
 						layout : {
 							type : "table",
-							columns : 2
+							columns : 4
 						},
-						height : 100,
+						height : 60,
 						bodyPadding : 10,
 						items : [{
 									xtype : "hidden",
@@ -119,7 +119,7 @@ Ext.define("PSI.WSP.WSPEditForm", {
 								}, {
 									id : "editToWarehouse",
 									fieldLabel : "拆分后调入仓库",
-									labelWidth : 60,
+									labelWidth : 120,
 									labelAlign : "right",
 									labelSeparator : "",
 									xtype : "psi_warehousefield",

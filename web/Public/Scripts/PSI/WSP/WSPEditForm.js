@@ -30,7 +30,7 @@ Ext.define("PSI.WSP.WSPEditForm", {
 						iconCls : "PSI-button-ok",
 						handler : me.onOK,
 						scope : me,
-						id : "buttonSave"
+						id : "PSI_WSP_WSPEditForm_buttonSave"
 					}, "-", {
 						text : "取消",
 						handler : function() {
@@ -43,7 +43,7 @@ Ext.define("PSI.WSP.WSPEditForm", {
 									});
 						},
 						scope : me,
-						id : "buttonCancel"
+						id : "PSI_WSP_WSPEditForm_buttonCancel"
 					}, "->", {
 						text : "表单通用操作帮助",
 						iconCls : "PSI-help",
@@ -172,6 +172,14 @@ Ext.define("PSI.WSP.WSPEditForm", {
 				.getCmp("PSI_WSP_WSPEditForm_editFromWarehouse");
 		me.editToWarehouse = Ext.getCmp("PSI_WSP_WSPEditForm_editToWarehouse");
 		me.editBizUser = Ext.getCmp("PSI_WSP_WSPEditForm_editBizUser");
+
+		me.buttonSave = Ext.getCmp("PSI_WSP_WSPEditForm_buttonSave");
+		me.buttonCancel = Ext.getCmp("PSI_WSP_WSPEditForm_buttonCancel");
+		me.columnActionDelete = Ext
+				.getCmp("PSI_WSP_WSPEditForm_columnActionDelete");
+		me.columnActionAdd = Ext.getCmp("PSI_WSP_WSPEditForm_columnActionAdd");
+		me.columnActionAppend = Ext
+				.getCmp("PSI_WSP_WSPEditForm_columnActionAppend");
 	},
 
 	onWindowBeforeUnload : function(e) {
@@ -399,7 +407,7 @@ Ext.define("PSI.WSP.WSPEditForm", {
 								draggable : false,
 								width : 50,
 								xtype : "actioncolumn",
-								id : "columnActionDelete",
+								id : "PSI_WSP_WSPEditForm_columnActionDelete",
 								items : [{
 									icon : PSI.Const.BASE_URL
 											+ "Public/Images/icons/delete.png",
@@ -415,7 +423,7 @@ Ext.define("PSI.WSP.WSPEditForm", {
 								}]
 							}, {
 								header : "",
-								id : "columnActionAdd",
+								id : "PSI_WSP_WSPEditForm_columnActionAdd",
 								align : "center",
 								menuDisabled : true,
 								draggable : false,
@@ -433,7 +441,7 @@ Ext.define("PSI.WSP.WSPEditForm", {
 								}]
 							}, {
 								header : "",
-								id : "columnActionAppend",
+								id : "PSI_WSP_WSPEditForm_columnActionAppend",
 								align : "center",
 								menuDisabled : true,
 								draggable : false,
@@ -521,14 +529,14 @@ Ext.define("PSI.WSP.WSPEditForm", {
 		var me = this;
 		me.__readonly = true;
 		me.setTitle("<span style='font-size:160%'>查看拆分单</span>");
-		Ext.getCmp("buttonSave").setDisabled(true);
-		Ext.getCmp("buttonCancel").setText("关闭");
+		me.buttonSave.setDisabled(true);
+		me.buttonCancel.setText("关闭");
 		me.editBizDT.setReadOnly(true);
 		me.editFromWarehouse.setReadOnly(true);
 		me.editToWarehouse.setReadOnly(true);
 		me.editBizUser.setReadOnly(true);
-		Ext.getCmp("columnActionDelete").hide();
-		Ext.getCmp("columnActionAdd").hide();
-		Ext.getCmp("columnActionAppend").hide();
+		me.columnActionDelete.hide();
+		me.columnActionAdd.hide();
+		me.columnActionAppend.hide();
 	}
 });

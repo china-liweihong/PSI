@@ -658,10 +658,10 @@ Ext.define("PSI.Purchase.PWEditForm", {
 			var store = me.getGoodsGrid().getStore();
 			if (e.rowIdx == store.getCount() - 1) {
 				store.add({});
+				var row = e.rowIdx + 1;
+				me.getGoodsGrid().getSelectionModel().select(row);
+				me.__cellEditing.startEdit(row, 1);
 			}
-			e.rowIdx += 1;
-			me.getGoodsGrid().getSelectionModel().select(e.rowIdx);
-			me.__cellEditing.startEdit(e.rowIdx, 1);
 		} else if (fieldName == "goodsMoney") {
 			if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
 				me.calcPrice(goods);

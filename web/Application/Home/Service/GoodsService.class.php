@@ -349,6 +349,23 @@ class GoodsService extends PSIBaseExService {
 	}
 
 	/**
+	 * 商品字段，查询数据 - 只显示有子商品的商品，用于加工业务中
+	 */
+	public function queryDataForBOM($queryKey) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$params = [
+				"queryKey" => $queryKey,
+				"loginUserId" => $this->getLoginUserId()
+		];
+		
+		$dao = new GoodsDAO($this->db());
+		return $dao->queryDataForBOM($params);
+	}
+
+	/**
 	 * 商品字段，查询数据
 	 */
 	public function queryDataWithSalePrice($queryKey, $customerId) {

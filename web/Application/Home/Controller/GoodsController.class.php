@@ -300,6 +300,17 @@ class GoodsController extends PSIBaseController {
 	}
 
 	/**
+	 * 商品自定义字段，查询数据 - 只显示有子商品的商品，用于加工业务中
+	 */
+	public function queryDataForBOM() {
+		if (IS_POST) {
+			$queryKey = I("post.queryKey");
+			$gs = new GoodsService();
+			$this->ajaxReturn($gs->queryDataForBOM($queryKey));
+		}
+	}
+
+	/**
 	 * 商品自定义字段，查询数据
 	 */
 	public function queryDataWithSalePrice() {

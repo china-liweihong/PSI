@@ -344,7 +344,7 @@ Ext.define("PSI.WSP.WSPEditForm", {
 								draggable : false,
 								sortable : false,
 								editor : {
-									xtype : "psi_goodsfield",
+									xtype : "psi_goodsfieldforbom",
 									parentCmp : me
 								}
 							}, {

@@ -459,6 +459,64 @@ class GoodsDAO extends PSIBaseExDAO {
 		return $result;
 	}
 
+	/**
+	 * 商品字段，查询数据 - - 只显示有子商品的商品，用于加工业务中
+	 *
+	 * @param array $params        	
+	 * @return array
+	 */
+	public function queryDataForBOM($params) {
+		$db = $this->db;
+		
+		$queryKey = $params["queryKey"];
+		$loginUserId = $params["loginUserId"];
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->emptyResult();
+		}
+		
+		if ($queryKey == null) {
+			$queryKey = "";
+		}
+		
+		$key = "%{$queryKey}%";
+		
+		$sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name
+				from t_goods g, t_goods_unit u
+				where (g.unit_id = u.id) and (g.record_status = 1000)
+				and (g.code like '%s' or g.name like '%s' or g.py like '%s'
+					or g.spec like '%s' or g.spec_py like '%s') 
+				and g.id in (select goods_id as id from t_goods_bom) ";
+		$queryParams = [];
+		$queryParams[] = $key;
+		$queryParams[] = $key;
+		$queryParams[] = $key;
+		$queryParams[] = $key;
+		$queryParams[] = $key;
+		
+		$ds = new DataOrgDAO($db);
+		$rs = $ds->buildSQL(FIdConst::GOODS_BILL, "g", $loginUserId);
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = array_merge($queryParams, $rs[1]);
+		}
+		
+		$sql .= " order by g.code
+				limit 20";
+		$data = $db->query($sql, $queryParams);
+		$result = [];
+		foreach ( $data as $v ) {
+			$result[] = [
+					"id" => $v["id"],
+					"code" => $v["code"],
+					"name" => $v["name"],
+					"spec" => $v["spec"],
+					"unitName" => $v["unit_name"]
+			];
+		}
+		
+		return $result;
+	}
+
 	private function getPsIdForCustomer($customerId) {
 		$result = null;
 		$db = $this->db;

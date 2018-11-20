@@ -479,10 +479,10 @@ Ext.define("PSI.InvCheck.ICEditForm", {
 				var store = me.getGoodsGrid().getStore();
 				if (e.rowIdx == store.getCount() - 1) {
 					store.add({});
+					var row = e.rowIdx + 1;
+					me.getGoodsGrid().getSelectionModel().select(row);
+					me.__cellEditing.startEdit(row, 1);
 				}
-				e.rowIdx += 1;
-				me.getGoodsGrid().getSelectionModel().select(e.rowIdx);
-				me.__cellEditing.startEdit(e.rowIdx, 1);
 			}
 		}
 	},

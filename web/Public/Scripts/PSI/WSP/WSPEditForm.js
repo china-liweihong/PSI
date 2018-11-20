@@ -24,7 +24,7 @@ Ext.define("PSI.WSP.WSPEditForm", {
 			width : 1000,
 			height : 600,
 			layout : "border",
-			defaultFocus : "editFromWarehouse",
+			defaultFocus : "PSI_WSP_WSPEditForm_editFromWarehouse",
 			tbar : [{
 						text : "保存",
 						iconCls : "PSI-button-ok",
@@ -68,12 +68,12 @@ Ext.define("PSI.WSP.WSPEditForm", {
 						bodyPadding : 10,
 						items : [{
 									xtype : "hidden",
-									id : "hiddenId",
+									id : "PSI_WSP_WSPEditForm_hiddenId",
 									name : "id",
 									value : entity == null ? null : entity
 											.get("id")
 								}, {
-									id : "editRef",
+									id : "PSI_WSP_WSPEditForm_editRef",
 									fieldLabel : "单号",
 									labelWidth : 60,
 									labelAlign : "right",
@@ -81,7 +81,7 @@ Ext.define("PSI.WSP.WSPEditForm", {
 									xtype : "displayfield",
 									value : "<span style='color:red'>保存后自动生成</span>"
 								}, {
-									id : "editBizDT",
+									id : "PSI_WSP_WSPEditForm_editBizDT",
 									fieldLabel : "业务日期",
 									allowBlank : false,
 									blankText : "没有输入业务日期",
@@ -100,7 +100,7 @@ Ext.define("PSI.WSP.WSPEditForm", {
 										}
 									}
 								}, {
-									id : "editFromWarehouse",
+									id : "PSI_WSP_WSPEditForm_editFromWarehouse",
 									fieldLabel : "仓库",
 									labelWidth : 60,
 									labelAlign : "right",
@@ -117,7 +117,7 @@ Ext.define("PSI.WSP.WSPEditForm", {
 										}
 									}
 								}, {
-									id : "editToWarehouse",
+									id : "PSI_WSP_WSPEditForm_editToWarehouse",
 									fieldLabel : "拆分后调入仓库",
 									labelWidth : 120,
 									labelAlign : "right",
@@ -134,7 +134,7 @@ Ext.define("PSI.WSP.WSPEditForm", {
 										}
 									}
 								}, {
-									id : "editBizUser",
+									id : "PSI_WSP_WSPEditForm_editBizUser",
 									fieldLabel : "业务员",
 									xtype : "psi_userfield",
 									labelWidth : 60,
@@ -164,6 +164,14 @@ Ext.define("PSI.WSP.WSPEditForm", {
 		});
 
 		me.callParent(arguments);
+
+		me.hiddenId = Ext.getCmp("PSI_WSP_WSPEditForm_hiddenId");
+		me.editRef = Ext.getCmp("PSI_WSP_WSPEditForm_editRef");
+		me.editBizDT = Ext.getCmp("PSI_WSP_WSPEditForm_editBizDT");
+		me.editFromWarehouse = Ext
+				.getCmp("PSI_WSP_WSPEditForm_editFromWarehouse");
+		me.editToWarehouse = Ext.getCmp("PSI_WSP_WSPEditForm_editToWarehouse");
+		me.editBizUser = Ext.getCmp("PSI_WSP_WSPEditForm_editBizUser");
 	},
 
 	onWindowBeforeUnload : function(e) {
@@ -188,7 +196,7 @@ Ext.define("PSI.WSP.WSPEditForm", {
 		Ext.Ajax.request({
 					url : PSI.Const.BASE_URL + "Home/WSP/wspBillInfo",
 					params : {
-						id : Ext.getCmp("hiddenId").getValue()
+						id : me.hiddenId.getValue()
 					},
 					method : "POST",
 					callback : function(options, success, response) {
@@ -198,26 +206,24 @@ Ext.define("PSI.WSP.WSPEditForm", {
 							var data = Ext.JSON.decode(response.responseText);
 
 							if (data.ref) {
-								Ext.getCmp("editRef").setValue(data.ref);
+								me.editRef.setValue(data.ref);
 							}
 
-							Ext.getCmp("editBizUser")
-									.setIdValue(data.bizUserId);
-							Ext.getCmp("editBizUser")
-									.setValue(data.bizUserName);
+							me.editBizUser.setIdValue(data.bizUserId);
+							me.editBizUser.setValue(data.bizUserName);
 							if (data.bizDT) {
-								Ext.getCmp("editBizDT").setValue(data.bizDT);
+								me.editBizDT.setValue(data.bizDT);
 							}
 							if (data.fromWarehouseId) {
-								Ext.getCmp("editFromWarehouse")
+								me.editFromWarehouse
 										.setIdValue(data.fromWarehouseId);
-								Ext.getCmp("editFromWarehouse")
+								me.editFromWarehouse
 										.setValue(data.fromWarehouseName);
 							}
 							if (data.toWarehouseId) {
-								Ext.getCmp("editToWarehouse")
+								me.editToWarehouse
 										.setIdValue(data.toWarehouseId);
-								Ext.getCmp("editToWarehouse")
+								me.editToWarehouse
 										.setValue(data.toWarehouseName);
 							}
 
@@ -269,19 +275,22 @@ Ext.define("PSI.WSP.WSPEditForm", {
 	},
 
 	onEditBizDTSpecialKey : function(field, e) {
+		var me = this;
 		if (e.getKey() == e.ENTER) {
-			Ext.getCmp("editFromWarehouse").focus();
+			me.editFromWarehouse.focus();
 		}
 	},
 
 	onEditFromWarehouseSpecialKey : function(field, e) {
+		var me = this;
 		if (e.getKey() == e.ENTER) {
-			Ext.getCmp("editToWarehouse").focus();
+			me.editToWarehouse.focus();
 		}
 	},
 	onEditToWarehouseSpecialKey : function(field, e) {
+		var me = this;
 		if (e.getKey() == e.ENTER) {
-			Ext.getCmp("editBizUser").focus();
+			me.editBizUser.focus();
 		}
 	},
 	onEditBizUserSpecialKey : function(field, e) {
@@ -485,17 +494,17 @@ Ext.define("PSI.WSP.WSPEditForm", {
 	},
 
 	getSaveData : function() {
+		var me = this;
 		var result = {
-			id : Ext.getCmp("hiddenId").getValue(),
-			bizDT : Ext.Date
-					.format(Ext.getCmp("editBizDT").getValue(), "Y-m-d"),
-			fromWarehouseId : Ext.getCmp("editFromWarehouse").getIdValue(),
-			toWarehouseId : Ext.getCmp("editToWarehouse").getIdValue(),
-			bizUserId : Ext.getCmp("editBizUser").getIdValue(),
+			id : me.hiddenId.getValue(),
+			bizDT : Ext.Date.format(me.editBizDT.getValue(), "Y-m-d"),
+			fromWarehouseId : me.editFromWarehouse.getIdValue(),
+			toWarehouseId : me.editToWarehouse.getIdValue(),
+			bizUserId : me.editBizUser.getIdValue(),
 			items : []
 		};
 
-		var store = this.getGoodsGrid().getStore();
+		var store = me.getGoodsGrid().getStore();
 		for (var i = 0; i < store.getCount(); i++) {
 			var item = store.getAt(i);
 			result.items.push({
@@ -514,10 +523,10 @@ Ext.define("PSI.WSP.WSPEditForm", {
 		me.setTitle("<span style='font-size:160%'>查看拆分单</span>");
 		Ext.getCmp("buttonSave").setDisabled(true);
 		Ext.getCmp("buttonCancel").setText("关闭");
-		Ext.getCmp("editBizDT").setReadOnly(true);
-		Ext.getCmp("editFromWarehouse").setReadOnly(true);
-		Ext.getCmp("editToWarehouse").setReadOnly(true);
-		Ext.getCmp("editBizUser").setReadOnly(true);
+		me.editBizDT.setReadOnly(true);
+		me.editFromWarehouse.setReadOnly(true);
+		me.editToWarehouse.setReadOnly(true);
+		me.editBizUser.setReadOnly(true);
 		Ext.getCmp("columnActionDelete").hide();
 		Ext.getCmp("columnActionAdd").hide();
 		Ext.getCmp("columnActionAppend").hide();

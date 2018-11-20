@@ -24,7 +24,6 @@ Ext.define("PSI.WSP.WSPEditForm", {
 			width : 1000,
 			height : 600,
 			layout : "border",
-			defaultFocus : "PSI_WSP_WSPEditForm_editFromWarehouse",
 			tbar : [{
 						text : "保存",
 						iconCls : "PSI-button-ok",
@@ -149,6 +148,21 @@ Ext.define("PSI.WSP.WSPEditForm", {
 											scope : me
 										}
 									}
+								}, {
+									id : "PSI_WSP_WSPEditForm_editBillMemo",
+									labelWidth : 60,
+									labelAlign : "right",
+									labelSeparator : "",
+									fieldLabel : "备注",
+									xtype : "textfield",
+									colspan : 3,
+									width : 710,
+									listeners : {
+										specialkey : {
+											fn : me.onEditBillMemoSpecialKey,
+											scope : me
+										}
+									}
 								}]
 					}],
 			listeners : {
@@ -172,6 +186,7 @@ Ext.define("PSI.WSP.WSPEditForm", {
 				.getCmp("PSI_WSP_WSPEditForm_editFromWarehouse");
 		me.editToWarehouse = Ext.getCmp("PSI_WSP_WSPEditForm_editToWarehouse");
 		me.editBizUser = Ext.getCmp("PSI_WSP_WSPEditForm_editBizUser");
+		me.editBillMemo = Ext.getCmp("PSI_WSP_WSPEditForm_editBillMemo");
 
 		me.buttonSave = Ext.getCmp("PSI_WSP_WSPEditForm_buttonSave");
 		me.buttonCancel = Ext.getCmp("PSI_WSP_WSPEditForm_buttonCancel");
@@ -248,6 +263,8 @@ Ext.define("PSI.WSP.WSPEditForm", {
 								me.setBillReadonly();
 							}
 
+							me.editFromWarehouse.focus();
+
 						} else {
 							PSI.MsgBox.showInfo("网络错误")
 						}
@@ -295,13 +312,22 @@ Ext.define("PSI.WSP.WSPEditForm", {
 			me.editToWarehouse.focus();
 		}
 	},
+
 	onEditToWarehouseSpecialKey : function(field, e) {
 		var me = this;
 		if (e.getKey() == e.ENTER) {
 			me.editBizUser.focus();
 		}
 	},
+
 	onEditBizUserSpecialKey : function(field, e) {
+		var me = this;
+		if (e.getKey() == e.ENTER) {
+			me.editBillMemo.focus();
+		}
+	},
+
+	onEditBillMemoSpecialKey : function(field, e) {
 		if (this.__readonly) {
 			return;
 		}
@@ -326,7 +352,7 @@ Ext.define("PSI.WSP.WSPEditForm", {
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
 					fields : ["id", "goodsId", "goodsCode", "goodsName",
-							"goodsSpec", "unitName", "goodsCount"]
+							"goodsSpec", "unitName", "goodsCount", "memo"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -351,113 +377,105 @@ Ext.define("PSI.WSP.WSPEditForm", {
 					},
 					plugins : [me.__cellEditing],
 					columnLines : true,
-					columns : [Ext.create("Ext.grid.RowNumberer", {
-										text : "",
-										width : 30
-									}), {
-								header : "商品编码",
-								dataIndex : "goodsCode",
-								menuDisabled : true,
-								draggable : false,
-								sortable : false,
-								editor : {
-									xtype : "psi_goodsfieldforbom",
-									parentCmp : me
-								}
-							}, {
-								header : "商品名称",
-								dataIndex : "goodsName",
-								menuDisabled : true,
-								sortable : false,
-								draggable : false,
-								width : 200
-							}, {
-								header : "规格型号",
-								dataIndex : "goodsSpec",
-								menuDisabled : true,
-								sortable : false,
-								draggable : false,
-								width : 200
-							}, {
-								header : "拆分数量",
-								dataIndex : "goodsCount",
-								menuDisabled : true,
-								draggable : false,
-								sortable : false,
-								align : "right",
-								width : 100,
-								editor : {
-									xtype : "numberfield",
-									allowDecimals : PSI.Const.GC_DEC_NUMBER > 0,
-									decimalPrecision : PSI.Const.GC_DEC_NUMBER,
-									minValue : 0,
-									hideTrigger : true
-								}
-							}, {
-								header : "单位",
-								dataIndex : "unitName",
-								menuDisabled : true,
-								sortable : false,
-								draggable : false,
-								width : 60
-							}, {
-								header : "",
-								align : "center",
-								menuDisabled : true,
-								draggable : false,
-								width : 50,
-								xtype : "actioncolumn",
-								id : "PSI_WSP_WSPEditForm_columnActionDelete",
-								items : [{
-									icon : PSI.Const.BASE_URL
-											+ "Public/Images/icons/delete.png",
-									tooltip : "删除当前记录",
-									handler : function(grid, row) {
-										var store = grid.getStore();
-										store.remove(store.getAt(row));
-										if (store.getCount() == 0) {
-											store.add({});
-										}
-									},
-									scope : me
+					columns : {
+						defaults : {
+							menuDisabled : true,
+							draggable : false,
+							sortable : false
+						},
+						items : [Ext.create("Ext.grid.RowNumberer", {
+											text : "",
+											width : 30
+										}), {
+									header : "商品编码",
+									dataIndex : "goodsCode",
+									editor : {
+										xtype : "psi_goodsfieldforbom",
+										parentCmp : me
+									}
+								}, {
+									header : "商品名称",
+									dataIndex : "goodsName",
+									width : 200
+								}, {
+									header : "规格型号",
+									dataIndex : "goodsSpec",
+									width : 200
+								}, {
+									header : "拆分数量",
+									dataIndex : "goodsCount",
+									align : "right",
+									width : 100,
+									editor : {
+										xtype : "numberfield",
+										allowDecimals : PSI.Const.GC_DEC_NUMBER > 0,
+										decimalPrecision : PSI.Const.GC_DEC_NUMBER,
+										minValue : 0,
+										hideTrigger : true
+									}
+								}, {
+									header : "单位",
+									dataIndex : "unitName",
+									width : 60
+								}, {
+									header : "备注",
+									dataIndex : "memo",
+									editor : {
+										xtype : "textfield"
+									}
+								}, {
+									header : "",
+									align : "center",
+									width : 50,
+									xtype : "actioncolumn",
+									id : "PSI_WSP_WSPEditForm_columnActionDelete",
+									items : [{
+										icon : PSI.Const.BASE_URL
+												+ "Public/Images/icons/delete.png",
+										tooltip : "删除当前记录",
+										handler : function(grid, row) {
+											var store = grid.getStore();
+											store.remove(store.getAt(row));
+											if (store.getCount() == 0) {
+												store.add({});
+											}
+										},
+										scope : me
+									}]
+								}, {
+									header : "",
+									id : "PSI_WSP_WSPEditForm_columnActionAdd",
+									align : "center",
+									width : 50,
+									xtype : "actioncolumn",
+									items : [{
+										icon : PSI.Const.BASE_URL
+												+ "Public/Images/icons/insert.png",
+										tooltip : "在当前记录之前插入新记录",
+										handler : function(grid, row) {
+											var store = grid.getStore();
+											store.insert(row, [{}]);
+										},
+										scope : me
+									}]
+								}, {
+									header : "",
+									id : "PSI_WSP_WSPEditForm_columnActionAppend",
+									align : "center",
+									width : 50,
+									xtype : "actioncolumn",
+									items : [{
+										icon : PSI.Const.BASE_URL
+												+ "Public/Images/icons/add.png",
+										tooltip : "在当前记录之后新增记录",
+										handler : function(grid, row) {
+											var store = grid.getStore();
+											store.insert(row + 1, [{}]);
+										},
+										scope : me
+									}]
 								}]
-							}, {
-								header : "",
-								id : "PSI_WSP_WSPEditForm_columnActionAdd",
-								align : "center",
-								menuDisabled : true,
-								draggable : false,
-								width : 50,
-								xtype : "actioncolumn",
-								items : [{
-									icon : PSI.Const.BASE_URL
-											+ "Public/Images/icons/insert.png",
-									tooltip : "在当前记录之前插入新记录",
-									handler : function(grid, row) {
-										var store = grid.getStore();
-										store.insert(row, [{}]);
-									},
-									scope : me
-								}]
-							}, {
-								header : "",
-								id : "PSI_WSP_WSPEditForm_columnActionAppend",
-								align : "center",
-								menuDisabled : true,
-								draggable : false,
-								width : 50,
-								xtype : "actioncolumn",
-								items : [{
-									icon : PSI.Const.BASE_URL
-											+ "Public/Images/icons/add.png",
-									tooltip : "在当前记录之后新增记录",
-									handler : function(grid, row) {
-										var store = grid.getStore();
-										store.insert(row + 1, [{}]);
-									},
-									scope : me
-								}]
-							}],
+					},
 					store : store,
 					listeners : {
 						cellclick : function() {
@@ -471,7 +489,7 @@ Ext.define("PSI.WSP.WSPEditForm", {
 
 	cellEditingAfterEdit : function(editor, e) {
 		var me = this;
-		if (e.colIdx == 4) {
+		if (e.colIdx == 6) {
 			if (!me.__canEditGoodsPrice) {
 				var store = me.getGoodsGrid().getStore();
 				if (e.rowIdx == store.getCount() - 1) {
@@ -509,6 +527,7 @@ Ext.define("PSI.WSP.WSPEditForm", {
 			fromWarehouseId : me.editFromWarehouse.getIdValue(),
 			toWarehouseId : me.editToWarehouse.getIdValue(),
 			bizUserId : me.editBizUser.getIdValue(),
+			billMemo : me.editBillMemo.getValue(),
 			items : []
 		};
 
@@ -518,7 +537,8 @@ Ext.define("PSI.WSP.WSPEditForm", {
 			result.items.push({
 						id : item.get("id"),
 						goodsId : item.get("goodsId"),
-						goodsCount : item.get("goodsCount")
+						goodsCount : item.get("goodsCount"),
+						memo : item.get("memo")
 					});
 		}
 

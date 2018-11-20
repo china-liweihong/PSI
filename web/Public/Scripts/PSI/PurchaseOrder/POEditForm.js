@@ -723,10 +723,10 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 				store.add({
 							taxRate : me.getTaxRate()
 						});
+				var row = e.rowIdx + 1;
+				me.getGoodsGrid().getSelectionModel().select(row);
+				me.__cellEditing.startEdit(row, 1);
 			}
-			e.rowIdx += 1;
-			me.getGoodsGrid().getSelectionModel().select(e.rowIdx);
-			me.__cellEditing.startEdit(e.rowIdx, 1);
 		} else if (fieldName == "moneyWithTax") {
 			if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
 				me.calcTax(goods);

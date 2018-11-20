@@ -213,7 +213,6 @@ Ext.define("PSI.WSP.WSPEditForm", {
 		Ext.get(window).on('beforeunload', this.onWindowBeforeUnload);
 
 		var me = this;
-		me.__canEditGoodsPrice = false;
 		var el = me.getEl() || Ext.getBody();
 		el.mask(PSI.Const.LOADING);
 		Ext.Ajax.request({
@@ -490,14 +489,13 @@ Ext.define("PSI.WSP.WSPEditForm", {
 	cellEditingAfterEdit : function(editor, e) {
 		var me = this;
 		if (e.colIdx == 6) {
-			if (!me.__canEditGoodsPrice) {
-				var store = me.getGoodsGrid().getStore();
-				if (e.rowIdx == store.getCount() - 1) {
-					store.add({});
-				}
-				e.rowIdx += 1;
-				me.getGoodsGrid().getSelectionModel().select(e.rowIdx);
-				me.__cellEditing.startEdit(e.rowIdx, 1);
+			var store = me.getGoodsGrid().getStore();
+			if (e.rowIdx == store.getCount() - 1) {
+				store.add({});
+
+				var row = e.rowIdx + 1;
+				me.getGoodsGrid().getSelectionModel().select(row);
+				me.__cellEditing.startEdit(row, 1);
 			}
 		}
 	},

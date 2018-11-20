@@ -737,10 +737,9 @@ Ext.define("PSI.Sale.WSEditForm", {
 			var store = me.getGoodsGrid().getStore();
 			if (e.rowIdx == store.getCount() - 1) {
 				store.add({});
+				me.getGoodsGrid().getSelectionModel().select(e.rowIdx + 1);
+				me.__cellEditing.startEdit(e.rowIdx + 1, 1);
 			}
-
-			me.getGoodsGrid().getSelectionModel().select(e.rowIdx + 1);
-			me.__cellEditing.startEdit(e.rowIdx + 1, 1);
 		}
 	},
 

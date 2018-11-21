@@ -26,6 +26,8 @@ PSI的开源协议为GPL v3
 
 商务合作QQ: 1569352868
 
+二次开发服务：请把需求文档email到 1569352868@qq.com ，评估需求后会回复报价
+
 # 技术支持
 
 如有技术方面的问题，可以提出Issue一起讨论：https://gitee.com/crm8000/PSI/issues

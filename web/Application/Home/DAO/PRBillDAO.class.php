@@ -1093,13 +1093,30 @@ class PRBillDAO extends PSIBaseExDAO {
 				$outMoney = $goodsPricePurchase * $outCount;
 				$outPrice = $goodsPricePurchase;
 				
+				if ($outMoney > $balanceMoney) {
+					// 这种情况情况的出现，是因为采购入库导致存货成本增加之后又发生了出库业务
+					// 再退货的时候，出现数量够，但是金额不够
+					// 这个时候退货成本就不能取原来的采购入库成本了，只能用当前的存货成本
+					$outPrice = $balancePrice;
+					$outMoney = $outPrice * $outCount;
+					if ($outMoney > $balanceMoney) {
+						// 超过余额，是因为单价两位小数有计算误差
+						$outMoney = $balanceMoney;
+						$outPrice = $outMoney / $outCount;
+					}
+				}
+				
 				$totalOutCount += $outCount;
 				$totalOutMoney += $outMoney;
 				$totalOutPrice = $totalOutMoney / $totalOutCount;
 				$balanceCount -= $outCount;
 				if ($balanceCount == 0) {
-					$balanceMoney -= $outMoney;
-					$balancePrice = 0;
+					// 基本原则：数量为0的时候，保持存货金额也为0
+					$outMoney = $balanceMoney;
+					$outPrice = $outMoney / $outCount;
+					
+					$balanceMoney = 0;
+					$balancePrice = $outPrice;
 				} else {
 					$balanceMoney -= $outMoney;
 					$balancePrice = $balanceMoney / $balanceCount;

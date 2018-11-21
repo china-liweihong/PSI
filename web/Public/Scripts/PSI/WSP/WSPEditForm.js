@@ -273,6 +273,23 @@ Ext.define("PSI.WSP.WSPEditForm", {
 
 	onOK : function() {
 		var me = this;
+
+		var fromWarehouseId = me.editFromWarehouse.getIdValue();
+		if (!fromWarehouseId) {
+			me.showInfo("没有输入仓库", function() {
+						me.editFromWarehouse.focus();
+					});
+			return;
+		}
+
+		var toWarehouseId = me.editToWarehouse.getIdValue();
+		if (!toWarehouseId) {
+			me.showInfo("没有输入拆分后调入仓库", function() {
+						me.editToWarehouse.focus();
+					});
+			return;
+		}
+
 		Ext.getBody().mask("正在保存中...");
 		Ext.Ajax.request({
 			url : PSI.Const.BASE_URL + "Home/WSP/editWSPBill",

@@ -100,20 +100,10 @@ class WSPBillDAO extends PSIBaseExDAO {
 		if (! $w) {
 			return $this->bad("仓库不存在");
 		}
-		$warehouseName = $w["name"];
-		$inited = $w["inited"];
-		if ($inited != 1) {
-			return $this->bad("仓库[{$warehouseName}]还没有完成建账，不能进行业务操作");
-		}
 		
 		$w = $warehouseDAO->getWarehouseById($toWarehouseId);
 		if (! $w) {
 			return $this->bad("拆分后调入仓库不存在");
-		}
-		$warehouseName = $w["name"];
-		$inited = $w["inited"];
-		if ($inited != 1) {
-			return $this->bad("拆分后调入仓库[{$warehouseName}]还没有完成建账，不能进行业务操作");
 		}
 		
 		// 检查业务员
@@ -160,13 +150,17 @@ class WSPBillDAO extends PSIBaseExDAO {
 		// 明细表
 		foreach ( $items as $showOrder => $v ) {
 			$goodsId = $v["goodsId"];
+			if (! $goodsId) {
+				continue;
+			}
+			
 			$goodsCount = $v["goodsCount"];
 			$memo = $v["memo"];
 			
 			// 检查商品是否有子商品
 			// 拆分单的明细表中不允许保存没有子商品的商品
 			// 一个商品没有子商品，就不能做拆分业务
-			$sql = "select count(*) as cnt form t_goods_bom where goods_id = '%s' ";
+			$sql = "select count(*) as cnt from t_goods_bom where goods_id = '%s' ";
 			$data = $db->query($sql, $goodsId);
 			$cnt = $data[0]["cnt"];
 			if ($cnt == 0) {
@@ -192,14 +186,21 @@ class WSPBillDAO extends PSIBaseExDAO {
 			}
 			
 			// 复制当前商品构成BOM
+			$this->copyGoodsBOM($detailId, $goodsId, $fmt);
 			
 			// 展开当前商品BOM
+			$this->expandGoodsBOM($id, $fmt);
 		}
 		
-		return $this->todo();
+		// 操作成功
+		$bill["id"] = $id;
+		$bill["ref"] = $ref;
+		return null;
 	}
 
-	private function copyGoodsBOM($wspbillId, $goodsId, $fmt) {
+	// 复制当前商品构成BOM
+	// 目前的实现只复制一层BOM
+	private function copyGoodsBOM($wspbillDetailId, $goodsId, $fmt) {
 		$db = $this->db;
 		
 		$sql = "select sub_goods_id, convert(sub_goods_count, $fmt) as sub_goods_count 
@@ -209,6 +210,62 @@ class WSPBillDAO extends PSIBaseExDAO {
 		foreach ( $data as $v ) {
 			$subGoodsId = $v["sub_goods_id"];
 			$subGoodsCount = $v["sub_goods_count"];
+			
+			$sql = "insert into t_wsp_bill_detail_bom (id, wspbilldetail_id, goods_id, sub_goods_id,
+						parent_id, sub_goods_count) 
+					values ('%s', '%s', '%s', '%s',
+						null, convert(%f, $fmt))";
+			$rc = $db->execute($sql, $this->newId(), $wspbillDetailId, $goodsId, $subGoodsId, 
+					$subGoodsCount);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+		}
+	}
+
+	// 展开商品BOM
+	// 目前的实现只展开一层BOM
+	private function expandGoodsBOM($wspbillId, $fmt) {
+		$db = $this->db;
+		
+		$sql = "select id, goods_id, convert(goods_count, $fmt) as goods_count,
+					data_org, company_id
+				from t_wsp_bill_detail
+				where wspbill_id = '%s'
+				order by show_order";
+		$data = $db->query($sql, $wspbillId);
+		
+		$showOrder = 0;
+		foreach ( $data as $v ) {
+			$wspbillDetailId = $v["id"];
+			$goodsId = $v["goods_id"];
+			$goodsCount = $v["goods_count"];
+			$dataOrg = $v["data_org"];
+			$companyId = $v["company_id"];
+			
+			$sql = "select sub_goods_id, convert(sub_goods_count, $fmt) as sub_goods_count
+					from t_wsp_bill_detail_bom
+					where wspbilldetail_id = '%s' and goods_id = '%s' ";
+			$subData = $db->query($sql, $wspbillDetailId, $goodsId);
+			foreach ( $subData as $sv ) {
+				$showOrder += 1;
+				
+				$subGoodsId = $sv["sub_goods_id"];
+				$subGoodsCount = $sv["sub_goods_count"] * $goodsCount;
+				
+				$sql = "insert into t_wsp_bill_detail_ex (id, wspbill_id, show_order, goods_id,
+							goods_count, date_created, data_org, company_id, from_goods_id,
+							wspbilldetail_id)
+						values ('%s', '%s', %d, '%s',
+							convert(%f, $fmt), now(), '%s', '%s', '%s',
+							'%s')";
+				
+				$rc = $db->execute($sql, $this->newId(), $wspbillId, $showOrder, $subGoodsId, 
+						$subGoodsCount, $dataOrg, $companyId, $goodsId, $wspbillDetailId);
+				if ($rc === false) {
+					return $this->sqlError(__METHOD__, __LINE__);
+				}
+			}
 		}
 	}
 

@@ -103,4 +103,18 @@ class WSPBillService extends PSIBaseExService {
 		
 		return $this->ok($id);
 	}
+
+	/**
+	 * 拆分单主表列表
+	 */
+	public function wspbillList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$params["loginUserId"] = $this->getLoginUserId();
+		
+		$dao = new WSPBillDAO($this->db());
+		return $dao->wspbillList($params);
+	}
 }

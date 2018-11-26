@@ -68,6 +68,8 @@ Ext.define("PSI.WSP.WSPMainForm", {
 				});
 
 		me.callParent(arguments);
+
+		me.refreshMainGrid();
 	},
 
 	getToolbarCmp : function() {
@@ -250,10 +252,19 @@ Ext.define("PSI.WSP.WSPMainForm", {
 	onQuery : function() {
 		var me = this;
 
+		me.getMainGrid().getStore().currentPage = 1;
+		me.refreshMainGrid();
 	},
 
 	onClearQuery : function() {
 		var me = this;
+
+		Ext.getCmp("editQueryBillStatus").setValue(-1);
+		Ext.getCmp("editQueryRef").setValue(null);
+		Ext.getCmp("editQueryFromDT").setValue(null);
+		Ext.getCmp("editQueryToDT").setValue(null);
+		Ext.getCmp("editQueryFromWarehouse").clearIdValue();
+		Ext.getCmp("editQueryToWarehouse").clearIdValue();
 
 		me.onQuery();
 	},
@@ -352,15 +363,14 @@ Ext.define("PSI.WSP.WSPMainForm", {
 									dataIndex : "billStatus",
 									width : 60,
 									renderer : function(value) {
-										return value == "待调拨"
-												? "<span style='color:red'>"
-														+ value + "</span>"
-												: value;
+										return value == 0
+												? "<span style='color:red'>待拆分</span>"
+												: "已拆分";
 									}
 								}, {
 									header : "单号",
 									dataIndex : "ref",
-									width : 110
+									width : 140
 								}, {
 									header : "业务日期",
 									dataIndex : "bizDate"
@@ -436,6 +446,19 @@ Ext.define("PSI.WSP.WSPMainForm", {
 				});
 
 		return me.__mainGrid;
+	},
+
+	refreshMainGrid : function(id) {
+		Ext.getCmp("buttonEdit").setDisabled(true);
+		Ext.getCmp("buttonDelete").setDisabled(true);
+		Ext.getCmp("buttonCommit").setDisabled(true);
+
+		var me = this;
+		var gridDetail = me.getDetailGrid();
+		gridDetail.setTitle(me.formatGridHeaderTitle("调拨单明细"));
+		gridDetail.getStore().removeAll();
+		Ext.getCmp("pagingToobar").doRefresh();
+		me.__lastId = id;
 	},
 
 	getDetailGrid : function() {
@@ -675,7 +698,7 @@ Ext.define("PSI.WSP.WSPMainForm", {
 
 	onAddBill : function() {
 		var me = this;
-		
+
 		var form = Ext.create("PSI.WSP.WSPEditForm", {
 					parentForm : me
 				});

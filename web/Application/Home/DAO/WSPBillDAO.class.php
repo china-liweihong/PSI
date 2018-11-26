@@ -2,6 +2,8 @@
 
 namespace Home\DAO;
 
+use Home\Common\FIdConst;
+
 /**
  * 拆分单 DAO
  *
@@ -276,5 +278,143 @@ class WSPBillDAO extends PSIBaseExDAO {
 	 */
 	public function updateWSPBill(& $bill) {
 		return $this->todo();
+	}
+
+	/**
+	 * 拆分单主表列表
+	 */
+	public function wspbillList($params) {
+		$db = $this->db;
+		
+		$loginUserId = $params["loginUserId"];
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->emptyResult();
+		}
+		
+		$start = $params["start"];
+		$limit = $params["limit"];
+		
+		$billStatus = $params["billStatus"];
+		$ref = $params["ref"];
+		$fromDT = $params["fromDT"];
+		$toDT = $params["toDT"];
+		$fromWarehouseId = $params["fromWarehouseId"];
+		$toWarehouseId = $params["toWarehouseId"];
+		
+		$sql = "select w.id, w.ref, w.bizdt, w.bill_status,
+					fw.name as from_warehouse_name,
+					tw.name as to_warehouse_name,
+					u.name as biz_user_name,
+					u1.name as input_user_name,
+					w.date_created
+				from t_wsp_bill w, t_warehouse fw, t_warehouse tw,
+				   t_user u, t_user u1
+				where (w.from_warehouse_id = fw.id)
+				  and (w.to_warehouse_id = tw.id)
+				  and (w.biz_user_id = u.id)
+				  and (w.input_user_id = u1.id) ";
+		$queryParams = [];
+		
+		$ds = new DataOrgDAO($db);
+		$rs = $ds->buildSQL(FIdConst::WSP, "w", $loginUserId);
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = $rs[1];
+		}
+		
+		if ($billStatus != - 1) {
+			$sql .= " and (w.bill_status = %d) ";
+			$queryParams[] = $billStatus;
+		}
+		if ($ref) {
+			$sql .= " and (w.ref like '%s') ";
+			$queryParams[] = "%{$ref}%";
+		}
+		if ($fromDT) {
+			$sql .= " and (w.bizdt >= '%s') ";
+			$queryParams[] = $fromDT;
+		}
+		if ($toDT) {
+			$sql .= " and (w.bizdt <= '%s') ";
+			$queryParams[] = $toDT;
+		}
+		if ($fromWarehouseId) {
+			$sql .= " and (w.from_warehouse_id = '%s') ";
+			$queryParams[] = $fromWarehouseId;
+		}
+		if ($toWarehouseId) {
+			$sql .= " and (w.to_warehouse_id = '%s') ";
+			$queryParams[] = $toWarehouseId;
+		}
+		
+		$sql .= " order by w.bizdt desc, w.ref desc
+				limit %d , %d
+				";
+		$queryParams[] = $start;
+		$queryParams[] = $limit;
+		$data = $db->query($sql, $queryParams);
+		
+		$result = [];
+		foreach ( $data as $v ) {
+			$result[] = [
+					"id" => $v["id"],
+					"ref" => $v["ref"],
+					"bizDate" => $this->toYMD($v["bizdt"]),
+					"billStatus" => $v["bill_status"],
+					"fromWarehouseName" => $v["from_warehouse_name"],
+					"toWarehouseName" => $v["to_warehouse_name"],
+					"bizUserName" => $v["biz_user_name"],
+					"inputUserName" => $v["input_user_name"],
+					"dateCreated" => $v["date_created"]
+			];
+		}
+		
+		$sql = "select count(*) as cnt
+				from t_wsp_bill w, t_warehouse fw, t_warehouse tw,
+				   t_user u, t_user u1
+				where (w.from_warehouse_id = fw.id)
+				  and (w.to_warehouse_id = tw.id)
+				  and (w.biz_user_id = u.id)
+				  and (w.input_user_id = u1.id) ";
+		$queryParams = [];
+		
+		$ds = new DataOrgDAO($db);
+		$rs = $ds->buildSQL(FIdConst::WSP, "w", $loginUserId);
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = $rs[1];
+		}
+		
+		if ($billStatus != - 1) {
+			$sql .= " and (w.bill_status = %d) ";
+			$queryParams[] = $billStatus;
+		}
+		if ($ref) {
+			$sql .= " and (w.ref like '%s') ";
+			$queryParams[] = "%{$ref}%";
+		}
+		if ($fromDT) {
+			$sql .= " and (w.bizdt >= '%s') ";
+			$queryParams[] = $fromDT;
+		}
+		if ($toDT) {
+			$sql .= " and (w.bizdt <= '%s') ";
+			$queryParams[] = $toDT;
+		}
+		if ($fromWarehouseId) {
+			$sql .= " and (w.from_warehouse_id = '%s') ";
+			$queryParams[] = $fromWarehouseId;
+		}
+		if ($toWarehouseId) {
+			$sql .= " and (w.to_warehouse_id = '%s') ";
+			$queryParams[] = $toWarehouseId;
+		}
+		$data = $db->query($sql, $queryParams);
+		$cnt = $data[0]["cnt"];
+		
+		return [
+				"dataList" => $result,
+				"totalCount" => $cnt
+		];
 	}
 }

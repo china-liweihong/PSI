@@ -67,4 +67,25 @@ class WSPController extends PSIBaseController {
 			$this->ajaxReturn($ps->editWSPBill($json));
 		}
 	}
+
+	/**
+	 * 拆分单主表列表
+	 */
+	public function wspbillList() {
+		if (IS_POST) {
+			$params = [
+					"billStatus" => I("post.billStatus"),
+					"ref" => I("post.ref"),
+					"fromDT" => I("post.fromDT"),
+					"toDT" => I("post.toDT"),
+					"fromWarehouseId" => I("post.fromWarehouseId"),
+					"toWarehouseId" => I("post.toWarehouseId"),
+					"start" => I("post.start"),
+					"limit" => I("post.limit")
+			];
+			
+			$service = new WSPBillService();
+			$this->ajaxReturn($service->wspbillList($params));
+		}
+	}
 }

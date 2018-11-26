@@ -459,7 +459,7 @@ Ext.define("PSI.WSP.WSPMainForm", {
 
 		var me = this;
 		var gridDetail = me.getDetailGrid();
-		gridDetail.setTitle(me.formatGridHeaderTitle("调拨单明细"));
+		gridDetail.setTitle(me.formatGridHeaderTitle("拆分单明细"));
 		gridDetail.getStore().removeAll();
 		Ext.getCmp("pagingToobar").doRefresh();
 		me.__lastId = id;

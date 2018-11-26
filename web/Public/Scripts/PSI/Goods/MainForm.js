@@ -1240,7 +1240,7 @@ Ext.define("PSI.Goods.MainForm", {
 							}, {
 								header : "子商品计量单位",
 								dataIndex : "unitName",
-								width : 100,
+								width : 120,
 								menuDisabled : true,
 								sortable : false
 							}],

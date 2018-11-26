@@ -306,7 +306,7 @@ class WSPBillDAO extends PSIBaseExDAO {
 					tw.name as to_warehouse_name,
 					u.name as biz_user_name,
 					u1.name as input_user_name,
-					w.date_created
+					w.date_created, w.bill_memo
 				from t_wsp_bill w, t_warehouse fw, t_warehouse tw,
 				   t_user u, t_user u1
 				where (w.from_warehouse_id = fw.id)
@@ -365,7 +365,8 @@ class WSPBillDAO extends PSIBaseExDAO {
 					"toWarehouseName" => $v["to_warehouse_name"],
 					"bizUserName" => $v["biz_user_name"],
 					"inputUserName" => $v["input_user_name"],
-					"dateCreated" => $v["date_created"]
+					"dateCreated" => $v["date_created"],
+					"billMemo" => $v["bill_memo"]
 			];
 		}
 		

@@ -315,7 +315,7 @@ Ext.define("PSI.WSP.WSPMainForm", {
 					extend : "Ext.data.Model",
 					fields : ["id", "ref", "bizDate", "fromWarehouseName",
 							"toWarehouseName", "inputUserName", "bizUserName",
-							"billStatus", "dateCreated"]
+							"billStatus", "dateCreated", "billMemo"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -392,6 +392,10 @@ Ext.define("PSI.WSP.WSPMainForm", {
 									header : "制单时间",
 									dataIndex : "dateCreated",
 									width : 140
+								}, {
+									header : "备注",
+									dataIndex : "billMemo",
+									width : 300
 								}]
 					},
 					listeners : {

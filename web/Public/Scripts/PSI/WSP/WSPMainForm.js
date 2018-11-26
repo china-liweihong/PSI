@@ -667,7 +667,7 @@ Ext.define("PSI.WSP.WSPMainForm", {
 									dataIndex : "goodsSpec",
 									width : 200
 								}, {
-									header : "拆分后数量",
+									header : "拆分后入库数量",
 									dataIndex : "goodsCount",
 									width : 120,
 									align : "right"

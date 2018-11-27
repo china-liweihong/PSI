@@ -844,7 +844,7 @@ Ext.define("PSI.WSP.WSPMainForm", {
 
 	onDetailGridSelect : function() {
 		var me = this;
-		me.getGoodsBOMGrid().setTitle("商品构成");
+		me.getGoodsBOMGrid().setTitle(me.formatGridHeaderTitle("商品构成"));
 
 		me.refreshGoodsBomGrid();
 	},

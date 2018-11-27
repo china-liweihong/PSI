@@ -418,4 +418,46 @@ class WSPBillDAO extends PSIBaseExDAO {
 				"totalCount" => $cnt
 		];
 	}
+
+	/**
+	 * 拆分单明细
+	 */
+	public function wspBillDetailList($params) {
+		$db = $this->db;
+		
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->emptyResult();
+		}
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
+		// id: 拆分单id
+		$id = $params["id"];
+		
+		$result = [];
+		
+		$sql = "select w.id, g.code, g.name, g.spec, u.name as unit_name, 
+					convert(w.goods_count, $fmt) as goods_count, w.memo
+				from t_wsp_bill_detail w, t_goods g, t_goods_unit u
+				where w.wspbill_id = '%s' and w.goods_id = g.id and g.unit_id = u.id
+				order by w.show_order ";
+		
+		$data = $db->query($sql, $id);
+		foreach ( $data as $v ) {
+			$result[] = [
+					"id" => $v["id"],
+					"goodsCode" => $v["code"],
+					"goodsName" => $v["name"],
+					"goodsSpec" => $v["spec"],
+					"unitName" => $v["unit_name"],
+					"goodsCount" => $v["goods_count"],
+					"memo" => $v["memo"]
+			];
+		}
+		
+		return $result;
+	}
 }

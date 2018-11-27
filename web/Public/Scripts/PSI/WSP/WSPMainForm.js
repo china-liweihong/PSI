@@ -452,6 +452,35 @@ Ext.define("PSI.WSP.WSPMainForm", {
 		return me.__mainGrid;
 	},
 
+	onMainGridSelect : function() {
+		var me = this;
+		me.getDetailGrid().setTitle(me.formatGridHeaderTitle("拆分单明细"));
+		var grid = me.getMainGrid();
+		var item = grid.getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			Ext.getCmp("buttonEdit").setDisabled(true);
+			Ext.getCmp("buttonDelete").setDisabled(true);
+			Ext.getCmp("buttonCommit").setDisabled(true);
+			return;
+		}
+		var bill = item[0];
+
+		var commited = parseInt(bill.get("billStatus")) == 1;
+
+		var buttonEdit = Ext.getCmp("buttonEdit");
+		buttonEdit.setDisabled(false);
+		if (commited) {
+			buttonEdit.setText("查看拆分单");
+		} else {
+			buttonEdit.setText("编辑拆分单");
+		}
+
+		Ext.getCmp("buttonDelete").setDisabled(commited);
+		Ext.getCmp("buttonCommit").setDisabled(commited);
+
+		me.refreshDetailGrid();
+	},
+
 	refreshMainGrid : function(id) {
 		Ext.getCmp("buttonEdit").setDisabled(true);
 		Ext.getCmp("buttonDelete").setDisabled(true);
@@ -465,6 +494,52 @@ Ext.define("PSI.WSP.WSPMainForm", {
 		me.__lastId = id;
 	},
 
+	refreshDetailGrid : function(id) {
+		var me = this;
+		me.getDetailGrid().setTitle(me.formatGridHeaderTitle("拆分单明细"));
+		var grid = me.getMainGrid();
+		var item = grid.getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			return;
+		}
+		var bill = item[0];
+
+		grid = me.getDetailGrid();
+		grid.setTitle(me.formatGridHeaderTitle("单号: " + bill.get("ref")
+				+ " 仓库: " + bill.get("fromWarehouseName") + " 拆分后调入仓库: "
+				+ bill.get("toWarehouseName")));
+		var el = grid.getEl();
+		el.mask(PSI.Const.LOADING);
+		Ext.Ajax.request({
+					url : PSI.Const.BASE_URL + "Home/WSP/wspBillDetailList",
+					params : {
+						id : bill.get("id")
+					},
+					method : "POST",
+					callback : function(options, success, response) {
+						var store = grid.getStore();
+
+						store.removeAll();
+
+						if (success) {
+							var data = Ext.JSON.decode(response.responseText);
+							store.add(data);
+
+							if (store.getCount() > 0) {
+								if (id) {
+									var r = store.findExact("id", id);
+									if (r != -1) {
+										grid.getSelectionModel().select(r);
+									}
+								}
+							}
+						}
+
+						el.unmask();
+					}
+				});
+	},
+
 	getDetailGrid : function() {
 		var me = this;
 		if (me.__detailGrid) {
@@ -475,7 +550,7 @@ Ext.define("PSI.WSP.WSPMainForm", {
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
 					fields : ["id", "goodsCode", "goodsName", "goodsSpec",
-							"unitName", "goodsCount"]
+							"unitName", "goodsCount", "memo"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -522,6 +597,10 @@ Ext.define("PSI.WSP.WSPMainForm", {
 									header : "单位",
 									dataIndex : "unitName",
 									width : 60
+								}, {
+									header : "备注",
+									dataIndex : "memo",
+									width : 300
 								}]
 					},
 					store : store

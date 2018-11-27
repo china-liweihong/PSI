@@ -117,4 +117,18 @@ class WSPBillService extends PSIBaseExService {
 		$dao = new WSPBillDAO($this->db());
 		return $dao->wspbillList($params);
 	}
+
+	/**
+	 * 拆分单明细
+	 */
+	public function wspBillDetailList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$params["companyId"] = $this->getCompanyId();
+		
+		$dao = new WSPBillDAO($this->db());
+		return $dao->wspBillDetailList($params);
+	}
 }

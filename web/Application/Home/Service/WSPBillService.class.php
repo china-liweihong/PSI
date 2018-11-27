@@ -18,6 +18,12 @@ class WSPBillService extends PSIBaseExService {
 	 * @param array $params        	
 	 */
 	public function goodsBOM($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$params["companyId"] = $this->getCompanyId();
+		
 		$dao = new WSPBillDAO($this->db());
 		return $dao->goodsBOM($params);
 	}

@@ -44,7 +44,78 @@ class WSPBillDAO extends PSIBaseExDAO {
 	 * @param array $params        	
 	 */
 	public function goodsBOM($params) {
-		return [];
+		$db = $this->db;
+		
+		// id - 拆分单明细id
+		$id = $params["id"];
+		
+		$result = [];
+		if (! $id) {
+			return $result;
+		}
+		
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->emptyResult();
+		}
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
+		$sql = "select d.goods_id, g.code, g.name, g.spec, u.name as unit_name, 
+					convert(d.goods_count, $fmt) as goods_count 
+				from t_wsp_bill_detail d, t_goods g, t_goods_unit u
+				where d.id = '%s' and d.goods_id = g.id and g.unit_id = u.id";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return $result;
+		}
+		$v = $data[0];
+		$goodsCount = $v["goods_count"];
+		$top = [
+				"id" => $id,
+				"text" => $v["code"],
+				"goodsName" => $v["name"],
+				"goodsSpec" => $v["spec"],
+				"unitName" => $v["unit_name"],
+				"bomCount" => 1,
+				"goodsCount" => $goodsCount,
+				"iconCls" => "PSI-GoodsCategory",
+				"expanded" => true
+		];
+		
+		// 当前实现只展开一层BOM
+		$goodsId = $v["goods_id"];
+		$sql = "select b.id, g.code, g.name, g.spec, u.name as unit_name,
+						convert(b.sub_goods_count, $fmt) as sub_goods_count
+				from t_wsp_bill_detail_bom b, t_goods g, t_goods_unit u
+				where b.wspbilldetail_id = '%s' and b.goods_id = '%s' 
+					and b.sub_goods_id = g.id and g.unit_id = u.id
+				order by g.code";
+		$data = $db->query($sql, $id, $goodsId);
+		$children = [];
+		foreach ( $data as $v ) {
+			$children[] = [
+					"id" => $v["id"],
+					"text" => $v["code"],
+					"goodsName" => $v["name"],
+					"goodsSpec" => $v["spec"],
+					"unitName" => $v["unit_name"],
+					"bomCount" => $v["sub_goods_count"],
+					"goodsCount" => $v["sub_goods_count"] * $goodsCount,
+					"iconCls" => "PSI-GoodsCategory",
+					"expanded" => true,
+					"leaf" => true
+			];
+		}
+		
+		$top["children"] = $children;
+		$top["leaf"] = count($children) == 0;
+		
+		$result[] = $top;
+		
+		return $result;
 	}
 
 	/**

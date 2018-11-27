@@ -36,7 +36,9 @@ class WSPController extends PSIBaseController {
 	 */
 	public function goodsBOM() {
 		if (IS_POST) {
-			$params = [];
+			$params = [
+					"id" => I("post.id")
+			];
 			
 			$service = new WSPBillService();
 			$this->ajaxReturn($service->goodsBOM($params));

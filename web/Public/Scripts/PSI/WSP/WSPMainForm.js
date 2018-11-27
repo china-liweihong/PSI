@@ -491,6 +491,9 @@ Ext.define("PSI.WSP.WSPMainForm", {
 		var gridDetail = me.getDetailGrid();
 		gridDetail.setTitle(me.formatGridHeaderTitle("拆分单明细"));
 		gridDetail.getStore().removeAll();
+
+		me.getDetailGridEx().getStore().removeAll();
+
 		Ext.getCmp("pagingToobar").doRefresh();
 		me.__lastId = id;
 	},
@@ -520,6 +523,8 @@ Ext.define("PSI.WSP.WSPMainForm", {
 						var store = grid.getStore();
 
 						store.removeAll();
+						me.getGoodsBOMGrid().getStore().getRootNode()
+								.removeAll();
 
 						if (success) {
 							var data = Ext.JSON.decode(response.responseText);
@@ -644,7 +649,13 @@ Ext.define("PSI.WSP.WSPMainForm", {
 									width : 300
 								}]
 					},
-					store : store
+					store : store,
+					listeners : {
+						select : {
+							fn : me.onDetailGridSelect,
+							scope : me
+						}
+					}
 				});
 
 		return me.__detailGrid;
@@ -659,7 +670,7 @@ Ext.define("PSI.WSP.WSPMainForm", {
 		var modelName = "PSIGoodsBOM";
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
-					fields : ["id", "goodsCode", "goodsName", "goodsSpec",
+					fields : ["id", "text", "goodsName", "goodsSpec",
 							"unitName", "bomCount", "goodsCount", "leaf",
 							"children"]
 				});
@@ -705,8 +716,8 @@ Ext.define("PSI.WSP.WSPMainForm", {
 						items : [{
 									xtype : "treecolumn",
 									text : "商品编码",
-									dataIndex : "code",
-									width : 100
+									dataIndex : "text",
+									width : 150
 								}, {
 									header : "商品名称",
 									dataIndex : "goodsName",
@@ -737,7 +748,18 @@ Ext.define("PSI.WSP.WSPMainForm", {
 	},
 
 	getQueryParamForBOM : function() {
-		var result = {};
+		var me = this;
+
+		var grid = me.getDetailGrid();
+		var item = grid.getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			return {};
+		}
+		var detailRecord = item[0];
+
+		var result = {
+			id : detailRecord.get("id")
+		};
 		return result;
 	},
 
@@ -818,6 +840,19 @@ Ext.define("PSI.WSP.WSPMainForm", {
 		} else {
 			grid.getSelectionModel().select(0);
 		}
+	},
+
+	onDetailGridSelect : function() {
+		var me = this;
+		me.getGoodsBOMGrid().setTitle("商品构成");
+
+		me.refreshGoodsBomGrid();
+	},
+
+	refreshGoodsBomGrid : function() {
+		var me = this;
+
+		me.getGoodsBOMGrid().getStore().load();
 	},
 
 	onAddBill : function() {

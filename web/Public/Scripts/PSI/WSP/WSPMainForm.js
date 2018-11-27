@@ -479,6 +479,7 @@ Ext.define("PSI.WSP.WSPMainForm", {
 		Ext.getCmp("buttonCommit").setDisabled(commited);
 
 		me.refreshDetailGrid();
+		me.refreshDetailGridEx();
 	},
 
 	refreshMainGrid : function(id) {
@@ -504,18 +505,17 @@ Ext.define("PSI.WSP.WSPMainForm", {
 		}
 		var bill = item[0];
 
-		grid = me.getDetailGrid();
+		var grid = me.getDetailGrid();
 		grid.setTitle(me.formatGridHeaderTitle("单号: " + bill.get("ref")
 				+ " 仓库: " + bill.get("fromWarehouseName") + " 拆分后调入仓库: "
 				+ bill.get("toWarehouseName")));
 		var el = grid.getEl();
-		el.mask(PSI.Const.LOADING);
-		Ext.Ajax.request({
-					url : PSI.Const.BASE_URL + "Home/WSP/wspBillDetailList",
+		el && el.mask(PSI.Const.LOADING);
+		me.ajax({
+					url : me.URL("Home/WSP/wspBillDetailList"),
 					params : {
 						id : bill.get("id")
 					},
-					method : "POST",
 					callback : function(options, success, response) {
 						var store = grid.getStore();
 
@@ -535,7 +535,48 @@ Ext.define("PSI.WSP.WSPMainForm", {
 							}
 						}
 
-						el.unmask();
+						el && el.unmask();
+					}
+				});
+	},
+
+	refreshDetailGridEx : function(id) {
+		var me = this;
+		var grid = me.getMainGrid();
+		var item = grid.getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			return;
+		}
+		var bill = item[0];
+
+		var grid = me.getDetailGridEx();
+		var el = grid.getEl();
+		el && el.mask(PSI.Const.LOADING);
+		me.ajax({
+					url : me.URL("Home/WSP/wspBillDetailExList"),
+					params : {
+						id : bill.get("id")
+					},
+					callback : function(options, success, response) {
+						var store = grid.getStore();
+
+						store.removeAll();
+
+						if (success) {
+							var data = Ext.JSON.decode(response.responseText);
+							store.add(data);
+
+							if (store.getCount() > 0) {
+								if (id) {
+									var r = store.findExact("id", id);
+									if (r != -1) {
+										grid.getSelectionModel().select(r);
+									}
+								}
+							}
+						}
+
+						el && el.unmask();
 					}
 				});
 	},

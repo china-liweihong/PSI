@@ -572,4 +572,77 @@ class WSPBillDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	public function getWSPBillById($id) {
+		$db = $this->db;
+		
+		$sql = "select ref, bill_status from t_wsp_bill where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if ($data) {
+			return [
+					"ref" => $data[0]["ref"],
+					"billStatus" => $data[0]["bill_status"]
+			];
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * 删除拆分单
+	 */
+	public function deleteWSPBill(& $params) {
+		$db = $this->db;
+		
+		// 拆分单id
+		$id = $params["id"];
+		
+		$bill = $this->getWSPBillById($id);
+		if (! $bill) {
+			return $this->bad("要删除的拆分单不存在");
+		}
+		
+		$ref = $bill["ref"];
+		$billStatus = $bill["billStatus"];
+		
+		if ($billStatus > 0) {
+			return $this->bad("拆分单[单号：{$ref}]已经提交，不能再删除");
+		}
+		
+		// 明细
+		$sql = "select id from t_wsp_bill_detail where wspbill_id = '%s' ";
+		$data = $db->query($sql, $id);
+		foreach ( $data as $v ) {
+			$detailId = $v["id"];
+			
+			$sql = "delete from t_wsp_bill_detail_bom where wspbilldetail_id = '%s' ";
+			$rc = $db->execute($sql, $detailId);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+			
+			$sql = "delete from t_wsp_bill_detail_ex where wspbilldetail_id = '%s' ";
+			$rc = $db->execute($sql, $detailId);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+			
+			$sql = "delete from t_wsp_bill_detail where id = '%s' ";
+			$rc = $db->execute($sql, $detailId);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+		}
+		
+		// 主表
+		$sql = "delete from t_wsp_bill where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		$params["ref"] = $ref;
+		return null;
+	}
 }

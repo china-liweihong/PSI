@@ -151,4 +151,34 @@ class WSPBillService extends PSIBaseExService {
 		$dao = new WSPBillDAO($this->db());
 		return $dao->wspBillDetailExList($params);
 	}
+
+	/**
+	 * 删除拆分单
+	 */
+	public function deleteWSPBill($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$db = $this->db();
+		$db->startTrans();
+		
+		$dao = new WSPBillDAO($db);
+		
+		$rc = $dao->deleteWSPBill($params);
+		if ($rc) {
+			$db->rollback();
+			return $rc;
+		}
+		
+		$ref = $params["ref"];
+		
+		$bs = new BizlogService($db);
+		$log = "删除拆分单，单号：$ref";
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
+		return $this->ok();
+	}
 }

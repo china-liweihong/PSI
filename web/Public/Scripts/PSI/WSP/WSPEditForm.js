@@ -216,7 +216,7 @@ Ext.define("PSI.WSP.WSPEditForm", {
 		var el = me.getEl() || Ext.getBody();
 		el.mask(PSI.Const.LOADING);
 		Ext.Ajax.request({
-					url : PSI.Const.BASE_URL + "Home/WSP/wspBillInfo",
+					url : me.URL("Home/WSP/wspBillInfo"),
 					params : {
 						id : me.hiddenId.getValue()
 					},
@@ -225,10 +225,11 @@ Ext.define("PSI.WSP.WSPEditForm", {
 						el.unmask();
 
 						if (success) {
-							var data = Ext.JSON.decode(response.responseText);
+							var data = me.decodeJSON(response.responseText);
 
 							if (data.ref) {
 								me.editRef.setValue(data.ref);
+								me.editBillMemo.setValue(data.billMemo);
 							}
 
 							me.editBizUser.setIdValue(data.bizUserId);
@@ -265,7 +266,7 @@ Ext.define("PSI.WSP.WSPEditForm", {
 							me.editFromWarehouse.focus();
 
 						} else {
-							PSI.MsgBox.showInfo("网络错误")
+							me.showInfo("网络错误")
 						}
 					}
 				});

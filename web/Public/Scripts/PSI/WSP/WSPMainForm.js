@@ -867,7 +867,18 @@ Ext.define("PSI.WSP.WSPMainForm", {
 
 	onEditBill : function() {
 		var me = this;
-		me.showInfo("TODO");
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("请选择要编辑的拆分单");
+			return;
+		}
+		var bill = item[0];
+
+		var form = Ext.create("PSI.WSP.WSPEditForm", {
+					parentForm : me,
+					entity : bill
+				});
+		form.show();
 	},
 
 	onDeleteBill : function() {

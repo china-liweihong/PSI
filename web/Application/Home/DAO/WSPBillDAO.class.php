@@ -139,10 +139,67 @@ class WSPBillDAO extends PSIBaseExDAO {
 		
 		$result = [];
 		
+		// 拆分单主表id
 		$id = $params["id"];
 		
 		if ($id) {
 			// 编辑
+			$sql = "select w.ref, w.bizdt, w.bill_status,
+						w.from_warehouse_id, w.to_warehouse_id,
+						fw.name as from_warehouse_name,
+						tw.name as to_warehouse_name,
+						w.biz_user_id,
+						u.name as biz_user_name,
+						w.bill_memo
+					from t_wsp_bill w, t_warehouse fw, t_warehouse tw,
+						t_user u
+					where (w.from_warehouse_id = fw.id)
+						and (w.to_warehouse_id = tw.id)
+						and (w.biz_user_id = u.id)
+						and w.id = '%s' ";
+			$data = $db->query($sql, $id);
+			if (! $data) {
+				return $result;
+			}
+			
+			$v = $data[0];
+			$result = [
+					"ref" => $v["ref"],
+					"billStatus" => $v["bill_status"],
+					"bizDT" => $this->toYMD($v["bizdt"]),
+					"fromWarehouseId" => $v["from_warehouse_id"],
+					"fromWarehouseName" => $v["from_warehouse_name"],
+					"toWarehouseId" => $v["to_warehouse_id"],
+					"toWarehouseName" => $v["to_warehouse_name"],
+					"bizUserId" => $v["biz_user_id"],
+					"bizUserName" => $v["biz_user_name"],
+					"billMemo" => $v["bill_memo"]
+			];
+			
+			// 明细记录
+			
+			$sql = "select w.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name,
+						convert(w.goods_count, $fmt) as goods_count, w.memo
+					from t_wsp_bill_detail w, t_goods g, t_goods_unit u
+						where w.wspbill_id = '%s' and w.goods_id = g.id and g.unit_id = u.id
+						order by w.show_order ";
+			
+			$data = $db->query($sql, $id);
+			$items = [];
+			foreach ( $data as $v ) {
+				$items[] = [
+						"id" => $v["id"],
+						"goodsId" => $v["goods_id"],
+						"goodsCode" => $v["code"],
+						"goodsName" => $v["name"],
+						"goodsSpec" => $v["spec"],
+						"unitName" => $v["unit_name"],
+						"goodsCount" => $v["goods_count"],
+						"memo" => $v["memo"]
+				];
+			}
+			
+			$result["items"] = $items;
 		} else {
 			// 新建
 			$result["bizUserId"] = $params["loginUserId"];

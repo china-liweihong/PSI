@@ -1558,7 +1558,7 @@ class PWBillDAO extends PSIBaseExDAO {
 			$totalOutMoney += $outMoney;
 			$totalBalanceMoney -= $outMoney;
 			$rc = $db->execute($sql, $totalOutMoney, $totalBalanceMoney, $supplierId, $companyId);
-			if (! $rc) {
+			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
 			
@@ -1569,7 +1569,7 @@ class PWBillDAO extends PSIBaseExDAO {
 					values ('%s', '%s', %f, %f, '%s', now(), '%s', '采购入库', '%s', '%s', '%s')";
 			$rc = $db->execute($sql, $this->newId(), $supplierId, $outMoney, $totalBalanceMoney, 
 					$bizDT, $ref, $bizUserId, $loginUserId, $companyId);
-			if (! $rc) {
+			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
 		}

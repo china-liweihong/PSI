@@ -409,7 +409,147 @@ class WSPBillDAO extends PSIBaseExDAO {
 	 * @param array $bill        	
 	 */
 	public function updateWSPBill(& $bill) {
-		return $this->todo();
+		$db = $this->db;
+		
+		$id = $bill["id"];
+		$oldBill = $this->getWSPBillById($id);
+		if (! $oldBill) {
+			return $this->bad("要编辑的拆分单不存在");
+		}
+		$ref = $oldBill["ref"];
+		$billStatus = $oldBill["billStatus"];
+		if ($billStatus > 0) {
+			return $this->bad("拆分单[单号：{$ref}]已经提交，不能被编辑了");
+		}
+		
+		$bizDT = $bill["bizDT"];
+		$fromWarehouseId = $bill["fromWarehouseId"];
+		$toWarehouseId = $bill["toWarehouseId"];
+		$bizUserId = $bill["bizUserId"];
+		$billMemo = $bill["billMemo"];
+		
+		// 检查业务日期
+		if (! $this->dateIsValid($bizDT)) {
+			return $this->bad("业务日期不正确");
+		}
+		
+		// 检查仓库
+		$warehouseDAO = new WarehouseDAO($db);
+		$w = $warehouseDAO->getWarehouseById($fromWarehouseId);
+		if (! $w) {
+			return $this->bad("仓库不存在");
+		}
+		
+		$w = $warehouseDAO->getWarehouseById($toWarehouseId);
+		if (! $w) {
+			return $this->bad("拆分后调入仓库不存在");
+		}
+		
+		// 检查业务员
+		$userDAO = new UserDAO($db);
+		$user = $userDAO->getUserById($bizUserId);
+		if (! $user) {
+			return $this->bad("选择的业务员不存在，无法保存数据");
+		}
+		
+		$companyId = $bill["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->badParam("companyId");
+		}
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
+		// 主表
+		$sql = "update t_wsp_bill
+				set bizdt = '%s', from_warehouse_id = '%s',
+					to_warehouse_id = '%s', biz_user_id = '%s',
+					bill_memo = '%s'
+				where id = '%s' ";
+		$rc = $db->execute($sql, $bizDT, $fromWarehouseId, $toWarehouseId, $bizUserId, $billMemo, 
+				$id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 明细表
+		
+		// 先清空明细数据
+		$sql = "select id from t_wsp_bill_detail where wspbill_id = '%s' ";
+		$data = $db->query($sql, $id);
+		foreach ( $data as $v ) {
+			$detailId = $v["id"];
+			
+			$sql = "delete from t_wsp_bill_detail_bom where wspbilldetail_id = '%s' ";
+			$rc = $db->execute($sql, $detailId);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+			
+			$sql = "delete from t_wsp_bill_detail_ex where wspbilldetail_id = '%s' ";
+			$rc = $db->execute($sql, $detailId);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+			
+			$sql = "delete from t_wsp_bill_detail where id = '%s' ";
+			$rc = $db->execute($sql, $detailId);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+		}
+		
+		$items = $bill["items"];
+		
+		// 清空明细数据后，再插入新的明细数据
+		foreach ( $items as $showOrder => $v ) {
+			$goodsId = $v["goodsId"];
+			if (! $goodsId) {
+				continue;
+			}
+			
+			$goodsCount = $v["goodsCount"];
+			$memo = $v["memo"];
+			
+			// 检查商品是否有子商品
+			// 拆分单的明细表中不允许保存没有子商品的商品
+			// 一个商品没有子商品，就不能做拆分业务
+			$sql = "select count(*) as cnt from t_goods_bom where goods_id = '%s' ";
+			$data = $db->query($sql, $goodsId);
+			$cnt = $data[0]["cnt"];
+			if ($cnt == 0) {
+				$rowIndex = $showOrder + 1;
+				return $this->bad("第{$rowIndex}记录中的商品没有子商品，不能做拆分业务");
+			}
+			
+			// 检查拆分数量
+			if ($goodsCount <= 0) {
+				$rowIndex = $showOrder + 1;
+				return $this->bad("第{$rowIndex}记录中的商品的拆分数量需要大于0");
+			}
+			
+			$detailId = $this->newId();
+			$sql = "insert into t_wsp_bill_detail (id, wspbill_id, show_order, goods_id,
+						goods_count, date_created, data_org, company_id, memo)
+					values ('%s', '%s', %d, '%s',
+						convert(%f, $fmt), now(), '%s', '%s', '%s')";
+			$rc = $db->execute($sql, $detailId, $id, $showOrder, $goodsId, $goodsCount, $dataOrg, 
+					$companyId, $memo);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+			
+			// 复制当前商品构成BOM
+			$this->copyGoodsBOM($detailId, $goodsId, $fmt);
+			
+			// 展开当前商品BOM
+			$this->expandGoodsBOM($id, $fmt);
+		}
+		
+		// 操作成功
+		$bill["ref"] = $ref;
+		return null;
 	}
 
 	/**

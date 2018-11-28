@@ -366,6 +366,10 @@
     background-image:url(../Images/icons/goodsbom.png) !important;
 }
 
+.PSI-GoodsBOMItem {
+    background-image:url(../Images/icons/goodsbomitem.png) !important;
+}
+
 .PSI-GoodsBrand {
     background-image:url(../Images/icons/goodsbrand.png) !important;
 }

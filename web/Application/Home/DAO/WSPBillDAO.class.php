@@ -89,6 +89,7 @@ class WSPBillDAO extends PSIBaseExDAO {
 		];
 		
 		// 当前实现只展开一层BOM
+		$iconClsItem = "PSI-GoodsBOMItem";
 		$goodsId = $v["goods_id"];
 		$sql = "select b.id, g.code, g.name, g.spec, u.name as unit_name,
 						convert(b.sub_goods_count, $fmt) as sub_goods_count
@@ -107,7 +108,7 @@ class WSPBillDAO extends PSIBaseExDAO {
 					"unitName" => $v["unit_name"],
 					"bomCount" => $v["sub_goods_count"],
 					"goodsCount" => $v["sub_goods_count"] * $goodsCount,
-					"iconCls" => $iconCls,
+					"iconCls" => $iconClsItem,
 					"expanded" => true,
 					"leaf" => true
 			];

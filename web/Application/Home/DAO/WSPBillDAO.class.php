@@ -73,6 +73,9 @@ class WSPBillDAO extends PSIBaseExDAO {
 		}
 		$v = $data[0];
 		$goodsCount = $v["goods_count"];
+		
+		$iconCls = "PSI-GoodsBOM";
+		
 		$top = [
 				"id" => $id,
 				"text" => $v["code"],
@@ -81,7 +84,7 @@ class WSPBillDAO extends PSIBaseExDAO {
 				"unitName" => $v["unit_name"],
 				"bomCount" => 1,
 				"goodsCount" => $goodsCount,
-				"iconCls" => "PSI-GoodsCategory",
+				"iconCls" => $iconCls,
 				"expanded" => true
 		];
 		
@@ -104,7 +107,7 @@ class WSPBillDAO extends PSIBaseExDAO {
 					"unitName" => $v["unit_name"],
 					"bomCount" => $v["sub_goods_count"],
 					"goodsCount" => $v["sub_goods_count"] * $goodsCount,
-					"iconCls" => "PSI-GoodsCategory",
+					"iconCls" => $iconCls,
 					"expanded" => true,
 					"leaf" => true
 			];

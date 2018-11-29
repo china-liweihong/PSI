@@ -587,7 +587,8 @@ class GoodsController extends PSIBaseController {
 					"id" => I("post.id"),
 					"addBOM" => I("post.addBOM"),
 					"subGoodsId" => I("post.subGoodsId"),
-					"subGoodsCount" => I("post.subGoodsCount")
+					"subGoodsCount" => I("post.subGoodsCount"),
+					"costWeight" => I("post.costWeight")
 			);
 			
 			$gs = new GoodsService();

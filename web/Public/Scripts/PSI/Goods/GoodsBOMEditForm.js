@@ -98,7 +98,7 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 						xtype : "form",
 						layout : {
 							type : "table",
-							columns : 1
+							columns : 2
 						},
 						height : "100%",
 						bodyPadding : 5,
@@ -117,25 +117,30 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 									fieldLabel : "商品编码",
 									width : 470,
 									readOnly : true,
+									colspan : 2,
 									value : goods.get("code")
 								}, {
 									fieldLabel : "品名",
 									width : 470,
 									readOnly : true,
+									colspan : 2,
 									value : goods.get("name")
 								}, {
 									fieldLabel : "规格型号",
 									readOnly : true,
 									width : 470,
+									colspan : 2,
 									value : goods.get("spec")
 								}, {
 									fieldLabel : "商品单位",
 									readOnly : true,
+									colspan : 2,
 									value : goods.get("unitName")
 								}, {
 									id : "PSI_Goods_GoodsBOMEditForm_editSubGoodsCode",
 									fieldLabel : "子商品编码",
 									width : 470,
+									colspan : 2,
 									allowBlank : false,
 									blankText : "没有输入子商品",
 									beforeLabelTextTpl : entity == null
@@ -154,11 +159,13 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 									fieldLabel : "子商品名称",
 									width : 470,
 									readOnly : true,
+									colspan : 2,
 									id : "PSI_Goods_GoodsBOMEditForm_editSubGoodsName"
 								}, {
 									fieldLabel : "子商品规格型号",
 									readOnly : true,
 									width : 470,
+									colspan : 2,
 									id : "PSI_Goods_GoodsBOMEditForm_editSubGoodsSpec"
 								}, {
 									id : "PSI_Goods_GoodsBOMEditForm_editSubGoodsCount",
@@ -178,8 +185,28 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 									}
 								}, {
 									fieldLabel : "子商品单位",
+									labelWidth : 70,
+									width : 200,
 									readOnly : true,
 									id : "PSI_Goods_GoodsBOMEditForm_editSubGoodsUnitName"
+								}, {
+									id : "PSI_Goods_GoodsBOMEditForm_editCostWeight",
+									xtype : "numberfield",
+									fieldLabel : "成本分摊权重",
+									allowDecimals : false,
+									decimalPrecision : 0,
+									minValue : 0,
+									maxValue : 100,
+									hideTrigger : true,
+									name : "costWeight",
+									beforeLabelTextTpl : PSI.Const.REQUIRED,
+									value : 1,
+									listeners : {
+										specialkey : {
+											fn : me.onEditCostWeightSpecialKey,
+											scope : me
+										}
+									}
 								}, {
 									xtype : "hidden",
 									id : "PSI_Goods_GoodsBOMEditForm_editSubGoodsId",
@@ -209,6 +236,8 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 				.getCmp("PSI_Goods_GoodsBOMEditForm_editSubGoodsSpec");
 		me.editSubGoodsUnitName = Ext
 				.getCmp("PSI_Goods_GoodsBOMEditForm_editSubGoodsUnitName");
+		me.editCostWeight = Ext
+				.getCmp("PSI_Goods_GoodsBOMEditForm_editCostWeight");
 	},
 
 	/**
@@ -256,6 +285,16 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 	},
 
 	onEditCountSpecialKey : function(field, e) {
+		var me = this;
+
+		if (e.getKey() == e.ENTER) {
+			var edit = me.editCostWeight;
+			edit.focus();
+			edit.setValue(edit.getValue());
+		}
+	},
+
+	onEditCostWeigthSpecialKey : function(field, e) {
 		var me = this;
 
 		if (e.getKey() == e.ENTER) {
@@ -326,6 +365,7 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 						me.editSubGoodsSpec.setValue(data.spec);
 						me.editSubGoodsUnitName.setValue(data.unitName);
 						me.editSubGoodsCount.setValue(data.count);
+						me.editCostWeight.setValue(data.costWeight);
 
 						me.editSubGoodsId.setValue(subGoods.get("goodsId"));
 

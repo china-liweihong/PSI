@@ -128,6 +128,13 @@ class GoodsBomDAO extends PSIBaseExDAO {
 		
 		$subGoodsId = $params["subGoodsId"];
 		$subGoodsCount = $params["subGoodsCount"];
+		$costWeight = $params["costWeight"];
+		if ($costWeight < 0) {
+			$costWeight = 0;
+		}
+		if ($costWeight > 100) {
+			$costWeight = 100;
+		}
 		
 		$goodsDAO = new GoodsDAO($db);
 		$goods = $goodsDAO->getGoodsById($id);
@@ -158,9 +165,10 @@ class GoodsBomDAO extends PSIBaseExDAO {
 			return $this->bad("子商品已经存在，不能再新增");
 		}
 		
-		$sql = "insert into t_goods_bom(id, goods_id, sub_goods_id, sub_goods_count, parent_id)
-				values ('%s', '%s', '%s', convert(%f, $fmt), null)";
-		$rc = $db->execute($sql, $this->newId(), $id, $subGoodsId, $subGoodsCount);
+		$sql = "insert into t_goods_bom(id, goods_id, sub_goods_id, sub_goods_count, parent_id,
+					cost_weight)
+				values ('%s', '%s', '%s', convert(%f, $fmt), null, %d)";
+		$rc = $db->execute($sql, $this->newId(), $id, $subGoodsId, $subGoodsCount, $costWeight);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -172,6 +180,7 @@ class GoodsBomDAO extends PSIBaseExDAO {
 		$params["subGoodsName"] = $subGoods["name"];
 		$params["subGoodsSpec"] = $subGoods["spec"];
 		
+		// 操作成功
 		return null;
 	}
 
@@ -198,6 +207,13 @@ class GoodsBomDAO extends PSIBaseExDAO {
 		
 		$subGoodsId = $params["subGoodsId"];
 		$subGoodsCount = $params["subGoodsCount"];
+		$costWeight = $params["costWeight"];
+		if ($costWeight < 0) {
+			$costWeight = 0;
+		}
+		if ($costWeight > 100) {
+			$costWeight = 100;
+		}
 		
 		$goodsDAO = new GoodsDAO($db);
 		$goods = $goodsDAO->getGoodsById($id);
@@ -215,10 +231,10 @@ class GoodsBomDAO extends PSIBaseExDAO {
 		}
 		
 		$sql = "update t_goods_bom
-				set sub_goods_count = convert(%f, $fmt)
+				set sub_goods_count = convert(%f, $fmt), cost_weight = %d
 				where goods_id = '%s' and sub_goods_id = '%s' ";
 		
-		$rc = $db->execute($sql, $subGoodsCount, $id, $subGoodsId);
+		$rc = $db->execute($sql, $subGoodsCount, $costWeight, $id, $subGoodsId);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -256,13 +272,15 @@ class GoodsBomDAO extends PSIBaseExDAO {
 			return $this->badParam("subGoodsId: $subGoodsId ");
 		}
 		
-		$sql = "select sub_goods_count
+		$sql = "select sub_goods_count, cost_weight
 				from t_goods_bom
 				where goods_id = '%s' and sub_goods_id = '%s' ";
 		$data = $db->query($sql, $goodsId, $subGoodsId);
 		$subGoodsCount = 0;
+		$costWeight = 1;
 		if ($data) {
 			$subGoodsCount = $data[0]["sub_goods_count"];
+			$costWeight = $data[0]["cost_weight"];
 		}
 		
 		$sql = "select u.name
@@ -280,7 +298,8 @@ class GoodsBomDAO extends PSIBaseExDAO {
 				"name" => $subGoods["name"],
 				"spec" => $subGoods["spec"],
 				"code" => $subGoods["code"],
-				"unitName" => $unitName
+				"unitName" => $unitName,
+				"costWeight" => $costWeight
 		];
 	}
 

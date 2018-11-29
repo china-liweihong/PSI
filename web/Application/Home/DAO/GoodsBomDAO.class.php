@@ -27,17 +27,35 @@ class GoodsBomDAO extends PSIBaseExDAO {
 		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
 		$fmt = "decimal(19, " . $dataScale . ")";
 		
+		// 商品id
 		$id = $params["id"];
 		
 		$result = [];
 		
+		$sql = "select sum(cost_weight) as sum_cost_weight from t_goods_bom where goods_id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return $result;
+		}
+		
+		$sumCostWeight = $data[0]["sum_cost_weight"];
+		
 		$sql = "select b.id, convert(b.sub_goods_count, $fmt) as sub_goods_count,g.id as goods_id,
-					g.code, g.name, g.spec, u.name as unit_name
+					g.code, g.name, g.spec, u.name as unit_name, b.cost_weight
 				from t_goods_bom b, t_goods g, t_goods_unit u
 				where b.goods_id = '%s' and b.sub_goods_id = g.id and g.unit_id = u.id
 				order by g.code";
 		$data = $db->query($sql, $id);
 		foreach ( $data as $v ) {
+			$costWeight = $v["cost_weight"];
+			$costWeightNote = null;
+			if ($costWeight == 0 || $sumCostWeight == 0) {
+				$costWeight = null;
+				$costWeightNote = null;
+			} else {
+				$percent = number_format($costWeight / $sumCostWeight * 100, 2);
+				$costWeightNote = "{$costWeight}/{$sumCostWeight} = {$percent}%";
+			}
 			$result[] = [
 					"id" => $v["id"],
 					"goodsId" => $v["goods_id"],
@@ -45,8 +63,9 @@ class GoodsBomDAO extends PSIBaseExDAO {
 					"goodsName" => $v["name"],
 					"goodsSpec" => $v["spec"],
 					"unitName" => $v["unit_name"],
-					"goodsCount" => $v["sub_goods_count"]
-			
+					"goodsCount" => $v["sub_goods_count"],
+					"costWeight" => $costWeight,
+					"costWeightNote" => $costWeightNote
 			];
 		}
 		

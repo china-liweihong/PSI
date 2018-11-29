@@ -1184,7 +1184,8 @@ Ext.define("PSI.Goods.MainForm", {
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
 					fields : ["id", "goodsId", "goodsCode", "goodsName",
-							"goodsCount", "goodsSpec", "unitName"]
+							"goodsCount", "goodsSpec", "unitName",
+							"costWeight", "costWeightNote"]
 				});
 
 		me.__bomGrid = Ext.create("Ext.grid.Panel", {
@@ -1213,37 +1214,42 @@ Ext.define("PSI.Goods.MainForm", {
 								handler : me.onDeleteBOM
 							}],
 					columnLines : true,
-					columns : [{
-								header : "子商品编码",
-								dataIndex : "goodsCode",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "子商品名称",
-								dataIndex : "goodsName",
-								width : 300,
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "子商品规格型号",
-								dataIndex : "goodsSpec",
-								width : 200,
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "子商品数量",
-								dataIndex : "goodsCount",
-								width : 120,
-								menuDisabled : true,
-								sortable : false,
-								align : "right"
-							}, {
-								header : "子商品计量单位",
-								dataIndex : "unitName",
-								width : 120,
-								menuDisabled : true,
-								sortable : false
-							}],
+					columns : {
+						defaults : {
+							menuDisabled : true,
+							sortable : false
+						},
+						items : [{
+									header : "子商品编码",
+									dataIndex : "goodsCode"
+								}, {
+									header : "子商品名称",
+									dataIndex : "goodsName",
+									width : 300
+								}, {
+									header : "子商品规格型号",
+									dataIndex : "goodsSpec",
+									width : 200
+								}, {
+									header : "子商品数量",
+									dataIndex : "goodsCount",
+									width : 90,
+									align : "right"
+								}, {
+									header : "子商品单位",
+									dataIndex : "unitName",
+									width : 90
+								}, {
+									header : "成本分摊权重",
+									dataIndex : "costWeight",
+									width : 100,
+									align : "right"
+								}, {
+									header : "成本分摊占比",
+									dataIndex : "costWeightNote",
+									width : 200
+								}]
+					},
 					store : Ext.create("Ext.data.Store", {
 								model : modelName,
 								autoLoad : false,

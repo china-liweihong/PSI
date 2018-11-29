@@ -942,7 +942,55 @@ Ext.define("PSI.WSP.WSPMainForm", {
 
 	onCommit : function() {
 		var me = this;
-		me.showInfo("TODO");
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("没有选择要提交的拆分单");
+			return;
+		}
+		var bill = item[0];
+
+		if (parseInt(bill.get("billStatus")) != 0) {
+			me.showInfo("当前拆分单已经提交，不能再次提交");
+			return;
+		}
+
+		var detailCount = me.getDetailGrid().getStore().getCount();
+		if (detailCount == 0) {
+			me.showInfo("当前提交单没有录入商品明细，不能提交");
+			return;
+		}
+
+		var info = "请确认是否提交单号为: <span style='color:red'>" + bill.get("ref")
+				+ "</span> 的拆分单?";
+		var funcConfirm = function() {
+			var el = Ext.getBody();
+			el.mask("正在提交中...");
+			var r = {
+				url : me.URL("Home/WSP/commitWSPBill"),
+				params : {
+					id : bill.get("id")
+				},
+				callback : function(options, success, response) {
+					el.unmask();
+
+					if (success) {
+						var data = me.decodeJSON(response.responseText);
+						if (data.success) {
+							me.showInfo("成功完成提交操作", function() {
+										me.refreshMainGrid(data.id);
+									});
+						} else {
+							me.showInfo(data.msg);
+						}
+					} else {
+						me.showInfo("网络错误");
+					}
+				}
+			};
+			me.ajax(r);
+		};
+
+		me.confirm(info, funcConfirm);
 	},
 
 	onPDF : function() {

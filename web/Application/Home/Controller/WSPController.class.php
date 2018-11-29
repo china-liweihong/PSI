@@ -132,4 +132,18 @@ class WSPController extends PSIBaseController {
 			$this->ajaxReturn($service->deleteWSPBill($params));
 		}
 	}
+
+	/**
+	 * 提交拆分单
+	 */
+	public function commitWSPBill() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id")
+			];
+			
+			$service = new WSPBillService();
+			$this->ajaxReturn($service->commitWSPBill($params));
+		}
+	}
 }

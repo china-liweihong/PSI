@@ -846,4 +846,16 @@ class WSPBillDAO extends PSIBaseExDAO {
 		$params["ref"] = $ref;
 		return null;
 	}
+
+	/**
+	 * 提交拆分单
+	 */
+	public function commitWSPBill(& $params) {
+		$db = $this->db;
+		
+		// 拆分单主表id
+		$id = $params["id"];
+		
+		return $this->todo();
+	}
 }

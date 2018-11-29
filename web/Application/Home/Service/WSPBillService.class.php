@@ -181,4 +181,35 @@ class WSPBillService extends PSIBaseExService {
 		
 		return $this->ok();
 	}
+
+	/**
+	 * 提交拆分单
+	 */
+	public function commitWSPBill($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$db = $this->db();
+		$db->startTrans();
+		
+		$dao = new WSPBillDAO($db);
+		
+		$rc = $dao->commitWSPBill($params);
+		if ($rc) {
+			$db->rollback();
+			return $rc;
+		}
+		
+		$id = $params["id"];
+		$ref = $params["ref"];
+		
+		$bs = new BizlogService($db);
+		$log = "提交拆分单，单号：$ref";
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
+		return $this->ok($id);
+	}
 }

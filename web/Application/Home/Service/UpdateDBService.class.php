@@ -198,6 +198,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20181114_02();
 		$this->update_20181118_01();
 		$this->update_20181120_01();
+		$this->update_20181129_01();
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -218,6 +219,25 @@ class UpdateDBService extends PSIBaseService {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// ============================================
 	private function notForgot() {
+	}
+
+	private function update_20181129_01() {
+		// 本次更新：t_goods_bom和t_wsp_bill_detail_bom新增字段cost_weight
+		$db = $this->db;
+		
+		$tableName = "t_goods_bom";
+		$columnName = "cost_weight";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} int(11) DEFAULT 1;";
+			$db->execute($sql);
+		}
+		
+		$tableName = "t_wsp_bill_detail_bom";
+		$columnName = "cost_weight";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} int(11) DEFAULT 1;";
+			$db->execute($sql);
+		}
 	}
 
 	private function update_20181120_01() {

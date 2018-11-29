@@ -208,6 +208,15 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 										}
 									}
 								}, {
+									text : "成本分摊权重的使用帮助",
+									xtype : "button",
+									iconCls : "PSI-help",
+									handler : function() {
+										var url = me
+												.URL("/Home/Help/index?t=costWeight")
+										window.open(url);
+									}
+								}, {
 									xtype : "hidden",
 									id : "PSI_Goods_GoodsBOMEditForm_editSubGoodsId",
 									name : "subGoodsId"

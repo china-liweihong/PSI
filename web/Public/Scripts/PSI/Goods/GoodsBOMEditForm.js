@@ -294,7 +294,7 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
 		}
 	},
 
-	onEditCostWeigthSpecialKey : function(field, e) {
+	onEditCostWeightSpecialKey : function(field, e) {
 		var me = this;
 
 		if (e.getKey() == e.ENTER) {

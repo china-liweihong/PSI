@@ -921,6 +921,7 @@ CREATE TABLE IF NOT EXISTS `t_goods_bom` (
   `sub_goods_id` varchar(255) NOT NULL,
   `parent_id` varchar(255) DEFAULT NULL,
   `sub_goods_count` decimal(19,8) NOT NULL,
+  `cost_weight` int(11) DEFAULT 1,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -1156,6 +1157,7 @@ CREATE TABLE IF NOT EXISTS `t_wsp_bill_detail_bom` (
   `sub_goods_id` varchar(255) NOT NULL,
   `parent_id` varchar(255) DEFAULT NULL,
   `sub_goods_count` decimal(19,8) NOT NULL,
+  `cost_weight` int(11) DEFAULT 1,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

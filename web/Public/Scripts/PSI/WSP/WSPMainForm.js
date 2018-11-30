@@ -744,7 +744,7 @@ Ext.define("PSI.WSP.WSPMainForm", {
 									header : "成本分摊权重",
 									dataIndex : "costWeight"
 								}, {
-									header : "成本分摊占比比例",
+									header : "成本分摊占比",
 									dataIndex : "costWeightNote",
 									width : 200
 								}]

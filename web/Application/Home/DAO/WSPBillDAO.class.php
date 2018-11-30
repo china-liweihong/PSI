@@ -337,20 +337,22 @@ class WSPBillDAO extends PSIBaseExDAO {
 	private function copyGoodsBOM($wspbillDetailId, $goodsId, $fmt) {
 		$db = $this->db;
 		
-		$sql = "select sub_goods_id, convert(sub_goods_count, $fmt) as sub_goods_count 
+		$sql = "select sub_goods_id, convert(sub_goods_count, $fmt) as sub_goods_count,
+					cost_weight 
 				from t_goods_bom 
 				where goods_id = '%s'";
 		$data = $db->query($sql, $goodsId);
 		foreach ( $data as $v ) {
 			$subGoodsId = $v["sub_goods_id"];
 			$subGoodsCount = $v["sub_goods_count"];
+			$costWeight = $v["cost_weight"];
 			
 			$sql = "insert into t_wsp_bill_detail_bom (id, wspbilldetail_id, goods_id, sub_goods_id,
-						parent_id, sub_goods_count) 
+						parent_id, sub_goods_count, cost_weight) 
 					values ('%s', '%s', '%s', '%s',
-						null, convert(%f, $fmt))";
+						null, convert(%f, $fmt), %d)";
 			$rc = $db->execute($sql, $this->newId(), $wspbillDetailId, $goodsId, $subGoodsId, 
-					$subGoodsCount);
+					$subGoodsCount, $costWeight);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}

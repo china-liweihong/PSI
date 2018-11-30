@@ -881,6 +881,252 @@ class WSPBillDAO extends PSIBaseExDAO {
 		// 拆分单主表id
 		$id = $params["id"];
 		
-		return $this->todo();
+		$sql = "select ref, bill_status , bizdt, from_warehouse_id, to_warehouse_id,
+					company_id, data_org, biz_user_id
+				from t_wsp_bill
+				where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return $this->bad("要提交的拆分单不存在");
+		}
+		$v = $data[0];
+		$ref = $v["ref"];
+		$billStatus = $v["bill_status"];
+		if ($billStatus > 0) {
+			return $this->bad("拆分单[单号：{$ref}]已经提交，不能再次提交");
+		}
+		$bizDT = $this->toYMD($v["bizdt"]);
+		if (! $this->dateIsValid($bizDT)) {
+			return $this->bad("业务日期不正确");
+		}
+		$fromWarehouseId = $v["from_warehouse_id"];
+		$toWarehouseId = $v["to_warehouse_id"];
+		
+		$warehouseDAO = new WarehouseDAO($db);
+		$fromWarehouse = $warehouseDAO->getWarehouseById($fromWarehouseId);
+		if (! $fromWarehouse) {
+			return $this->bad("仓库不存在");
+		}
+		$inited = $fromWarehouse["inited"];
+		if ($inited != 1) {
+			$fromWarehouseName = $fromWarehouse["name"];
+			return $this->bad("仓库[{$fromWarehouseName}]还没有完成库存建账，不能进行业务操作");
+		}
+		$toWarehouse = $warehouseDAO->getWarehouseById($toWarehouseId);
+		if (! $toWarehouse) {
+			return $this->bad("拆分后调入仓库不存在");
+		}
+		$inited = $toWarehouse["inited"];
+		if ($inited != 1) {
+			$toWarehouseName = $toWarehouse["name"];
+			return $this->bad("拆分后调入仓库[{$toWarehouseName}]还没有完成库存建账，不能进行业务操作");
+		}
+		
+		$companyId = $v["company_id"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->badParam("companyId");
+		}
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
+		$dataOrg = $v["data_org"];
+		$bizUserId = $v["biz_user_id"];
+		
+		// 取明细
+		$sql = "select id, goods_id, convert(goods_count, $fmt) as goods_count
+				from t_wsp_bill_detail
+				where wspbill_id = '%s' 
+				order by show_order";
+		$items = $db->query($sql, $id);
+		
+		foreach ( $items as $showOrder => $v ) {
+			$detailId = $v["id"];
+			$goodsId = $v["goods_id"];
+			$goodsCount = $v["goods_count"];
+			$recordIndex = $showOrder + 1;
+			
+			// 要拆分的商品出库
+			// 确认出库数量足够
+			$sql = "select convert(balance_count, $fmt) as balance_count, 
+						balance_money, balance_price, out_count, out_money, out_price 
+					from t_inventory
+					where warehouse_id = '%s' and goods_id = '%s' ";
+			$data = $db->query($sql, $fromWarehouseId, $goodsId);
+			if (! $data) {
+				return $this->bad("第{$recordIndex}条商品没有库存，无法完成拆分操作");
+			}
+			$v = $data[0];
+			$balanceCount = $v["balance_count"];
+			$balanceMoney = $v["balance_money"];
+			$balancePrice = $v["balance_price"];
+			$totalOutCount = $v["out_count"];
+			$totalOutMoney = $v["out_money"];
+			$totalOutPrice = $v["out_price"];
+			
+			if ($goodsCount > $balanceCount) {
+				return $this->bad("第{$recordIndex}条商品库存量($balanceCount)小于拆分量($goodsCount)，无法完成拆分操作");
+			}
+			
+			// 出库：更新总账
+			$outCount = $goodsCount;
+			$outMoney = $outCount * $balancePrice;
+			if ($outCount == $balanceCount) {
+				// 库存全部出库的时候，把金额也全部出库
+				$outMoney = $balanceMoney;
+				
+				$balanceMoney = 0;
+				$balanceCount = 0;
+			} else {
+				if ($outMoney > $balanceMoney) {
+					// 这是由于单价小数位数带来的误差
+					$outMoney = $balanceMoney;
+				}
+				
+				$balanceMoney -= $outMoney;
+				$balanceCount -= $outCount;
+			}
+			
+			$outPrice = $outMoney / $outCount;
+			
+			$totalOutCount += $outCount;
+			$totalOutMoney += $outMoney;
+			$totalOutPrice = $totalOutMoney / $totalOutCount;
+			
+			$sql = "update t_inventory
+					set balance_count = convert(%f, $fmt), balance_money = %f,
+						out_count = convert(%f, $fmt), out_money = %f, out_price = %f
+					where warehouse_id = '%s' and goods_id = '%s' ";
+			$rc = $db->execute($sql, $balanceCount, $balanceMoney, $totalOutCount, $totalOutMoney, 
+					$totalOutPrice, $fromWarehouseId, $goodsId);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+			
+			// 出库：更新明细账
+			$sql = "insert into t_inventory_detail (warehouse_id, goods_id, out_count, out_money, out_price,
+						balance_count, balance_money, balance_price, biz_date, biz_user_id,
+						date_created, ref_number, ref_type, data_org, company_id)
+					values ('%s', '%s', convert(%f, $fmt), %f, %f,
+						convert(%f, $fmt), %f, %f, '%s', '%s',
+						now(), '%s', '存货拆分', '%s', '%s')";
+			$rc = $db->execute($sql, $fromWarehouseId, $goodsId, $outCount, $outMoney, $outPrice, 
+					$balanceCount, $balanceMoney, $balancePrice, $bizDT, $bizUserId, $ref, $dataOrg, 
+					$companyId);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+			
+			// 拆分后的商品入库
+			$sql = "select sum(cost_weight) as sum_cost_weight 
+					from t_wsp_bill_detail_bom
+					where wspbilldetail_id = '%s' and goods_id = '%s' ";
+			$data = $db->query($sql, $detailId, $goodsId);
+			$sumCostWeight = $data[0]["sum_cost_weight"];
+			if (! $sumCostWeight || $sumCostWeight < 0) {
+				$sumCostWeight = 0;
+			}
+			
+			// 总得待分摊的成本
+			$sumCost = $outMoney;
+			
+			$sql = "select sub_goods_id, convert(sub_goods_count, $fmt) as sub_goods_count,
+						cost_weight
+					from t_wsp_bill_detail_bom
+					where wspbilldetail_id = '%s' and goods_id = '%s' ";
+			$subItems = $db->query($sql, $detailId, $goodsId);
+			$subItemsCount = count($subItems);
+			foreach ( $subItems as $svIndex => $sv ) {
+				// 分摊成本
+				$subGoodsId = $sv["sub_goods_id"];
+				$subGoodsCount = $sv["sub_goods_count"] * $goodsCount;
+				$costWeight = $sv["cost_weight"];
+				
+				$inMoney = 0;
+				if ($sumCostWeight > 0) {
+					$inMoney = $sumCost * ($costWeight / $sumCostWeight);
+				}
+				if ($svIndex == $subItemsCount - 1) {
+					// 把剩余的成本全部分摊给最后一个商品
+					$inMoney = $sumCost;
+				}
+				$sumCost -= $inMoney;
+				
+				$inCount = $subGoodsCount;
+				$inPrice = $inMoney / $inCount;
+				
+				// 入库：更新总账
+				$balanceCountSI = $inCount;
+				$balanceMoneySI = $inMoney;
+				$balancePriceSI = $inPrice;
+				$sql = "select convert(in_count, $fmt) as in_count, in_money, 
+							convert(balance_count, $fmt) as balance_count, balance_money
+						from t_inventory
+						where warehouse_id = '%s' and goods_id = '%s' ";
+				$data = $db->query($sql, $toWarehouseId, $subGoodsId);
+				
+				if (! $data) {
+					// 首次入库
+					
+					$sql = "insert into t_inventory (warehouse_id, goods_id, in_count, in_money, in_price,
+								balance_count, balance_money, balance_price)
+							values ('%s', '%s', convert(%f, $fmt), %f, %f,
+								convert(%f, $fmt), %f, %f)";
+					$rc = $db->execute($sql, $toWarehouseId, $subGoodsId, $inCount, $inMoney, 
+							$inPrice, $balanceCountSI, $balanceMoneySI, $balancePriceSI);
+					if ($rc === false) {
+						return $this->sqlError(__METHOD__, __LINE__);
+					}
+				} else {
+					$totalInCount = $data[0]["in_count"];
+					$totalInCount += $inCount;
+					$totalInMoney = $data[0]["in_money"];
+					$totalInMoney += $inMoney;
+					$totalInPrice = $totalInMoney / $totalInCount;
+					
+					$balanceCountSI = $data[0]["balance_count"];
+					$balanceCountSI += $inCount;
+					$balanceMoneySI = $data[0]["balance_money"];
+					$balanceMoneySI += $inMoney;
+					$balancePriceSI = $balanceMoneySI / $balanceCountSI;
+					
+					$sql = "update t_inventory
+							set in_count = convert(%f, $fmt), in_money = %f, in_price = %f,
+								balance_count = convert(%f, $fmt), balance_money = %f, balance_price = %f
+							where warehouse_id = '%s' and goods_id = '%s' ";
+					$rc = $db->execute($sql, $totalInCount, $totalInMoney, $totalInPrice, 
+							$balanceCountSI, $balanceMoneySI, $balancePriceSI, $toWarehouseId, 
+							$subGoodsId);
+					if ($rc === false) {
+						return $this->sqlError(__METHOD__, __LINE__);
+					}
+				}
+				
+				// 入库：更新明细账
+				$sql = "insert into t_inventory_detail (warehouse_id, goods_id, in_count, in_money, in_price,
+							balance_count, balance_money, balance_price, ref_number, ref_type,
+							biz_date, biz_user_id, date_created, data_org, company_id)
+						values ('%s', '%s', convert(%f, $fmt), %f, %f,
+							convert(%f, $fmt), %f, %f, '%s', '存货拆分',
+							'%s', '%s', now(), '%s', '%s')";
+				$rc = $db->execute($sql, $toWarehouseId, $subGoodsId, $inCount, $inMoney, $inPrice, 
+						$balanceCountSI, $balanceMoneySI, $balancePriceSI, $ref, $bizDT, $bizUserId, 
+						$dataOrg, $companyId);
+				if ($rc === false) {
+					return $this->sqlError(__METHOD__, __LINE__);
+				}
+			} // end of foreach $subItems
+		} // end of foreach $items
+		  
+		// 更新本单据状态
+		$sql = "update t_wsp_bill set bill_status = 1000 where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		$params["ref"] = $ref;
+		return null;
 	}
 }

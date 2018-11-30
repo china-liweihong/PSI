@@ -929,6 +929,9 @@ Ext.define("PSI.WSP.WSPMainForm", {
 						var data = me.decodeJSON(response.responseText);
 						if (data.success) {
 							me.showInfo("成功完成删除操作", function() {
+										me.getGoodsBOMGrid().getStore()
+												.getRootNode().removeAll();
+
 										me.refreshMainGrid(preIndex);
 									});
 						} else {

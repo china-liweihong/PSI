@@ -672,7 +672,7 @@ Ext.define("PSI.WSP.WSPMainForm", {
 					extend : "Ext.data.Model",
 					fields : ["id", "text", "goodsName", "goodsSpec",
 							"unitName", "bomCount", "goodsCount", "leaf",
-							"children"]
+							"children", "costWeight", "costWeightNote"]
 				});
 
 		var store = Ext.create("Ext.data.TreeStore", {
@@ -740,6 +740,13 @@ Ext.define("PSI.WSP.WSPMainForm", {
 									header : "单位",
 									dataIndex : "unitName",
 									width : 60
+								}, {
+									header : "成本分摊权重",
+									dataIndex : "costWeight"
+								}, {
+									header : "成本分摊占比比例",
+									dataIndex : "costWeightNote",
+									width : 200
 								}]
 					}
 				});

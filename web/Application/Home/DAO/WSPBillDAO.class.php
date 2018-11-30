@@ -91,8 +91,19 @@ class WSPBillDAO extends PSIBaseExDAO {
 		// 当前实现只展开一层BOM
 		$iconClsItem = "PSI-GoodsBOMItem";
 		$goodsId = $v["goods_id"];
+		
+		$sql = "select sum(cost_weight) as sum_cost_weight 
+				from t_wsp_bill_detail_bom
+				where wspbilldetail_id = '%s' and goods_id = '%s' ";
+		$data = $db->query($sql, $id, $goodsId);
+		$sumCostWeight = $data[0]["sum_cost_weight"];
+		if (! $sumCostWeight) {
+			$sumCostWeight = 0;
+		}
+		
 		$sql = "select b.id, g.code, g.name, g.spec, u.name as unit_name,
-						convert(b.sub_goods_count, $fmt) as sub_goods_count
+						convert(b.sub_goods_count, $fmt) as sub_goods_count,
+						b.cost_weight
 				from t_wsp_bill_detail_bom b, t_goods g, t_goods_unit u
 				where b.wspbilldetail_id = '%s' and b.goods_id = '%s' 
 					and b.sub_goods_id = g.id and g.unit_id = u.id
@@ -100,6 +111,16 @@ class WSPBillDAO extends PSIBaseExDAO {
 		$data = $db->query($sql, $id, $goodsId);
 		$children = [];
 		foreach ( $data as $v ) {
+			$costWeight = $v["cost_weight"];
+			$costWeightNote = null;
+			if ($costWeight == 0 || $sumCostWeight == 0) {
+				$costWeight = null;
+				$costWeightNote = null;
+			} else {
+				$percent = number_format($costWeight / $sumCostWeight * 100, 2);
+				$costWeightNote = "{$costWeight}/{$sumCostWeight} = {$percent}%";
+			}
+			
 			$children[] = [
 					"id" => $v["id"],
 					"text" => $v["code"],
@@ -110,7 +131,9 @@ class WSPBillDAO extends PSIBaseExDAO {
 					"goodsCount" => $v["sub_goods_count"] * $goodsCount,
 					"iconCls" => $iconClsItem,
 					"expanded" => true,
-					"leaf" => true
+					"leaf" => true,
+					"costWeight" => $costWeight,
+					"costWeightNote" => $costWeightNote
 			];
 		}
 		

@@ -236,7 +236,7 @@ class WSPBillService extends PSIBaseExService {
 		}
 		
 		// 记录业务日志
-		$log = "拆分单(单号号：$ref)生成PDF文件";
+		$log = "拆分单(单号：$ref)生成PDF文件";
 		$bls = new BizlogService($this->db());
 		$bls->insertBizlog($log, $this->LOG_CATEGORY);
 		

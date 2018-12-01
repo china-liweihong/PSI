@@ -272,14 +272,15 @@ class WSPBillService extends PSIBaseExService {
 					<tr><td colspan="2">单号：' . $ref . '</td></tr>
 					<tr><td>仓库：' . $bill["fromWarehouseName"] . '</td><td>拆分后调入仓库：' . $bill["toWarehouseName"] . '</td></tr>
 					<tr><td>业务日期：' . $bill["bizDT"] . '</td><td>业务员：' . $bill["bizUserName"] . '</td></tr>
+					<tr><td colspan="2">备注：' . $bill["billMemo"] . '</td></tr>
 				</table>
 				';
 		$pdf->writeHTML($html);
 		
 		// 拆分前商品明细
 		$html = '<table border="1" cellpadding="1">
-					<tr><td colspan="5" align="center">拆分前商品明细</td></tr>
-					<tr><td>商品编号</td><td>商品名称</td><td>规格型号</td><td>拆分数量</td><td>单位</td></tr>
+					<tr><td colspan="6" align="center">拆分前商品明细</td></tr>
+					<tr><td>商品编号</td><td>商品名称</td><td>规格型号</td><td>拆分数量</td><td>单位</td><td>备注</td></tr>
 				';
 		foreach ( $bill["items"] as $v ) {
 			$html .= '<tr>';
@@ -288,6 +289,7 @@ class WSPBillService extends PSIBaseExService {
 			$html .= '<td>' . $v["goodsSpec"] . '</td>';
 			$html .= '<td align="right">' . $v["goodsCount"] . '</td>';
 			$html .= '<td>' . $v["unitName"] . '</td>';
+			$html .= '<td>' . $v["memo"] . '</td>';
 			$html .= '</tr>';
 		}
 		

@@ -212,7 +212,7 @@ class WSPBillService extends PSIBaseExService {
 		
 		return $this->ok($id);
 	}
-	
+
 	/**
 	 * 拆分单生成pdf文件
 	 */
@@ -250,13 +250,13 @@ class WSPBillService extends PSIBaseExService {
 				"stsongstdlight",
 				"",
 				16
-				));
+		));
 		
 		$pdf->setFooterFont(Array(
 				"stsongstdlight",
 				"",
 				14
-				));
+		));
 		
 		$pdf->SetHeaderData("", 0, $productionName, "拆分单");
 		
@@ -316,5 +316,20 @@ class WSPBillService extends PSIBaseExService {
 		
 		$pdf->Output("$ref.pdf", "I");
 	}
-	
+
+	/**
+	 * 生成打印拆分单的数据
+	 *
+	 * @param array $params        	
+	 */
+	public function getWSPBillDataForLodopPrint($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$params["companyId"] = $this->getCompanyId();
+		
+		$dao = new WSPBillDAO($this->db());
+		return $dao->getWSPBillDataForLodopPrint($params);
+	}
 }

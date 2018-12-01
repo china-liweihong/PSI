@@ -158,4 +158,20 @@ class WSPController extends PSIBaseController {
 		$ws = new WSPBillService();
 		$ws->pdf($params);
 	}
+
+	/**
+	 * 生成打印拆分单的页面
+	 */
+	public function genWSPBillPrintPage() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id")
+			];
+			
+			$ss = new WSPBillService();
+			$data = $ss->getWSPBillDataForLodopPrint($params);
+			$this->assign("data", $data);
+			$this->display();
+		}
+	}
 }

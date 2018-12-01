@@ -1129,4 +1129,98 @@ class WSPBillDAO extends PSIBaseExDAO {
 		$params["ref"] = $ref;
 		return null;
 	}
+
+	/**
+	 * 获得生成PDF文件的数据
+	 *
+	 * @param array $params        	
+	 */
+	public function getDataForPDF($params) {
+		$db = $this->db;
+		
+		$result = [];
+		
+		$ref = $params["ref"];
+		
+		$sql = "select w.id, w.bizdt,
+						fw.name as from_warehouse_name,
+						tw.name as to_warehouse_name,
+						u.name as biz_user_name,
+						w.bill_memo, w.company_id
+				from t_wsp_bill w, t_warehouse fw, t_warehouse tw,
+					t_user u
+				where (w.from_warehouse_id = fw.id)
+					and (w.to_warehouse_id = tw.id)
+					and (w.biz_user_id = u.id)
+					and w.ref = '%s' ";
+		$data = $db->query($sql, $ref);
+		if (! $data) {
+			return $result;
+		}
+		$v = $data[0];
+		
+		$companyId = $v["company_id"];
+		if ($this->companyIdNotExists($companyId)) {
+			$companyId = $params["companyId"];
+		}
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
+		$id = $v["id"];
+		$result = [
+				"ref" => $ref,
+				"bizDT" => $this->toYMD($v["bizdt"]),
+				"fromWarehouseName" => $v["from_warehouse_name"],
+				"toWarehouseName" => $v["to_warehouse_name"],
+				"bizUserName" => $v["biz_user_name"],
+				"billMemo" => $v["bill_memo"]
+		];
+		
+		// 拆分前明细
+		$sql = "select g.code, g.name, g.spec, u.name as unit_name,
+					convert(w.goods_count, $fmt) as goods_count, w.memo
+				from t_wsp_bill_detail w, t_goods g, t_goods_unit u
+				where w.wspbill_id = '%s' and w.goods_id = g.id and g.unit_id = u.id
+				order by w.show_order ";
+		
+		$data = $db->query($sql, $id);
+		$items = [];
+		foreach ( $data as $v ) {
+			$items[] = [
+					"goodsCode" => $v["code"],
+					"goodsName" => $v["name"],
+					"goodsSpec" => $v["spec"],
+					"unitName" => $v["unit_name"],
+					"goodsCount" => $v["goods_count"],
+					"memo" => $v["memo"]
+			];
+		}
+		
+		$result["items"] = $items;
+		
+		// 拆分后明细
+		$sql = "select g.code, g.name, g.spec, u.name as unit_name,
+					convert(w.goods_count, $fmt) as goods_count
+				from t_wsp_bill_detail_ex w, t_goods g, t_goods_unit u
+				where w.wspbill_id = '%s' and w.goods_id = g.id and g.unit_id = u.id
+				order by w.show_order ";
+		
+		$data = $db->query($sql, $id);
+		$itemsEx = [];
+		foreach ( $data as $v ) {
+			$itemsEx[] = [
+					"goodsCode" => $v["code"],
+					"goodsName" => $v["name"],
+					"goodsSpec" => $v["spec"],
+					"unitName" => $v["unit_name"],
+					"goodsCount" => $v["goods_count"]
+			];
+		}
+		
+		$result["itemsEx"] = $itemsEx;
+		
+		return $result;
+	}
 }

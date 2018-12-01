@@ -146,4 +146,16 @@ class WSPController extends PSIBaseController {
 			$this->ajaxReturn($service->commitWSPBill($params));
 		}
 	}
+
+	/**
+	 * 拆分单生成pdf文件
+	 */
+	public function wspBillPdf() {
+		$params = [
+				"ref" => I("get.ref")
+		];
+		
+		$ws = new WSPBillService();
+		$ws->pdf($params);
+	}
 }

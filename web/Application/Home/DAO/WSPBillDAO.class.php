@@ -1234,7 +1234,7 @@ class WSPBillDAO extends PSIBaseExDAO {
 		
 		$id = $params["id"];
 		
-		$sql = "select w.id, w.bizdt,
+		$sql = "select w.ref, w.bizdt,
 					fw.name as from_warehouse_name,
 					tw.name as to_warehouse_name,
 					u.name as biz_user_name,
@@ -1244,7 +1244,7 @@ class WSPBillDAO extends PSIBaseExDAO {
 				where (w.from_warehouse_id = fw.id)
 					and (w.to_warehouse_id = tw.id)
 					and (w.biz_user_id = u.id)
-					and w.ref = '%s' ";
+					and w.id = '%s' ";
 		$data = $db->query($sql, $id);
 		if (! $data) {
 			return null;

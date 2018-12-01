@@ -1018,11 +1018,106 @@ Ext.define("PSI.WSP.WSPMainForm", {
 
 	onPrintPreview : function() {
 		var me = this;
-		me.showInfo("TODO");
+
+		var lodop = getLodop();
+		if (!lodop) {
+			me.showInfo("没有安装Lodop控件，无法打印");
+			return;
+		}
+
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("没有选择要打印的拆分单");
+			return;
+		}
+		var bill = item[0];
+
+		var el = Ext.getBody();
+		el.mask("数据加载中...");
+		var r = {
+			url : me.URL("Home/WSP/genWSPBillPrintPage"),
+			params : {
+				id : bill.get("id")
+			},
+			callback : function(options, success, response) {
+				el.unmask();
+
+				if (success) {
+					var data = response.responseText;
+					me.previewWSPBill(bill.get("ref"), data);
+				}
+			}
+		};
+		me.ajax(r);
+	},
+
+	PRINT_PAGE_WIDTH : "200mm",
+	PRINT_PAGE_HEIGHT : "95mm",
+
+	previewWSPBill : function(ref, data) {
+		var me = this;
+
+		var lodop = getLodop();
+		if (!lodop) {
+			me.showInfo("Lodop打印控件没有正确安装");
+			return;
+		}
+
+		lodop.PRINT_INIT("拆分单" + ref);
+		lodop.SET_PRINT_PAGESIZE(1, me.PRINT_PAGE_WIDTH, me.PRINT_PAGE_HEIGHT,
+				"");
+		lodop.ADD_PRINT_HTM("0mm", "0mm", "100%", "100%", data);
+		var result = lodop.PREVIEW("_blank");
 	},
 
 	onPrint : function() {
 		var me = this;
-		me.showInfo("TODO");
+
+		var lodop = getLodop();
+		if (!lodop) {
+			me.showInfo("没有安装Lodop控件，无法打印");
+			return;
+		}
+
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("没有选择要打印的拆分单");
+			return;
+		}
+		var bill = item[0];
+
+		var el = Ext.getBody();
+		el.mask("数据加载中...");
+		var r = {
+			url : me.URL("Home/WSP/genWSPBillPrintPage"),
+			params : {
+				id : bill.get("id")
+			},
+			callback : function(options, success, response) {
+				el.unmask();
+
+				if (success) {
+					var data = response.responseText;
+					me.printWSPBill(bill.get("ref"), data);
+				}
+			}
+		};
+		me.ajax(r);
+	},
+
+	printWSPBill : function(ref, data) {
+		var me = this;
+
+		var lodop = getLodop();
+		if (!lodop) {
+			me.showInfo("Lodop打印控件没有正确安装");
+			return;
+		}
+
+		lodop.PRINT_INIT("拆分单" + ref);
+		lodop.SET_PRINT_PAGESIZE(1, me.PRINT_PAGE_WIDTH, me.PRINT_PAGE_HEIGHT,
+				"");
+		lodop.ADD_PRINT_HTM("0mm", "0mm", "100%", "100%", data);
+		var result = lodop.PRINT();
 	}
 });

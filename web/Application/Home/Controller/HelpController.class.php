@@ -117,6 +117,10 @@ class HelpController extends PSIBaseController {
 				$bs->insertBizlog("访问帮助页面：商品构成-成本分摊权重", "帮助");
 				redirect("/help/02-04-04.html");
 				break;
+			case "wspbill" :
+				$bs->insertBizlog("访问帮助页面：存货拆分", "帮助");
+				redirect("/help/60-01.html");
+				break;
 			default :
 				$bs->insertBizlog("通过主菜单进入帮助页面", "帮助");
 				redirect("/help/index.html");

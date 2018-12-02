@@ -320,6 +320,7 @@ CREATE TABLE IF NOT EXISTS `t_pw_bill` (
   `company_id` varchar(255) DEFAULT NULL,
   `expand_by_bom` int(11) NOT NULL DEFAULT 0,
   `bill_memo` varchar(255) DEFAULT NULL,
+  `wspbill_id` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

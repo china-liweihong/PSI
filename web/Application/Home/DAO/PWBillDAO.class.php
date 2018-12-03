@@ -101,7 +101,7 @@ class PWBillDAO extends PSIBaseExDAO {
 		$queryParams = [];
 		$sql = "select p.id, p.bill_status, p.ref, p.biz_dt, u1.name as biz_user_name, u2.name as input_user_name,
 					p.goods_money, w.name as warehouse_name, s.name as supplier_name,
-					p.date_created, p.payment_type, p.bill_memo
+					p.date_created, p.payment_type, p.bill_memo, p.expand_by_bom, p.wspbill_id
 				from t_pw_bill p, t_warehouse w, t_supplier s, t_user u1, t_user u2
 				where (p.warehouse_id = w.id) and (p.supplier_id = s.id)
 				and (p.biz_user_id = u1.id) and (p.input_user_id = u2.id) ";
@@ -151,6 +151,16 @@ class PWBillDAO extends PSIBaseExDAO {
 		$result = [];
 		
 		foreach ( $data as $v ) {
+			$wspBillId = $v["wspbill_id"];
+			$wspBillRef = null;
+			if ($wspBillId) {
+				$sql = "select ref from t_wsp_bill where id = '%s' ";
+				$d = $db->query($sql, $wspBillId);
+				if ($d) {
+					$wspBillRef = $d[0]["ref"];
+				}
+			}
+			
 			$result[] = [
 					"id" => $v["id"],
 					"ref" => $v["ref"],
@@ -163,7 +173,9 @@ class PWBillDAO extends PSIBaseExDAO {
 					"amount" => $canViewPrice ? $v["goods_money"] : null,
 					"dateCreated" => $v["date_created"],
 					"paymentType" => $v["payment_type"],
-					"billMemo" => $v["bill_memo"]
+					"billMemo" => $v["bill_memo"],
+					"expandByBOM" => $v["expand_by_bom"],
+					"wspBillRef" => $wspBillRef
 			];
 		}
 		

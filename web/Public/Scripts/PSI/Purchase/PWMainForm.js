@@ -257,7 +257,8 @@ Ext.define("PSI.Purchase.PWMainForm", {
 					fields : ["id", "ref", "bizDate", "supplierName",
 							"warehouseName", "inputUserName", "bizUserName",
 							"billStatus", "amount", "dateCreated",
-							"paymentType", "billMemo"]
+							"paymentType", "billMemo", "expandByBOM",
+							"wspBillRef"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -365,6 +366,22 @@ Ext.define("PSI.Purchase.PWMainForm", {
 									header : "备注",
 									dataIndex : "billMemo",
 									width : 150
+								}, {
+									header : "自动拆分",
+									dataIndex : "expandByBOM",
+									width : 80,
+									align : "center",
+									renderer : function(value) {
+										if (parseInt(value) == 1) {
+											return "▲";
+										} else {
+											return "";
+										}
+									}
+								}, {
+									header : "拆分单号",
+									dataIndex : "wspBillRef",
+									width : 140
 								}]
 					},
 					store : store,

@@ -287,151 +287,164 @@ Ext.define("PSI.Purchase.PWMainForm", {
 				});
 
 		me.__mainGrid = Ext.create("Ext.grid.Panel", {
-					cls : "PSI",
-					viewConfig : {
-						enableTextSelection : true
-					},
-					border : 1,
-					columnLines : true,
-					columns : {
-						defaults : {
-							menuDisabled : true,
-							sortable : false
-						},
-						items : [{
-									xtype : "rownumberer",
-									width : 50
-								}, {
-									header : "状态",
-									dataIndex : "billStatus",
-									width : 60,
-									renderer : function(value) {
-										if (value == "待入库") {
-											return "<span style='color:red'>"
-													+ value + "</span>";
-										} else if (value == "已退货") {
-											return "<span style='color:blue'>"
-													+ value + "</span>";
-										} else {
-											return value;
-										}
-									}
-								}, {
-									header : "入库单号",
-									dataIndex : "ref",
-									width : 110
-								}, {
-									header : "业务日期",
-									dataIndex : "bizDate"
-								}, {
-									header : "供应商",
-									dataIndex : "supplierName",
-									width : 300
-								}, {
-									header : "采购金额",
-									dataIndex : "amount",
-									align : "right",
-									xtype : "numbercolumn",
-									width : 150,
-									hidden : me.getPermission().viewPrice == "0"
-								}, {
-									header : "付款方式",
-									dataIndex : "paymentType",
-									width : 100,
-									renderer : function(value) {
-										if (value == 0) {
-											return "记应付账款";
-										} else if (value == 1) {
-											return "现金付款";
-										} else if (value == 2) {
-											return "预付款";
-										} else {
-											return "";
-										}
-									}
-								}, {
-									header : "入库仓库",
-									dataIndex : "warehouseName"
-								}, {
-									header : "业务员",
-									dataIndex : "bizUserName"
-								}, {
-									header : "制单人",
-									dataIndex : "inputUserName"
-								}, {
-									header : "制单时间",
-									dataIndex : "dateCreated",
-									width : 140
-								}, {
-									header : "备注",
-									dataIndex : "billMemo",
-									width : 150
-								}, {
-									header : "自动拆分",
-									dataIndex : "expandByBOM",
-									width : 80,
-									align : "center",
-									renderer : function(value) {
-										if (parseInt(value) == 1) {
-											return "▲";
-										} else {
-											return "";
-										}
-									}
-								}, {
-									header : "拆分单号",
-									dataIndex : "wspBillRef",
-									width : 140
-								}]
-					},
-					store : store,
-					bbar : ["->", {
-								id : "pagingToobar",
-								xtype : "pagingtoolbar",
-								border : 0,
-								store : store
-							}, "-", {
-								xtype : "displayfield",
-								value : "每页显示"
-							}, {
-								id : "comboCountPerPage",
-								xtype : "combobox",
-								editable : false,
-								width : 60,
-								store : Ext.create("Ext.data.ArrayStore", {
-											fields : ["text"],
-											data : [["20"], ["50"], ["100"],
-													["300"], ["1000"]]
-										}),
-								value : 20,
-								listeners : {
-									change : {
-										fn : function() {
-											store.pageSize = Ext
-													.getCmp("comboCountPerPage")
-													.getValue();
-											store.currentPage = 1;
-											Ext.getCmp("pagingToobar")
-													.doRefresh();
-										},
-										scope : me
-									}
+			cls : "PSI",
+			viewConfig : {
+				enableTextSelection : true
+			},
+			border : 1,
+			columnLines : true,
+			columns : {
+				defaults : {
+					menuDisabled : true,
+					sortable : false
+				},
+				items : [{
+							xtype : "rownumberer",
+							width : 50
+						}, {
+							header : "状态",
+							dataIndex : "billStatus",
+							width : 60,
+							renderer : function(value) {
+								if (value == "待入库") {
+									return "<span style='color:red'>" + value
+											+ "</span>";
+								} else if (value == "已退货") {
+									return "<span style='color:blue'>" + value
+											+ "</span>";
+								} else {
+									return value;
 								}
-							}, {
-								xtype : "displayfield",
-								value : "条记录"
-							}],
-					listeners : {
-						select : {
-							fn : me.onMainGridSelect,
-							scope : me
-						},
-						itemdblclick : {
-							fn : me.onEditBill,
-							scope : me
+							}
+						}, {
+							header : "入库单号",
+							dataIndex : "ref",
+							width : 110
+						}, {
+							header : "业务日期",
+							dataIndex : "bizDate"
+						}, {
+							header : "供应商",
+							dataIndex : "supplierName",
+							width : 300
+						}, {
+							header : "采购金额",
+							dataIndex : "amount",
+							align : "right",
+							xtype : "numbercolumn",
+							width : 150,
+							hidden : me.getPermission().viewPrice == "0"
+						}, {
+							header : "付款方式",
+							dataIndex : "paymentType",
+							width : 100,
+							renderer : function(value) {
+								if (value == 0) {
+									return "记应付账款";
+								} else if (value == 1) {
+									return "现金付款";
+								} else if (value == 2) {
+									return "预付款";
+								} else {
+									return "";
+								}
+							}
+						}, {
+							header : "入库仓库",
+							dataIndex : "warehouseName"
+						}, {
+							header : "业务员",
+							dataIndex : "bizUserName"
+						}, {
+							header : "制单人",
+							dataIndex : "inputUserName"
+						}, {
+							header : "制单时间",
+							dataIndex : "dateCreated",
+							width : 140
+						}, {
+							header : "备注",
+							dataIndex : "billMemo",
+							width : 150
+						}, {
+							header : "自动拆分",
+							dataIndex : "expandByBOM",
+							width : 80,
+							align : "center",
+							renderer : function(value) {
+								if (parseInt(value) == 1) {
+									return "▲";
+								} else {
+									return "";
+								}
+							}
+						}, {
+							header : "拆分单号",
+							dataIndex : "wspBillRef",
+							width : 140,
+							renderer : function(value) {
+								if (value) {
+									return "<a href='"
+											+ PSI.Const.BASE_URL
+											+ "Home/Bill/viewIndex?fid=2001&refType="
+											+ encodeURIComponent("存货拆分")
+											+ "&ref="
+											+ encodeURIComponent(value)
+											+ "' target='_blank'>" + value
+											+ "</a>";
+								} else {
+									return "";
+								}
+							}
+						}]
+			},
+			store : store,
+			bbar : ["->", {
+						id : "pagingToobar",
+						xtype : "pagingtoolbar",
+						border : 0,
+						store : store
+					}, "-", {
+						xtype : "displayfield",
+						value : "每页显示"
+					}, {
+						id : "comboCountPerPage",
+						xtype : "combobox",
+						editable : false,
+						width : 60,
+						store : Ext.create("Ext.data.ArrayStore", {
+									fields : ["text"],
+									data : [["20"], ["50"], ["100"], ["300"],
+											["1000"]]
+								}),
+						value : 20,
+						listeners : {
+							change : {
+								fn : function() {
+									store.pageSize = Ext
+											.getCmp("comboCountPerPage")
+											.getValue();
+									store.currentPage = 1;
+									Ext.getCmp("pagingToobar").doRefresh();
+								},
+								scope : me
+							}
 						}
-					}
-				});
+					}, {
+						xtype : "displayfield",
+						value : "条记录"
+					}],
+			listeners : {
+				select : {
+					fn : me.onMainGridSelect,
+					scope : me
+				},
+				itemdblclick : {
+					fn : me.onEditBill,
+					scope : me
+				}
+			}
+		});
 
 		return me.__mainGrid;
 	},

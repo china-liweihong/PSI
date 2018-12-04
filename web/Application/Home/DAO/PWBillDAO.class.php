@@ -307,6 +307,9 @@ class PWBillDAO extends PSIBaseExDAO {
 		// 付款方式
 		$paymentType = $bill["paymentType"];
 		
+		// 自动拆分
+		$expandByBOM = $bill["expandByBOM"];
+		
 		// 单据备注
 		$billMemo = $bill["billMemo"];
 		
@@ -361,12 +364,12 @@ class PWBillDAO extends PSIBaseExDAO {
 		
 		// 主表
 		$sql = "insert into t_pw_bill (id, ref, supplier_id, warehouse_id, biz_dt,
-				biz_user_id, bill_status, date_created, goods_money, input_user_id, payment_type,
-				data_org, company_id, bill_memo)
-				values ('%s', '%s', '%s', '%s', '%s', '%s', 0, now(), 0, '%s', %d, '%s', '%s', '%s')";
+					biz_user_id, bill_status, date_created, goods_money, input_user_id, payment_type,
+					data_org, company_id, bill_memo, expand_by_bom)
+				values ('%s', '%s', '%s', '%s', '%s', '%s', 0, now(), 0, '%s', %d, '%s', '%s', '%s', %d)";
 		
 		$rc = $db->execute($sql, $id, $ref, $supplierId, $warehouseId, $bizDT, $bizUserId, 
-				$loginUserId, $paymentType, $dataOrg, $companyId, $billMemo);
+				$loginUserId, $paymentType, $dataOrg, $companyId, $billMemo, $expandByBOM);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -617,6 +620,9 @@ class PWBillDAO extends PSIBaseExDAO {
 		// 付款方式
 		$paymentType = $bill["paymentType"];
 		
+		// 自动拆分
+		$expandByBOM = $bill["expandByBOM"];
+		
 		// 采购入库单备注
 		$billMemo = $bill["billMemo"];
 		
@@ -737,10 +743,10 @@ class PWBillDAO extends PSIBaseExDAO {
 				set goods_money = %f, warehouse_id = '%s',
 					supplier_id = '%s', biz_dt = '%s',
 					biz_user_id = '%s', payment_type = %d,
-					bill_memo = '%s'
+					bill_memo = '%s', expand_by_bom = %d
 				where id = '%s' ";
 		$rc = $db->execute($sql, $totalMoney, $warehouseId, $supplierId, $bizDT, $bizUserId, 
-				$paymentType, $billMemo, $id);
+				$paymentType, $billMemo, $expandByBOM, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -890,9 +896,9 @@ class PWBillDAO extends PSIBaseExDAO {
 		];
 		
 		$sql = "select p.ref, p.bill_status, p.supplier_id, s.name as supplier_name,
-				p.warehouse_id, w.name as  warehouse_name,
-				p.biz_user_id, u.name as biz_user_name, p.biz_dt, p.payment_type,
-				p.bill_memo
+					p.warehouse_id, w.name as  warehouse_name,
+					p.biz_user_id, u.name as biz_user_name, p.biz_dt, p.payment_type,
+					p.bill_memo, p.expand_by_bom
 				from t_pw_bill p, t_supplier s, t_warehouse w, t_user u
 				where p.id = '%s' and p.supplier_id = s.id and p.warehouse_id = w.id
 				  and p.biz_user_id = u.id";
@@ -910,6 +916,7 @@ class PWBillDAO extends PSIBaseExDAO {
 			$result["bizDT"] = $this->toYMD($v["biz_dt"]);
 			$result["paymentType"] = $v["payment_type"];
 			$result["billMemo"] = $v["bill_memo"];
+			$result["expandByBOM"] = $v["expand_by_bom"];
 			
 			// 采购的商品明细
 			$items = [];

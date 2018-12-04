@@ -84,9 +84,9 @@ Ext.define("PSI.Purchase.PWEditForm", {
 						id : "editForm",
 						layout : {
 							type : "table",
-							columns : 2
+							columns : 4
 						},
-						height : 120,
+						height : 90,
 						bodyPadding : 10,
 						border : 0,
 						items : [{
@@ -198,12 +198,36 @@ Ext.define("PSI.Purchase.PWEditForm", {
 										}
 									}
 								}, {
+									id : "editExpand",
+									labelWidth : 60,
+									labelAlign : "right",
+									labelSeparator : "",
+									fieldLabel : "自动拆分",
+									xtype : "combo",
+									queryMode : "local",
+									editable : false,
+									valueField : "id",
+									store : Ext.create("Ext.data.ArrayStore", {
+												fields : ["id", "text"],
+												data : [["0", "不执行拆分业务"],
+														["1", "生成拆分单并执行"]]
+											}),
+									value : "0",
+									listeners : {
+										specialkey : {
+											fn : me.onEditExpandSpecialKey,
+											scope : me
+										}
+									}
+								}, {
 									id : "editBillMemo",
 									labelWidth : 60,
 									labelAlign : "right",
 									labelSeparator : "",
 									fieldLabel : "备注",
 									xtype : "textfield",
+									colspan : 4,
+									width : 860,
 									listeners : {
 										specialkey : {
 											fn : me.onEditBillMemoSpecialKey,
@@ -232,6 +256,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 		me.editWarehouse = Ext.getCmp("editWarehouse");
 		me.editBizUser = Ext.getCmp("editBizUser");
 		me.editPaymentType = Ext.getCmp("editPaymentType");
+		me.editExpand = Ext.getCmp("editExpand");
 		me.editBillMemo = Ext.getCmp("editBillMemo");
 
 		me.editHiddenId = Ext.getCmp("hiddenId");
@@ -343,6 +368,9 @@ Ext.define("PSI.Purchase.PWEditForm", {
 						if (data.paymentType) {
 							me.editPaymentType.setValue(data.paymentType);
 						}
+						if (data.expandByBOM) {
+							me.editExpand.setValue(data.expandByBOM);
+						}
 
 						var store = me.getGoodsGrid().getStore();
 						store.removeAll();
@@ -446,6 +474,18 @@ Ext.define("PSI.Purchase.PWEditForm", {
 	},
 
 	onEditPaymentTypeSpecialKey : function(field, e) {
+		var me = this;
+
+		if (me.__readonly) {
+			return;
+		}
+
+		if (e.getKey() == e.ENTER) {
+			me.editExpand.focus();
+		}
+	},
+
+	onEditExpandSpecialKey : function(field, e) {
 		var me = this;
 
 		if (me.__readonly) {
@@ -708,6 +748,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 			warehouseId : me.editWarehouse.getIdValue(),
 			bizUserId : me.editBizUser.getIdValue(),
 			paymentType : me.editPaymentType.getValue(),
+			expandByBOM : me.editExpand.getValue(),
 			pobillRef : me.getPobillRef(),
 			billMemo : me.editBillMemo.getValue(),
 			viewPrice : me.getViewPrice() ? "1" : "0",
@@ -742,6 +783,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 		me.editWarehouse.setReadOnly(true);
 		me.editBizUser.setReadOnly(true);
 		me.editPaymentType.setReadOnly(true);
+		me.editExpand.setReadOnly(true);
 		me.editBillMemo.setReadOnly(true);
 		me.columnActionDelete.hide();
 		me.columnActionAdd.hide();

@@ -209,7 +209,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 									valueField : "id",
 									store : Ext.create("Ext.data.ArrayStore", {
 												fields : ["id", "text"],
-												data : [["0", "不执行拆分业务"],
+												data : [["0", "不自动执行拆分业务"],
 														["1", "生成拆分单并执行"]]
 											}),
 									value : "0",

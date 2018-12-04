@@ -1311,4 +1311,166 @@ class WSPBillDAO extends PSIBaseExDAO {
 		
 		return $bill;
 	}
+
+	/**
+	 * 从采购入库单生成拆分单，并提交拆分单
+	 *
+	 * @param string $pwBillId
+	 *        	采购入库单主表id
+	 *        	
+	 * @param string $loginUserId
+	 *        	当前登录用户的id
+	 *        	
+	 * @param string $wspBillRef
+	 *        	生成的拆分单的单号
+	 *        	
+	 * @return array|NULL
+	 */
+	public function genWSPBillFromPWBillAndCommit($pwBillId, $loginUserId, & $wspBillRef) {
+		$db = $this->db;
+		
+		$wspBillRef = null;
+		
+		// 检查采购入库单是否存在
+		$sql = "select ref, bill_status, expand_by_bom, company_id,
+					data_org, warehouse_id, biz_dt, biz_user_id 
+				from t_pw_bill where id = '%s' ";
+		$data = $db->query($sql, $pwBillId);
+		if (! $data) {
+			return $this->bad("采购入库单不存");
+		}
+		$v = $data[0];
+		$expandByBOM = $v["expand_by_bom"];
+		if ($expandByBOM != 1) {
+			// 不处理
+			return null;
+		}
+		$billStatus = $v["bill_status"];
+		if ($billStatus != 1000) {
+			return $this->bad("采购入库单不是提交状态");
+		}
+		$pwBillRef = $v["ref"];
+		$companyId = $v["company_id"];
+		$bizDT = $this->toYMD($v["biz_dt"]);
+		$bizUserId = $v["biz_user_id"];
+		$dataOrg = $v["data_org"];
+		$warehouseId = $v["warehouse_id"];
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
+		// 检查采购入库单里面商品有没有子商品
+		// 如果所有的商品都没有子商品，即使是expandByBOM == 1也不需要生成拆分单
+		$sql = "select goods_id, convert(goods_count, $fmt) as goods_count
+				from t_pw_bill_detail 
+				where pwbill_id = '%s'
+				order by show_order";
+		$data = $db->query($sql, $pwBillId);
+		$items = [];
+		foreach ( $data as $v ) {
+			$goodsId = $v["goods_id"];
+			$goodsCount = $v["goods_count"];
+			
+			$sql = "select count(*) as cnt from t_goods_bom where goods_id = '%s' ";
+			$d = $db->query($sql, $goodsId);
+			$cnt = $d[0]["cnt"];
+			if ($cnt > 0) {
+				$items[] = [
+						"goodsId" => $goodsId,
+						"goodsCount" => $goodsCount
+				];
+			}
+		}
+		
+		if (count($items) == 0) {
+			// 所有商品都没有子商品，不需要进一步的操作了
+			return null;
+		}
+		
+		// 生成拆分主表
+		$id = $this->newId();
+		$ref = $this->genNewBillRef($companyId);
+		$fromWarehouseId = $warehouseId;
+		$toWarehouseId = $warehouseId;
+		$billMemo = "从采购入库单(单号：{$pwBillRef})生成";
+		$sql = "insert into t_wsp_bill (id, ref, from_warehouse_id, to_warehouse_id,
+					bill_status, bizdt, biz_user_id, date_created,
+					input_user_id, data_org, company_id, bill_memo)
+				values ('%s', '%s', '%s', '%s',
+					0, '%s', '%s', now(),
+					'%s', '%s', '%s', '%s')";
+		$rc = $db->execute($sql, $id, $ref, $fromWarehouseId, $toWarehouseId, $bizDT, $bizUserId, 
+				$loginUserId, $dataOrg, $companyId, $billMemo);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 生成拆分单明细
+		foreach ( $items as $showOrder => $v ) {
+			$goodsId = $v["goodsId"];
+			if (! $goodsId) {
+				continue;
+			}
+			
+			$goodsCount = $v["goodsCount"];
+			$memo = $billMemo;
+			
+			// 检查商品是否有子商品
+			// 拆分单的明细表中不允许保存没有子商品的商品
+			// 一个商品没有子商品，就不能做拆分业务
+			$sql = "select count(*) as cnt from t_goods_bom where goods_id = '%s' ";
+			$data = $db->query($sql, $goodsId);
+			$cnt = $data[0]["cnt"];
+			if ($cnt == 0) {
+				$rowIndex = $showOrder + 1;
+				return $this->bad("第{$rowIndex}记录中的商品没有子商品，不能做拆分业务");
+			}
+			
+			// 检查拆分数量
+			if ($goodsCount <= 0) {
+				$rowIndex = $showOrder + 1;
+				return $this->bad("第{$rowIndex}记录中的商品的拆分数量需要大于0");
+			}
+			
+			$detailId = $this->newId();
+			$sql = "insert into t_wsp_bill_detail (id, wspbill_id, show_order, goods_id,
+						goods_count, date_created, data_org, company_id, memo)
+					values ('%s', '%s', %d, '%s',
+						convert(%f, $fmt), now(), '%s', '%s', '%s')";
+			$rc = $db->execute($sql, $detailId, $id, $showOrder, $goodsId, $goodsCount, $dataOrg, 
+					$companyId, $memo);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+			
+			// 复制当前商品构成BOM
+			$this->copyGoodsBOM($detailId, $goodsId, $fmt);
+			
+			// 展开当前商品BOM
+			$this->expandGoodsBOM($id, $fmt);
+		}
+		
+		// 提交拆分单
+		$params = [
+				"id" => $id
+		];
+		$rc = $this->commitWSPBill($params);
+		if ($rc) {
+			return $rc;
+		}
+		
+		// 关联采购入库单和拆分单
+		$sql = "update t_pw_bill
+				set wspbill_id = '%s'
+				where id = '%s' ";
+		$rc = $db->execute($sql, $id, $pwBillId);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		$wspBillRef = $ref;
+		return null;
+	}
 }

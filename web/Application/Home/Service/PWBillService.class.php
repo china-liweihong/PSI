@@ -217,6 +217,10 @@ class PWBillService extends PSIBaseExService {
 		
 		// 业务日志
 		$log = "提交采购入库单: 单号 = {$ref}";
+		$wspBillRef = $params["wspBillRef"];
+		if ($wspBillRef) {
+			$log .= ", 并自动执行拆分业务(拆分单单号：{$wspBillRef})";
+		}
 		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
 		

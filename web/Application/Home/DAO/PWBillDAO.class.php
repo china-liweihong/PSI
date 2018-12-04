@@ -1608,9 +1608,17 @@ class PWBillDAO extends PSIBaseExDAO {
 			}
 		}
 		
-		$params["ref"] = $ref;
+		// 处理自动拆分
+		$wspBillDAO = new WSPBillDAO($db);
+		$wspBillRef = null;
+		$rc = $wspBillDAO->genWSPBillFromPWBillAndCommit($id, $loginUserId, $wspBillRef);
+		if ($rc) {
+			return $rc;
+		}
 		
 		// 操作成功
+		$params["ref"] = $ref;
+		$params["wspBillRef"] = $wspBillRef;
 		return null;
 	}
 

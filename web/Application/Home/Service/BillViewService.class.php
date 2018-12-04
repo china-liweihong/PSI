@@ -8,6 +8,7 @@ use Home\DAO\WSBillDAO;
 use Home\DAO\SRBillDAO;
 use Home\DAO\ITBillDAO;
 use Home\DAO\ICBillDAO;
+use Home\DAO\WSPBillDAO;
 
 /**
  * 查看单据Service
@@ -105,6 +106,18 @@ class BillViewService extends PSIBaseExService {
 		}
 		
 		$dao = new ICBillDAO($this->db());
+		return $dao->getFullBillDataByRef($ref);
+	}
+
+	/**
+	 * 拆分单 - 数据查询
+	 */
+	public function wspBillInfo($ref) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new WSPBillDAO($this->db());
 		return $dao->getFullBillDataByRef($ref);
 	}
 }

@@ -71,6 +71,9 @@ class BillController extends Controller {
 			case "库存盘点-盘盈入库" :
 				redirect(__ROOT__ . "/Home/Bill/viewICBill?fid={$fid}&ref={$ref}");
 				break;
+			case "存货拆分" :
+				redirect(__ROOT__ . "/Home/Bill/viewWSPBill?fid={$fid}&ref={$ref}");
+				break;
 			default :
 				$this->display();
 		}
@@ -289,6 +292,42 @@ class BillController extends Controller {
 			
 			$bs = new BillViewService();
 			$this->ajaxReturn($bs->icBillInfo($ref));
+		}
+	}
+
+	/**
+	 * 查看拆分单
+	 */
+	public function viewWSPBill() {
+		$fid = I("get.fid");
+		if (! $this->hasPermission($fid)) {
+			return;
+		}
+		
+		$bcs = new BizConfigService();
+		$this->assign("productionName", $bcs->getProductionName());
+		
+		$ref = I("get.ref");
+		$this->assign("ref", $ref);
+		
+		$this->assign("title", "查看拆分单");
+		$this->assign("uri", __ROOT__ . "/");
+		
+		$dtFlag = getdate();
+		$this->assign("dtFlag", $dtFlag[0]);
+		
+		$this->display();
+	}
+
+	/**
+	 * 拆分单 - 数据查询
+	 */
+	public function wspBillInfo() {
+		if (IS_POST) {
+			$ref = I("post.ref");
+			
+			$bs = new BillViewService();
+			$this->ajaxReturn($bs->wspBillInfo($ref));
 		}
 	}
 }

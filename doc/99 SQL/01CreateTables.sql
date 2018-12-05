@@ -1162,6 +1162,47 @@ CREATE TABLE IF NOT EXISTS `t_wsp_bill_detail_bom` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `t_factory`;
+CREATE TABLE IF NOT EXISTS `t_factory` (
+  `id` varchar(255) NOT NULL,
+  `category_id` varchar(255) NOT NULL,
+  `code` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `contact01` varchar(255) DEFAULT NULL,
+  `tel01` varchar(255) DEFAULT NULL,
+  `mobile01` varchar(255) DEFAULT NULL,
+  `contact02` varchar(255) DEFAULT NULL,
+  `tel02` varchar(255) DEFAULT NULL,
+  `mobile02` varchar(255) DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `py` varchar(255) DEFAULT NULL,
+  `init_receivables` decimal(19,2) DEFAULT NULL, 
+  `init_receivables_dt` datetime DEFAULT NULL, 
+  `init_payables` decimal(19,2) DEFAULT NULL, 
+  `init_payables_dt` datetime DEFAULT NULL, 
+  `bank_name` varchar(255) DEFAULT NULL,
+  `bank_account` varchar(255) DEFAULT NULL,
+  `tax_number` varchar(255) DEFAULT NULL,
+  `fax` varchar(255) DEFAULT NULL,
+  `note` varchar(255) DEFAULT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
+  `company_id` varchar(255) DEFAULT NULL,
+  `record_status` int(11) DEFAULT 1000,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `t_factory_category`;
+CREATE TABLE IF NOT EXISTS `t_factory_category` (
+  `id` varchar(255) NOT NULL,
+  `code` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `parent_id` varchar(255) DEFAULT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
+  `company_id` varchar(255) DEFAULT NULL,
+  `full_name` varchar(1000) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

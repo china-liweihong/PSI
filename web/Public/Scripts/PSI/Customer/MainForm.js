@@ -411,144 +411,110 @@ Ext.define("PSI.Customer.MainForm", {
 				title : me.formatGridHeaderTitle("客户列表")
 			},
 			columnLines : true,
-			columns : [Ext.create("Ext.grid.RowNumberer", {
-								text : "序号",
-								width : 40
-							}), {
-						header : "客户编码",
-						dataIndex : "code",
-						locked : true,
-						menuDisabled : true,
-						sortable : false,
-						renderer : function(value, metaData, record) {
-							if (parseInt(record.get("recordStatus")) == 1000) {
-								return value;
-							} else {
-								return "<span style='color:gray;text-decoration:line-through;'>"
-										+ value + "</span>";
+			columns : {
+				defaults : {
+					menuDisabled : true,
+					sortable : false
+				},
+				items : [Ext.create("Ext.grid.RowNumberer", {
+									text : "序号",
+									width : 40
+								}), {
+							header : "客户编码",
+							dataIndex : "code",
+							locked : true,
+							renderer : function(value, metaData, record) {
+								if (parseInt(record.get("recordStatus")) == 1000) {
+									return value;
+								} else {
+									return "<span style='color:gray;text-decoration:line-through;'>"
+											+ value + "</span>";
+								}
 							}
-						}
-					}, {
-						header : "客户名称",
-						dataIndex : "name",
-						locked : true,
-						menuDisabled : true,
-						sortable : false,
-						width : 300
-					}, {
-						header : "地址",
-						dataIndex : "address",
-						menuDisabled : true,
-						sortable : false,
-						width : 300
-					}, {
-						header : "联系人",
-						dataIndex : "contact01",
-						menuDisabled : true,
-						sortable : false
-					}, {
-						header : "手机",
-						dataIndex : "mobile01",
-						menuDisabled : true,
-						sortable : false
-					}, {
-						header : "固话",
-						dataIndex : "tel01",
-						menuDisabled : true,
-						sortable : false
-					}, {
-						header : "QQ",
-						dataIndex : "qq01",
-						menuDisabled : true,
-						sortable : false
-					}, {
-						header : "备用联系人",
-						dataIndex : "contact02",
-						menuDisabled : true,
-						sortable : false
-					}, {
-						header : "备用联系人手机",
-						dataIndex : "mobile02",
-						menuDisabled : true,
-						sortable : false
-					}, {
-						header : "备用联系人固话",
-						dataIndex : "tel02",
-						menuDisabled : true,
-						sortable : false
-					}, {
-						header : "备用联系人QQ",
-						dataIndex : "qq02",
-						menuDisabled : true,
-						sortable : false
-					}, {
-						header : "收货地址",
-						dataIndex : "addressReceipt",
-						menuDisabled : true,
-						sortable : false,
-						width : 300
-					}, {
-						header : "开户行",
-						dataIndex : "bankName",
-						menuDisabled : true,
-						sortable : false
-					}, {
-						header : "开户行账号",
-						dataIndex : "bankAccount",
-						menuDisabled : true,
-						sortable : false
-					}, {
-						header : "税号",
-						dataIndex : "tax",
-						menuDisabled : true,
-						sortable : false
-					}, {
-						header : "传真",
-						dataIndex : "fax",
-						menuDisabled : true,
-						sortable : false
-					}, {
-						header : "应收期初余额",
-						dataIndex : "initReceivables",
-						align : "right",
-						xtype : "numbercolumn",
-						menuDisabled : true,
-						sortable : false
-					}, {
-						header : "应收期初余额日期",
-						dataIndex : "initReceivablesDT",
-						menuDisabled : true,
-						sortable : false
-					}, {
-						header : "销售出库仓库",
-						dataIndex : "warehouseName",
-						menuDisabled : true,
-						sortable : false,
-						width : 200
-					}, {
-						header : "备注",
-						dataIndex : "note",
-						menuDisabled : true,
-						sortable : false,
-						width : 400
-					}, {
-						header : "数据域",
-						dataIndex : "dataOrg",
-						menuDisabled : true,
-						sortable : false
-					}, {
-						header : "状态",
-						dataIndex : "recordStatus",
-						menuDisabled : true,
-						sortable : false,
-						renderer : function(value) {
-							if (parseInt(value) == 1000) {
-								return "启用";
-							} else {
-								return "<span style='color:red'>停用</span>";
+						}, {
+							header : "客户名称",
+							dataIndex : "name",
+							locked : true,
+							width : 300
+						}, {
+							header : "地址",
+							dataIndex : "address",
+							width : 300
+						}, {
+							header : "联系人",
+							dataIndex : "contact01"
+						}, {
+							header : "手机",
+							dataIndex : "mobile01"
+						}, {
+							header : "固话",
+							dataIndex : "tel01"
+						}, {
+							header : "QQ",
+							dataIndex : "qq01"
+						}, {
+							header : "备用联系人",
+							dataIndex : "contact02"
+						}, {
+							header : "备用联系人手机",
+							dataIndex : "mobile02",
+							width : 150
+						}, {
+							header : "备用联系人固话",
+							dataIndex : "tel02",
+							width : 150
+						}, {
+							header : "备用联系人QQ",
+							dataIndex : "qq02",
+							width : 150
+						}, {
+							header : "收货地址",
+							dataIndex : "addressReceipt",
+							width : 300
+						}, {
+							header : "开户行",
+							dataIndex : "bankName"
+						}, {
+							header : "开户行账号",
+							dataIndex : "bankAccount"
+						}, {
+							header : "税号",
+							dataIndex : "tax"
+						}, {
+							header : "传真",
+							dataIndex : "fax"
+						}, {
+							header : "应收期初余额",
+							dataIndex : "initReceivables",
+							align : "right",
+							xtype : "numbercolumn"
+						}, {
+							header : "应收期初余额日期",
+							dataIndex : "initReceivablesDT",
+							width : 150
+						}, {
+							header : "销售出库仓库",
+							dataIndex : "warehouseName",
+							width : 200
+						}, {
+							header : "备注",
+							dataIndex : "note",
+							width : 400
+						}, {
+							header : "数据域",
+							dataIndex : "dataOrg"
+						}, {
+							header : "状态",
+							dataIndex : "recordStatus",
+							renderer : function(value) {
+								if (parseInt(value) == 1000) {
+									return "启用";
+								} else {
+									return "<span style='color:red'>停用</span>";
+								}
 							}
-						}
-					}],
+						}]
+			},
 			store : store,
 			bbar : ["->", {
 						id : "pagingToolbar",

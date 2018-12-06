@@ -23,6 +23,13 @@ class WSPController extends PSIBaseController {
 		if ($us->hasPermission(FIdConst::WSP)) {
 			$this->initVar();
 			
+			$this->assign("pAdd", $us->hasPermission(FIdConst::WSP_ADD) ? "1" : "0");
+			$this->assign("pEdit", $us->hasPermission(FIdConst::WSP_EDIT) ? "1" : "0");
+			$this->assign("pDelete", $us->hasPermission(FIdConst::WSP_DELETE) ? "1" : "0");
+			$this->assign("pCommit", $us->hasPermission(FIdConst::WSP_COMMIT) ? "1" : "0");
+			$this->assign("pGenPDF", $us->hasPermission(FIdConst::WSP_PDF) ? "1" : "0");
+			$this->assign("pPrint", $us->hasPermission(FIdConst::WSP_PRINT) ? "1" : "0");
+			
 			$this->assign("title", "存货拆分");
 			
 			$this->display();

@@ -27,7 +27,14 @@
 			productionName : "{$productionName}"
 		});
 
-		var permission = {};
+		var permission = {
+			add : "{$pAdd}",
+			edit : "{$pEdit}",
+			del : "{$pDelete}",
+			commit : "{$pCommit}",
+			genPDF : "{$pGenPDF}",
+			print : "{$pPrint}"
+		};
 
 		app.add(Ext.create("PSI.WSP.WSPMainForm", {
 			permission : permission

@@ -829,45 +829,52 @@ class FIdConst {
 	
 	/**
 	 * 存货拆分 - 新建拆分单
-	 * 
+	 *
 	 * @var string
 	 */
 	const WSP_ADD = "2033-01";
 	
 	/**
 	 * 存货拆分 - 编辑拆分单
-	 * 
+	 *
 	 * @var string
 	 */
 	const WSP_EDIT = "2033-02";
 	
 	/**
 	 * 存货拆分 - 删除拆分单
-	 * 
+	 *
 	 * @var string
 	 */
 	const WSP_DELETE = "2033-03";
 	
 	/**
 	 * 存货拆分 - 提交拆分单
-	 * 
+	 *
 	 * @var string
 	 */
 	const WSP_COMMIT = "2033-04";
 	
 	/**
 	 * 存货拆分 - 单据导出PDF
-	 * 
+	 *
 	 * @var string
 	 */
 	const WSP_PDF = "2033-05";
 	
 	/**
 	 * 存货拆分 - 打印
-	 * 
+	 *
 	 * @var string
 	 */
 	const WSP_PRINT = "2033-06";
+	
+	/**
+	 * 工厂
+	 * 
+	 * @var string
+	 */
+	const FACTORY = "2034";
 	
 	// -------------------------
 	// 财务总账系统GL fid使用2100段

@@ -241,6 +241,10 @@ class MainMenuController extends Controller {
 				// 存货拆分
 				redirect(__ROOT__ . "/Home/WSP/index");
 				break;
+			case FIdConst::FACTORY :
+				// 工厂
+				redirect(__ROOT__ . "/Home/Factory/index");
+				break;
 			default :
 				redirect(__ROOT__ . "/Home");
 		}

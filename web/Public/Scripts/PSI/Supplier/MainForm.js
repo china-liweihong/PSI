@@ -93,7 +93,7 @@ Ext.define("PSI.Supplier.MainForm", {
 					handler : me.onAddSupplier,
 					scope : me
 				}, {
-					text : "修改供应商",
+					text : "编辑供应商",
 					disabled : me.getPEditSupplier() == "0",
 					handler : me.onEditSupplier,
 					scope : me

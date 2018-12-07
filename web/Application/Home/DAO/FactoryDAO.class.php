@@ -202,4 +202,65 @@ class FactoryDAO extends PSIBaseExDAO {
 		// 操作成功
 		return null;
 	}
+
+	/**
+	 * 根据工厂分类id查询工厂分类
+	 *
+	 * @param string $id        	
+	 * @return array|NULL
+	 */
+	public function getFactoryCategoryById($id) {
+		$db = $this->db;
+		
+		$sql = "select code, name from t_factory_category where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if ($data) {
+			return [
+					"code" => $data[0]["code"],
+					"name" => $data[0]["name"]
+			];
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * 删除工厂分类
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
+	 */
+	public function deleteFactoryCategory(& $params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		
+		$category = $this->getFactoryCategoryById($id);
+		if (! $category) {
+			return $this->bad("要删除的分类不存在");
+		}
+		
+		$params["code"] = $category["code"];
+		$params["name"] = $category["name"];
+		$name = $params["name"];
+		
+		$sql = "select count(*) as cnt
+				from t_factory
+				where category_id = '%s' ";
+		$query = $db->query($sql, $id);
+		$cnt = $query[0]["cnt"];
+		if ($cnt > 0) {
+			$db->rollback();
+			return $this->bad("当前分类 [{$name}] 下还有工厂，不能删除");
+		}
+		
+		$sql = "delete from t_factory_category where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		return null;
+	}
 }

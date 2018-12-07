@@ -79,4 +79,33 @@ class FactoryService extends PSIBaseExService {
 		
 		return $this->ok($id);
 	}
+
+	/**
+	 * 删除工厂分类
+	 */
+	public function deleteCategory($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$id = $params["id"];
+		
+		$db = $this->db();
+		$db->startTrans();
+		$dao = new FactoryDAO($db);
+		
+		$rc = $dao->deleteFactoryCategory($params);
+		if ($rc) {
+			$db->rollback();
+			return $rc;
+		}
+		
+		$log = "删除工厂分类： 编码 = {$params['code']}, 分类名称 = {$params['name']}";
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
+		return $this->ok();
+	}
 }

@@ -146,6 +146,7 @@ Ext.define("PSI.Factory.MainForm", {
 					fieldLabel : "地址",
 					margin : "5, 0, 0, 0",
 					xtype : "textfield",
+					width : 400,
 					listeners : {
 						specialkey : {
 							fn : me.onQueryEditSpecialKey,
@@ -729,8 +730,8 @@ Ext.define("PSI.Factory.MainForm", {
 			preIndex = preItem.get("id");
 		}
 
-		var info = "请确认是否删除工厂: <span style='color:red'>"
-				+ factory.get("name") + "</span>";
+		var info = "请确认是否删除工厂: <span style='color:red'>" + factory.get("name")
+				+ "</span>";
 		me.confirm(info, function() {
 			var el = Ext.getBody();
 			el.mask("正在删除中...");

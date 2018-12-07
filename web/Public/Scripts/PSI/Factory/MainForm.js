@@ -542,7 +542,7 @@ Ext.define("PSI.Factory.MainForm", {
 
 	onEditCategory : function() {
 		var me = this;
-		if (me.getPermssion().editCategory == "0") {
+		if (me.getPermission().editCategory == "0") {
 			return;
 		}
 

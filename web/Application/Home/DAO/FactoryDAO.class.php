@@ -170,6 +170,36 @@ class FactoryDAO extends PSIBaseExDAO {
 	 * @return array|null
 	 */
 	public function updateFactoryCategory(& $params) {
-		return $this->todo();
+		$db = $this->db;
+		
+		$id = $params["id"];
+		$code = trim($params["code"]);
+		$name = trim($params["name"]);
+		
+		if ($this->isEmptyStringAfterTrim($code)) {
+			return $this->bad("分类编码不能为空");
+		}
+		if ($this->isEmptyStringAfterTrim($name)) {
+			return $this->bad("分类名称不能为空");
+		}
+		
+		// 检查分类编码是否已经存在
+		$sql = "select count(*) as cnt from t_factory_category where code = '%s' and id <> '%s' ";
+		$data = $db->query($sql, $code, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("编码为 [$code] 的分类已经存在");
+		}
+		
+		$sql = "update t_factory_category
+				set code = '%s', name = '%s'
+				where id = '%s' ";
+		$rc = $db->execute($sql, $code, $name, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		return null;
 	}
 }

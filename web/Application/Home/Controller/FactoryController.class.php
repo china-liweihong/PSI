@@ -4,6 +4,7 @@ namespace Home\Controller;
 
 use Home\Common\FIdConst;
 use Home\Service\UserService;
+use Home\Service\FactoryService;
 
 /**
  * 工厂Controller
@@ -27,6 +28,22 @@ class FactoryController extends PSIBaseController {
 			$this->display();
 		} else {
 			$this->gotoLoginPage("/Home/Factory/index");
+		}
+	}
+
+	/**
+	 * 新建或编辑工厂分类
+	 */
+	public function editCategory() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id"),
+					"code" => strtoupper(I("post.code")),
+					"name" => I("post.name")
+			];
+			
+			$service = new FactoryService();
+			$this->ajaxReturn($service->editCategory($params));
 		}
 	}
 }

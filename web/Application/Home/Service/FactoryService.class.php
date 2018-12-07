@@ -108,4 +108,18 @@ class FactoryService extends PSIBaseExService {
 		
 		return $this->ok();
 	}
+
+	/**
+	 * 某个分类下的工厂列表
+	 */
+	public function factoryList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$params["loginUserId"] = $this->getLoginUserId();
+		
+		$dao = new FactoryDAO($this->db());
+		return $dao->factoryList($params);
+	}
 }

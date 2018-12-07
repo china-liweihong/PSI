@@ -78,4 +78,26 @@ class FactoryController extends PSIBaseController {
 			$this->ajaxReturn($service->deleteCategory($params));
 		}
 	}
+
+	/**
+	 * 工厂列表
+	 */
+	public function factoryList() {
+		if (IS_POST) {
+			$params = array(
+					"categoryId" => I("post.categoryId"),
+					"code" => I("post.code"),
+					"name" => I("post.name"),
+					"address" => I("post.address"),
+					"contact" => I("post.contact"),
+					"mobile" => I("post.mobile"),
+					"tel" => I("post.tel"),
+					"page" => I("post.page"),
+					"start" => I("post.start"),
+					"limit" => I("post.limit")
+			);
+			$service = new FactoryService();
+			$this->ajaxReturn($service->factoryList($params));
+		}
+	}
 }

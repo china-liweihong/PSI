@@ -32,6 +32,24 @@ class FactoryController extends PSIBaseController {
 	}
 
 	/**
+	 * 工厂分类
+	 */
+	public function categoryList() {
+		if (IS_POST) {
+			$params = [
+					"code" => I("post.code"),
+					"name" => I("post.name"),
+					"address" => I("post.address"),
+					"contact" => I("post.contact"),
+					"mobile" => I("post.mobile"),
+					"tel" => I("post.tel")
+			];
+			$service = new FactoryService();
+			$this->ajaxReturn($service->categoryList($params));
+		}
+	}
+
+	/**
 	 * 新建或编辑工厂分类
 	 */
 	public function editCategory() {

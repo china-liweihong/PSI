@@ -2,12 +2,116 @@
 
 namespace Home\DAO;
 
+use Home\Common\FIdConst;
+
 /**
  * 工厂 DAO
  *
  * @author 李静波
  */
 class FactoryDAO extends PSIBaseExDAO {
+
+	/**
+	 * 供应商分类列表
+	 *
+	 * @param array $params        	
+	 * @return array
+	 */
+	public function categoryList($params) {
+		$db = $this->db;
+		
+		$code = $params["code"];
+		$name = $params["name"];
+		$address = $params["address"];
+		$contact = $params["contact"];
+		$mobile = $params["mobile"];
+		$tel = $params["tel"];
+		
+		$inQuery = false;
+		if ($code || $name || $address || $contact || $mobile || $tel) {
+			$inQuery = true;
+		}
+		
+		$loginUserId = $params["loginUserId"];
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->emptyResult();
+		}
+		
+		$sql = "select c.id, c.code, c.name
+				from t_factory_category c ";
+		$queryParam = [];
+		$ds = new DataOrgDAO($db);
+		$rs = $ds->buildSQL(FIdConst::FACTORY, "c", $loginUserId);
+		if ($rs) {
+			$sql .= " where " . $rs[0];
+			$queryParam = array_merge($queryParam, $rs[1]);
+		}
+		$sql .= " order by c.code";
+		
+		$data = $db->query($sql, $queryParam);
+		
+		$result = [];
+		foreach ( $data as $v ) {
+			$id = $v["id"];
+			
+			$queryParam = [];
+			$sql = "select count(s.id) as cnt
+					from t_factory s
+					where (s.category_id = '%s') ";
+			$queryParam[] = $id;
+			if ($code) {
+				$sql .= " and (s.code like '%s') ";
+				$queryParam[] = "%{$code}%";
+			}
+			if ($name) {
+				$sql .= " and (s.name like '%s' or s.py like '%s' ) ";
+				$queryParam[] = "%{$name}%";
+				$queryParam[] = "%{$name}%";
+			}
+			if ($address) {
+				$sql .= " and (s.address like '%s' or s.address_shipping like '%s') ";
+				$queryParam[] = "%{$address}%";
+				$queryParam[] = "%{$address}%";
+			}
+			if ($contact) {
+				$sql .= " and (s.contact01 like '%s' or s.contact02 like '%s' ) ";
+				$queryParam[] = "%{$contact}%";
+				$queryParam[] = "%{$contact}%";
+			}
+			if ($mobile) {
+				$sql .= " and (s.mobile01 like '%s' or s.mobile02 like '%s' ) ";
+				$queryParam[] = "%{$mobile}%";
+				$queryParam[] = "%{$mobile}";
+			}
+			if ($tel) {
+				$sql .= " and (s.tel01 like '%s' or s.tel02 like '%s' ) ";
+				$queryParam[] = "%{$tel}%";
+				$queryParam[] = "%{$tel}";
+			}
+			$rs = $ds->buildSQL(FIdConst::FACTORY, "s", $loginUserId);
+			if ($rs) {
+				$sql .= " and " . $rs[0];
+				$queryParam = array_merge($queryParam, $rs[1]);
+			}
+			
+			$d = $db->query($sql, $queryParam);
+			$factoryCount = $d[0]["cnt"];
+			
+			if ($inQuery && $factoryCount == 0) {
+				// 当前是查询，而且当前分类下没有符合查询条件的工厂，就不返回该工厂分类
+				continue;
+			}
+			
+			$result[] = [
+					"id" => $id,
+					"code" => $v["code"],
+					"name" => $v["name"],
+					"cnt" => $factoryCount
+			];
+		}
+		
+		return $result;
+	}
 
 	/**
 	 * 新增工厂分类

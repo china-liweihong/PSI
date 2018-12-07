@@ -13,6 +13,20 @@ class FactoryService extends PSIBaseExService {
 	private $LOG_CATEGORY = "基础数据-工厂";
 
 	/**
+	 * 工厂分类列表
+	 */
+	public function categoryList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$params["loginUserId"] = $this->getLoginUserId();
+		
+		$dao = new FactoryDAO($this->db());
+		return $dao->categoryList($params);
+	}
+
+	/**
 	 * 新建或编辑供应商分类
 	 */
 	public function editCategory($params) {

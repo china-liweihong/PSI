@@ -39,7 +39,7 @@ Ext.define("PSI.Factory.FactoryEditForm", {
 
 		var categoryStore = null;
 		if (me.getParentForm()) {
-			categoryStore = me.getParentForm().categoryGrid.getStore();
+			categoryStore = me.getParentForm().getCategoryGrid().getStore();
 		}
 
 		var t = entity == null ? "新增工厂" : "编辑工厂";
@@ -62,7 +62,7 @@ Ext.define("PSI.Factory.FactoryEditForm", {
 				height : 40
 			},
 			width : 550,
-			height : 570,
+			height : 490,
 			layout : "border",
 			items : [{
 						region : "north",
@@ -399,7 +399,7 @@ Ext.define("PSI.Factory.FactoryEditForm", {
 		if (me.adding) {
 			// 新建
 			if (me.getParentForm()) {
-				var grid = me.getParentForm().categoryGrid;
+				var grid = me.getParentForm().getCategoryGrid();
 				var item = grid.getSelectionModel().getSelection();
 				if (item == null || item.length != 1) {
 					return;

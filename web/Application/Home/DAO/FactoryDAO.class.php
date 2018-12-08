@@ -664,4 +664,52 @@ class FactoryDAO extends PSIBaseExDAO {
 		// 操作成功
 		return null;
 	}
+
+	/**
+	 * 获得某个工厂的详情
+	 *
+	 * @param array $params        	
+	 * @return array
+	 */
+	public function factoryInfo($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		
+		$result = [];
+		
+		$sql = "select category_id, code, name, contact01, mobile01, tel01,
+					contact02, mobile02, tel02, address,
+					init_payables, init_payables_dt,
+					bank_name, bank_account, tax_number, fax, note,
+					record_status
+				from t_factory
+				where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if ($data) {
+			$result["categoryId"] = $data[0]["category_id"];
+			$result["code"] = $data[0]["code"];
+			$result["name"] = $data[0]["name"];
+			$result["contact01"] = $data[0]["contact01"];
+			$result["mobile01"] = $data[0]["mobile01"];
+			$result["tel01"] = $data[0]["tel01"];
+			$result["contact02"] = $data[0]["contact02"];
+			$result["mobile02"] = $data[0]["mobile02"];
+			$result["tel02"] = $data[0]["tel02"];
+			$result["address"] = $data[0]["address"];
+			$result["initPayables"] = $data[0]["init_payables"];
+			$d = $data[0]["init_payables_dt"];
+			if ($d) {
+				$result["initPayablesDT"] = $this->toYMD($d);
+			}
+			$result["bankName"] = $data[0]["bank_name"];
+			$result["bankAccount"] = $data[0]["bank_account"];
+			$result["tax"] = $data[0]["tax_number"];
+			$result["fax"] = $data[0]["fax"];
+			$result["note"] = $data[0]["note"];
+			$result["recordStatus"] = $data[0]["record_status"];
+		}
+		
+		return $result;
+	}
 }

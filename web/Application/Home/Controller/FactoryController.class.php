@@ -131,4 +131,18 @@ class FactoryController extends PSIBaseController {
 			$this->ajaxReturn($service->editFactory($params));
 		}
 	}
+
+	/**
+	 * 获得某个工厂的信息
+	 */
+	public function factoryInfo() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id")
+			];
+			
+			$service = new FactoryService();
+			$this->ajaxReturn($service->factoryInfo($params));
+		}
+	}
 }

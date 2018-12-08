@@ -413,4 +413,198 @@ class FactoryDAO extends PSIBaseExDAO {
 				"totalCount" => $cnt
 		];
 	}
+
+	/**
+	 * 新建工厂
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
+	 */
+	public function addFactory(& $params) {
+		$db = $this->db;
+		
+		$code = $params["code"];
+		$name = $params["name"];
+		$address = $params["address"];
+		$contact01 = $params["contact01"];
+		$mobile01 = $params["mobile01"];
+		$tel01 = $params["tel01"];
+		$contact02 = $params["contact02"];
+		$mobile02 = $params["mobile02"];
+		$tel02 = $params["tel02"];
+		$bankName = $params["bankName"];
+		$bankAccount = $params["bankAccount"];
+		$tax = $params["tax"];
+		$fax = $params["fax"];
+		$note = $params["note"];
+		$recordStatus = $params["recordStatus"];
+		
+		$dataOrg = $params["dataOrg"];
+		$companyId = $params["companyId"];
+		if ($this->dataOrgNotExists($dataOrg)) {
+			return $this->badParam("dataOrg");
+		}
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->badParam("companyId");
+		}
+		
+		$categoryId = $params["categoryId"];
+		$py = $params["py"];
+		
+		// 检查编码是否已经存在
+		$sql = "select count(*) as cnt from t_factory where code = '%s' ";
+		$data = $db->query($sql, $code);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("编码为 [$code] 的工厂已经存在");
+		}
+		
+		$id = $this->newId();
+		$params["id"] = $id;
+		
+		$sql = "insert into t_factory (id, category_id, code, name, py, 
+					contact01, tel01, mobile01, contact02, tel02, mobile02, 
+					address, bank_name, bank_account, tax_number, fax, note, 
+					data_org, company_id, record_status)
+				values ('%s', '%s', '%s', '%s', '%s', 
+						'%s', '%s', '%s', '%s', '%s', '%s',
+						'%s', '%s', '%s', '%s', '%s', '%s', 
+						'%s', '%s', %d)  ";
+		$rc = $db->execute($sql, $id, $categoryId, $code, $name, $py, $contact01, $tel01, $mobile01, 
+				$contact02, $tel02, $mobile02, $address, $bankName, $bankAccount, $tax, $fax, $note, 
+				$dataOrg, $companyId, $recordStatus);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		return null;
+	}
+
+	/**
+	 * 初始化应付账款
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
+	 */
+	public function initPayables(& $params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		$initPayables = $params["initPayables"];
+		$initPayablesDT = $params["initPayablesDT"];
+		
+		$dataOrg = $params["dataOrg"];
+		$companyId = $params["companyId"];
+		if ($this->dataOrgNotExists($dataOrg)) {
+			return $this->badParam("dataOrg");
+		}
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->badParam("companyId");
+		}
+		
+		$sql = "select count(*) as cnt
+				from t_payables_detail
+				where ca_id = '%s' and ca_type = 'factory' and ref_type <> '应付账款期初建账'
+					and company_id = '%s' ";
+		$data = $db->query($sql, $id, $companyId);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			// 已经有往来业务发生，就不能修改应付账了
+			return null;
+		}
+		
+		$initPayables = floatval($initPayables);
+		if ($initPayables && $initPayablesDT) {
+			$sql = "update t_factory
+					set init_payables = %f, init_payables_dt = '%s'
+					where id = '%s' ";
+			$rc = $db->execute($sql, $initPayables, $initPayablesDT, $id);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+			
+			// 应付明细账
+			$sql = "select id from t_payables_detail
+					where ca_id = '%s' and ca_type = 'factory' and ref_type = '应付账款期初建账'
+						and company_id = '%s' ";
+			$data = $db->query($sql, $id, $companyId);
+			if ($data) {
+				$payId = $data[0]["id"];
+				$sql = "update t_payables_detail
+						set pay_money = %f ,  balance_money = %f , biz_date = '%s', date_created = now(), act_money = 0
+						where id = '%s' ";
+				$rc = $db->execute($sql, $initPayables, $initPayables, $initPayablesDT, $payId);
+				if ($rc === false) {
+					return $this->sqlError(__METHOD__, __LINE__);
+				}
+			} else {
+				$payId = $this->newId();
+				$sql = "insert into t_payables_detail (id, pay_money, act_money, balance_money, ca_id,
+							ca_type, ref_type, ref_number, biz_date, date_created, data_org, company_id)
+						values ('%s', %f, 0, %f, '%s', 'factory', '应付账款期初建账', '%s', '%s', now(), '%s', '%s') ";
+				$rc = $db->execute($sql, $payId, $initPayables, $initPayables, $id, $id, 
+						$initPayablesDT, $dataOrg, $companyId);
+				if ($rc === false) {
+					return $this->sqlError(__METHOD__, __LINE__);
+				}
+			}
+			
+			// 应付总账
+			$sql = "select id from t_payables
+					where ca_id = '%s' and ca_type = 'factory'
+						and company_id = '%s' ";
+			$data = $db->query($sql, $id, $companyId);
+			if ($data) {
+				$pId = $data[0]["id"];
+				$sql = "update t_payables
+						set pay_money = %f ,  balance_money = %f , act_money = 0
+						where id = '%s' ";
+				$rc = $db->execute($sql, $initPayables, $initPayables, $pId);
+				if ($rc === false) {
+					return $this->sqlError(__METHOD__, __LINE__);
+				}
+			} else {
+				$pId = $this->newId();
+				$sql = "insert into t_payables (id, pay_money, act_money, balance_money, ca_id,
+							ca_type, data_org, company_id)
+						values ('%s', %f, 0, %f, '%s', 'factory', '%s', '%s') ";
+				$rc = $db->execute($sql, $pId, $initPayables, $initPayables, $id, $dataOrg, 
+						$companyId);
+				if ($rc === false) {
+					return $this->sqlError(__METHOD__, __LINE__);
+				}
+			}
+		} else {
+			// 清除应付账款初始化数据
+			$sql = "update t_factory
+					set init_payables = null, init_payables_dt = null
+					where id = '%s' ";
+			$rc = $db->execute($sql, $id);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+			
+			// 明细账
+			$sql = "delete from t_payables_detail
+					where ca_id = '%s' and ca_type = 'factory' and ref_type = '应付账款期初建账'
+						and company_id = '%s' ";
+			$rc = $db->execute($sql, $id, $companyId);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+			
+			// 总账
+			$sql = "delete from t_payables
+					where ca_id = '%s' and ca_type = 'factory'
+						and company_id = '%s' ";
+			$rc = $db->execute($sql, $id, $companyId);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+		}
+		
+		// 操作成功
+		return null;
+	}
 }

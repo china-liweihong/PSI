@@ -100,4 +100,35 @@ class FactoryController extends PSIBaseController {
 			$this->ajaxReturn($service->factoryList($params));
 		}
 	}
+
+	/**
+	 * 新建或编辑工厂
+	 */
+	public function editFactory() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id"),
+					"code" => strtoupper(I("post.code")),
+					"name" => I("post.name"),
+					"address" => I("post.address"),
+					"contact01" => I("post.contact01"),
+					"mobile01" => I("post.mobile01"),
+					"tel01" => I("post.tel01"),
+					"contact02" => I("post.contact02"),
+					"mobile02" => I("post.mobile02"),
+					"tel02" => I("post.tel02"),
+					"bankName" => I("post.bankName"),
+					"bankAccount" => I("post.bankAccount"),
+					"tax" => I("post.tax"),
+					"fax" => I("post.fax"),
+					"note" => I("post.note"),
+					"categoryId" => I("post.categoryId"),
+					"initPayables" => I("post.initPayables"),
+					"initPayablesDT" => I("post.initPayablesDT"),
+					"recordStatus" => I("post.recordStatus")
+			];
+			$service = new FactoryService();
+			$this->ajaxReturn($service->editFactory($params));
+		}
+	}
 }

@@ -572,7 +572,7 @@ Ext.define("PSI.Factory.FactoryEditForm", {
 
 		if (me.__lastId) {
 			if (me.getParentForm()) {
-				me.getParentForm().freshFactoryGrid(me.__lastId);
+				me.getParentForm().freshMainGrid(me.__lastId);
 			}
 		}
 	}

@@ -26,7 +26,8 @@ Ext.define("PSI.Funds.PayMainForm", {
 								store : Ext.create("Ext.data.ArrayStore", {
 											fields : ["id", "text"],
 											data : [["supplier", "供应商"],
-													["customer", "客户"]]
+													["customer", "客户"],
+													["factory", "工厂"]]
 										}),
 								value : "supplier",
 								listeners : {

@@ -45,6 +45,21 @@ class PayablesDAO extends PSIBaseExDAO {
 				$result[$i + 1]["id"] = $v["id"];
 				$result[$i + 1]["name"] = $v["name"];
 			}
+		} else if ($id == "factory") {
+			$sql = "select id, name from t_factory_category ";
+			$queryParams = array();
+			$ds = new DataOrgDAO($db);
+			$rs = $ds->buildSQL(FIdConst::PAYABLES, "t_factory_category", $loginUserId);
+			if ($rs) {
+				$sql .= " where " . $rs[0];
+				$queryParams = $rs[1];
+			}
+			$sql .= " order by code";
+			$data = $db->query($sql, $queryParams);
+			foreach ( $data as $i => $v ) {
+				$result[$i + 1]["id"] = $v["id"];
+				$result[$i + 1]["name"] = $v["name"];
+			}
 		} else {
 			$sql = "select id,  code, name from t_customer_category ";
 			$queryParams = array();
@@ -119,6 +134,57 @@ class PayablesDAO extends PSIBaseExDAO {
 			$queryParams[] = array();
 			$sql = "select count(*) as cnt from t_payables p, t_supplier s
 					where p.ca_id = s.id and p.ca_type = 'supplier' ";
+			if ($categoryId) {
+				$sql .= " and s.category_id = '%s' ";
+				$queryParams[] = $categoryId;
+			}
+			$ds = new DataOrgDAO($db);
+			$rs = $ds->buildSQL(FIdConst::PAYABLES, "s", $loginUserId);
+			if ($rs) {
+				$sql .= " and " . $rs[0];
+				$queryParams = array_merge($queryParams, $rs[1]);
+			}
+			$data = $db->query($sql, $queryParams);
+			$cnt = $data[0]["cnt"];
+			
+			return array(
+					"dataList" => $result,
+					"totalCount" => $cnt
+			);
+		} else if ($caType == "factory") {
+			$queryParams = array();
+			$sql = "select p.id, p.pay_money, p.act_money, p.balance_money, s.id as ca_id, s.code, s.name
+					from t_payables p, t_factory s
+					where p.ca_id = s.id and p.ca_type = 'factory' ";
+			if ($categoryId) {
+				$sql .= " and s.category_id = '%s' ";
+				$queryParams[] = $categoryId;
+			}
+			$ds = new DataOrgDAO($db);
+			$rs = $ds->buildSQL(FIdConst::PAYABLES, "s", $loginUserId);
+			if ($rs) {
+				$sql .= " and " . $rs[0];
+				$queryParams = array_merge($queryParams, $rs[1]);
+			}
+			$sql .= " order by s.code
+					limit %d , %d ";
+			$queryParams[] = $start;
+			$queryParams[] = $limit;
+			$data = $db->query($sql, $queryParams);
+			$result = array();
+			foreach ( $data as $i => $v ) {
+				$result[$i]["id"] = $v["id"];
+				$result[$i]["caId"] = $v["ca_id"];
+				$result[$i]["code"] = $v["code"];
+				$result[$i]["name"] = $v["name"];
+				$result[$i]["payMoney"] = $v["pay_money"];
+				$result[$i]["actMoney"] = $v["act_money"];
+				$result[$i]["balanceMoney"] = $v["balance_money"];
+			}
+			
+			$queryParams[] = array();
+			$sql = "select count(*) as cnt from t_payables p, t_supplier s
+					where p.ca_id = s.id and p.ca_type = 'factory' ";
 			if ($categoryId) {
 				$sql .= " and s.category_id = '%s' ";
 				$queryParams[] = $categoryId;
@@ -416,7 +482,7 @@ class PayablesDAO extends PSIBaseExDAO {
 
 	/**
 	 * 刷新付款信息 - 明细账
-	 * 
+	 *
 	 * @param array $params        	
 	 * @return array
 	 */

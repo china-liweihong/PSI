@@ -482,6 +482,63 @@ class FactoryDAO extends PSIBaseExDAO {
 	}
 
 	/**
+	 * 编辑工厂
+	 *
+	 * @param array $params        	
+	 * @return NULL|array
+	 */
+	public function updateFactory(& $params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		$code = $params["code"];
+		$name = $params["name"];
+		$address = $params["address"];
+		$contact01 = $params["contact01"];
+		$mobile01 = $params["mobile01"];
+		$tel01 = $params["tel01"];
+		$contact02 = $params["contact02"];
+		$mobile02 = $params["mobile02"];
+		$tel02 = $params["tel02"];
+		$bankName = $params["bankName"];
+		$bankAccount = $params["bankAccount"];
+		$tax = $params["tax"];
+		$fax = $params["fax"];
+		$note = $params["note"];
+		$recordStatus = $params["recordStatus"];
+		
+		$categoryId = $params["categoryId"];
+		$py = $params["py"];
+		
+		// 检查编码是否已经存在
+		$sql = "select count(*) as cnt from t_factory where code = '%s'  and id <> '%s' ";
+		$data = $db->query($sql, $code, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("编码为 [$code] 的工厂已经存在");
+		}
+		
+		$sql = "update t_factory
+				set code = '%s', name = '%s', category_id = '%s', py = '%s',
+					contact01 = '%s', tel01 = '%s', mobile01 = '%s',
+					contact02 = '%s', tel02 = '%s', mobile02 = '%s',
+					address = '%s',
+					bank_name = '%s', bank_account = '%s', tax_number = '%s',
+					fax = '%s', note = '%s', record_status = %d
+				where id = '%s'  ";
+		
+		$rc = $db->execute($sql, $code, $name, $categoryId, $py, $contact01, $tel01, $mobile01, 
+				$contact02, $tel02, $mobile02, $address, $bankName, $bankAccount, $tax, $fax, $note, 
+				$recordStatus, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		return null;
+	}
+
+	/**
 	 * 初始化应付账款
 	 *
 	 * @param array $params        	

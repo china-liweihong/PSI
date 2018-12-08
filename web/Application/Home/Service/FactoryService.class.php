@@ -206,4 +206,36 @@ class FactoryService extends PSIBaseExService {
 		$dao = new FactoryDAO($this->db());
 		return $dao->FactoryInfo($params);
 	}
+
+	/**
+	 * 删除工厂
+	 */
+	public function deleteFactory($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$id = $params["id"];
+		
+		$db = $this->db();
+		$db->startTrans();
+		
+		$dao = new FactoryDAO($db);
+		
+		$rc = $dao->deleteFactory($params);
+		if ($rc) {
+			$db->rollback();
+			return $rc;
+		}
+		
+		$code = $params["code"];
+		$name = $params["name"];
+		$log = "删除工厂：编码 = {$code},  名称 = {$name}";
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
+		return $this->ok();
+	}
 }

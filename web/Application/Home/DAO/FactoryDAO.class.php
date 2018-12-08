@@ -712,4 +712,13 @@ class FactoryDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 删除工厂
+	 *
+	 * @param array $params        	
+	 */
+	public function deleteFactory(& $params) {
+		return $this->todo();
+	}
 }

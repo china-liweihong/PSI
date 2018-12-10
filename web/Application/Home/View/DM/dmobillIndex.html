@@ -1,5 +1,7 @@
 <layout name="layout" />
 
+<script src="{$uri}Public/Scripts/PSI/DMO/DMOMainForm.js?dt={$dtFlag}"
+	type="text/javascript"></script>
 
 <script>
 	Ext.onReady(function() {
@@ -20,6 +22,9 @@
 			print : "{$pPrint}"
 		};
 
+		app.add(Ext.create("PSI.DMO.DMOMainForm", {
+			permission : permission
+		}));
 		app.setAppHeader({
 			title : "{$title}",
 			iconCls : "PSI-fid2027"

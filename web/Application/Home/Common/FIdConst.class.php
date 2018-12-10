@@ -871,10 +871,73 @@ class FIdConst {
 	
 	/**
 	 * 工厂
-	 * 
+	 *
 	 * @var string
 	 */
 	const FACTORY = "2034";
+	
+	/**
+	 * 成品委托生产订单
+	 *
+	 * @var string
+	 */
+	const DMO = "2035";
+	
+	/**
+	 * 成品委托生产订单 - 新建成品委托生产订单
+	 *
+	 * @var string
+	 */
+	const DMO_ADD = "2035-01";
+	
+	/**
+	 * 成品委托生产订单 - 编辑成品委托生产订单
+	 *
+	 * @var string
+	 */
+	const DMO_EDIT = "2035-02";
+	
+	/**
+	 * 成品委托生产订单 - 删除成品委托生产订单
+	 *
+	 * @var string
+	 */
+	const DMO_DELETE = "2035-03";
+	
+	/**
+	 * 成品委托生产订单 - 提交成品委托生产订单
+	 *
+	 * @var string
+	 */
+	const DMO_COMMIT = "2035-04";
+	
+	/**
+	 * 成品委托生产订单 - 生成成品委托生产入库单
+	 *
+	 * @var string
+	 */
+	const DMO_GEN_DMW_BILL = "2035-05";
+	
+	/**
+	 * 成品委托生产订单 - 关闭成品委托生产订单
+	 *
+	 * @var string
+	 */
+	const DMO_CLOSE_BILL = "2035-06";
+	
+	/**
+	 * 成品委托生产订单 - 单据生成PDF
+	 *
+	 * @var string
+	 */
+	const DMO_PDF = "2035-07";
+	
+	/**
+	 * 成品委托生产订单 - 打印
+	 *
+	 * @var string
+	 */
+	const DMO_PRINT = "2035-08";
 	
 	// -------------------------
 	// 财务总账系统GL fid使用2100段

@@ -1381,6 +1381,59 @@ class InstallService extends PSIBaseExService {
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
 		$db->execute($sql);
+		
+		// t_dmo_bill
+		$sql = "CREATE TABLE IF NOT EXISTS `t_dmo_bill` (
+				  `id` varchar(255) NOT NULL,
+				  `ref` varchar(255) NOT NULL,
+				  `factory_id` varchar(255) NOT NULL,
+				  `contact` varchar(255) NOT NULL,
+				  `tel` varchar(255) DEFAULT NULL,
+				  `fax` varchar(255) DEFAULT NULL,
+				  `org_id` varchar(255) NOT NULL,
+				  `biz_user_id` varchar(255) NOT NULL,
+				  `biz_dt` datetime NOT NULL,
+				  `input_user_id` varchar(255) NOT NULL,
+				  `date_created` datetime DEFAULT NULL,
+				  `bill_status` int(11) NOT NULL,
+				  `goods_money` decimal(19,2) NOT NULL,
+				  `tax` decimal(19,2) NOT NULL,
+				  `money_with_tax` decimal(19,2) NOT NULL,
+				  `payment_type` int(11) NOT NULL DEFAULT 0,
+				  `deal_date` datetime NOT NULL,
+				  `deal_address` varchar(255) DEFAULT NULL,
+				  `confirm_user_id` varchar(255) DEFAULT NULL,
+				  `confirm_date` datetime DEFAULT NULL,
+				  `bill_memo` varchar(255) DEFAULT NULL,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_dmo_bill_detail
+		$sql = "CREATE TABLE IF NOT EXISTS `t_dmo_bill_detail` (
+				  `id` varchar(255) NOT NULL,
+				  `dmobill_id` varchar(255) NOT NULL,
+				  `show_order` int(11) NOT NULL,
+				  `goods_id` varchar(255) NOT NULL,
+				  `goods_count` decimal(19,8) NOT NULL,
+				  `goods_money` decimal(19,2) NOT NULL,
+				  `goods_price` decimal(19,2) NOT NULL,
+				  `tax_rate` decimal(19,2) NOT NULL,
+				  `tax` decimal(19,2) NOT NULL,
+				  `money_with_tax` decimal(19,2) NOT NULL,
+				  `dmw_count` decimal(19,8) NOT NULL,
+				  `left_count` decimal(19,8) NOT NULL,
+				  `date_created` datetime DEFAULT NULL,
+				  `data_org` varchar(255) DEFAULT NULL,
+				  `company_id` varchar(255) DEFAULT NULL,
+				  `memo` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
 	}
 
 	/**

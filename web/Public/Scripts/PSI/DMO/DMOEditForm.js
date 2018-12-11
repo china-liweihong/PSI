@@ -480,7 +480,7 @@ Ext.define("PSI.DMO.DMOEditForm", {
 								sortable : false,
 								draggable : false,
 								editor : {
-									xtype : "psi_goods_with_purchaseprice_field",
+									xtype : "psi_goodsfield",
 									parentCmp : me,
 									showAddButton : me.getShowAddGoodsButton() == "1"
 								}

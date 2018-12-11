@@ -721,4 +721,61 @@ class FactoryDAO extends PSIBaseExDAO {
 	public function deleteFactory(& $params) {
 		return $this->todo();
 	}
+
+	/**
+	 * 工厂自定义字段， 查询数据
+	 *
+	 * @param array $params        	
+	 * @return array
+	 */
+	public function queryData($params) {
+		$db = $this->db;
+		
+		$queryKey = $params["queryKey"];
+		$loginUserId = $params["loginUserId"];
+		
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->emptyResult();
+		}
+		
+		if ($queryKey == null) {
+			$queryKey = "";
+		}
+		
+		$sql = "select id, code, name, tel01, fax, contact01
+				from t_factory
+				where (record_status = 1000)
+					and (code like '%s' or name like '%s' or py like '%s') ";
+		$queryParams = array();
+		$key = "%{$queryKey}%";
+		$queryParams[] = $key;
+		$queryParams[] = $key;
+		$queryParams[] = $key;
+		
+		$ds = new DataOrgDAO($db);
+		$rs = $ds->buildSQL(FIdConst::FACTORY_BILL, "t_factory", $loginUserId);
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = array_merge($queryParams, $rs[1]);
+		}
+		
+		$sql .= " order by code
+				limit 20";
+		$data = $db->query($sql, $queryParams);
+		
+		$result = [];
+		
+		foreach ( $data as $v ) {
+			$result[] = [
+					"id" => $v["id"],
+					"code" => $v["code"],
+					"name" => $v["name"],
+					"tel01" => $v["tel01"],
+					"fax" => $v["fax"],
+					"contact01" => $v["contact01"]
+			];
+		}
+		
+		return $result;
+	}
 }

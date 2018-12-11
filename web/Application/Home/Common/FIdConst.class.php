@@ -877,6 +877,13 @@ class FIdConst {
 	const FACTORY = "2034";
 	
 	/**
+	 * 工厂 - 在业务单据中的数据权限
+	 *
+	 * @var string
+	 */
+	const FACTORY_BILL = "2034-01";
+	
+	/**
 	 * 成品委托生产订单
 	 *
 	 * @var string

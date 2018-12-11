@@ -159,4 +159,15 @@ class FactoryController extends PSIBaseController {
 			$this->ajaxReturn($service->deleteFactory($params));
 		}
 	}
+
+	/**
+	 * 工厂自定义字段，查询数据
+	 */
+	public function queryData() {
+		if (IS_POST) {
+			$queryKey = I("post.queryKey");
+			$service = new FactoryService();
+			$this->ajaxReturn($service->queryData($queryKey));
+		}
+	}
 }

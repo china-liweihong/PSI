@@ -64,6 +64,21 @@ class FactoryController extends PSIBaseController {
 	 */
 	public function editCategory() {
 		if (IS_POST) {
+			$us = new UserService();
+			if (I("post.id")) {
+				// 编辑工厂分类
+				if (! $us->hasPermission(FIdConst::FACTORY_CATEGORY_EDIT)) {
+					$this->ajaxReturn($this->noPermission("编辑工厂分类"));
+					return;
+				}
+			} else {
+				// 新增工厂分类
+				if (! $us->hasPermission(FIdConst::FACTORY_CATEGORY_ADD)) {
+					$this->ajaxReturn($this->noPermission("新增工厂分类"));
+					return;
+				}
+			}
+			
 			$params = [
 					"id" => I("post.id"),
 					"code" => strtoupper(I("post.code")),
@@ -80,6 +95,12 @@ class FactoryController extends PSIBaseController {
 	 */
 	public function deleteCategory() {
 		if (IS_POST) {
+			$us = new UserService();
+			if (! $us->hasPermission(FIdConst::FACTORY_CATEGORY_DELETE)) {
+				$this->ajaxReturn($this->noPermission("删除工厂分类"));
+				return;
+			}
+			
 			$params = [
 					"id" => I("post.id")
 			];
@@ -116,6 +137,21 @@ class FactoryController extends PSIBaseController {
 	 */
 	public function editFactory() {
 		if (IS_POST) {
+			$us = new UserService();
+			if (I("post.id")) {
+				// 编辑工厂
+				if (! $us->hasPermission(FIdConst::FACTORY_EDIT)) {
+					$this->ajaxReturn($this->noPermission("编辑工厂"));
+					return;
+				}
+			} else {
+				// 新增工厂
+				if (! $us->hasPermission(FIdConst::FACTORY_ADD)) {
+					$this->ajaxReturn($this->noPermission("新增工厂"));
+					return;
+				}
+			}
+			
 			$params = [
 					"id" => I("post.id"),
 					"code" => strtoupper(I("post.code")),
@@ -161,6 +197,12 @@ class FactoryController extends PSIBaseController {
 	 */
 	public function deleteFactory() {
 		if (IS_POST) {
+			$us = new UserService();
+			if (! $us->hasPermission(FIdConst::FACTORY_DELETE)) {
+				$this->ajaxReturn($this->noPermission("删除工厂"));
+				return;
+			}
+			
 			$params = [
 					"id" => I("post.id")
 			];

@@ -268,7 +268,7 @@ Ext.define("PSI.DMO.DMOEditForm", {
 
 		me.callParent(arguments);
 
-		me.__editorList = ["editDealDate", "editSupplier", "editDealAddress",
+		me.__editorList = ["editDealDate", "editFactory", "editDealAddress",
 				"editContact", "editTel", "editFax", "editOrg", "editBizUser",
 				"editBillMemo"];
 	},

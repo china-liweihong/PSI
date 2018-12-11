@@ -656,7 +656,7 @@ class POBillDAO extends PSIBaseExDAO {
 						p.org_id, o.full_name, p.biz_user_id, u.name as biz_user_name,
 						p.payment_type, p.bill_memo, p.bill_status
 					from t_po_bill p, t_supplier s, t_user u, t_org o
-					where p.id = '%s' and p.supplier_Id = s.id
+					where p.id = '%s' and p.supplier_id = s.id
 						and p.biz_user_id = u.id
 						and p.org_id = o.id";
 			$data = $db->query($sql, $id);

@@ -23,6 +23,16 @@ class FactoryController extends PSIBaseController {
 		if ($us->hasPermission(FIdConst::FACTORY)) {
 			$this->initVar();
 			
+			$this->assign("pAddCategory", 
+					$us->hasPermission(FIdConst::FACTORY_CATEGORY_ADD) ? 1 : 0);
+			$this->assign("pEditCategory", 
+					$us->hasPermission(FIdConst::FACTORY_CATEGORY_EDIT) ? 1 : 0);
+			$this->assign("pDeleteCategory", 
+					$us->hasPermission(FIdConst::FACTORY_CATEGORY_DELETE) ? 1 : 0);
+			$this->assign("pAdd", $us->hasPermission(FIdConst::FACTORY_ADD) ? 1 : 0);
+			$this->assign("pEdit", $us->hasPermission(FIdConst::FACTORY_EDIT) ? 1 : 0);
+			$this->assign("pDelete", $us->hasPermission(FIdConst::FACTORY_DELETE) ? 1 : 0);
+			
 			$this->assign("title", "工厂");
 			
 			$this->display();

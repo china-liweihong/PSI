@@ -41,7 +41,7 @@ class FactoryDAO extends PSIBaseExDAO {
 				from t_factory_category c ";
 		$queryParam = [];
 		$ds = new DataOrgDAO($db);
-		$rs = $ds->buildSQL(FIdConst::FACTORY, "c", $loginUserId);
+		$rs = $ds->buildSQL(FIdConst::FACTORY_CATEGORY, "c", $loginUserId);
 		if ($rs) {
 			$sql .= " where " . $rs[0];
 			$queryParam = array_merge($queryParam, $rs[1]);

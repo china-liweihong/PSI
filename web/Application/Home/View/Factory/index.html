@@ -18,7 +18,14 @@
 			productionName : "{$productionName}"
 		});
 
-		var permission = {};
+		var permission = {
+			addCategory : "{$pAddCategory}",
+			editCategory : "{$pEditCategory}",
+			deleteCategory : "{$pDeleteCategory}",
+			add : "{$pAdd}",
+			edit : "{$pEdit}",
+			del : "{$pDelete}"
+		};
 
 		app.add(Ext.create("PSI.Factory.MainForm", {
 			permission : permission

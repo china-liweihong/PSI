@@ -884,6 +884,55 @@ class FIdConst {
 	const FACTORY_BILL = "2034-01";
 	
 	/**
+	 * 工厂 - 工厂分类的数据权限
+	 *
+	 * @var string
+	 */
+	const FACTORY_CATEGORY = "2034-02";
+	
+	/**
+	 * 工厂 - 新增工厂分类
+	 * 
+	 * @var string
+	 */
+	const FACTORY_CATEGORY_ADD = "2034-03";
+	
+	/**
+	 * 工厂 - 编辑工厂分类
+	 * 
+	 * @var string
+	 */
+	const FACTORY_CATEGORY_EDIT = "2034-04";
+	
+	/**
+	 * 工厂 - 删除工厂分类
+	 * 
+	 * @var string
+	 */
+	const FACTORY_CATEGORY_DELETE = "2034-05";
+	
+	/**
+	 * 工厂 - 新增工厂
+	 * 
+	 * @var string
+	 */
+	const FACTORY_ADD = "2034-06";
+	
+	/**
+	 * 工厂 - 编辑工厂
+	 * 
+	 * @var string
+	 */
+	const FACTORY_EDIT = "2034-07";
+	
+	/**
+	 * 工厂 - 删除工厂
+	 * 
+	 * @var string
+	 */
+	const FACTORY_DELETE = "2034-08";
+	
+	/**
 	 * 成品委托生产订单
 	 *
 	 * @var string

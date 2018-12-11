@@ -108,4 +108,28 @@ class DMOBillDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 新建成品委托生产订单
+	 *
+	 * @param array $bill        	
+	 * @return array|null
+	 */
+	public function addDMOBill(& $bill) {
+		$db = $this->db;
+		
+		return $this->todo();
+	}
+
+	/**
+	 * 编辑成品委托生产订单
+	 *
+	 * @param array $bill        	
+	 * @return array|null
+	 */
+	public function updateDMOBill(& $bill) {
+		$db = $this->db;
+		
+		return $this->todo();
+	}
 }

@@ -56,4 +56,15 @@ class DMController extends PSIBaseController {
 			$this->ajaxReturn($service->dmoBillInfo($params));
 		}
 	}
+
+	/**
+	 * 新增或编辑成品委托生产订单
+	 */
+	public function editDMOBill() {
+		if (IS_POST) {
+			$json = I("post.jsonStr");
+			$service = new DMOBillService();
+			$this->ajaxReturn($service->editDMOBill($json));
+		}
+	}
 }

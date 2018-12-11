@@ -3,6 +3,7 @@
 namespace Home\Service;
 
 use Home\DAO\DMOBillDAO;
+use Home\Common\FIdConst;
 
 /**
  * 成品委托生产订单Service
@@ -26,5 +27,80 @@ class DMOBillService extends PSIBaseExService {
 		
 		$dao = new DMOBillDAO($this->db());
 		return $dao->dmoBillInfo($params);
+	}
+
+	/**
+	 * 新建或编辑成品委托生产订单
+	 */
+	public function editDMOBill($json) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$bill = json_decode(html_entity_decode($json), true);
+		if ($bill == null) {
+			return $this->bad("传入的参数错误，不是正确的JSON格式");
+		}
+		
+		$id = $bill["id"];
+		
+		// 判断权限
+		$us = new UserService();
+		if ($id) {
+			if (! $us->hasPermission(FIdConst::DMO_EDIT)) {
+				return $this->bad("您没有编辑成品委托生产订单的权限");
+			}
+		} else {
+			if (! $us->hasPermission(FIdConst::DMO_ADD)) {
+				return $this->bad("您没有新建成品委托生产订单的权限");
+			}
+		}
+		
+		$db = $this->db();
+		
+		$db->startTrans();
+		
+		$dao = new DMOBillDAO($db);
+		
+		$us = new UserService();
+		$bill["companyId"] = $us->getCompanyId();
+		$bill["loginUserId"] = $us->getLoginUserId();
+		$bill["dataOrg"] = $us->getLoginUserDataOrg();
+		
+		$log = null;
+		if ($id) {
+			// 编辑
+			
+			$rc = $dao->updateDMOBill($bill);
+			if ($rc) {
+				$db->rollback();
+				return $rc;
+			}
+			
+			$ref = $bill["ref"];
+			
+			$log = "编辑成品委托生产订单，单号：{$ref}";
+		} else {
+			// 新建采购订单
+			
+			$rc = $dao->addDMOBill($bill);
+			if ($rc) {
+				$db->rollback();
+				return $rc;
+			}
+			
+			$id = $bill["id"];
+			$ref = $bill["ref"];
+			
+			$log = "新建成品委托生产订单，单号：{$ref}";
+		}
+		
+		// 记录业务日志
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
+		return $this->ok($id);
 	}
 }

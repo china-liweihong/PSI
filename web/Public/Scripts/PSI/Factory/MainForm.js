@@ -66,35 +66,53 @@ Ext.define("PSI.Factory.MainForm", {
 
 		return [{
 					text : "新增工厂分类",
-					disabled : me.getPermission().addCategory == "0",
+					hidden : me.getPermission().addCategory == "0",
 					handler : me.onAddCategory,
 					scope : me
 				}, {
+					hidden : me.getPermission().addCategory == "0",
+					xtype : "tbseparator"
+				}, {
 					text : "编辑工厂分类",
-					disabled : me.getPermission().editCategory == "0",
+					hidden : me.getPermission().editCategory == "0",
 					handler : me.onEditCategory,
 					scope : me
 				}, {
+					hidden : me.getPermission().editCategory == "0",
+					xtype : "tbseparator"
+				}, {
 					text : "删除工厂分类",
-					disabled : me.getPermission().delCategory == "0",
+					hidden : me.getPermission().deleteCategory == "0",
 					handler : me.onDeleteCategory,
 					scope : me
-				}, "-", {
+				}, {
+					hidden : me.getPermission().deleteCategory == "0",
+					xtype : "tbseparator"
+				}, {
 					text : "新增工厂",
-					disabled : me.getPermission().add == "0",
+					hidden : me.getPermission().add == "0",
 					handler : me.onAddFactory,
 					scope : me
 				}, {
+					hidden : me.getPermission().add == "0",
+					xtype : "tbseparator"
+				}, {
 					text : "编辑工厂",
-					disabled : me.getPermission().edit == "0",
+					hidden : me.getPermission().edit == "0",
 					handler : me.onEditFactory,
 					scope : me
 				}, {
+					hidden : me.getPermission().edit == "0",
+					xtype : "tbseparator"
+				}, {
 					text : "删除工厂",
-					disabled : me.getPermission().del == "0",
+					hidden : me.getPermission().del == "0",
 					handler : me.onDeleteFactory,
 					scope : me
-				}, "-", {
+				}, {
+					hidden : me.getPermission().del == "0",
+					xtype : "tbseparator"
+				}, {
 					text : "帮助",
 					handler : function() {
 						me.showInfo("TODO");

@@ -366,7 +366,7 @@ Ext.define("PSI.DMO.DMOMainForm", {
 							header : "工厂传真",
 							dataIndex : "fax"
 						}, {
-							header : "采购金额",
+							header : "金额",
 							dataIndex : "goodsMoney",
 							align : "right",
 							xtype : "numbercolumn",
@@ -520,7 +520,7 @@ Ext.define("PSI.DMO.DMOMainForm", {
 									dataIndex : "goodsSpec",
 									width : 200
 								}, {
-									header : "采购数量",
+									header : "生产数量",
 									dataIndex : "goodsCount",
 									align : "right"
 								}, {

@@ -28,7 +28,7 @@ Ext.define("PSI.DMO.DMOEditForm", {
 			width : 1000,
 			height : 600,
 			layout : "border",
-			defaultFocus : "editSupplier",
+			defaultFocus : "editFactory",
 			tbar : [{
 						text : "保存",
 						id : "buttonSave",
@@ -113,7 +113,7 @@ Ext.define("PSI.DMO.DMOEditForm", {
 									labelAlign : "right",
 									labelSeparator : "",
 									xtype : "psi_factoryfield",
-									fieldLabel : "供应商",
+									fieldLabel : "工厂",
 									allowBlank : false,
 									blankText : "没有输入工厂",
 									beforeLabelTextTpl : PSI.Const.REQUIRED,
@@ -226,7 +226,7 @@ Ext.define("PSI.DMO.DMOEditForm", {
 									valueField : "id",
 									store : Ext.create("Ext.data.ArrayStore", {
 												fields : ["id", "text"],
-												data : [["0", "记应付账款"]
+												data : [["0", "记应付账款"]]
 											}),
 									value : "0",
 									listeners : {

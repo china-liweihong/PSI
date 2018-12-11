@@ -29,6 +29,8 @@ class DMController extends PSIBaseController {
 			$this->assign("pCommit", $us->hasPermission(FIdConst::DMO_COMMIT) ? "1" : "0");
 			$this->assign("pGenDMWBill", $us->hasPermission(FIdConst::DMO_GEN_DMW_BILL) ? "1" : "0");
 			$this->assign("showAddGoodsButton", $us->hasPermission(FIdConst::GOODS_ADD) ? "1" : "0");
+			$this->assign("showAddFactoryButton", 
+					$us->hasPermission(FIdConst::FACTORY_ADD) ? "1" : "0");
 			$this->assign("pCloseBill", $us->hasPermission(FIdConst::DMO_CLOSE_BILL) ? "1" : "0");
 			$this->assign("pGenPDF", $us->hasPermission(FIdConst::DMO_PDF) ? "1" : "0");
 			$this->assign("pPrint", $us->hasPermission(FIdConst::DMO_PRINT) ? "1" : "0");

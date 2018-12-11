@@ -5,7 +5,8 @@ Ext.define("PSI.DMO.DMOEditForm", {
 	extend : "PSI.AFX.BaseDialogForm",
 
 	config : {
-		showAddGoodsButton : "0"
+		showAddGoodsButton : "0",
+		showAddFactoryButton : "0"
 	},
 
 	initComponent : function() {
@@ -123,7 +124,8 @@ Ext.define("PSI.DMO.DMOEditForm", {
 											scope : me
 										}
 									},
-									showAddButton : true,
+									showAddButton : me
+											.getShowAddFactoryButton() == "1",
 									callbackFunc : me.__setFactoryExtData,
 									callbackScope : me
 								}, {

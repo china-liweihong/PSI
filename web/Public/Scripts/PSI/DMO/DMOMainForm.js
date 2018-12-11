@@ -607,7 +607,8 @@ Ext.define("PSI.DMO.DMOMainForm", {
 
 		var form = Ext.create("PSI.DMO.DMOEditForm", {
 					parentForm : me,
-					showAddGoodsButton : me.getPermission().showAddGoodsButton
+					showAddGoodsButton : me.getPermission().showAddGoodsButton,
+					showAddFactoryButton : me.getPermission().showAddFactoryButton
 				});
 		form.show();
 	},
@@ -624,7 +625,8 @@ Ext.define("PSI.DMO.DMOMainForm", {
 		var form = Ext.create("PSI.DMO.DMOEditForm", {
 					parentForm : me,
 					entity : bill,
-					showAddGoodsButton : me.getPermission().showAddGoodsButton
+					showAddGoodsButton : me.getPermission().showAddGoodsButton,
+					showAddFactoryButton : me.getPermission().showAddFactoryButton
 				});
 		form.show();
 	},

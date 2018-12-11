@@ -218,7 +218,7 @@ Ext.define("PSI.DMO.DMOMainForm", {
 			fieldLabel : "交货日期（止）"
 		}, {
 			id : "editQueryFactory",
-			xtype : "textfield",
+			xtype : "psi_factoryfield",
 			parentCmp : me,
 			showModal : true,
 			labelAlign : "right",
@@ -914,10 +914,10 @@ Ext.define("PSI.DMO.DMOMainForm", {
 			result.ref = ref;
 		}
 
-		// var factoryId = Ext.getCmp("editQueryFactory").getIdValue();
-		// if (factoryId) {
-		// result.factoryId = factoryId;
-		// }
+		var factoryId = Ext.getCmp("editQueryFactory").getIdValue();
+		if (factoryId) {
+			result.factoryId = factoryId;
+		}
 
 		var fromDT = Ext.getCmp("editQueryFromDT").getValue();
 		if (fromDT) {

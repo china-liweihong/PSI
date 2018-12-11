@@ -4,6 +4,7 @@ namespace Home\Controller;
 
 use Home\Common\FIdConst;
 use Home\Service\UserService;
+use Home\Service\DMOBillService;
 
 /**
  * 成品委托生产Controller
@@ -37,6 +38,20 @@ class DMController extends PSIBaseController {
 			$this->display();
 		} else {
 			$this->gotoLoginPage("/Home/DM/dmobillIndex");
+		}
+	}
+
+	/**
+	 * 获得成品委托生产订单的信息
+	 */
+	public function dmoBillInfo() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id")
+			];
+			
+			$service = new DMOBillService();
+			$this->ajaxReturn($service->dmoBillInfo($params));
 		}
 	}
 }

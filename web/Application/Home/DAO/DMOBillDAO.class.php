@@ -132,4 +132,11 @@ class DMOBillDAO extends PSIBaseExDAO {
 		
 		return $this->todo();
 	}
+
+	/**
+	 * 获得成品委托生产订单主表信息列表
+	 */
+	public function dmobillList($params) {
+		return $this->emptyResult();
+	}
 }

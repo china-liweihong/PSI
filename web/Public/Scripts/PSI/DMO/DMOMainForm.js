@@ -550,7 +550,7 @@ Ext.define("PSI.DMO.DMOMainForm", {
 									xtype : "numbercolumn",
 									width : 150
 								}, {
-									header : "采购金额",
+									header : "金额",
 									dataIndex : "goodsMoney",
 									align : "right",
 									xtype : "numbercolumn",
@@ -1035,7 +1035,7 @@ Ext.define("PSI.DMO.DMOMainForm", {
 							dataIndex : "factoryName",
 							width : 300
 						}, {
-							header : "采购金额",
+							header : "金额",
 							dataIndex : "amount",
 							align : "right",
 							xtype : "numbercolumn",

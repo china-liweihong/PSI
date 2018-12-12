@@ -282,7 +282,7 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 							"billStatus", "goodsMoney", "dateCreated",
 							"receivingType", "tax", "moneyWithTax", "dealDate",
 							"dealAddress", "orgName", "confirmUserName",
-							"confirmDate", "billMemo"]
+							"confirmDate", "billMemo", "genPWBill"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -343,6 +343,13 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 								header : "销售订单号",
 								dataIndex : "ref",
 								width : 110,
+								menuDisabled : true,
+								sortable : false
+							}, {
+								header : "出库单?",
+								dataIndex : "genPWBill",
+								width : 70,
+								align : "center",
 								menuDisabled : true,
 								sortable : false
 							}, {

@@ -139,6 +139,14 @@ class SOBillDAO extends PSIBaseExDAO {
 					$result[$i]["confirmDate"] = $v["confirm_date"];
 				}
 			}
+			
+			// 查询是否生成了销售出库单
+			$sql = "select count(*) as cnt from t_so_ws
+					where so_id = '%s' ";
+			$d = $db->query($sql, $v["id"]);
+			$cnt = $d[0]["cnt"];
+			$genPWBill = $cnt > 0 ? "▲" : "";
+			$result[$i]["genPWBill"] = $genPWBill;
 		}
 		
 		$sql = "select count(*) as cnt

@@ -12,6 +12,33 @@ use Home\Common\FIdConst;
 class DMOBillDAO extends PSIBaseExDAO {
 
 	/**
+	 * 生成新的成品委托生产订单号
+	 *
+	 * @param string $companyId        	
+	 * @return string
+	 */
+	private function genNewBillRef($companyId) {
+		$db = $this->db;
+		
+		$bs = new BizConfigDAO($db);
+		$pre = $bs->getDMOBillRefPre($companyId);
+		
+		$mid = date("Ymd");
+		
+		$sql = "select ref from t_dmo_bill where ref like '%s' order by ref desc limit 1";
+		$data = $db->query($sql, $pre . $mid . "%");
+		$sufLength = 3;
+		$suf = str_pad("1", $sufLength, "0", STR_PAD_LEFT);
+		if ($data) {
+			$ref = $data[0]["ref"];
+			$nextNumber = intval(substr($ref, strlen($pre . $mid))) + 1;
+			$suf = str_pad($nextNumber, $sufLength, "0", STR_PAD_LEFT);
+		}
+		
+		return $pre . $mid . $suf;
+	}
+
+	/**
 	 * 获得成品委托生产订单的信息
 	 */
 	public function dmoBillInfo($params) {

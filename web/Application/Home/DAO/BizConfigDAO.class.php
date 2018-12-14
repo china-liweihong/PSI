@@ -221,6 +221,13 @@ class BizConfigDAO extends PSIBaseExDAO {
 						"value" => "WSP",
 						"note" => "",
 						"showOrder" => 610
+				],
+				[
+						"id" => "9003-11",
+						"name" => "成品委托生产订单号前缀",
+						"value" => "DMO",
+						"note" => "",
+						"showOrder" => 611
 				]
 		];
 	}
@@ -485,6 +492,7 @@ class BizConfigDAO extends PSIBaseExDAO {
 		}
 		$companyName = $data[0]["name"];
 		
+		// 单号前缀
 		$refPreList = array(
 				"9003-01",
 				"9003-02",
@@ -495,7 +503,8 @@ class BizConfigDAO extends PSIBaseExDAO {
 				"9003-07",
 				"9003-08",
 				"9003-09",
-				"9003-10"
+				"9003-10",
+				"9003-11"
 		);
 		
 		// 检查值是否合法

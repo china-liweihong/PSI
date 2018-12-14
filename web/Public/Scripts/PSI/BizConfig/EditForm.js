@@ -357,6 +357,12 @@ Ext.define("PSI.BizConfig.EditForm", {
 									}, {
 										id : "editValue9003-10",
 										xtype : "textfield"
+									}, {
+										id : "editName9003-11",
+										xtype : "displayfield"
+									}, {
+										id : "editValue9003-11",
+										xtype : "textfield"
 									}]
 						}, {
 							title : "系统",
@@ -458,7 +464,8 @@ Ext.define("PSI.BizConfig.EditForm", {
 			'value9003-07' : Ext.getCmp("editValue9003-07").getValue(),
 			'value9003-08' : Ext.getCmp("editValue9003-08").getValue(),
 			'value9003-09' : Ext.getCmp("editValue9003-09").getValue(),
-			'value9003-10' : Ext.getCmp("editValue9003-10").getValue()
+			'value9003-10' : Ext.getCmp("editValue9003-10").getValue(),
+			'value9003-11' : Ext.getCmp("editValue9003-11").getValue()
 		};
 
 		return result;

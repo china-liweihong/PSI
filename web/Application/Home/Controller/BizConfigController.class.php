@@ -66,9 +66,16 @@ class BizConfigController extends PSIBaseController {
 	 */
 	public function edit() {
 		if (IS_POST) {
-			$bs = new BizConfigService();
 			
-			$params = array(
+			$us = new UserService();
+			
+			if (! $us->hasPermission(FIdConst::BIZ_CONFIG)) {
+				$this->ajaxReturn($this->noPermission("业务设置-编辑配置项"));
+			}
+			
+			$service = new BizConfigService();
+			
+			$params = [
 					"companyId" => I("post.companyId"),
 					"9000-01" => I("post.value9000-01"),
 					"9000-02" => I("post.value9000-02"),
@@ -98,10 +105,11 @@ class BizConfigController extends PSIBaseController {
 					"9003-07" => I("post.value9003-07"),
 					"9003-08" => I("post.value9003-08"),
 					"9003-09" => I("post.value9003-09"),
-					"9003-10" => I("post.value9003-10")
-			);
+					"9003-10" => I("post.value9003-10"),
+					"9003-11" => I("post.value9003-11")
+			];
 			
-			$this->ajaxReturn($bs->edit($params));
+			$this->ajaxReturn($service->edit($params));
 		}
 	}
 

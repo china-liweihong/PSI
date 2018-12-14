@@ -1247,4 +1247,30 @@ class BizConfigDAO extends PSIBaseExDAO {
 		
 		return $r;
 	}
+
+	/**
+	 * 获得成品委托生产订单单号前缀
+	 *
+	 * @param string $companyId        	
+	 * @return string
+	 */
+	public function getDMOBillRefPre($companyId) {
+		$result = "DMO";
+		
+		$db = $this->db;
+		
+		$id = "9003-11";
+		$sql = "select value from t_config
+				where id = '%s' and company_id = '%s' ";
+		$data = $db->query($sql, $id, $companyId);
+		if ($data) {
+			$result = $data[0]["value"];
+			
+			if ($result == null || $result == "") {
+				$result = "DMO";
+			}
+		}
+		
+		return $result;
+	}
 }

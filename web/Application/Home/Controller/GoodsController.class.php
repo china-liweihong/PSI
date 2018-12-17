@@ -743,4 +743,15 @@ class GoodsController extends PSIBaseController {
 			$this->ajaxReturn($gs->editGoodsPriceSystem($params));
 		}
 	}
+
+	/**
+	 * 商品品牌自定义字段 - 查询数据
+	 */
+	public function queryGoodsBrandData() {
+		if (IS_POST) {
+			$queryKey = I("post.queryKey");
+			$service = new GoodsService();
+			$this->ajaxReturn($service->queryGoodsBrandData($queryKey));
+		}
+	}
 }

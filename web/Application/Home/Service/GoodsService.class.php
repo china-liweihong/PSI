@@ -910,4 +910,21 @@ class GoodsService extends PSIBaseExService {
 		
 		return $this->ok();
 	}
+
+	/**
+	 * 商品品牌自定义字段，查询数据
+	 */
+	public function queryGoodsBrandData($queryKey) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$params = [
+				"queryKey" => $queryKey,
+				"loginUserId" => $this->getLoginUserId()
+		];
+		
+		$dao = new GoodsBrandDAO($this->db());
+		return $dao->queryGoodsBrandData($params);
+	}
 }

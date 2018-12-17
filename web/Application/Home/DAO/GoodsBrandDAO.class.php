@@ -383,4 +383,51 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 商品品牌自定义字段，查询数据
+	 */
+	public function queryGoodsBrandData($params) {
+		$db = $this->db;
+		
+		$loginUserId = $params["loginUserId"];
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->emptyResult();
+		}
+		
+		$queryKey = $params["queryKey"];
+		if ($queryKey == null) {
+			$queryKey = "";
+		}
+		
+		$key = "%{$queryKey}%";
+		
+		$result = [];
+		$sql = "select id, full_name
+				from t_goods_brand b
+				where (b.name like '%s' or b.py like '%s')
+				";
+		$queryParams = [];
+		$queryParams[] = $key;
+		$queryParams[] = $key;
+		$ds = new DataOrgDAO($db);
+		$rs = $ds->buildSQL(FIdConst::GOODS_BRAND, "b", $loginUserId);
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = array_merge($queryParams, $rs[1]);
+		}
+		
+		$sql .= " order by b.full_name";
+		
+		$data = $db->query($sql, $queryParams);
+		
+		foreach ( $data as $v ) {
+			$result[] = [
+					"id" => $v["id"],
+					"name" => $v["full_name"]
+			];
+		}
+		
+		return $result;
+	}
 }

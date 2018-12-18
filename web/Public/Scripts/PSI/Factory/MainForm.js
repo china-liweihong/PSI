@@ -115,7 +115,7 @@ Ext.define("PSI.Factory.MainForm", {
 				}, {
 					text : "帮助",
 					handler : function() {
-						me.showInfo("TODO");
+						window.open(me.URL("/Home/Help/index?t=factory"));
 					}
 				}, "-", {
 					text : "关闭",

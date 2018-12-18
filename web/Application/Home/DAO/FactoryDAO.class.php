@@ -735,7 +735,46 @@ class FactoryDAO extends PSIBaseExDAO {
 	 * @param array $params        	
 	 */
 	public function deleteFactory(& $params) {
-		return $this->todo();
+		$db = $this->db;
+		
+		// 工厂id
+		$id = $params["id"];
+		
+		$factory = $this->getFactoryById($id);
+		if (! $factory) {
+			return $this->bad("要删除的工厂不存在");
+		}
+		
+		$code = $factory["code"];
+		$name = $factory["name"];
+		
+		// 检查工厂在成品委托生产订单中是否使用过
+		$sql = "select count(*) as cnt from t_dmo_bill where factory_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("工厂[{$name}]已经在成品委托生产订单中使用了，不能再删除");
+		}
+		
+		// 检查工厂在成品委托生产入库单中是否使用过
+		$sql = "select count(*) as cnt from t_dmw_bill where factory_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("工厂[{$name}]已经在成品委托生产入库单中使用了，不能再删除");
+		}
+		
+		// 删除
+		$sql = "delete from t_factory where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		$params["code"] = $code;
+		$params["name"] = $name;
+		return null;
 	}
 
 	/**

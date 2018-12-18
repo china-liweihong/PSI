@@ -147,7 +147,151 @@ class DMOBillDAO extends PSIBaseExDAO {
 	public function addDMOBill(& $bill) {
 		$db = $this->db;
 		
-		return $this->todo();
+		$dealDate = $bill["dealDate"];
+		$factoryId = $bill["factoryId"];
+		$orgId = $bill["orgId"];
+		$bizUserId = $bill["bizUserId"];
+		
+		// 付款方式：目前只处理应付账款
+		$paymentType = 0;
+		
+		$contact = $bill["contact"];
+		$tel = $bill["tel"];
+		$fax = $bill["fax"];
+		$dealAddress = $bill["dealAddress"];
+		$billMemo = $bill["billMemo"];
+		
+		$items = $bill["items"];
+		
+		$dataOrg = $bill["dataOrg"];
+		$loginUserId = $bill["loginUserId"];
+		$companyId = $bill["companyId"];
+		if ($this->dataOrgNotExists($dataOrg)) {
+			return $this->badParam("dataOrg");
+		}
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->badParam("loginUserId");
+		}
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->badParam("companyId");
+		}
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
+		if (! $this->dateIsValid($dealDate)) {
+			return $this->bad("交货日期不正确");
+		}
+		
+		$factoryDAO = new FactoryDAO($db);
+		$factory = $factoryDAO->getFactoryById($factoryId);
+		if (! $factory) {
+			return $this->bad("工厂不存在");
+		}
+		
+		$orgDAO = new OrgDAO($db);
+		$org = $orgDAO->getOrgById($orgId);
+		if (! $org) {
+			return $this->bad("组织机构不存在");
+		}
+		
+		$userDAO = new UserDAO($db);
+		$user = $userDAO->getUserById($bizUserId);
+		if (! $user) {
+			return $this->bad("业务员不存在");
+		}
+		
+		$id = $this->newId();
+		$ref = $this->genNewBillRef($companyId);
+		
+		// 主表
+		$sql = "insert into t_dmo_bill(id, ref, bill_status, deal_date, biz_dt, org_id, biz_user_id,
+					goods_money, tax, money_with_tax, input_user_id, factory_id, contact, tel, fax,
+					deal_address, bill_memo, payment_type, date_created, data_org, company_id)
+				values ('%s', '%s', 0, '%s', '%s', '%s', '%s',
+					0, 0, 0, '%s', '%s', '%s', '%s', '%s',
+					'%s', '%s', %d, now(), '%s', '%s')";
+		$rc = $db->execute($sql, $id, $ref, $dealDate, $dealDate, $orgId, $bizUserId, $loginUserId, 
+				$factoryId, $contact, $tel, $fax, $dealAddress, $billMemo, $paymentType, $dataOrg, 
+				$companyId);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 明细表
+		$goodsDAO = new GoodsDAO($db);
+		foreach ( $items as $i => $v ) {
+			$goodsId = $v["goodsId"];
+			if (! $goodsId) {
+				continue;
+			}
+			$goods = $goodsDAO->getGoodsById($goodsId);
+			if (! $goods) {
+				continue;
+			}
+			
+			$goodsCount = $v["goodsCount"];
+			if ($goodsCount <= 0) {
+				return $this->bad("生产数量需要大于0");
+			}
+			
+			$goodsPrice = $v["goodsPrice"];
+			if ($goodsPrice < 0) {
+				return $this->bad("单价不能是负数");
+			}
+			
+			$goodsMoney = $v["goodsMoney"];
+			$taxRate = $v["taxRate"];
+			$tax = $v["tax"];
+			$moneyWithTax = $v["moneyWithTax"];
+			$memo = $v["memo"];
+			
+			$sql = "insert into t_dmo_bill_detail(id, date_created, goods_id, goods_count, goods_money,
+						goods_price, dmobill_id, tax_rate, tax, money_with_tax, dmw_count, left_count,
+						show_order, data_org, company_id, memo)
+					values ('%s', now(), '%s', convert(%f, $fmt), %f,
+						%f, '%s', %d, %f, %f, 0, convert(%f, $fmt), %d, '%s', '%s', '%s')";
+			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsMoney, 
+					$goodsPrice, $id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i, $dataOrg, 
+					$companyId, $memo);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+		}
+		
+		// 同步主表的金额合计字段
+		$sql = "select sum(goods_money) as sum_goods_money, sum(tax) as sum_tax,
+					sum(money_with_tax) as sum_money_with_tax
+				from t_dmo_bill_detail
+				where dmobill_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$sumGoodsMoney = $data[0]["sum_goods_money"];
+		if (! $sumGoodsMoney) {
+			$sumGoodsMoney = 0;
+		}
+		$sumTax = $data[0]["sum_tax"];
+		if (! $sumTax) {
+			$sumTax = 0;
+		}
+		$sumMoneyWithTax = $data[0]["sum_money_with_tax"];
+		if (! $sumMoneyWithTax) {
+			$sumMoneyWithTax = 0;
+		}
+		
+		$sql = "update t_dmo_bill
+				set goods_money = %f, tax = %f, money_with_tax = %f
+				where id = '%s' ";
+		$rc = $db->execute($sql, $sumGoodsMoney, $sumTax, $sumMoneyWithTax, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		$bill["id"] = $id;
+		$bill["ref"] = $ref;
+		
+		// 操作成功
+		return null;
 	}
 
 	/**

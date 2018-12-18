@@ -414,6 +414,22 @@ class FactoryDAO extends PSIBaseExDAO {
 		];
 	}
 
+	public function getFactoryById($id) {
+		$db = $this->db;
+		
+		$sql = "select code, name from t_factory where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if ($data) {
+			return [
+					"id" => $id,
+					"code" => $data[0]["code"],
+					"name" => $data[0]["name"]
+			];
+		} else {
+			return null;
+		}
+	}
+
 	/**
 	 * 新建工厂
 	 *

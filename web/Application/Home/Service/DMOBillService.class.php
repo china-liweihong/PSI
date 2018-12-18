@@ -117,4 +117,18 @@ class DMOBillService extends PSIBaseExService {
 		$dao = new DMOBillDAO($this->db());
 		return $dao->dmobillList($params);
 	}
+
+	/**
+	 * 获得成品委托生产订单的明细信息
+	 */
+	public function dmoBillDetailList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$params["companyId"] = $this->getCompanyId();
+		
+		$dao = new DMOBillDAO($this->db());
+		return $dao->dmoBillDetailList($params);
+	}
 }

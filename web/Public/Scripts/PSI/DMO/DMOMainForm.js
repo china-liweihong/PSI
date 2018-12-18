@@ -525,7 +525,7 @@ Ext.define("PSI.DMO.DMOMainForm", {
 									align : "right"
 								}, {
 									header : "入库数量",
-									dataIndex : "pwCount",
+									dataIndex : "dmwCount",
 									align : "right"
 								}, {
 									header : "未入库数量",

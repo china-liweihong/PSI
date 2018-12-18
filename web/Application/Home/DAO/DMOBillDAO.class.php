@@ -457,4 +457,54 @@ class DMOBillDAO extends PSIBaseExDAO {
 				"totalCount" => $cnt
 		];
 	}
+
+	/**
+	 * 获得成品委托生产订单的明细信息
+	 */
+	public function dmoBillDetailList($params) {
+		$db = $this->db;
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->emptyResult();
+		}
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
+		// id: 成品委托生产订单id
+		$id = $params["id"];
+		
+		$sql = "select p.id, g.code, g.name, g.spec, convert(p.goods_count, " . $fmt . ") as goods_count,
+					p.goods_price, p.goods_money,
+					convert(p.dmw_count, " . $fmt . ") as dmw_count,
+					convert(p.left_count, " . $fmt . ") as left_count, p.memo,
+					p.tax_rate, p.tax, p.money_with_tax, u.name as unit_name
+				from t_dmo_bill_detail p, t_goods g, t_goods_unit u
+				where p.dmobill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
+				order by p.show_order";
+		$result = [];
+		$data = $db->query($sql, $id);
+		
+		foreach ( $data as $v ) {
+			$result[] = [
+					"id" => $v["id"],
+					"goodsCode" => $v["code"],
+					"goodsName" => $v["name"],
+					"goodsSpec" => $v["spec"],
+					"goodsCount" => $v["goods_count"],
+					"goodsPrice" => $v["goods_price"],
+					"goodsMoney" => $v["goods_money"],
+					"taxRate" => $v["tax_rate"],
+					"tax" => $v["tax"],
+					"moneyWithTax" => $v["money_with_tax"],
+					"unitName" => $v["unit_name"],
+					"dmwCount" => $v["dmw_count"],
+					"leftCount" => $v["left_count"],
+					"memo" => $v["memo"]
+			];
+		}
+		
+		return $result;
+	}
 }

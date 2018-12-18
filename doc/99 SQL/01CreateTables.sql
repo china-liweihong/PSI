@@ -1253,6 +1253,49 @@ CREATE TABLE IF NOT EXISTS `t_dmo_bill_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+DROP TABLE IF EXISTS `t_dmw_bill`;
+CREATE TABLE IF NOT EXISTS `t_dmw_bill` (
+  `id` varchar(255) NOT NULL,
+  `ref` varchar(255) NOT NULL,
+  `factory_id` varchar(255) NOT NULL,
+  `warehouse_id` varchar(255) NOT NULL,
+  `biz_user_id` varchar(255) NOT NULL,
+  `biz_dt` datetime NOT NULL,
+  `input_user_id` varchar(255) NOT NULL,
+  `date_created` datetime DEFAULT NULL,
+  `bill_status` int(11) NOT NULL,
+  `goods_money` decimal(19,2) NOT NULL,
+  `payment_type` int(11) NOT NULL DEFAULT 0,
+  `data_org` varchar(255) DEFAULT NULL,
+  `company_id` varchar(255) DEFAULT NULL,
+  `bill_memo` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `t_dmw_bill_detail`;
+CREATE TABLE IF NOT EXISTS `t_dmw_bill_detail` (
+  `id` varchar(255) NOT NULL,
+  `dmwbill_id` varchar(255) NOT NULL,
+  `show_order` int(11) NOT NULL,
+  `goods_id` varchar(255) NOT NULL,
+  `goods_count` decimal(19,8) NOT NULL,
+  `goods_money` decimal(19,2) NOT NULL,
+  `goods_price` decimal(19,2) NOT NULL,
+  `date_created` datetime DEFAULT NULL,
+  `memo` varchar(1000) DEFAULT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
+  `company_id` varchar(255) DEFAULT NULL,
+  `dmobilldetail_id` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `t_dmo_dmw`;
+CREATE TABLE IF NOT EXISTS `t_dmo_dmw` (
+  `dmo_id` varchar(255) NOT NULL,
+  `dmw_id` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

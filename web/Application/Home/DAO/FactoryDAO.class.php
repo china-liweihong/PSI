@@ -771,6 +771,20 @@ class FactoryDAO extends PSIBaseExDAO {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
 		
+		// 删除应付总账
+		$sql = "delete from t_payables where ca_id = '%s' and ca_type = 'factory' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 删除应付明细账
+		$sql = "delete from t_payables_detail where ca_id = '%s' and ca_type = 'factory' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
 		// 操作成功
 		$params["code"] = $code;
 		$params["name"] = $name;

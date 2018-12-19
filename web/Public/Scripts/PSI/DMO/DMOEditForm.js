@@ -293,7 +293,7 @@ Ext.define("PSI.DMO.DMOEditForm", {
 		var el = me.getEl() || Ext.getBody();
 		el.mask(PSI.Const.LOADING);
 		Ext.Ajax.request({
-					url : PSI.Const.BASE_URL + "Home/DM/dmoBillInfo",
+					url : me.URL("Home/DM/dmoBillInfo"),
 					params : {
 						id : Ext.getCmp("hiddenId").getValue()
 					},
@@ -302,7 +302,7 @@ Ext.define("PSI.DMO.DMOEditForm", {
 						el.unmask();
 
 						if (success) {
-							var data = Ext.JSON.decode(response.responseText);
+							var data = me.decodeJSON(response.responseText);
 
 							if (data.ref) {
 								Ext.getCmp("editRef").setValue(data.ref);
@@ -366,9 +366,8 @@ Ext.define("PSI.DMO.DMOEditForm", {
 	onOK : function() {
 		var me = this;
 		Ext.getBody().mask("正在保存中...");
-		Ext.Ajax.request({
-			url : PSI.Const.BASE_URL + "Home/DM/editDMOBill",
-			method : "POST",
+		me.ajax({
+			url : me.URL("Home/DM/editDMOBill"),
 			params : {
 				jsonStr : me.getSaveData()
 			},
@@ -376,19 +375,18 @@ Ext.define("PSI.DMO.DMOEditForm", {
 				Ext.getBody().unmask();
 
 				if (success) {
-					var data = Ext.JSON.decode(response.responseText);
+					var data = me.decodeJSON(response.responseText);
 					if (data.success) {
-						PSI.MsgBox.showInfo("成功保存数据", function() {
+						me.showInfo("成功保存数据", function() {
 									me.close();
 									me.getParentForm().refreshMainGrid(data.id);
 								});
 					} else {
-						PSI.MsgBox.showInfo(data.msg);
+						me.showInfo(data.msg);
 					}
 				}
 			}
 		});
-
 	},
 
 	onEditSpecialKey : function(field, e) {
@@ -820,7 +818,7 @@ Ext.define("PSI.DMO.DMOEditForm", {
 		Ext.getCmp("buttonSave").setDisabled(true);
 		Ext.getCmp("buttonCancel").setText("关闭");
 		Ext.getCmp("editDealDate").setReadOnly(true);
-		Ext.getCmp("editSupplier").setReadOnly(true);
+		Ext.getCmp("editFactory").setReadOnly(true);
 		Ext.getCmp("editDealAddress").setReadOnly(true);
 		Ext.getCmp("editContact").setReadOnly(true);
 		Ext.getCmp("editTel").setReadOnly(true);

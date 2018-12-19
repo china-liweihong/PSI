@@ -67,7 +67,7 @@ class DMOBillDAO extends PSIBaseExDAO {
 						p.org_id, o.full_name, p.biz_user_id, u.name as biz_user_name,
 						p.payment_type, p.bill_memo, p.bill_status
 					from t_dmo_bill p, t_factory f, t_user u, t_org o
-					where p.id = '%s' and p.supplier_id = f.id
+					where p.id = '%s' and p.factory_id = f.id
 						and p.biz_user_id = u.id
 						and p.org_id = o.id";
 			$data = $db->query($sql, $id);
@@ -95,7 +95,7 @@ class DMOBillDAO extends PSIBaseExDAO {
 							p.goods_price, p.goods_money,
 							p.tax_rate, p.tax, p.money_with_tax, u.name as unit_name, p.memo
 						from t_dmo_bill_detail p, t_goods g, t_goods_unit u
-						where p.pobill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
+						where p.dmobill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
 						order by p.show_order";
 				$items = [];
 				$data = $db->query($sql, $id);

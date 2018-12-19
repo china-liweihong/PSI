@@ -507,4 +507,54 @@ class DMOBillDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 成品委托生产订单的入库情况列表
+	 */
+	public function dmoBillDMWBillList($params) {
+		$db = $this->db;
+		
+		// id: 成品委托生产订单id
+		$id = $params["id"];
+		
+		$sql = "select b.id, b.bill_status, b.ref, b.biz_dt, u1.name as biz_user_name, u2.name as input_user_name,
+					b.goods_money, w.name as warehouse_name, f.name as factory_name,
+					b.date_created, b.payment_type
+				from t_dmw_bill b, t_warehouse w, t_factory f, t_user u1, t_user u2,
+					t_dmo_dmw dmow
+				where (dmow.dmo_id = '%s') and (dmow.dmw_id = b.id)
+				and (b.warehouse_id = w.id) and (b.factory_id = f.id)
+				and (b.biz_user_id = u1.id) and (b.input_user_id = u2.id)
+				order by b.ref ";
+		$data = $db->query($sql, $id);
+		$result = [];
+		
+		foreach ( $data as $v ) {
+			$billStatus = $v["bill_status"];
+			$bs = "";
+			if ($billStatus == 0) {
+				$bs = "待入库";
+			} else if ($billStatus == 1000) {
+				$bs = "已入库";
+			} else if ($billStatus == 2000) {
+				$bs = "已退货";
+			}
+			
+			$result[] = [
+					"id" => $v["id"],
+					"ref" => $v["ref"],
+					"bizDate" => $this->toYMD($v["biz_dt"]),
+					"factoryName" => $v["factory_name"],
+					"warehouseName" => $v["warehouse_name"],
+					"inputUserName" => $v["input_user_name"],
+					"bizUserName" => $v["biz_user_name"],
+					"billStatus" => $bs,
+					"amount" => $v["goods_money"],
+					"dateCreated" => $v["date_created"],
+					"paymentType" => $v["payment_type"]
+			];
+		}
+		
+		return $result;
+	}
 }

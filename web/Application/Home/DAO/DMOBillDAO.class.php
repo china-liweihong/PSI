@@ -800,4 +800,49 @@ class DMOBillDAO extends PSIBaseExDAO {
 		$params["ref"] = $ref;
 		return null;
 	}
+
+	/**
+	 * 取消审核成品委托生产订单
+	 */
+	public function cancelConfirmDMOBill(& $params) {
+		$db = $this->db;
+		
+		// 成品委托生产订单id
+		$id = $params["id"];
+		
+		$bill = $this->getDMOBillById($id);
+		if (! $bill) {
+			return $this->bad("要取消审核的成品委托生产订单不存在");
+		}
+		
+		$ref = $bill["ref"];
+		
+		$billStatus = $bill["billStatus"];
+		if ($billStatus > 1000) {
+			return $this->bad("成品委托生产订单(单号:{$ref})不能取消审核");
+		}
+		
+		if ($billStatus == 0) {
+			return $this->bad("成品委托生产订单(单号:{$ref})还没有审核，无需进行取消审核操作");
+		}
+		
+		$sql = "select count(*) as cnt from t_dmo_dmw where dmo_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("成品委托生产订单(单号:{$ref})已经生成了成品委托生产入库单，不能取消审核");
+		}
+		
+		$sql = "update t_dmo_bill
+				set bill_status = 0, confirm_user_id = null, confirm_date = null
+				where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		$params["ref"] = $ref;
+		return null;
+	}
 }

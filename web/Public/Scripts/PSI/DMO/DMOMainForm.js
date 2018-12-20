@@ -88,26 +88,26 @@ Ext.define("PSI.DMO.DMOMainForm", {
 					text : "审核",
 					scope : me,
 					handler : me.onCommit,
-					hidden : me.getPermission().confirm == "0",
+					hidden : me.getPermission().commit == "0",
 					id : "buttonCommit"
 				}, {
 					text : "取消审核",
 					scope : me,
 					handler : me.onCancelConfirm,
-					hidden : me.getPermission().confirm == "0",
+					hidden : me.getPermission().commit == "0",
 					id : "buttonCancelConfirm"
 				}, {
 					xtype : "tbseparator",
-					hidden : me.getPermission().confirm == "0",
+					hidden : me.getPermission().commit == "0",
 					id : "tbseparator2"
 				}, {
 					text : "生成成品委托生产入库单",
 					scope : me,
 					handler : me.onGenDMWBill,
-					hidden : me.getPermission().genPWBill == "0",
+					hidden : me.getPermission().genDMWBill == "0",
 					id : "buttonGenDMWBill"
 				}, {
-					hidden : me.getPermission().genPWBill == "0",
+					hidden : me.getPermission().genDMWBill == "0",
 					xtype : "tbseparator"
 				}, {
 					text : "关闭订单",

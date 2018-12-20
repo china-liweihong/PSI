@@ -845,4 +845,71 @@ class DMOBillDAO extends PSIBaseExDAO {
 		$params["ref"] = $ref;
 		return null;
 	}
+
+	/**
+	 * 关闭成品委托生产订单
+	 */
+	public function closeDMOBill(& $params) {
+		$db = $this->db;
+		
+		// 成品委托生产订单id
+		$id = $params["id"];
+		
+		$bill = $this->getDMOBillById($id);
+		if (! $bill) {
+			return $this->bad("要关闭的成品委托生产订单不存在");
+		}
+		
+		$ref = $bill["ref"];
+		$billStatus = $bill["billStatus"];
+		
+		if ($billStatus >= 4000) {
+			return $this->bad("成品委托生产订单已经被关闭");
+		}
+		
+		// 检查该成品委托生产订单是否有生成的成品委托生产入库单，并且这些成品委托生产入库单是没有提交入库的
+		// 如果存在这类成品委托生产入库单，那么该成品委托生产订单不能关闭。
+		$sql = "select count(*) as cnt
+				from t_dmw_bill w, t_dmo_dmw p
+				where w.id = p.dmw_id and p.dmo_id = '%s'
+					and w.bill_status = 0 ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			$info = "当前成品委托生产订单生成的入库单中还有没提交的<br/><br/>把这些入库单删除后，才能关闭采购订单";
+			return $this->bad($info);
+		}
+		
+		if ($billStatus < 1000) {
+			return $this->bad("当前成品委托生产订单还没有审核，没有审核的成品委托生产订单不能关闭");
+		}
+		
+		$newBillStatus = - 1;
+		if ($billStatus == 1000) {
+			// 当前订单只是审核了
+			$newBillStatus = 4000;
+		} else if ($billStatus == 2000) {
+			// 部分入库
+			$newBillStatus = 4001;
+		} else if ($billStatus == 3000) {
+			// 全部入库
+			$newBillStatus = 4002;
+		}
+		
+		if ($newBillStatus == - 1) {
+			return $this->bad("当前成品委托生产订单的订单状态是不能识别的状态码：{$billStatus}");
+		}
+		
+		$sql = "update t_dmo_bill
+				set bill_status = %d
+				where id = '%s' ";
+		$rc = $db->execute($sql, $newBillStatus, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		$params["ref"] = $ref;
+		return null;
+	}
 }

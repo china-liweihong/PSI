@@ -124,6 +124,7 @@ class DMController extends PSIBaseController {
 			$us = new UserService();
 			if (! $us->hasPermission(FIdConst::DMO_DELETE)) {
 				$this->ajaxReturn($this->noPermission("删除成品委托生产订单"));
+				return;
 			}
 			
 			$params = [
@@ -143,6 +144,7 @@ class DMController extends PSIBaseController {
 			$us = new UserService();
 			if (! $us->hasPermission(FIdConst::DMO_COMMIT)) {
 				$this->ajaxReturn($this->noPermission("审核成品委托生产订单"));
+				return;
 			}
 			
 			$params = [
@@ -162,6 +164,7 @@ class DMController extends PSIBaseController {
 			$us = new UserService();
 			if (! $us->hasPermission(FIdConst::DMO_COMMIT)) {
 				$this->ajaxReturn($this->noPermission("取消审核成品委托生产订单"));
+				return;
 			}
 			
 			$params = [
@@ -170,6 +173,26 @@ class DMController extends PSIBaseController {
 			
 			$service = new DMOBillService();
 			$this->ajaxReturn($service->cancelConfirmDMOBill($params));
+		}
+	}
+
+	/**
+	 * 关闭成品委托生产订单
+	 */
+	public function closeDMOBill() {
+		if (IS_POST) {
+			$us = new UserService();
+			if (! $us->hasPermission(FIdConst::DMO_CLOSE_BILL)) {
+				$this->ajaxReturn($this->noPermission("关闭成品委托生产订单"));
+				return;
+			}
+			
+			$params = [
+					"id" => I("post.id")
+			];
+			
+			$service = new DMOBillService();
+			$this->ajaxReturn($service->closeDMOBill($params));
 		}
 	}
 }

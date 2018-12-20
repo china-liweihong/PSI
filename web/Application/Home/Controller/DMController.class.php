@@ -195,4 +195,24 @@ class DMController extends PSIBaseController {
 			$this->ajaxReturn($service->closeDMOBill($params));
 		}
 	}
+
+	/**
+	 * 取消关闭成品委托生产订单
+	 */
+	public function cancelClosedDMOBill() {
+		if (IS_POST) {
+			$us = new UserService();
+			if (! $us->hasPermission(FIdConst::DMO_CLOSE_BILL)) {
+				$this->ajaxReturn($this->noPermission("取消关闭成品委托生产订单"));
+				return;
+			}
+			
+			$params = [
+					"id" => I("post.id")
+			];
+			
+			$service = new DMOBillService();
+			$this->ajaxReturn($service->cancelClosedDMOBill($params));
+		}
+	}
 }

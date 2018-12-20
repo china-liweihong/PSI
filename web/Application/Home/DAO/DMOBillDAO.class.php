@@ -912,4 +912,52 @@ class DMOBillDAO extends PSIBaseExDAO {
 		$params["ref"] = $ref;
 		return null;
 	}
+
+	/**
+	 * 取消关闭成品委托生产订单
+	 */
+	public function cancelClosedDMOBill(& $params) {
+		$db = $this->db;
+		
+		// 成品委托生产订单id
+		$id = $params["id"];
+		
+		$bill = $this->getDMOBillById($id);
+		
+		if (! $bill) {
+			return $this->bad("要关闭的成品委托生产订单不存在");
+		}
+		
+		$ref = $bill["ref"];
+		$billStatus = $bill["billStatus"];
+		
+		if ($billStatus < 4000) {
+			return $this->bad("成品委托生产订单没有被关闭，无需取消");
+		}
+		
+		$newBillStatus = - 1;
+		if ($billStatus == 4000) {
+			$newBillStatus = 1000;
+		} else if ($billStatus == 4001) {
+			$newBillStatus = 2000;
+		} else if ($billStatus == 4002) {
+			$newBillStatus = 3000;
+		}
+		
+		if ($newBillStatus == - 1) {
+			return $this->bad("当前成品委托生产订单的订单状态是不能识别的状态码：{$billStatus}");
+		}
+		
+		$sql = "update t_dmo_bill
+				set bill_status = %d
+				where id = '%s' ";
+		$rc = $db->execute($sql, $newBillStatus, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		$params["ref"] = $ref;
+		return null;
+	}
 }

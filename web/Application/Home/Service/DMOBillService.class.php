@@ -143,4 +143,34 @@ class DMOBillService extends PSIBaseExService {
 		$dao = new DMOBillDAO($this->db());
 		return $dao->dmoBillDMWBillList($params);
 	}
+
+	/**
+	 * 删除成品委托生产订单
+	 */
+	public function deleteDMOBill($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$db = $this->db();
+		
+		$db->startTrans();
+		
+		$dao = new DMOBillDAO($db);
+		
+		$rc = $dao->deleteDMOBill($params);
+		if ($rc) {
+			$db->rollback();
+			return $rc;
+		}
+		
+		$ref = $params["ref"];
+		$log = "删除成品委托生产订单，单号：{$ref}";
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
+		return $this->ok();
+	}
 }

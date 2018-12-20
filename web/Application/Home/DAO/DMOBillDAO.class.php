@@ -726,4 +726,41 @@ class DMOBillDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 删除成品委托生产订单
+	 */
+	public function deleteDMOBill(& $params) {
+		$db = $this->db;
+		
+		// 成品委托生产订单id
+		$id = $params["id"];
+		
+		$bill = $this->getDMOBillById($id);
+		
+		if (! $bill) {
+			return $this->bad("要删除的成品委托生产订单不存在");
+		}
+		$ref = $bill["ref"];
+		$billStatus = $bill["billStatus"];
+		if ($billStatus > 0) {
+			return $this->bad("成品委托生产订单(单号：{$ref})已经审核，不能被删除");
+		}
+		
+		$sql = "delete from t_dmo_bill_detail where dmobill_id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		$sql = "delete from t_dmo_bill where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		$params["ref"] = $ref;
+		return null;
+	}
 }

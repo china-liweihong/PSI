@@ -115,4 +115,23 @@ class DMController extends PSIBaseController {
 			$this->ajaxReturn($service->dmoBillDMWBillList($params));
 		}
 	}
+
+	/**
+	 * 删除成品委托生产订单
+	 */
+	public function deleteDMOBill() {
+		if (IS_POST) {
+			$us = new UserService();
+			if (! $us->hasPermission(FIdConst::DMO_DELETE)) {
+				$this->ajaxReturn($this->noPermission("删除成品委托生产订单"));
+			}
+			
+			$params = [
+					"id" => I("post.id")
+			];
+			
+			$service = new DMOBillService();
+			$this->ajaxReturn($service->deleteDMOBill($params));
+		}
+	}
 }

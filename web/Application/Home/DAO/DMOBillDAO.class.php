@@ -763,4 +763,41 @@ class DMOBillDAO extends PSIBaseExDAO {
 		$params["ref"] = $ref;
 		return null;
 	}
+
+	/**
+	 * 审核成品委托生产订单
+	 */
+	public function commitDMOBill(& $params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		$loginUserId = $params["loginUserId"];
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->badParam("loginUserId");
+		}
+		
+		$bill = $this->getDMOBillById($id);
+		if (! $bill) {
+			return $this->bad("要审核的成品委托生产订单不存在");
+		}
+		$ref = $bill["ref"];
+		$billStatus = $bill["billStatus"];
+		if ($billStatus > 0) {
+			return $this->bad("成品委托生产订单(单号：$ref)已经被审核，不能再次审核");
+		}
+		
+		$sql = "update t_dmo_bill
+				set bill_status = 1000,
+					confirm_user_id = '%s',
+					confirm_date = now()
+				where id = '%s' ";
+		$rc = $db->execute($sql, $loginUserId, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		$params["ref"] = $ref;
+		return null;
+	}
 }

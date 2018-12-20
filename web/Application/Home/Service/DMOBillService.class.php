@@ -173,4 +173,38 @@ class DMOBillService extends PSIBaseExService {
 		
 		return $this->ok();
 	}
+
+	/**
+	 * 审核成品委托生产订单
+	 */
+	public function commitDMOBill($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$db = $this->db();
+		$db->startTrans();
+		
+		$dao = new DMOBillDAO($db);
+		
+		$params["loginUserId"] = $this->getLoginUserId();
+		
+		$rc = $dao->commitDMOBill($params);
+		if ($rc) {
+			$db->rollback();
+			return $rc;
+		}
+		
+		$ref = $params["ref"];
+		$id = $params["id"];
+		
+		// 记录业务日志
+		$log = "审核成品委托生产订单，单号：{$ref}";
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
+		return $this->ok($id);
+	}
 }

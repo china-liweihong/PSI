@@ -892,42 +892,42 @@ class FIdConst {
 	
 	/**
 	 * 工厂 - 新增工厂分类
-	 * 
+	 *
 	 * @var string
 	 */
 	const FACTORY_CATEGORY_ADD = "2034-03";
 	
 	/**
 	 * 工厂 - 编辑工厂分类
-	 * 
+	 *
 	 * @var string
 	 */
 	const FACTORY_CATEGORY_EDIT = "2034-04";
 	
 	/**
 	 * 工厂 - 删除工厂分类
-	 * 
+	 *
 	 * @var string
 	 */
 	const FACTORY_CATEGORY_DELETE = "2034-05";
 	
 	/**
 	 * 工厂 - 新增工厂
-	 * 
+	 *
 	 * @var string
 	 */
 	const FACTORY_ADD = "2034-06";
 	
 	/**
 	 * 工厂 - 编辑工厂
-	 * 
+	 *
 	 * @var string
 	 */
 	const FACTORY_EDIT = "2034-07";
 	
 	/**
 	 * 工厂 - 删除工厂
-	 * 
+	 *
 	 * @var string
 	 */
 	const FACTORY_DELETE = "2034-08";
@@ -994,6 +994,55 @@ class FIdConst {
 	 * @var string
 	 */
 	const DMO_PRINT = "2035-08";
+	
+	/**
+	 * 成品委托生产入库单
+	 *
+	 * @var string
+	 */
+	const DMW = "2036";
+	
+	/**
+	 * 成品委托生产入库单 - 新建成品委托生产入库单
+	 *
+	 * @var string
+	 */
+	const DMW_ADD = "2036-01";
+	
+	/**
+	 * 成品委托生产入库单 - 编辑成品委托生产入库单
+	 *
+	 * @var string
+	 */
+	const DMW_EDIT = "2036-02";
+	
+	/**
+	 * 成品委托生产入库单 - 删除成品委托生产入库单
+	 *
+	 * @var string
+	 */
+	const DMW_DELETE = "2036-03";
+	
+	/**
+	 * 成品委托生产入库单 - 提交入库
+	 *
+	 * @var string
+	 */
+	const DMW_COMMIT = "2036-04";
+	
+	/**
+	 * 成品委托生产入库单 - 单据生成PDF
+	 *
+	 * @var string
+	 */
+	const DMW_PDF = "2036-05";
+	
+	/**
+	 * 成品委托生产入库单 - 打印
+	 *
+	 * @var string
+	 */
+	const DMW_PRINT = "2036-06";
 	
 	// -------------------------
 	// 财务总账系统GL fid使用2100段

@@ -249,6 +249,10 @@ class MainMenuController extends Controller {
 				// 成品委托生产订单
 				redirect(__ROOT__ . "/Home/DM/dmobillIndex");
 				break;
+			case FIdConst::DMW :
+				// 成品委托生产入库
+				redirect(__ROOT__ . "/Home/DM/dmwbillIndex");
+				break;
 			default :
 				redirect(__ROOT__ . "/Home");
 		}

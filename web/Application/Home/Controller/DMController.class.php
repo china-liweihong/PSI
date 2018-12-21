@@ -215,4 +215,28 @@ class DMController extends PSIBaseController {
 			$this->ajaxReturn($service->cancelClosedDMOBill($params));
 		}
 	}
+
+	/**
+	 * 成品委托生产入库 - 主页面
+	 */
+	public function dmwbillIndex() {
+		$us = new UserService();
+		
+		if ($us->hasPermission(FIdConst::DMW)) {
+			$this->initVar();
+			
+			$this->assign("pAdd", $us->hasPermission(FIdConst::DMW_ADD) ? "1" : "0");
+			$this->assign("pEdit", $us->hasPermission(FIdConst::DMW_EDIT) ? "1" : "0");
+			$this->assign("pDelete", $us->hasPermission(FIdConst::DMW_DELETE) ? "1" : "0");
+			$this->assign("pCommit", $us->hasPermission(FIdConst::DMW_COMMIT) ? "1" : "0");
+			$this->assign("pGenPDF", $us->hasPermission(FIdConst::DMW_PDF) ? "1" : "0");
+			$this->assign("pPrint", $us->hasPermission(FIdConst::DMW_PRINT) ? "1" : "0");
+			
+			$this->assign("title", "成品委托生产入库");
+			
+			$this->display();
+		} else {
+			$this->gotoLoginPage("/Home/DM/dmwbillIndex");
+		}
+	}
 }

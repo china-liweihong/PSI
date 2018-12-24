@@ -1,5 +1,16 @@
 <layout name="layout" />
 
+<script src="{$uri}Public/Scripts/PSI/DMW/DMWMainForm.js?dt={$dtFlag}"
+	type="text/javascript"></script>
+
+<script
+	src="{$uri}Public/Scripts/PSI/Warehouse/WarehouseField.js?dt={$dtFlag}"
+	type="text/javascript"></script>
+<script src="{$uri}Public/Scripts/PSI/User/UserField.js?dt={$dtFlag}"
+	type="text/javascript"></script>
+<script
+	src="{$uri}Public/Scripts/PSI/Factory/FactoryField.js?dt={$dtFlag}"
+	type="text/javascript"></script>
 
 <script>
 	Ext.onReady(function() {
@@ -17,6 +28,9 @@
 			print : "{$pPrint}"
 		};
 
+		app.add(Ext.create("PSI.DMW.DMWMainForm", {
+			permission : permission
+		}));
 		app.setAppHeader({
 			title : "{$title}"
 		});

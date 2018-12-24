@@ -31,21 +31,6 @@ Ext.define("PSI.DMW.DMWEditForm", {
 			layout : "border",
 			defaultFocus : "editSupplier",
 			tbar : [{
-						xtype : "displayfield",
-						value : "条码录入",
-						id : "displayFieldBarcode"
-					}, {
-						xtype : "textfield",
-						cls : "PSI-toolbox",
-						id : "editBarcode",
-						listeners : {
-							specialkey : {
-								fn : me.onEditBarcodeKeydown,
-								scope : me
-							}
-						}
-
-					}, " ", {
 						text : "保存",
 						id : "buttonSave",
 						iconCls : "PSI-button-ok",
@@ -193,7 +178,8 @@ Ext.define("PSI.DMW.DMWEditForm", {
 											fn : me.onEditPaymentTypeSpecialKey,
 											scope : me
 										}
-									}
+									},
+									colspan : 2
 								}, {
 									id : "editBillMemo",
 									labelWidth : 60,
@@ -238,7 +224,6 @@ Ext.define("PSI.DMW.DMWEditForm", {
 		me.columnActionDelete = Ext.getCmp("columnActionDelete");
 		me.columnActionAdd = Ext.getCmp("columnActionAdd");
 		me.columnActionAppend = Ext.getCmp("columnActionAppend");
-		me.editBarcode = Ext.getCmp("editBarcode");
 
 		me.columnGoodsCode = Ext.getCmp("columnGoodsCode");
 		me.columnGoodsPrice = Ext.getCmp("columnGoodsPrice");
@@ -246,8 +231,6 @@ Ext.define("PSI.DMW.DMWEditForm", {
 
 		me.buttonSave = Ext.getCmp("buttonSave");
 		me.buttonCancel = Ext.getCmp("buttonCancel");
-
-		me.displayFieldBarcode = Ext.getCmp("displayFieldBarcode");
 	},
 
 	onWindowBeforeUnload : function(e) {
@@ -298,8 +281,6 @@ Ext.define("PSI.DMW.DMWEditForm", {
 						me.columnActionDelete.hide();
 						me.columnActionAdd.hide();
 						me.columnActionAppend.hide();
-
-						me.editBarcode.setDisabled(true);
 					} else {
 						if (!data.genBill) {
 							me.columnGoodsCode.setEditor({
@@ -738,73 +719,5 @@ Ext.define("PSI.DMW.DMWEditForm", {
 		me.columnActionDelete.hide();
 		me.columnActionAdd.hide();
 		me.columnActionAppend.hide();
-		me.displayFieldBarcode.setDisabled(true);
-		me.editBarcode.setDisabled(true);
-	},
-
-	onEditBarcodeKeydown : function(field, e) {
-		if (e.getKey() == e.ENTER) {
-			var me = this;
-
-			var el = Ext.getBody();
-			el.mask("查询中...");
-			var r = {
-				url : me.URL("Home/Goods/queryGoodsInfoByBarcodeForPW"),
-				params : {
-					barcode : field.getValue()
-				},
-				callback : function(options, success, response) {
-					el.unmask();
-
-					if (success) {
-						var data = me.decodeJSON(response.responseText);
-						if (data.success) {
-							var goods = {
-								goodsId : data.id,
-								goodsCode : data.code,
-								goodsName : data.name,
-								goodsSpec : data.spec,
-								unitName : data.unitName,
-								goodsCount : 1,
-								goodsPrice : data.purchasePrice,
-								goodsMoney : data.purchasePrice
-							};
-							me.addGoodsByBarCode(goods);
-							var edit = me.editBarcode;
-							edit.setValue(null);
-							edit.focus();
-						} else {
-							var edit = me.editBarcode;
-							edit.setValue(null);
-							me.showInfo(data.msg, function() {
-										edit.focus();
-									});
-						}
-					} else {
-						me.showInfo("网络错误");
-					}
-				}
-			};
-			me.ajax(r);
-		}
-	},
-
-	addGoodsByBarCode : function(goods) {
-		if (!goods) {
-			return;
-		}
-
-		var me = this;
-		var store = me.getGoodsGrid().getStore();
-
-		if (store.getCount() == 1) {
-			var r = store.getAt(0);
-			var id = r.get("goodsId");
-			if (id == null || id == "") {
-				store.removeAll();
-			}
-		}
-
-		store.add(goods);
 	}
 });

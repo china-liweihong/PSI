@@ -25,6 +25,7 @@ class GoodsDAO extends PSIBaseExDAO {
 		$name = $params["name"];
 		$spec = $params["spec"];
 		$barCode = $params["barCode"];
+		$brandId = $params["brandId"];
 		
 		$start = $params["start"];
 		$limit = $params["limit"];
@@ -64,6 +65,10 @@ class GoodsDAO extends PSIBaseExDAO {
 		if ($barCode) {
 			$sql .= " and (g.bar_code = '%s') ";
 			$queryParam[] = $barCode;
+		}
+		if ($brandId) {
+			$sql .= " and (g.brand_id = '%s') ";
+			$queryParam[] = $brandId;
 		}
 		
 		$sql .= " order by g.code limit %d, %d";
@@ -117,6 +122,10 @@ class GoodsDAO extends PSIBaseExDAO {
 		if ($barCode) {
 			$sql .= " and (g.bar_code = '%s') ";
 			$queryParam[] = $barCode;
+		}
+		if ($brandId) {
+			$sql .= " and (g.brand_id = '%s') ";
+			$queryParam[] = $brandId;
 		}
 		
 		$data = $db->query($sql, $queryParam);

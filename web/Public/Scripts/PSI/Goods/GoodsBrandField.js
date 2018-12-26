@@ -5,6 +5,10 @@ Ext.define("PSI.Goods.GoodsBrandField", {
 	extend : "Ext.form.field.Trigger",
 	alias : "widget.PSI_goods_brand_field",
 
+	config : {
+		showModal : false
+	},
+
 	initComponent : function() {
 		var me = this;
 		me.__idValue = null;
@@ -66,6 +70,7 @@ Ext.define("PSI.Goods.GoodsBrandField", {
 
 		var wnd = Ext.create("Ext.window.Window", {
 					title : "选择 - 商品品牌",
+					modal : me.getShowModal(),
 					width : 400,
 					height : 300,
 					layout : "border",
@@ -110,9 +115,11 @@ Ext.define("PSI.Goods.GoodsBrandField", {
 		wnd.on("close", function() {
 					me.focus();
 				});
-		wnd.on("deactivate", function() {
-					wnd.close();
-				});
+		if (!me.getShowModal()) {
+			wnd.on("deactivate", function() {
+						wnd.close();
+					});
+		}
 		me.wnd = wnd;
 
 		var editName = Ext.getCmp("__editGoodsBrand");

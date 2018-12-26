@@ -90,7 +90,7 @@ Ext.define("PSI.Goods.MainForm", {
 		me.queryTotalGoodsCount();
 
 		me.__queryEditNameList = ["editQueryCode", "editQueryName",
-				"editQuerySpec", "editQueryBarCode"];
+				"editQuerySpec", "editQueryBarCode", "editQueryBrand"];
 	},
 
 	getToolbarCmp : function() {
@@ -226,6 +226,21 @@ Ext.define("PSI.Goods.MainForm", {
 					fieldLabel : "条形码",
 					margin : "5, 0, 0, 0",
 					xtype : "textfield",
+					listeners : {
+						specialkey : {
+							fn : me.onQueryEditSpecialKey,
+							scope : me
+						}
+					}
+				}, {
+					id : "editQueryBrand",
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "品牌",
+					margin : "5, 0, 0, 0",
+					xtype : "PSI_goods_brand_field",
+					showModal : true,
 					listeners : {
 						specialkey : {
 							fn : me.onLastQueryEditSpecialKey,
@@ -724,6 +739,11 @@ Ext.define("PSI.Goods.MainForm", {
 			result.barCode = barCode;
 		}
 
+		var brandId = Ext.getCmp("editQueryBrand").getIdValue();
+		if (brandId) {
+			result.brandId = brandId;
+		}
+
 		return result;
 	},
 
@@ -761,6 +781,11 @@ Ext.define("PSI.Goods.MainForm", {
 			result.barCode = barCode;
 		}
 
+		var brandId = Ext.getCmp("editQueryBrand").getIdValue();
+		if (brandId) {
+			result.brandId = brandId;
+		}
+
 		return result;
 	},
 
@@ -794,6 +819,8 @@ Ext.define("PSI.Goods.MainForm", {
 				edit.setValue(null);
 			}
 		}
+
+		Ext.getCmp("editQueryBrand").clearIdValue();
 
 		me.onQuery();
 	},

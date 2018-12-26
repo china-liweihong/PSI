@@ -63,6 +63,7 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 		$name = $params["name"];
 		$spec = $params["spec"];
 		$barCode = $params["barCode"];
+		$brandId = $params["brandId"];
 		
 		$sql = "select count(*) as cnt 
 					from t_goods c
@@ -89,6 +90,10 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 		if ($barCode) {
 			$sql .= " and (c.bar_code = '%s') ";
 			$queryParam[] = $barCode;
+		}
+		if ($brandId) {
+			$sql .= " and (c.brand_id = '%s') ";
+			$queryParam[] = $brandId;
 		}
 		
 		$data = $db->query($sql, $queryParam);
@@ -127,9 +132,10 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 		$name = $params["name"];
 		$spec = $params["spec"];
 		$barCode = $params["barCode"];
+		$brandId = $params["brandId"];
 		
 		$inQuery = false;
-		if ($code || $name || $spec || $barCode) {
+		if ($code || $name || $spec || $barCode || $brandId) {
 			$inQuery = true;
 		}
 		

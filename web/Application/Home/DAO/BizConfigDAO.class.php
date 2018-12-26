@@ -228,6 +228,13 @@ class BizConfigDAO extends PSIBaseExDAO {
 						"value" => "DMO",
 						"note" => "",
 						"showOrder" => 611
+				],
+				[
+						"id" => "9003-12",
+						"name" => "成品委托生产入库单号前缀",
+						"value" => "DMW",
+						"note" => "",
+						"showOrder" => 612
 				]
 		];
 	}
@@ -504,7 +511,8 @@ class BizConfigDAO extends PSIBaseExDAO {
 				"9003-08",
 				"9003-09",
 				"9003-10",
-				"9003-11"
+				"9003-11",
+				"9003-12"
 		);
 		
 		// 检查值是否合法

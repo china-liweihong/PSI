@@ -1281,4 +1281,30 @@ class BizConfigDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 获得成品委托生产入库单单号前缀
+	 *
+	 * @param string $companyId        	
+	 * @return string
+	 */
+	public function getDMWBillRefPre($companyId) {
+		$result = "DMW";
+		
+		$db = $this->db;
+		
+		$id = "9003-12";
+		$sql = "select value from t_config
+				where id = '%s' and company_id = '%s' ";
+		$data = $db->query($sql, $id, $companyId);
+		if ($data) {
+			$result = $data[0]["value"];
+			
+			if ($result == null || $result == "") {
+				$result = "DMW";
+			}
+		}
+		
+		return $result;
+	}
 }

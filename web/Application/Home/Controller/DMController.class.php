@@ -255,4 +255,15 @@ class DMController extends PSIBaseController {
 			$this->ajaxReturn($ps->dmwBillInfo($params));
 		}
 	}
+
+	/**
+	 * 新增或编辑成品委托生产入库单
+	 */
+	public function editDMWBill() {
+		if (IS_POST) {
+			$json = I("post.jsonStr");
+			$service = new DMWBillService();
+			$this->ajaxReturn($service->editDMWBill($json));
+		}
+	}
 }

@@ -145,4 +145,24 @@ class DMWBillDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 新建成品委托生产入库单
+	 *
+	 * @param array $bill        	
+	 * @return array|null
+	 */
+	public function addDMWBill(& $bill) {
+		return $this->todo();
+	}
+
+	/**
+	 * 编辑成品委托生产入库单
+	 * 
+	 * @param array $bill        	
+	 * @return array|null
+	 */
+	public function updateDMWBill(& $bill) {
+		return $this->todo();
+	}
 }

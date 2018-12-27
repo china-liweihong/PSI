@@ -81,7 +81,7 @@ class DMOBillService extends PSIBaseExService {
 			
 			$log = "编辑成品委托生产订单，单号：{$ref}";
 		} else {
-			// 新建采购订单
+			// 新建
 			
 			$rc = $dao->addDMOBill($bill);
 			if ($rc) {

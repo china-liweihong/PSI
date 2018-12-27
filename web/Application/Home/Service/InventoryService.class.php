@@ -49,6 +49,7 @@ class InventoryService extends PSIBaseService {
 		$code = $params["code"];
 		$name = $params["name"];
 		$spec = $params["spec"];
+		$brandId = $params["brandId"];
 		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
@@ -120,6 +121,10 @@ class InventoryService extends PSIBaseService {
 			$sql .= " and (g.spec like '%s')";
 			$queryParams[] = "%{$spec}%";
 		}
+		if ($brandId) {
+			$sql .= " and (g.brand_id = '%s')";
+			$queryParams[] = $brandId;
+		}
 		if ($hasInv) {
 			$sql .= " and (convert(v.balance_count, $fmt) > 0) ";
 		}
@@ -171,6 +176,13 @@ class InventoryService extends PSIBaseService {
 		if ($spec) {
 			$sql .= " and (g.spec like '%s')";
 			$queryParams[] = "%{$spec}%";
+		}
+		if ($brandId) {
+			$sql .= " and (g.brand_id = '%s')";
+			$queryParams[] = $brandId;
+		}
+		if ($hasInv) {
+			$sql .= " and (convert(v.balance_count, $fmt) > 0) ";
 		}
 		
 		$data = $db->query($sql, $queryParams);

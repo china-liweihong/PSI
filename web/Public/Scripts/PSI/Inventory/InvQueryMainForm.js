@@ -32,7 +32,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 		Ext.apply(me, {
 					tbar : [{
 								xtype : "displayfield",
-								value : "查询条件: 商品编码"
+								value : "商品编码"
 							}, {
 								cls : "PSI-toolbox",
 								xtype : "textfield",
@@ -65,11 +65,25 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 								id : "editQuerySpec",
 								listeners : {
 									specialkey : {
-										fn : me.onLastQueryEditSpecialKey,
+										fn : me.onQueryEditSpecialKey,
 										scope : me
 									}
 								}
 							}, {
+								xtype : "displayfield",
+								value : "品牌"
+							}, {
+								cls : "PSI-toolbox",
+								xtype : "PSI_goods_brand_field",
+								showModal : true,
+								id : "editQueryBrand",
+								listeners : {
+									specialkey : {
+										fn : me.onLastQueryEditSpecialKey,
+										scope : me
+									}
+								}
+							}, " ", {
 								xtype : "checkbox",
 								boxLabel : "只显示有库存的商品",
 								inputValue : "1",
@@ -150,7 +164,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 		me.callParent(arguments);
 
 		me.__queryEditNameList = ["editQueryCode", "editQueryName",
-				"editQuerySpec"];
+				"editQuerySpec", "editQueryBrand"];
 
 		me.refreshWarehouseGrid();
 	},
@@ -644,6 +658,11 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 			result.hasInv = hasInv ? 1 : 0;
 		}
 
+		var brandId = Ext.getCmp("editQueryBrand").getIdValue();
+		if (brandId) {
+			result.brandId = brandId;
+		}
+
 		return result;
 	},
 
@@ -717,6 +736,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 		}
 
 		Ext.getCmp("editQueryHasInv").setValue(false);
+		Ext.getCmp("editQueryBrand").clearIdValue();
 
 		this.onQueryGoods();
 	},

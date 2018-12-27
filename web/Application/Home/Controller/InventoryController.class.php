@@ -68,6 +68,7 @@ class InventoryController extends PSIBaseController {
 					"code" => I("post.code"),
 					"name" => I("post.name"),
 					"spec" => I("post.spec"),
+					"brandId" => I("post.brandId"),
 					"hasInv" => I("post.hasInv"),
 					"sort" => I("post.sort"),
 					"page" => I("post.page"),

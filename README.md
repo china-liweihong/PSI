@@ -25,7 +25,6 @@ PSI的开源协议为GPL v3
 
 # PSI相关项目
 
-
 1. PSI使用帮助：https://gitee.com/crm8000/PSI_Help
 
 2. PSI移动端：https://gitee.com/crm8000/PSI_Mobile
@@ -39,32 +38,3 @@ PSI的开源协议为GPL v3
 # 技术支持
 
 如有技术方面的问题，可以提出Issue一起讨论：https://gitee.com/crm8000/PSI/issues
-
-# QA团队招募
-1. 完善PSI目前的单元测试部分的开发
-2. 加QQ：1569352868 了解详情
-3. 做QA是一场马拉松，只有跑过了极点后才能体会到乐趣，请三思再动
-
-# 致谢
-
-PSI使用了如下开源软件，没有你们，就没有PSI
- 
-1、PHP (http://php.net/)
-
-2、MySQL (http://www.mysql.com/)
-
-3、ExtJS 4.2 (http://www.sencha.com/)
-
-4、ThinkPHP 3.2.3 (http://www.thinkphp.cn/)
-
-5、pinyin_php (https://gitee.com/cik/pinyin_php)
-
-6、PHPExcel (https://github.com/PHPOffice/PHPExcel)
-
-7、TCPDF (http://www.tcpdf.org/)
-
-8、Material-UI (https://material-ui.com/)
-
-9、UmiJS (https://umijs.org/)
-
-10、DVA (https://github.com/dvajs/dva)

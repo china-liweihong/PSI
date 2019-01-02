@@ -909,7 +909,7 @@ class SOBillDAO extends PSIBaseExDAO {
 		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
 		$fmt = "decimal(19, " . $dataScale . ")";
 		
-		$bill["bizDT"] = $this->toYMD($data[0]["bizdt"]);
+		$bill["dealDate"] = $this->toYMD($data[0]["deal_date"]);
 		$bill["customerName"] = $data[0]["customer_name"];
 		$bill["warehouseName"] = $data[0]["warehouse_name"];
 		$bill["bizUserName"] = $data[0]["biz_user_name"];

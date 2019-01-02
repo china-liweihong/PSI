@@ -281,7 +281,7 @@ class SOBillService extends PSIBaseExService {
 				<table>
 					<tr><td colspan="2">单号：' . $ref . '</td></tr>
 					<tr><td colspan="2">客户：' . $bill["customerName"] . '</td></tr>
-					<tr><td>业务日期：' . $bill["bizDT"] . '</td><td>交货地址:' . $bill["dealAddress"] . '</td></tr>
+					<tr><td>交货日期：' . $bill["dealDate"] . '</td><td>交货地址:' . $bill["dealAddress"] . '</td></tr>
 					<tr><td>业务员：' . $bill["bizUserName"] . '</td><td></td></tr>
 					<tr><td colspan="2">销售金额:' . $bill["saleMoney"] . '</td></tr>
 				</table>

@@ -209,6 +209,8 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20181218_01();
 		$this->update_20181221_01();
 		
+		$this->update_20190103_01();
+		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
 		$sql = "insert into t_psi_db_version (db_version, update_dt) 
@@ -229,8 +231,27 @@ class UpdateDBService extends PSIBaseService {
 	// ============================================
 	private function notForgot() {
 	}
-	
-	private function update_20181221_01(){
+
+	private function update_20190103_01() {
+		// 本次更新：调拨单增加备注字段
+		$db = $this->db;
+		
+		$tableName = "t_it_bill";
+		$columnName = "bill_memo";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} varchar(255) DEFAULT NULL;";
+			$db->execute($sql);
+		}
+		
+		$tableName = "t_it_bill_detail";
+		$columnName = "memo";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} varchar(255) DEFAULT NULL;";
+			$db->execute($sql);
+		}
+	}
+
+	private function update_20181221_01() {
 		// 本次更新：新增模块 - 成品委托生产入库
 		$db = $this->db;
 		

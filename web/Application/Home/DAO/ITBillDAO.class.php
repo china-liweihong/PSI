@@ -267,6 +267,8 @@ class ITBillDAO extends PSIBaseExDAO {
 			return $this->bad("业务日期不正确");
 		}
 		
+		$billMemo = $bill["billMemo"];
+		
 		$items = $bill["items"];
 		
 		$dataOrg = $bill["dataOrg"];
@@ -289,20 +291,20 @@ class ITBillDAO extends PSIBaseExDAO {
 		// 新增
 		$sql = "insert into t_it_bill(id, bill_status, bizdt, biz_user_id,
 					date_created, input_user_id, ref, from_warehouse_id,
-					to_warehouse_id, data_org, company_id)
-				values ('%s', 0, '%s', '%s', now(), '%s', '%s', '%s', '%s', '%s', '%s')";
+					to_warehouse_id, data_org, company_id, bill_memo)
+				values ('%s', 0, '%s', '%s', now(), '%s', '%s', '%s', '%s', '%s', '%s', '%s')";
 		$id = $this->newId();
 		$ref = $this->genNewBillRef($companyId);
 		
 		$rc = $db->execute($sql, $id, $bizDT, $bizUserId, $loginUserId, $ref, $fromWarehouseId, 
-				$toWarehouseId, $dataOrg, $companyId);
+				$toWarehouseId, $dataOrg, $companyId, $billMemo);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
 		
 		$sql = "insert into t_it_bill_detail(id, date_created, goods_id, goods_count,
-					show_order, itbill_id, data_org, company_id)
-				values ('%s', now(), '%s', convert(%f, $fmt), %d, '%s', '%s', '%s')";
+					show_order, itbill_id, data_org, company_id, memo)
+				values ('%s', now(), '%s', convert(%f, $fmt), %d, '%s', '%s', '%s', '%s')";
 		foreach ( $items as $i => $v ) {
 			$goodsId = $v["goodsId"];
 			if (! $goodsId) {
@@ -311,8 +313,10 @@ class ITBillDAO extends PSIBaseExDAO {
 			
 			$goodsCount = $v["goodsCount"];
 			
+			$memo = $v["memo"];
+			
 			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $i, $id, $dataOrg, 
-					$companyId);
+					$companyId, $memo);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
@@ -400,6 +404,8 @@ class ITBillDAO extends PSIBaseExDAO {
 			return $this->bad("业务日期不正确");
 		}
 		
+		$billMemo = $bill["billMemo"];
+		
 		$items = $bill["items"];
 		
 		$loginUserId = $bill["loginUserId"];
@@ -409,11 +415,12 @@ class ITBillDAO extends PSIBaseExDAO {
 		
 		$sql = "update t_it_bill
 				set bizdt = '%s', biz_user_id = '%s', date_created = now(),
-				    input_user_id = '%s', from_warehouse_id = '%s', to_warehouse_id = '%s'
+				    input_user_id = '%s', from_warehouse_id = '%s', to_warehouse_id = '%s',
+					bill_memo = '%s'
 				where id = '%s' ";
 		
 		$rc = $db->execute($sql, $bizDT, $bizUserId, $loginUserId, $fromWarehouseId, $toWarehouseId, 
-				$id);
+				$billMemo, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -426,8 +433,8 @@ class ITBillDAO extends PSIBaseExDAO {
 		}
 		
 		$sql = "insert into t_it_bill_detail(id, date_created, goods_id, goods_count,
-					show_order, itbill_id, data_org, company_id)
-				values ('%s', now(), '%s', convert(%f, $fmt), %d, '%s', '%s', '%s')";
+					show_order, itbill_id, data_org, company_id, memo)
+				values ('%s', now(), '%s', convert(%f, $fmt), %d, '%s', '%s', '%s', '%s')";
 		foreach ( $items as $i => $v ) {
 			$goodsId = $v["goodsId"];
 			if (! $goodsId) {
@@ -436,8 +443,10 @@ class ITBillDAO extends PSIBaseExDAO {
 			
 			$goodsCount = $v["goodsCount"];
 			
+			$memo = $v["memo"];
+			
 			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $i, $id, $dataOrg, 
-					$companyId);
+					$companyId, $memo);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}

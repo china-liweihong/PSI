@@ -69,7 +69,7 @@ class ITBillDAO extends PSIBaseExDAO {
 					tw.name as to_warehouse_name,
 					u.name as biz_user_name,
 					u1.name as input_user_name,
-					t.date_created
+					t.date_created, t.bill_memo
 				from t_it_bill t, t_warehouse fw, t_warehouse tw,
 				   t_user u, t_user u1
 				where (t.from_warehouse_id = fw.id)
@@ -127,7 +127,8 @@ class ITBillDAO extends PSIBaseExDAO {
 					"toWarehouseName" => $v["to_warehouse_name"],
 					"bizUserName" => $v["biz_user_name"],
 					"inputUserName" => $v["input_user_name"],
-					"dateCreated" => $v["date_created"]
+					"dateCreated" => $v["date_created"],
+					"billMemo" => $v["bill_memo"]
 			];
 		}
 		
@@ -204,7 +205,8 @@ class ITBillDAO extends PSIBaseExDAO {
 		
 		$result = [];
 		
-		$sql = "select t.id, g.code, g.name, g.spec, u.name as unit_name, convert(t.goods_count, $fmt) as goods_count
+		$sql = "select t.id, g.code, g.name, g.spec, u.name as unit_name, convert(t.goods_count, $fmt) as goods_count,
+					t.memo
 				from t_it_bill_detail t, t_goods g, t_goods_unit u
 				where t.itbill_id = '%s' and t.goods_id = g.id and g.unit_id = u.id
 				order by t.show_order ";
@@ -217,7 +219,8 @@ class ITBillDAO extends PSIBaseExDAO {
 					"goodsName" => $v["name"],
 					"goodsSpec" => $v["spec"],
 					"unitName" => $v["unit_name"],
-					"goodsCount" => $v["goods_count"]
+					"goodsCount" => $v["goods_count"],
+					"memo" => $v["memo"]
 			];
 		}
 		

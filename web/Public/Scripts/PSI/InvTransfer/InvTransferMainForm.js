@@ -376,7 +376,7 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
 					extend : "Ext.data.Model",
 					fields : ["id", "ref", "bizDate", "fromWarehouseName",
 							"toWarehouseName", "inputUserName", "bizUserName",
-							"billStatus", "dateCreated"]
+							"billStatus", "dateCreated", "billMemo"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -466,6 +466,12 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
 								width : 140,
 								menuDisabled : true,
 								sortable : false
+							}, {
+								header : "备注",
+								dataIndex : "billMemo",
+								width : 300,
+								menuDisabled : true,
+								sortable : false
 							}],
 					listeners : {
 						select : {
@@ -531,7 +537,7 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
 					fields : ["id", "goodsCode", "goodsName", "goodsSpec",
-							"unitName", "goodsCount"]
+							"unitName", "goodsCount", "memo"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -583,6 +589,12 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
 								menuDisabled : true,
 								sortable : false,
 								width : 60
+							}, {
+								header : "备注",
+								dataIndex : "memo",
+								menuDisabled : true,
+								sortable : false,
+								width : 300
 							}],
 					store : store
 				});

@@ -867,6 +867,10 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 		var tax = goods.get("moneyWithTax") * taxRate / (1 + taxRate);
 		goods.set("tax", tax);
 		goods.set("goodsMoney", goods.get("moneyWithTax") - tax);
+
+		// 计算单价
+		goods.set("goodsPrice", goods.get("goodsMoney")
+						/ goods.get("goodsCount"))
 	},
 
 	calcMoneyWithTax : function(goods) {

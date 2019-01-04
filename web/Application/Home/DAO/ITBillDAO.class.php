@@ -739,7 +739,7 @@ class ITBillDAO extends PSIBaseExDAO {
 			// 编辑
 			$sql = "select t.ref, t.bill_status, t.bizdt, t.biz_user_id, u.name as biz_user_name,
 						wf.id as from_warehouse_id, wf.name as from_warehouse_name,
-						wt.id as to_warehouse_id, wt.name as to_warehouse_name
+						wt.id as to_warehouse_id, wt.name as to_warehouse_name, t.bill_memo
 					from t_it_bill t, t_user u, t_warehouse wf, t_warehouse wt
 					where t.id = '%s' and t.biz_user_id = u.id
 					      and t.from_warehouse_id = wf.id
@@ -758,10 +758,11 @@ class ITBillDAO extends PSIBaseExDAO {
 			$result["fromWarehouseName"] = $data[0]["from_warehouse_name"];
 			$result["toWarehouseId"] = $data[0]["to_warehouse_id"];
 			$result["toWarehouseName"] = $data[0]["to_warehouse_name"];
+			$result["billMemo"] = $data[0]["bill_memo"];
 			
 			$items = [];
 			$sql = "select t.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, 
-						convert(t.goods_count, $fmt) as goods_count
+						convert(t.goods_count, $fmt) as goods_count, t.memo
 					from t_it_bill_detail t, t_goods g, t_goods_unit u
 					where t.itbill_id = '%s' and t.goods_id = g.id and g.unit_id = u.id
 					order by t.show_order ";
@@ -775,7 +776,8 @@ class ITBillDAO extends PSIBaseExDAO {
 						"goodsName" => $v["name"],
 						"goodsSpec" => $v["spec"],
 						"unitName" => $v["unit_name"],
-						"goodsCount" => $v["goods_count"]
+						"goodsCount" => $v["goods_count"],
+						"memo" => $v["memo"]
 				];
 			}
 			

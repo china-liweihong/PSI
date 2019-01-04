@@ -62,9 +62,9 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
 						border : 0,
 						layout : {
 							type : "table",
-							columns : 2
+							columns : 4
 						},
-						height : 100,
+						height : 60,
 						bodyPadding : 10,
 						items : [{
 									xtype : "hidden",
@@ -75,7 +75,7 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
 								}, {
 									id : "editRef",
 									fieldLabel : "单号",
-									labelWidth : 60,
+									labelWidth : 70,
 									labelAlign : "right",
 									labelSeparator : "",
 									xtype : "displayfield",
@@ -85,7 +85,7 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
 									fieldLabel : "业务日期",
 									allowBlank : false,
 									blankText : "没有输入业务日期",
-									labelWidth : 60,
+									labelWidth : 70,
 									labelAlign : "right",
 									labelSeparator : "",
 									beforeLabelTextTpl : PSI.Const.REQUIRED,
@@ -102,7 +102,7 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
 								}, {
 									id : "editFromWarehouse",
 									fieldLabel : "调出仓库",
-									labelWidth : 60,
+									labelWidth : 70,
 									labelAlign : "right",
 									labelSeparator : "",
 									xtype : "psi_warehousefield",
@@ -119,7 +119,7 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
 								}, {
 									id : "editToWarehouse",
 									fieldLabel : "调入仓库",
-									labelWidth : 60,
+									labelWidth : 70,
 									labelAlign : "right",
 									labelSeparator : "",
 									xtype : "psi_warehousefield",
@@ -137,7 +137,7 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
 									id : "editBizUser",
 									fieldLabel : "业务员",
 									xtype : "psi_userfield",
-									labelWidth : 60,
+									labelWidth : 70,
 									labelAlign : "right",
 									labelSeparator : "",
 									allowBlank : false,
@@ -146,6 +146,21 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
 									listeners : {
 										specialkey : {
 											fn : me.onEditBizUserSpecialKey,
+											scope : me
+										}
+									}
+								}, {
+									id : "editBillMemo",
+									fieldLabel : "备注",
+									labelWidth : 70,
+									labelAlign : "right",
+									labelSeparator : "",
+									colspan : 3,
+									width : 680,
+									xtype : "textfield",
+									listeners : {
+										specialkey : {
+											fn : me.onEditBillMemoSpecialKey,
 											scope : me
 										}
 									}
@@ -220,6 +235,10 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
 								Ext.getCmp("editToWarehouse")
 										.setValue(data.toWarehouseName);
 							}
+							if (data.billMemo) {
+								Ext.getCmp("editBillMemo")
+										.setValue(data.billMemo);
+							}
 
 							var store = me.getGoodsGrid().getStore();
 							store.removeAll();
@@ -285,6 +304,12 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
 		}
 	},
 	onEditBizUserSpecialKey : function(field, e) {
+		if (e.getKey() == e.ENTER) {
+			Ext.getCmp("editBillMemo").focus();
+		}
+	},
+
+	onEditBillMemoSpecialKey : function(field, e) {
 		if (this.__readonly) {
 			return;
 		}
@@ -309,7 +334,7 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
 					fields : ["id", "goodsId", "goodsCode", "goodsName",
-							"goodsSpec", "unitName", "goodsCount"]
+							"goodsSpec", "unitName", "goodsCount", "memo"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -384,6 +409,16 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
 								draggable : false,
 								width : 60
 							}, {
+								header : "备注",
+								dataIndex : "memo",
+								menuDisabled : true,
+								sortable : false,
+								draggable : false,
+								width : 200,
+								editor : {
+									xtype : "textfield"
+								}
+							}, {
 								header : "",
 								align : "center",
 								menuDisabled : true,
@@ -454,15 +489,15 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
 
 	cellEditingAfterEdit : function(editor, e) {
 		var me = this;
-		if (e.colIdx == 4) {
-			if (!me.__canEditGoodsPrice) {
-				var store = me.getGoodsGrid().getStore();
-				if (e.rowIdx == store.getCount() - 1) {
-					store.add({});
-					var row = e.rowIdx + 1;
-					me.getGoodsGrid().getSelectionModel().select(row);
-					me.__cellEditing.startEdit(row, 1);
-				}
+
+		var fieldName = e.field;
+		if (fieldName == "memo") {
+			var store = me.getGoodsGrid().getStore();
+			if (e.rowIdx == store.getCount() - 1) {
+				store.add({});
+				var row = e.rowIdx + 1;
+				me.getGoodsGrid().getSelectionModel().select(row);
+				me.__cellEditing.startEdit(row, 1);
 			}
 		}
 	},
@@ -492,6 +527,7 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
 			fromWarehouseId : Ext.getCmp("editFromWarehouse").getIdValue(),
 			toWarehouseId : Ext.getCmp("editToWarehouse").getIdValue(),
 			bizUserId : Ext.getCmp("editBizUser").getIdValue(),
+			billMemo : Ext.getCmp("editBillMemo").getValue(),
 			items : []
 		};
 
@@ -501,7 +537,8 @@ Ext.define("PSI.InvTransfer.ITEditForm", {
 			result.items.push({
 						id : item.get("id"),
 						goodsId : item.get("goodsId"),
-						goodsCount : item.get("goodsCount")
+						goodsCount : item.get("goodsCount"),
+						memo : item.get("memo")
 					});
 		}
 

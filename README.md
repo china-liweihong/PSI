@@ -29,6 +29,8 @@ PSI的开源协议为GPL v3
 
 2. PSI移动端：https://gitee.com/crm8000/PSI_Mobile
 
+3. ExtJS代码注释：https://gitee.com/crm8000/ExtJS
+
 # 商务合作
 
 商务合作QQ: 1569352868

@@ -266,4 +266,25 @@ class DMController extends PSIBaseController {
 			$this->ajaxReturn($service->editDMWBill($json));
 		}
 	}
+
+	/**
+	 * 获得成品委托生产入库单主表列表
+	 */
+	public function dmwbillList() {
+		if (IS_POST) {
+			$ps = new DMWBillService();
+			$params = [
+					"billStatus" => I("post.billStatus"),
+					"ref" => I("post.ref"),
+					"fromDT" => I("post.fromDT"),
+					"toDT" => I("post.toDT"),
+					"warehouseId" => I("post.warehouseId"),
+					"factoryId" => I("post.factoryId"),
+					"paymentType" => I("post.paymentType"),
+					"start" => I("post.start"),
+					"limit" => I("post.limit")
+			];
+			$this->ajaxReturn($ps->dmwbillList($params));
+		}
+	}
 }

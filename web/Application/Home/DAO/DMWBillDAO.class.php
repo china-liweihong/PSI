@@ -12,6 +12,25 @@ use Home\Common\FIdConst;
 class DMWBillDAO extends PSIBaseExDAO {
 
 	/**
+	 * 单据状态标志转化为文字
+	 *
+	 * @param int $code        	
+	 * @return string
+	 */
+	private function billStatusCodeToName($code) {
+		switch ($code) {
+			case 0 :
+				return "待入库";
+			case 1000 :
+				return "已入库";
+			case 2000 :
+				return "已退货";
+			default :
+				return "";
+		}
+	}
+
+	/**
 	 * 生成新的成品委托生产入库单单号
 	 *
 	 * @param string $companyId        	

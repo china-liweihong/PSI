@@ -302,7 +302,7 @@ Ext.define("PSI.DMW.DMWMainForm", {
 								}, {
 									header : "入库单号",
 									dataIndex : "ref",
-									width : 110
+									width : 130
 								}, {
 									header : "业务日期",
 									dataIndex : "bizDate"

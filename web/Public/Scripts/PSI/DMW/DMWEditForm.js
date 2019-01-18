@@ -262,6 +262,8 @@ Ext.define("PSI.DMW.DMWEditForm", {
 				el.unmask();
 
 				if (success) {
+					me.editFactory.focus();
+					
 					var data = me.decodeJSON(response.responseText);
 					me.editBillMemo.setValue(data.billMemo);
 

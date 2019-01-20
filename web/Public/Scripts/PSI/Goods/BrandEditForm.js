@@ -171,9 +171,11 @@ Ext.define("PSI.Goods.BrandEditForm", {
 						me.getEl().unmask();
 						if (success) {
 							var data = Ext.JSON.decode(response.responseText);
-							me.editParentBrand.setValue(data.parentBrandName);
+							me.editParentBrand.setValue(Ext.String
+									.htmlDecode(data.parentBrandName));
 							me.editParentBrandId.setValue(data.parentBrandId);
-							me.editName.setValue(data.name);
+							me.editName.setValue(Ext.String
+									.htmlDecode(data.name));
 						}
 					}
 				});
@@ -182,7 +184,7 @@ Ext.define("PSI.Goods.BrandEditForm", {
 	setParentBrand : function(data) {
 		var me = this;
 
-		me.editParentBrand.setValue(data.fullName);
+		me.editParentBrand.setValue(Ext.String.htmlDecode(data.fullName));
 		me.editParentBrandId.setValue(data.id);
 	},
 

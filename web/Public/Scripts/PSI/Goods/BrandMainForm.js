@@ -93,6 +93,14 @@ Ext.define("PSI.Goods.BrandMainForm", {
 											dataIndex : "fullName",
 											flex : 2
 										}]
+							},
+							listeners : {
+								beforeitemdblclick : {
+									fn : function() {
+										me.onEditBrand();
+										return false;
+									}
+								}
 							}
 						});
 

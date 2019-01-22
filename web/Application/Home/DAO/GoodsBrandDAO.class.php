@@ -141,6 +141,14 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 			$fullName = $data[0]["full_name"] . "\\" . $name;
 		}
 		
+		// 判断品牌是否已经存在
+		$sql = "select count(*) as cnt from t_goods_brand where full_name = '%s' ";
+		$data = $db->query($sql, $fullName);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("品牌[{$fullName}]已经存在");
+		}
+		
 		$id = $this->newId();
 		if ($parentId) {
 			$sql = "insert into t_goods_brand(id, name, full_name, parent_id, data_org, company_id, py)
@@ -248,6 +256,16 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 					return $this->bad("下级品牌不能作为上级品牌");
 				}
 			}
+		}
+		
+		// 判断品牌是否已经存在
+		$fullName = $parentId ? $parentFullName . "\\" . $name : $name;
+		$sql = "select count(*) as cnt from t_goods_brand 
+				where full_name = '%s' and id <> '%s' ";
+		$data = $db->query($sql, $fullName, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("品牌[{$fullName}]已经存在");
 		}
 		
 		if ($parentId) {

@@ -131,4 +131,33 @@ class DMWBillService extends PSIBaseExService {
 		$dao = new DMWBillDAO($this->db());
 		return $dao->dmwBillDetailList($params);
 	}
+
+	/**
+	 * 删除成品委托生产入库单
+	 */
+	public function deleteDMWBill($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$db = $this->db();
+		$db->startTrans();
+		
+		$dao = new DMWBillDAO($db);
+		$rc = $dao->deleteDMWBill($params);
+		if ($rc) {
+			$db->rollback();
+			return $rc;
+		}
+		
+		// 记录业务日志
+		$ref = $params["ref"];
+		$log = "删除成品委托生产入库单: 单号 = {$ref}";
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
+		return $this->ok();
+	}
 }

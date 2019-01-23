@@ -736,4 +736,53 @@ class DMWBillDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 删除成品委托生产入库单
+	 */
+	public function deleteDMWBill(& $params) {
+		$db = $this->db;
+		
+		// 成品委托生产入库单id
+		$id = $params["id"];
+		
+		$bill = $this->getDMWBillById($id);
+		if (! $bill) {
+			return $this->bad("要删除的成品委托生产入库单不存在");
+		}
+		
+		// 单号
+		$ref = $bill["ref"];
+		
+		// 单据状态
+		$billStatus = $bill["billStatus"];
+		if ($billStatus != 0) {
+			return $this->bad("当前采购入库单已经提交入库，不能删除");
+		}
+		
+		// 先删除明细记录
+		$sql = "delete from t_dmw_bill_detail where dmwbill_id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 再删除主表
+		$sql = "delete from t_dmw_bill where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 删除从成品委托生产订单生成的记录
+		$sql = "delete from t_dmo_dmw where dmw_id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		$params["ref"] = $ref;
+		return null;
+	}
 }

@@ -57,6 +57,24 @@ class DMWBillDAO extends PSIBaseExDAO {
 		return $pre . $mid . $suf;
 	}
 
+	public function getDMWBillById($id) {
+		$db = $this->db;
+		
+		$sql = "select ref, bill_status, data_org, company_id
+				from t_dmw_bill where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return null;
+		} else {
+			return [
+					"ref" => $data[0]["ref"],
+					"billStatus" => $data[0]["bill_status"],
+					"dataOrg" => $data[0]["data_org"],
+					"companyId" => $data[0]["company_id"]
+			];
+		}
+	}
+
 	/**
 	 * 成品委托生产入库单 - 单据详情
 	 */
@@ -389,7 +407,149 @@ class DMWBillDAO extends PSIBaseExDAO {
 	 * @return array|null
 	 */
 	public function updateDMWBill(& $bill) {
-		return $this->todo();
+		$db = $this->db;
+		
+		// 成品委托生产入库单id
+		$id = $bill["id"];
+		
+		// 业务日期
+		$bizDT = $bill["bizDT"];
+		
+		// 仓库id
+		$warehouseId = $bill["warehouseId"];
+		
+		// 工厂id
+		$factoryId = $bill["factoryId"];
+		
+		// 业务员id
+		$bizUserId = $bill["bizUserId"];
+		
+		// 付款方式
+		$paymentType = $bill["paymentType"];
+		
+		// 备注
+		$billMemo = $bill["billMemo"];
+		
+		$warehouseDAO = new WarehouseDAO($db);
+		$warehouse = $warehouseDAO->getWarehouseById($warehouseId);
+		if (! $warehouse) {
+			return $this->bad("入库仓库不存在");
+		}
+		
+		$factoryDAO = new FactoryDAO($db);
+		$factory = $factoryDAO->getFactoryById($factoryId);
+		if (! $factory) {
+			return $this->bad("工厂不存在");
+		}
+		
+		$userDAO = new UserDAO($db);
+		$user = $userDAO->getUserById($bizUserId);
+		if (! $user) {
+			return $this->bad("业务人员不存在");
+		}
+		
+		// 检查业务日期
+		if (! $this->dateIsValid($bizDT)) {
+			return $this->bad("业务日期不正确");
+		}
+		
+		$oldBill = $this->getDMWBillById($id);
+		if (! $oldBill) {
+			return $this->bad("要编辑的成品委托生产入库单不存在");
+		}
+		$dataOrg = $oldBill["dataOrg"];
+		$billStatus = $oldBill["billStatus"];
+		$companyId = $oldBill["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->badParam("companyId");
+		}
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
+		$ref = $oldBill["ref"];
+		if ($billStatus != 0) {
+			return $this->bad("当前成品委托生产入库单已经提交入库，不能再编辑");
+		}
+		$bill["ref"] = $ref;
+		
+		// 编辑单据的时候，先删除原来的明细记录，再新增明细记录
+		$sql = "delete from t_dmw_bill_detail where dmwbill_id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		$goodsDAO = new GoodsDAO($db);
+		
+		// 明细记录
+		$items = $bill["items"];
+		foreach ( $items as $i => $item ) {
+			// 商品id
+			$goodsId = $item["goodsId"];
+			
+			if ($goodsId == null) {
+				continue;
+			}
+			
+			$goods = $goodsDAO->getGoodsById($goodsId);
+			if (! $goods) {
+				return $this->bad("选择的商品不存在");
+			}
+			
+			// 关于入库数量为什么允许填写0：
+			// 当由成品委托生产订单生成入库单的时候，订单中有多种商品，但是是部分到货
+			// 那么就存在有些商品的数量是0的情形。
+			$goodsCount = $item["goodsCount"];
+			if ($goodsCount < 0) {
+				return $this->bad("入库数量不能是负数");
+			}
+			
+			// 入库明细记录的备注
+			$memo = $item["memo"];
+			
+			// 单价
+			$goodsPrice = $item["goodsPrice"];
+			
+			// 金额
+			$goodsMoney = $item["goodsMoney"];
+			
+			// 成品委托生产订单明细记录id
+			$dmoBillDetailId = $item["dmoBillDetailId"];
+			
+			$sql = "insert into t_dmw_bill_detail (id, date_created, goods_id, goods_count, goods_price,
+						goods_money,  dmwbill_id, show_order, data_org, memo, company_id, dmobilldetail_id)
+					values ('%s', now(), '%s', convert(%f, $fmt), %f, %f, '%s', %d, '%s', '%s', '%s', '%s')";
+			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsPrice, 
+					$goodsMoney, $id, $i, $dataOrg, $memo, $companyId, $dmoBillDetailId);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+		}
+		
+		// 同步主表数据
+		$sql = "select sum(goods_money) as goods_money from t_dmw_bill_detail
+				where dmwbill_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$totalMoney = $data[0]["goods_money"];
+		if (! $totalMoney) {
+			$totalMoney = 0;
+		}
+		$sql = "update t_dmw_bill
+				set goods_money = %f, warehouse_id = '%s',
+					factory_id = '%s', biz_dt = '%s',
+					biz_user_id = '%s', payment_type = %d,
+					bill_memo = '%s'
+				where id = '%s' ";
+		$rc = $db->execute($sql, $totalMoney, $warehouseId, $factoryId, $bizDT, $bizUserId, 
+				$paymentType, $billMemo, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		return null;
 	}
 
 	/**
@@ -531,5 +691,49 @@ class DMWBillDAO extends PSIBaseExDAO {
 				"dataList" => $result,
 				"totalCount" => $cnt
 		];
+	}
+
+	/**
+	 * 获得成品委托生产入库单的明细记录
+	 */
+	public function dmwBillDetailList($params) {
+		$db = $this->db;
+		
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->emptyResult();
+		}
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
+		// 成品委托生产入库单id
+		$id = $params["id"];
+		
+		$sql = "select p.id, g.code, g.name, g.spec, u.name as unit_name,
+					convert(p.goods_count, $fmt) as goods_count, p.goods_price,
+					p.goods_money, p.memo
+				from t_dmw_bill_detail p, t_goods g, t_goods_unit u
+				where p.dmwbill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
+				order by p.show_order ";
+		$data = $db->query($sql, $id);
+		$result = [];
+		
+		foreach ( $data as $v ) {
+			$result[] = [
+					"id" => $v["id"],
+					"goodsCode" => $v["code"],
+					"goodsName" => $v["name"],
+					"goodsSpec" => $v["spec"],
+					"unitName" => $v["unit_name"],
+					"goodsCount" => $v["goods_count"],
+					"goodsMoney" => $v["goods_money"],
+					"goodsPrice" => $v["goods_price"],
+					"memo" => $v["memo"]
+			];
+		}
+		
+		return $result;
 	}
 }

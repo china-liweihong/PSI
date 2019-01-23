@@ -627,9 +627,9 @@ Ext.define("PSI.DMW.DMWMainForm", {
 		var el = grid.getEl();
 		el.mask(PSI.Const.LOADING);
 		me.ajax({
-					url : me.URL("Home/Purchase/pwBillDetailList"),
+					url : me.URL("Home/DM/dmwBillDetailList"),
 					params : {
-						pwBillId : bill.get("id")
+						id : bill.get("id")
 					},
 					callback : function(options, success, response) {
 						var store = grid.getStore();

@@ -117,4 +117,18 @@ class DMWBillService extends PSIBaseExService {
 		$dao = new DMWBillDAO($this->db());
 		return $dao->dmwbillList($params);
 	}
+
+	/**
+	 * 获得成品委托生产入库单的明细记录
+	 */
+	public function dmwBillDetailList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$params["companyId"] = $this->getCompanyId();
+		
+		$dao = new DMWBillDAO($this->db());
+		return $dao->dmwBillDetailList($params);
+	}
 }

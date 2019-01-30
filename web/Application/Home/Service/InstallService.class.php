@@ -597,6 +597,7 @@ class InstallService extends PSIBaseExService {
 				  `payment_type` int(11) NOT NULL DEFAULT 0,
 				  `data_org` varchar(255) DEFAULT NULL,
 				  `company_id` varchar(255) DEFAULT NULL,
+				  `bill_memo` varchar(255) DEFAULT NULL,
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
@@ -621,6 +622,7 @@ class InstallService extends PSIBaseExService {
 				  `sn_note` varchar(255) DEFAULT NULL,
 				  `data_org` varchar(255) DEFAULT NULL,
 				  `company_id` varchar(255) DEFAULT NULL,
+				  `memo` varchar(255) DEFAULT NULL,
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";

@@ -167,8 +167,8 @@ class DMWBillDAO extends PSIBaseExDAO {
 				$sql = "select p.id, p.factory_id, f.name as factory_name, p.deal_date,
 							p.payment_type, p.bill_memo
 						from t_dmo_bill p, t_factory f
-						where p.ref = '%s' and p.supplier_id = s.id ";
-				$data = $db->query($sql, $pobillRef);
+						where p.ref = '%s' and p.factory_id = f.id ";
+				$data = $db->query($sql, $dmobillRef);
 				if ($data) {
 					$v = $data[0];
 					$result["factoryId"] = $v["factory_id"];
@@ -187,7 +187,7 @@ class DMWBillDAO extends PSIBaseExDAO {
 							from t_dmo_bill_detail p, t_goods g, t_goods_unit u
 							where p.dmobill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
 							order by p.show_order ";
-					$data = $db->query($sql, $pobillId);
+					$data = $db->query($sql, $dmobillId);
 					foreach ( $data as $v ) {
 						$items[] = [
 								"id" => $v["id"],
@@ -386,7 +386,7 @@ class DMWBillDAO extends PSIBaseExDAO {
 			}
 			
 			// 关联成品委托生产订单和成品委托生产入库单
-			$sql = "insert into t_dmo_d,mw(dmo_id, dmw_id) values('%s', '%s')";
+			$sql = "insert into t_dmo_dmw(dmo_id, dmw_id) values('%s', '%s')";
 			$rc = $db->execute($sql, $dmobillId, $id);
 			if (! $rc) {
 				return $this->sqlError(__METHOD__, __LINE__);

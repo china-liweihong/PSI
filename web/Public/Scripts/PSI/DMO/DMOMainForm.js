@@ -952,7 +952,11 @@ Ext.define("PSI.DMO.DMOMainForm", {
 			return;
 		}
 
-		me.showInfo("TODO");
+		var form = Ext.create("PSI.DMW.DMWEditForm", {
+					genBill : true,
+					dmobillRef : bill.get("ref")
+				});
+		form.show();
 	},
 
 	onPDF : function() {

@@ -407,7 +407,7 @@ Ext.define("PSI.Sale.SRMainForm", {
 					fields : ["id", "ref", "bizDate", "customerName",
 							"warehouseName", "inputUserName", "bizUserName",
 							"billStatus", "amount", "dateCreated",
-							"paymentType"]
+							"paymentType", "billMemo"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -520,6 +520,12 @@ Ext.define("PSI.Sale.SRMainForm", {
 								width : 140,
 								menuDisabled : true,
 								sortable : false
+							}, {
+								header : "备注",
+								dataIndex : "billMemo",
+								width : 300,
+								menuDisabled : true,
+								sortable : false
 							}],
 					listeners : {
 						select : {
@@ -587,7 +593,7 @@ Ext.define("PSI.Sale.SRMainForm", {
 					fields : ["id", "goodsCode", "goodsName", "goodsSpec",
 							"unitName", "goodsCount", "goodsMoney",
 							"goodsPrice", "rejCount", "rejPrice",
-							"rejSaleMoney", "sn"]
+							"rejSaleMoney", "sn", "memo"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -657,6 +663,12 @@ Ext.define("PSI.Sale.SRMainForm", {
 							}, {
 								header : "序列号",
 								dataIndex : "sn",
+								menuDisabled : true,
+								sortable : false
+							}, {
+								header : "备注",
+								dataIndex : "memo",
+								width : 200,
 								menuDisabled : true,
 								sortable : false
 							}],

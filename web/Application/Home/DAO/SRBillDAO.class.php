@@ -68,7 +68,7 @@ class SRBillDAO extends PSIBaseExDAO {
 		
 		$sql = "select w.id, w.ref, w.bizdt, c.name as customer_name, u.name as biz_user_name,
 				 	user.name as input_user_name, h.name as warehouse_name, w.rejection_sale_money,
-				 	w.bill_status, w.date_created, w.payment_type
+				 	w.bill_status, w.date_created, w.payment_type, w.bill_memo
 				 from t_sr_bill w, t_customer c, t_user u, t_user user, t_warehouse h
 				 where (w.customer_id = c.id) and (w.biz_user_id = u.id)
 				 and (w.input_user_id = user.id) and (w.warehouse_id = h.id) ";
@@ -136,7 +136,8 @@ class SRBillDAO extends PSIBaseExDAO {
 					"billStatus" => $v["bill_status"] == 0 ? "待入库" : "已入库",
 					"amount" => $v["rejection_sale_money"],
 					"dateCreated" => $v["date_created"],
-					"paymentType" => $v["payment_type"]
+					"paymentType" => $v["payment_type"],
+					"billMemo" => $v["bill_memo"]
 			];
 		}
 		
@@ -222,7 +223,7 @@ class SRBillDAO extends PSIBaseExDAO {
 		$sql = "select s.id, g.code, g.name, g.spec, u.name as unit_name,
 					convert(s.rejection_goods_count, $fmt) as rejection_goods_count, 
 					s.rejection_goods_price, s.rejection_sale_money,
-					s.sn_note
+					s.sn_note, s.memo
 				from t_sr_bill_detail s, t_goods g, t_goods_unit u
 				where s.srbill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
 					and s.rejection_goods_count > 0
@@ -241,7 +242,8 @@ class SRBillDAO extends PSIBaseExDAO {
 					"rejCount" => $v["rejection_goods_count"],
 					"rejPrice" => $v["rejection_goods_price"],
 					"rejSaleMoney" => $v["rejection_sale_money"],
-					"sn" => $v["sn_note"]
+					"sn" => $v["sn_note"],
+					"memo" => $v["memo"]
 			];
 		}
 		return $result;

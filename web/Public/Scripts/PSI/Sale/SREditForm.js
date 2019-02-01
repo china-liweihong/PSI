@@ -69,9 +69,9 @@ Ext.define("PSI.Sale.SREditForm", {
 						border : 0,
 						layout : {
 							type : "table",
-							columns : 2
+							columns : 4
 						},
-						height : 120,
+						height : 90,
 						bodyPadding : 10,
 						items : [{
 									xtype : "hidden",
@@ -86,7 +86,7 @@ Ext.define("PSI.Sale.SREditForm", {
 									labelWidth : 60,
 									labelAlign : "right",
 									labelSeparator : "",
-									colspan : 2,
+									colspan : 4,
 									width : 430
 								}, {
 									id : "editRef",
@@ -175,6 +175,21 @@ Ext.define("PSI.Sale.SREditForm", {
 											scope : me
 										}
 									}
+								}, {
+									id : "editBillMemo",
+									labelWidth : 60,
+									labelAlign : "right",
+									labelSeparator : "",
+									fieldLabel : "备注",
+									xtype : "textfield",
+									listeners : {
+										specialkey : {
+											fn : me.onEditBillMemoSpecialKey,
+											scope : me
+										}
+									},
+									colspan : 3,
+									width : 645
 								}]
 					}],
 			listeners : {
@@ -252,6 +267,10 @@ Ext.define("PSI.Sale.SREditForm", {
 								Ext.getCmp("editPaymentType")
 										.setValue(data.paymentType);
 							}
+							if (data.billMemo) {
+								Ext.getCmp("editBillMemo")
+										.setValue(data.billMemo);
+							}
 
 							var store = me.getGoodsGrid().getStore();
 							store.removeAll();
@@ -321,6 +340,16 @@ Ext.define("PSI.Sale.SREditForm", {
 		}
 
 		if (e.getKey() == e.ENTER) {
+			Ext.getCmp("editBillMemo").focus();
+		}
+	},
+
+	onEditBillMemoSpecialKey : function(field, e) {
+		if (this.__readonly) {
+			return;
+		}
+
+		if (e.getKey() == e.ENTER) {
 			var me = this;
 			me.getGoodsGrid().focus();
 			me.__cellEditing.startEdit(0, 4);
@@ -342,7 +371,7 @@ Ext.define("PSI.Sale.SREditForm", {
 							{
 								name : "rejMoney",
 								type : "float"
-							}, "sn"]
+							}, "sn", "memo"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -479,6 +508,15 @@ Ext.define("PSI.Sale.SREditForm", {
 								menuDisabled : true,
 								draggable : false,
 								sortable : false
+							}, {
+								header : "备注",
+								dataIndex : "memo",
+								menuDisabled : true,
+								sortable : false,
+								draggable : false,
+								editor : {
+									xtype : "textfield"
+								}
 							}],
 					store : store,
 					listeners : {
@@ -551,6 +589,7 @@ Ext.define("PSI.Sale.SREditForm", {
 			warehouseId : Ext.getCmp("editWarehouse").getIdValue(),
 			bizUserId : Ext.getCmp("editBizUser").getIdValue(),
 			paymentType : Ext.getCmp("editPaymentType").getValue(),
+			billMemo : Ext.getCmp("editBillMemo").getValue(),
 			wsBillId : me.__wsBillId,
 			items : []
 		};
@@ -564,7 +603,8 @@ Ext.define("PSI.Sale.SREditForm", {
 						rejCount : item.get("rejCount"),
 						rejPrice : item.get("rejPrice"),
 						rejMoney : item.get("rejMoney"),
-						sn : item.get("sn")
+						sn : item.get("sn"),
+						memo : item.get("memo")
 					});
 		}
 
@@ -623,5 +663,6 @@ Ext.define("PSI.Sale.SREditForm", {
 		Ext.getCmp("editWarehouse").setReadOnly(true);
 		Ext.getCmp("editBizUser").setReadOnly(true);
 		Ext.getCmp("editPaymentType").setReadOnly(true);
+		Ext.getCmp("editBillMemo").setReadOnly(true);
 	}
 });

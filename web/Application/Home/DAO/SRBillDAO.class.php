@@ -471,6 +471,7 @@ class SRBillDAO extends PSIBaseExDAO {
 		$items = $bill["items"];
 		$wsBillId = $bill["wsBillId"];
 		$paymentType = $bill["paymentType"];
+		$billMemo = $bill["billMemo"];
 		
 		$wsBillDAO = new WSBillDAO($db);
 		$wsBill = $wsBillDAO->getWSBillById($wsBillId);
@@ -522,12 +523,12 @@ class SRBillDAO extends PSIBaseExDAO {
 		$ref = $this->genNewBillRef($companyId);
 		$sql = "insert into t_sr_bill(id, bill_status, bizdt, biz_user_id, customer_id,
 					date_created, input_user_id, ref, warehouse_id, ws_bill_id, payment_type,
-					data_org, company_id)
+					data_org, company_id, bill_memo)
 				values ('%s', 0, '%s', '%s', '%s',
-					  now(), '%s', '%s', '%s', '%s', %d, '%s', '%s')";
+					  now(), '%s', '%s', '%s', '%s', %d, '%s', '%s', '%s')";
 		
 		$rc = $db->execute($sql, $id, $bizDT, $bizUserId, $customerId, $loginUserId, $ref, 
-				$warehouseId, $wsBillId, $paymentType, $dataOrg, $companyId);
+				$warehouseId, $wsBillId, $paymentType, $dataOrg, $companyId, $billMemo);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -554,16 +555,17 @@ class SRBillDAO extends PSIBaseExDAO {
 			$inventoryMoney = $rejCount * $inventoryPrice;
 			$goodsId = $v["goodsId"];
 			$sn = $v["sn"];
+			$memo = $v["memo"];
 			
 			$sql = "insert into t_sr_bill_detail(id, date_created, goods_id, goods_count, goods_money,
 					goods_price, inventory_money, inventory_price, rejection_goods_count,
 					rejection_goods_price, rejection_sale_money, show_order, srbill_id, wsbilldetail_id,
-						sn_note, data_org, company_id)
+						sn_note, data_org, company_id, memo)
 					values('%s', now(), '%s', convert(%f, $fmt), %f, %f, %f, %f, convert(%f, $fmt),
-					%f, %f, %d, '%s', '%s', '%s', '%s', '%s') ";
+					%f, %f, %d, '%s', '%s', '%s', '%s', '%s', '%s') ";
 			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsMoney, 
 					$goodsPrice, $inventoryMoney, $inventoryPrice, $rejCount, $rejPrice, 
-					$rejSaleMoney, $i, $id, $wsBillDetailId, $sn, $dataOrg, $companyId);
+					$rejSaleMoney, $i, $id, $wsBillDetailId, $sn, $dataOrg, $companyId, $memo);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
@@ -644,6 +646,7 @@ class SRBillDAO extends PSIBaseExDAO {
 		$bizUserId = $bill["bizUserId"];
 		$items = $bill["items"];
 		$paymentType = $bill["paymentType"];
+		$billMemo = $bill["billMemo"];
 		
 		$customerDAO = new CustomerDAO($db);
 		$customer = $customerDAO->getCustomerById($customerId);
@@ -681,9 +684,10 @@ class SRBillDAO extends PSIBaseExDAO {
 		$sql = "update t_sr_bill
 				set bizdt = '%s', biz_user_id = '%s', date_created = now(),
 				   input_user_id = '%s', warehouse_id = '%s',
-					payment_type = %d
+					payment_type = %d, bill_memo = '%s'
 				where id = '%s' ";
-		$db->execute($sql, $bizDT, $bizUserId, $loginUserId, $warehouseId, $paymentType, $id);
+		$db->execute($sql, $bizDT, $bizUserId, $loginUserId, $warehouseId, $paymentType, $billMemo, 
+				$id);
 		
 		// 退货明细
 		$sql = "delete from t_sr_bill_detail where srbill_id = '%s' ";
@@ -714,16 +718,17 @@ class SRBillDAO extends PSIBaseExDAO {
 			$inventoryMoney = $rejCount * $inventoryPrice;
 			$goodsId = $v["goodsId"];
 			$sn = $v["sn"];
+			$memo = $v["memo"];
 			
 			$sql = "insert into t_sr_bill_detail(id, date_created, goods_id, goods_count, goods_money,
 					goods_price, inventory_money, inventory_price, rejection_goods_count,
 					rejection_goods_price, rejection_sale_money, show_order, srbill_id, wsbilldetail_id,
-						sn_note, data_org, company_id)
+						sn_note, data_org, company_id, memo)
 					values('%s', now(), '%s', convert(%f, $fmt), %f, %f, %f, %f, convert(%f, $fmt),
-						%f, %f, %d, '%s', '%s', '%s', '%s', '%s') ";
+						%f, %f, %d, '%s', '%s', '%s', '%s', '%s', '%s') ";
 			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsMoney, 
 					$goodsPrice, $inventoryMoney, $inventoryPrice, $rejCount, $rejPrice, 
-					$rejSaleMoney, $i, $id, $wsBillDetailId, $sn, $dataOrg, $companyId);
+					$rejSaleMoney, $i, $id, $wsBillDetailId, $sn, $dataOrg, $companyId, $memo);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
@@ -788,7 +793,7 @@ class SRBillDAO extends PSIBaseExDAO {
 			$sql = "select w.id, w.ref, w.bill_status, w.bizdt, c.id as customer_id, c.name as customer_name,
 					 u.id as biz_user_id, u.name as biz_user_name,
 					 h.id as warehouse_id, h.name as warehouse_name, wsBill.ref as ws_bill_ref,
-						w.payment_type
+						w.payment_type, w.bill_memo
 					 from t_sr_bill w, t_customer c, t_user u, t_warehouse h, t_ws_bill wsBill
 					 where w.customer_id = c.id and w.biz_user_id = u.id
 					 and w.warehouse_id = h.id
@@ -806,6 +811,7 @@ class SRBillDAO extends PSIBaseExDAO {
 				$result["bizUserName"] = $data[0]["biz_user_name"];
 				$result["wsBillRef"] = $data[0]["ws_bill_ref"];
 				$result["paymentType"] = $data[0]["payment_type"];
+				$result["billMemo"] = $data[0]["bill_memo"];
 			}
 			
 			$sql = "select d.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, 
@@ -813,7 +819,7 @@ class SRBillDAO extends PSIBaseExDAO {
 						d.goods_price, d.goods_money,
 						convert(d.rejection_goods_count, $fmt) as rejection_goods_count, 
 						d.rejection_goods_price, d.rejection_sale_money,
-						d.wsbilldetail_id, d.sn_note
+						d.wsbilldetail_id, d.sn_note, d.memo
 					 from t_sr_bill_detail d, t_goods g, t_goods_unit u
 					 where d.srbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id
 					 order by d.show_order";
@@ -833,7 +839,8 @@ class SRBillDAO extends PSIBaseExDAO {
 						"rejCount" => $v["rejection_goods_count"],
 						"rejPrice" => $v["rejection_goods_price"],
 						"rejMoney" => $v["rejection_sale_money"],
-						"sn" => $v["sn_note"]
+						"sn" => $v["sn_note"],
+						"memo" => $v["memo"]
 				];
 			}
 			

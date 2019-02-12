@@ -49,7 +49,7 @@ Ext.define("PSI.DMO.DMOMainForm", {
 							}]
 				});
 
-		me.callParent(arguments);
+		me.callParent();
 
 		me.refreshMainGrid();
 	},
@@ -1023,11 +1023,11 @@ Ext.define("PSI.DMO.DMOMainForm", {
 						}, {
 							header : "入库单号",
 							dataIndex : "ref",
-							width : 110,
+							width : 130,
 							renderer : function(value, md, record) {
 								return "<a href='"
 										+ PSI.Const.BASE_URL
-										+ "Home/Bill/viewIndex?fid=2027&refType=采购入库&ref="
+										+ "Home/Bill/viewIndex?fid=2036&refType=成品委托生产入库&ref="
 										+ encodeURIComponent(record.get("ref"))
 										+ "' target='_blank'>" + value + "</a>";
 							}

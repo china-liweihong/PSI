@@ -9,6 +9,7 @@ use Home\DAO\SRBillDAO;
 use Home\DAO\ITBillDAO;
 use Home\DAO\ICBillDAO;
 use Home\DAO\WSPBillDAO;
+use Home\DAO\DMWBillDAO;
 
 /**
  * 查看单据Service
@@ -30,6 +31,22 @@ class BillViewService extends PSIBaseExService {
 		}
 		
 		$dao = new PWBillDAO($this->db());
+		return $dao->getFullBillDataByRef($ref);
+	}
+
+	/**
+	 * 由单号查询成品委托生产入库单信息
+	 *
+	 * @param string $ref
+	 *        	成品委托生产入库单单号
+	 * @return array|NULL
+	 */
+	public function dmwBillInfo($ref) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new DMWBillDAO($this->db());
 		return $dao->getFullBillDataByRef($ref);
 	}
 

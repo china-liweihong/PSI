@@ -33,7 +33,8 @@ class BillController extends Controller {
 				FIdConst::PRE_PAYMENT,
 				FIdConst::PURCHASE_ORDER,
 				FIdConst::SALE_ORDER,
-				FIdConst::PURCHASE_WAREHOUSE
+				FIdConst::PURCHASE_WAREHOUSE,
+				FIdConst::DMW
 		);
 		
 		if (in_array($fid, $idArray)) {
@@ -54,6 +55,9 @@ class BillController extends Controller {
 		switch ($refType) {
 			case "采购入库" :
 				redirect(__ROOT__ . "/Home/Bill/viewPWBill?fid={$fid}&ref={$ref}");
+				break;
+			case "成品委托生产入库" :
+				redirect(__ROOT__ . "/Home/Bill/viewDMWBill?fid={$fid}&ref={$ref}");
 				break;
 			case "采购退货出库" :
 				redirect(__ROOT__ . "/Home/Bill/viewPRBill?fid={$fid}&ref={$ref}");
@@ -105,6 +109,30 @@ class BillController extends Controller {
 	}
 
 	/**
+	 * 查看成品委托生产入库单
+	 */
+	public function viewDMWBill() {
+		$fid = I("get.fid");
+		if (! $this->hasPermission($fid)) {
+			return;
+		}
+		
+		$bcs = new BizConfigService();
+		$this->assign("productionName", $bcs->getProductionName());
+		
+		$ref = I("get.ref");
+		$this->assign("ref", $ref);
+		
+		$this->assign("title", "查看成品委托生产入库单");
+		$this->assign("uri", __ROOT__ . "/");
+		
+		$dtFlag = getdate();
+		$this->assign("dtFlag", $dtFlag[0]);
+		
+		$this->display();
+	}
+
+	/**
 	 * 采购入库单 - 数据查询
 	 */
 	public function pwBillInfo() {
@@ -113,6 +141,18 @@ class BillController extends Controller {
 			
 			$bs = new BillViewService();
 			$this->ajaxReturn($bs->pwBillInfo($ref));
+		}
+	}
+
+	/**
+	 * 成品委托生产入库单 - 数据查询
+	 */
+	public function dmwBillInfo() {
+		if (IS_POST) {
+			$ref = I("post.ref");
+			
+			$bs = new BillViewService();
+			$this->ajaxReturn($bs->dmwBillInfo($ref));
 		}
 	}
 

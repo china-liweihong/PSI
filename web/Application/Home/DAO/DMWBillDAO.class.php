@@ -785,4 +785,69 @@ class DMWBillDAO extends PSIBaseExDAO {
 		$params["ref"] = $ref;
 		return null;
 	}
+
+	/**
+	 * 通过单号查询成品委托生产入库的完整信息，包括明细入库记录
+	 *
+	 * @param string $ref
+	 *        	成品委托生产入库单单号
+	 * @return array|NULL
+	 */
+	public function getFullBillDataByRef($ref) {
+		$db = $this->db;
+		
+		$sql = "select p.id, f.name as factory_name,
+					w.name as  warehouse_name,
+					u.name as biz_user_name, p.biz_dt, p.company_id
+				from t_dmw_bill p, t_factory f, t_warehouse w, t_user u
+				where p.ref = '%s' and p.factory_id = f.id and p.warehouse_id = w.id
+				  and p.biz_user_id = u.id";
+		$data = $db->query($sql, $ref);
+		if (! $data) {
+			return NULL;
+		}
+		
+		$v = $data[0];
+		$id = $v["id"];
+		$companyId = $v["company_id"];
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
+		$result = [
+				"factoryName" => $v["factory_name"],
+				"warehouseName" => $v["warehouse_name"],
+				"bizUserName" => $v["biz_user_name"],
+				"bizDT" => $this->toYMD($v["biz_dt"])
+		
+		];
+		
+		// 明细记录
+		$items = [];
+		$sql = "select p.id, p.goods_id, g.code, g.name, g.spec, u.name as unit_name,
+					convert(p.goods_count, $fmt) as goods_count, p.goods_price, p.goods_money, p.memo
+				from t_dmw_bill_detail p, t_goods g, t_goods_unit u
+				where p.goods_Id = g.id and g.unit_id = u.id and p.dmwbill_id = '%s'
+				order by p.show_order";
+		$data = $db->query($sql, $id);
+		foreach ( $data as $v ) {
+			$items[] = [
+					"id" => $v["id"],
+					"goodsId" => $v["goods_id"],
+					"goodsCode" => $v["code"],
+					"goodsName" => $v["name"],
+					"goodsSpec" => $v["spec"],
+					"unitName" => $v["unit_name"],
+					"goodsCount" => $v["goods_count"],
+					"goodsPrice" => $v["goods_price"],
+					"goodsMoney" => $v["goods_money"],
+					"memo" => $v["memo"]
+			];
+		}
+		
+		$result["items"] = $items;
+		
+		return $result;
+	}
 }

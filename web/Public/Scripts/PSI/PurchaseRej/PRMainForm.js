@@ -392,7 +392,7 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 					fields : ["id", "ref", "bizDT", "warehouseName",
 							"supplierName", "inputUserName", "bizUserName",
 							"billStatus", "rejMoney", "dateCreated",
-							"receivingType"]
+							"receivingType", "billMemo"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -504,6 +504,12 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 								width : 140,
 								menuDisabled : true,
 								sortable : false
+							}, {
+								header : "备注",
+								dataIndex : "billMemo",
+								width : 300,
+								menuDisabled : true,
+								sortable : false
 							}],
 					listeners : {
 						select : {
@@ -569,7 +575,8 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
 					fields : ["id", "goodsCode", "goodsName", "goodsSpec",
-							"unitName", "rejCount", "rejPrice", "rejMoney"]
+							"unitName", "rejCount", "rejPrice", "rejMoney",
+							"memo"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -637,6 +644,12 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 								align : "right",
 								width : 150,
 								xtype : "numbercolumn"
+							}, {
+								header : "备注",
+								dataIndex : "memo",
+								menuDisabled : true,
+								sortable : false,
+								width : 200
 							}],
 					store : store
 				});

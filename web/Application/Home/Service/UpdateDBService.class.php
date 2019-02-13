@@ -211,6 +211,7 @@ class UpdateDBService extends PSIBaseService {
 		
 		$this->update_20190103_01();
 		$this->update_20190130_01();
+		$this->update_20190213_01();
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -231,6 +232,25 @@ class UpdateDBService extends PSIBaseService {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// ============================================
 	private function notForgot() {
+	}
+
+	private function update_20190213_01() {
+		// 本次更新：采购退货出库单增加备注字段
+		$db = $this->db;
+		
+		$tableName = "t_pr_bill";
+		$columnName = "bill_memo";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} varchar(255) DEFAULT NULL;";
+			$db->execute($sql);
+		}
+		
+		$tableName = "t_pr_bill_detail";
+		$columnName = "memo";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} varchar(255) DEFAULT NULL;";
+			$db->execute($sql);
+		}
 	}
 
 	private function update_20190130_01() {

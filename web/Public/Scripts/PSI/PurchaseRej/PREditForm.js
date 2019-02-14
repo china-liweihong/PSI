@@ -68,9 +68,9 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 						id : "editForm",
 						layout : {
 							type : "table",
-							columns : 2
+							columns : 4
 						},
-						height : 130,
+						height : 90,
 						bodyPadding : 10,
 						border : 0,
 						items : [{
@@ -86,8 +86,8 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 									labelWidth : 60,
 									labelAlign : "right",
 									labelSeparator : "",
-									colspan : 2,
-									width : 430
+									colspan : 4,
+									width : 830
 								}, {
 									id : "editSupplierId",
 									xtype : "hidden"
@@ -173,6 +173,21 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 											scope : me
 										}
 									}
+								}, {
+									id : "editBillMemo",
+									labelWidth : 60,
+									labelAlign : "right",
+									labelSeparator : "",
+									fieldLabel : "备注",
+									xtype : "textfield",
+									listeners : {
+										specialkey : {
+											fn : me.onEditBillMemoSpecialKey,
+											scope : me
+										}
+									},
+									colspan : 3,
+									width : 645
 								}]
 					}],
 			listeners : {
@@ -233,6 +248,8 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 										.setIdValue(data.warehouseId);
 								Ext.getCmp("editWarehouse")
 										.setValue(data.warehouseName);
+								Ext.getCmp("editBillMemo")
+										.setValue(data.billMemo);
 							} else {
 								// 新建采购退货出库单，第一步就是选择采购入库单
 								me.onSelectPWBill();
@@ -318,6 +335,12 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 
 	onEditReceivingTypeSpecialKey : function(field, e) {
 		if (e.getKey() == e.ENTER) {
+			Ext.getCmp("editBillMemo").focus();
+		}
+	},
+
+	onEditBillMemoSpecialKey : function(field, e) {
+		if (e.getKey() == e.ENTER) {
 			var me = this;
 			me.getGoodsGrid().focus();
 			me.__cellEditing.startEdit(0, 4);
@@ -338,7 +361,7 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 							{
 								name : "rejMoney",
 								type : "float"
-							}]
+							}, "memo"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -467,6 +490,15 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 								align : "right",
 								xtype : "numbercolumn",
 								width : 120
+							}, {
+								header : "备注",
+								dataIndex : "memo",
+								menuDisabled : true,
+								sortable : false,
+								draggable : false,
+								editor : {
+									xtype : "textfield"
+								}
 							}],
 					store : store,
 					listeners : {
@@ -536,6 +568,7 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 			warehouseId : Ext.getCmp("editWarehouse").getIdValue(),
 			bizUserId : Ext.getCmp("editBizUser").getIdValue(),
 			receivingType : Ext.getCmp("editReceivingType").getValue(),
+			billMemo : Ext.getCmp("editBillMemo").getValue(),
 			pwBillId : me.__billId,
 			items : []
 		};
@@ -550,7 +583,8 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
 						goodsPrice : item.get("goodsPrice"),
 						rejCount : item.get("rejCount"),
 						rejPrice : item.get("rejPrice"),
-						rejMoney : item.get("rejMoney")
+						rejMoney : item.get("rejMoney"),
+						memo : item.get("memo")
 					});
 		}
 

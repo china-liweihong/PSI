@@ -81,6 +81,8 @@ class PRBillDAO extends PSIBaseExDAO {
 		// 收款方式
 		$receivingType = $bill["receivingType"];
 		
+		$billMemo = $bill["billMemo"];
+		
 		// 退货明细记录
 		$items = $bill["items"];
 		
@@ -114,10 +116,10 @@ class PRBillDAO extends PSIBaseExDAO {
 		
 		// 主表
 		$sql = "insert into t_pr_bill(id, bill_status, bizdt, biz_user_id, supplier_id, date_created,
-					input_user_id, ref, warehouse_id, pw_bill_id, receiving_type, data_org, company_id)
-				values ('%s', 0, '%s', '%s', '%s', now(), '%s', '%s', '%s', '%s', %d, '%s', '%s')";
+					input_user_id, ref, warehouse_id, pw_bill_id, receiving_type, data_org, company_id, bill_memo)
+				values ('%s', 0, '%s', '%s', '%s', now(), '%s', '%s', '%s', '%s', %d, '%s', '%s', '%s')";
 		$rc = $db->execute($sql, $id, $bizDT, $bizUserId, $supplierId, $loginUserId, $ref, 
-				$warehouseId, $pwBillId, $receivingType, $dataOrg, $companyId);
+				$warehouseId, $pwBillId, $receivingType, $dataOrg, $companyId, $billMemo);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -125,9 +127,9 @@ class PRBillDAO extends PSIBaseExDAO {
 		// 明细表
 		$sql = "insert into t_pr_bill_detail(id, date_created, goods_id, goods_count, goods_price,
 				goods_money, rejection_goods_count, rejection_goods_price, rejection_money, show_order,
-				prbill_id, pwbilldetail_id, data_org, company_id, inventory_price, inventory_money)
+				prbill_id, pwbilldetail_id, data_org, company_id, inventory_price, inventory_money, memo)
 				values ('%s', now(), '%s', convert(%f, $fmt), %f, %f, convert(%f, $fmt),
-						%f, %f, %d, '%s', '%s', '%s', '%s', 0, 0)";
+						%f, %f, %d, '%s', '%s', '%s', '%s', 0, 0, '%s')";
 		foreach ( $items as $i => $v ) {
 			$pwbillDetailId = $v["id"];
 			$goodsId = $v["goodsId"];
@@ -137,10 +139,11 @@ class PRBillDAO extends PSIBaseExDAO {
 			$rejCount = $v["rejCount"];
 			$rejPrice = $v["rejPrice"];
 			$rejMoney = $v["rejMoney"];
+			$memo = $v["memo"];
 			
 			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsPrice, 
 					$goodsMoney, $rejCount, $rejPrice, $rejMoney, $i, $id, $pwbillDetailId, $dataOrg, 
-					$companyId);
+					$companyId, $memo);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
@@ -242,6 +245,8 @@ class PRBillDAO extends PSIBaseExDAO {
 		// 收款方式
 		$receivingType = $bill["receivingType"];
 		
+		$billMemo = $bill["billMemo"];
+		
 		// 退货商品明细记录
 		$items = $bill["items"];
 		
@@ -279,9 +284,9 @@ class PRBillDAO extends PSIBaseExDAO {
 		
 		$sql = "insert into t_pr_bill_detail(id, date_created, goods_id, goods_count, goods_price,
 				goods_money, rejection_goods_count, rejection_goods_price, rejection_money, show_order,
-				prbill_id, pwbilldetail_id, data_org, company_id, inventory_price, inventory_money)
+				prbill_id, pwbilldetail_id, data_org, company_id, inventory_price, inventory_money, memo)
 				values ('%s', now(), '%s', convert(%f, $fmt), %f, %f, 
-						convert(%f, $fmt), %f, %f, %d, '%s', '%s', '%s', '%s', 0, 0)";
+						convert(%f, $fmt), %f, %f, %d, '%s', '%s', '%s', '%s', 0, 0, '%s')";
 		foreach ( $items as $i => $v ) {
 			$pwbillDetailId = $v["id"];
 			$goodsId = $v["goodsId"];
@@ -291,10 +296,11 @@ class PRBillDAO extends PSIBaseExDAO {
 			$rejCount = $v["rejCount"];
 			$rejPrice = $v["rejPrice"];
 			$rejMoney = $v["rejMoney"];
+			$memo = $v["memo"];
 			
 			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsPrice, 
 					$goodsMoney, $rejCount, $rejPrice, $rejMoney, $i, $id, $pwbillDetailId, $dataOrg, 
-					$companyId);
+					$companyId, $memo);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
@@ -314,10 +320,11 @@ class PRBillDAO extends PSIBaseExDAO {
 				set rejection_money = %f,
 					bizdt = '%s', biz_user_id = '%s',
 					date_created = now(), input_user_id = '%s',
-					warehouse_id = '%s', receiving_type = %d
+					warehouse_id = '%s', receiving_type = %d,
+					bill_memo = '%s'
 				where id = '%s' ";
 		$rc = $db->execute($sql, $rejMoney, $bizDT, $bizUserId, $loginUserId, $warehouseId, 
-				$receivingType, $id);
+				$receivingType, $billMemo, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -747,7 +754,7 @@ class PRBillDAO extends PSIBaseExDAO {
 			$sql = "select p.ref, p.bill_status, p.warehouse_id, w.name as warehouse_name,
 						p.biz_user_id, u.name as biz_user_name, pw.ref as pwbill_ref,
 						s.name as supplier_name, s.id as supplier_id,
-						p.pw_bill_id as pwbill_id, p.bizdt, p.receiving_type
+						p.pw_bill_id as pwbill_id, p.bizdt, p.receiving_type, p.bill_memo
 					from t_pr_bill p, t_warehouse w, t_user u, t_pw_bill pw, t_supplier s
 					where p.id = '%s'
 						and p.warehouse_id = w.id
@@ -771,12 +778,13 @@ class PRBillDAO extends PSIBaseExDAO {
 			$result["pwbillId"] = $data[0]["pwbill_id"];
 			$result["bizDT"] = $this->toYMD($data[0]["bizdt"]);
 			$result["receivingType"] = $data[0]["receiving_type"];
+			$result["billMemo"] = $data[0]["bill_memo"];
 			
 			$items = [];
 			$sql = "select p.pwbilldetail_id as id, p.goods_id, g.code as goods_code, g.name as goods_name,
 						g.spec as goods_spec, u.name as unit_name, convert(p.goods_count, $fmt) as goods_count,
 						p.goods_price, p.goods_money, convert(p.rejection_goods_count, $fmt) as rej_count,
-						p.rejection_goods_price as rej_price, p.rejection_money as rej_money
+						p.rejection_goods_price as rej_price, p.rejection_money as rej_money, p.memo
 					from t_pr_bill_detail p, t_goods g, t_goods_unit u
 					where p.prbill_id = '%s'
 						and p.goods_id = g.id
@@ -796,7 +804,8 @@ class PRBillDAO extends PSIBaseExDAO {
 						"goodsMoney" => $v["goods_money"],
 						"rejCount" => $v["rej_count"],
 						"rejPrice" => $v["rej_price"],
-						"rejMoney" => $v["rej_money"]
+						"rejMoney" => $v["rej_money"],
+						"memo" => $v["memo"]
 				];
 			}
 			

@@ -344,10 +344,10 @@ class WSPBillDAO extends PSIBaseExDAO {
 			
 			// 复制当前商品构成BOM
 			$this->copyGoodsBOM($detailId, $goodsId, $fmt);
-			
-			// 展开当前商品BOM
-			$this->expandGoodsBOM($id, $fmt);
 		}
+		
+		// 展开当前商品BOM
+		$this->expandGoodsBOM($id, $fmt);
 		
 		// 操作成功
 		$bill["id"] = $id;
@@ -567,10 +567,10 @@ class WSPBillDAO extends PSIBaseExDAO {
 			
 			// 复制当前商品构成BOM
 			$this->copyGoodsBOM($detailId, $goodsId, $fmt);
-			
-			// 展开当前商品BOM
-			$this->expandGoodsBOM($id, $fmt);
 		}
+		
+		// 展开当前商品BOM
+		$this->expandGoodsBOM($id, $fmt);
 		
 		// 操作成功
 		$bill["ref"] = $ref;

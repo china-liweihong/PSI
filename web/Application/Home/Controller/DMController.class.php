@@ -218,6 +218,18 @@ class DMController extends PSIBaseController {
 	}
 
 	/**
+	 * 成品委托生产订单生成PDF文件
+	 */
+	public function dmoBillPdf() {
+		$params = [
+				"ref" => I("get.ref")
+		];
+		
+		$ps = new DMOBillService();
+		$ps->pdf($params);
+	}
+
+	/**
 	 * 成品委托生产入库 - 主页面
 	 */
 	public function dmwbillIndex() {

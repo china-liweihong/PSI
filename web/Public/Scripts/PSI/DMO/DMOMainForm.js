@@ -968,7 +968,8 @@ Ext.define("PSI.DMO.DMOMainForm", {
 		}
 		var bill = item[0];
 
-		me.showInfo("TODO");
+		var url = me.URL("Home/DM/dmoBillPdf?ref=" + bill.get("ref"));
+		window.open(url);
 	},
 
 	getDMWGrid : function() {

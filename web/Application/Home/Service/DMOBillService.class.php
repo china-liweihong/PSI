@@ -392,4 +392,19 @@ class DMOBillService extends PSIBaseExService {
 		
 		$pdf->Output("$ref.pdf", "I");
 	}
+
+	/**
+	 * 为使用Lodop打印准备数据
+	 *
+	 * @param array $params        	
+	 */
+	public function getDMOBillDataForLodopPrint($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new DMOBillDAO($this->db());
+		
+		return $dao->getDMOBillDataForLodopPrint($params);
+	}
 }

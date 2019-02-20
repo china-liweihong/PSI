@@ -1032,4 +1032,77 @@ class DMOBillDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 为使用Lodop打印准备数据
+	 *
+	 * @param array $params        	
+	 */
+	public function getDMOBillDataForLodopPrint($params) {
+		$db = $this->db;
+		$result = [];
+		
+		$id = $params["id"];
+		
+		$sql = "select p.ref, p.bill_status, p.goods_money, p.tax, p.money_with_tax,
+					f.name as factory_name, p.contact, p.tel, p.fax, p.deal_address,
+					p.deal_date, p.payment_type, p.bill_memo, p.date_created,
+					o.full_name as org_name, u1.name as biz_user_name, u2.name as input_user_name,
+					p.confirm_user_id, p.confirm_date, p.company_id
+				from t_dmo_bill p, t_factory f, t_org o, t_user u1, t_user u2
+				where (p.factory_id = f.id) and (p.org_id = o.id)
+					and (p.biz_user_id = u1.id) and (p.input_user_id = u2.id)
+					and (p.id = '%s')";
+		
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return $result;
+		}
+		
+		$v = $data[0];
+		$result["ref"] = $v["ref"];
+		$result["goodsMoney"] = $v["goods_money"];
+		$result["tax"] = $v["tax"];
+		$result["moneyWithTax"] = $v["money_with_tax"];
+		$result["factoryName"] = $v["factory_name"];
+		$result["contact"] = $v["contact"];
+		$result["tel"] = $v["tel"];
+		$result["dealDate"] = $this->toYMD($v["deal_date"]);
+		$result["dealAddress"] = $v["deal_address"];
+		$result["billMemo"] = $v["bill_memo"];
+		
+		$result["printDT"] = date("Y-m-d H:i:s");
+		
+		$companyId = $v["company_id"];
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
+		$sql = "select p.id, g.code, g.name, g.spec, convert(p.goods_count, $fmt) as goods_count,
+					p.goods_price, p.goods_money,
+					p.tax_rate, p.tax, p.money_with_tax, u.name as unit_name
+				from t_dmo_bill_detail p, t_goods g, t_goods_unit u
+				where p.dmobill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
+				order by p.show_order";
+		$items = [];
+		$data = $db->query($sql, $id);
+		
+		foreach ( $data as $v ) {
+			$items[] = [
+					"goodsCode" => $v["code"],
+					"goodsName" => $v["name"],
+					"goodsSpec" => $v["spec"],
+					"goodsCount" => $v["goods_count"],
+					"unitName" => $v["unit_name"],
+					"goodsPrice" => $v["goods_price"],
+					"goodsMoney" => $v["goods_money"],
+					"taxRate" => intval($v["tax_rate"]),
+					"goodsMoneyWithTax" => $v["money_with_tax"]
+			];
+		}
+		
+		$result["items"] = $items;
+		
+		return $result;
+	}
 }

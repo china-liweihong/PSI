@@ -230,6 +230,22 @@ class DMController extends PSIBaseController {
 	}
 
 	/**
+	 * 生成打印成品委托生产订单的页面
+	 */
+	public function genDMOBillPrintPage() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id")
+			];
+			
+			$ss = new DMOBillService();
+			$data = $ss->getDMOBillDataForLodopPrint($params);
+			$this->assign("data", $data);
+			$this->display();
+		}
+	}
+
+	/**
 	 * 成品委托生产入库 - 主页面
 	 */
 	public function dmwbillIndex() {

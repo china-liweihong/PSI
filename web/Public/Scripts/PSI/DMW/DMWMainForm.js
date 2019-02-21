@@ -804,7 +804,7 @@ Ext.define("PSI.DMW.DMWMainForm", {
 
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			me.showInfo("没有选择要打印的采购入库单");
+			me.showInfo("没有选择要打印的成品委托生产入库单");
 			return;
 		}
 		var bill = item[0];
@@ -812,7 +812,7 @@ Ext.define("PSI.DMW.DMWMainForm", {
 		var el = Ext.getBody();
 		el.mask("数据加载中...");
 		var r = {
-			url : PSI.Const.BASE_URL + "Home/Purchase/genPWBillPrintPage",
+			url : PSI.Const.BASE_URL + "Home/DM/genDMWBillPrintPage",
 			params : {
 				id : bill.get("id")
 			},
@@ -821,7 +821,7 @@ Ext.define("PSI.DMW.DMWMainForm", {
 
 				if (success) {
 					var data = response.responseText;
-					me.previewPWBill(bill.get("ref"), data);
+					me.previewDMWBill(bill.get("ref"), data);
 				}
 			}
 		};
@@ -831,7 +831,7 @@ Ext.define("PSI.DMW.DMWMainForm", {
 	PRINT_PAGE_WIDTH : "200mm",
 	PRINT_PAGE_HEIGHT : "95mm",
 
-	previewPWBill : function(ref, data) {
+	previewDMWBill : function(ref, data) {
 		var me = this;
 
 		var lodop = getLodop();
@@ -840,7 +840,7 @@ Ext.define("PSI.DMW.DMWMainForm", {
 			return;
 		}
 
-		lodop.PRINT_INIT("采购入库单" + ref);
+		lodop.PRINT_INIT("成品委托生产入库单" + ref);
 		lodop.SET_PRINT_PAGESIZE(1, me.PRINT_PAGE_WIDTH, me.PRINT_PAGE_HEIGHT,
 				"");
 		lodop.ADD_PRINT_HTM("0mm", "0mm", "100%", "100%", data);
@@ -858,7 +858,7 @@ Ext.define("PSI.DMW.DMWMainForm", {
 
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			me.showInfo("没有选择要打印的采购入库单");
+			me.showInfo("没有选择要打印的成品委托生产入库单");
 			return;
 		}
 		var bill = item[0];
@@ -866,7 +866,7 @@ Ext.define("PSI.DMW.DMWMainForm", {
 		var el = Ext.getBody();
 		el.mask("数据加载中...");
 		var r = {
-			url : PSI.Const.BASE_URL + "Home/Purchase/genPWBillPrintPage",
+			url : PSI.Const.BASE_URL + "Home/DM/genDMWBillPrintPage",
 			params : {
 				id : bill.get("id")
 			},
@@ -875,14 +875,14 @@ Ext.define("PSI.DMW.DMWMainForm", {
 
 				if (success) {
 					var data = response.responseText;
-					me.printPWBill(bill.get("ref"), data);
+					me.printDMWBill(bill.get("ref"), data);
 				}
 			}
 		};
 		me.ajax(r);
 	},
 
-	printPWBill : function(ref, data) {
+	printDMWBill : function(ref, data) {
 		var me = this;
 
 		var lodop = getLodop();
@@ -891,7 +891,7 @@ Ext.define("PSI.DMW.DMWMainForm", {
 			return;
 		}
 
-		lodop.PRINT_INIT("采购入库单" + ref);
+		lodop.PRINT_INIT("成品委托生产入库单" + ref);
 		lodop.SET_PRINT_PAGESIZE(1, me.PRINT_PAGE_WIDTH, me.PRINT_PAGE_HEIGHT,
 				"");
 		lodop.ADD_PRINT_HTM("0mm", "0mm", "100%", "100%", data);

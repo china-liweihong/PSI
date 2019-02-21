@@ -289,4 +289,20 @@ class DMWBillService extends PSIBaseExService {
 		
 		return $this->ok($id);
 	}
+
+	/**
+	 * 生成打印成品委托生产入库单的页面
+	 *
+	 * @param array $params        	
+	 */
+	public function getDMWBillDataForLodopPrint($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$params["companyId"] = $this->getCompanyId();
+		
+		$dao = new DMWBillDAO($this->db());
+		return $dao->getDMWBillDataForLodopPrint($params);
+	}
 }

@@ -366,4 +366,20 @@ class DMController extends PSIBaseController {
 			$this->ajaxReturn($service->commitDMWBill($params));
 		}
 	}
+
+	/**
+	 * 生成打印成品委托生产入库单的页面
+	 */
+	public function genDMWBillPrintPage() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id")
+			];
+			
+			$ss = new DMWBillService();
+			$data = $ss->getDMWBillDataForLodopPrint($params);
+			$this->assign("data", $data);
+			$this->display();
+		}
+	}
 }

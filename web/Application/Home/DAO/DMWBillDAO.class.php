@@ -925,4 +925,74 @@ class DMWBillDAO extends PSIBaseExDAO {
 	public function commitDMWBill(& $params) {
 		return $this->todo();
 	}
+
+	/**
+	 * 生成打印成品委托生产入库单的页面
+	 *
+	 * @param array $params        	
+	 */
+	public function getDMWBillDataForLodopPrint($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		
+		$sql = "select p.ref, p.bill_status, p.ref, p.biz_dt, u1.name as biz_user_name, u2.name as input_user_name,
+					p.goods_money, w.name as warehouse_name, f.name as factory_name,
+					p.date_created, p.payment_type, p.company_id, p.bill_memo
+				from t_dmw_bill p, t_warehouse w, t_factory f, t_user u1, t_user u2
+				where (p.warehouse_id = w.id) and (p.factory_id = f.id)
+				and (p.biz_user_id = u1.id) and (p.input_user_id = u2.id)
+				and (p.id = '%s')";
+		
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return null;
+		}
+		
+		$v = $data[0];
+		$companyId = $v["company_id"];
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
+		$result = [];
+		
+		$result["ref"] = $v["ref"];
+		$result["billStatus"] = $v["bill_status"];
+		$result["factoryName"] = $v["factory_name"];
+		$result["goodsMoney"] = $v["goods_money"];
+		$result["bizDT"] = $this->toYMD($v["biz_dt"]);
+		$result["warehouseName"] = $v["warehouse_name"];
+		$result["bizUserName"] = $v["biz_user_name"];
+		$result["billMemo"] = $v["bill_memo"];
+		
+		$result["printDT"] = date("Y-m-d H:i:s");
+		
+		$sql = "select g.code, g.name, g.spec, u.name as unit_name,
+					convert(p.goods_count, $fmt) as goods_count, p.goods_price,
+					p.goods_money, p.memo
+				from t_dmw_bill_detail p, t_goods g, t_goods_unit u
+				where p.dmwbill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
+				order by p.show_order ";
+		$items = [];
+		$data = $db->query($sql, $id);
+		
+		foreach ( $data as $v ) {
+			$items[] = [
+					"goodsCode" => $v["code"],
+					"goodsName" => $v["name"],
+					"goodsSpec" => $v["spec"],
+					"goodsCount" => $v["goods_count"],
+					"unitName" => $v["unit_name"],
+					"goodsPrice" => $v["goods_price"],
+					"goodsMoney" => $v["goods_money"],
+					"memo" => $v["memo"]
+			];
+		}
+		
+		$result["items"] = $items;
+		
+		return $result;
+	}
 }

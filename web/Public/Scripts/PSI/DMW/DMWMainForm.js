@@ -789,7 +789,8 @@ Ext.define("PSI.DMW.DMWMainForm", {
 		}
 		var bill = item[0];
 
-		me.showInfo("TODO");
+		var url = me.URL("Home/DM/dmwBillPdf?ref=" + bill.get("ref"));
+		window.open(url);
 	},
 
 	onPrintPreview : function() {

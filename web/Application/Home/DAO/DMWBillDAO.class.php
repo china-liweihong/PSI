@@ -918,4 +918,11 @@ class DMWBillDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 提交成品委托生产入库单
+	 */
+	public function commitDMWBill(& $params) {
+		return $this->todo();
+	}
 }

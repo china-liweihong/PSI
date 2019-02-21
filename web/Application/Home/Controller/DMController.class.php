@@ -353,4 +353,17 @@ class DMController extends PSIBaseController {
 		$service = new DMWBillService();
 		$service->pdf($params);
 	}
+
+	/**
+	 * 提交成品委托生产入库单
+	 */
+	public function commitDMWBill() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id")
+			];
+			$service = new DMWBillService();
+			$this->ajaxReturn($service->commitDMWBill($params));
+		}
+	}
 }

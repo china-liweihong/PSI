@@ -255,4 +255,38 @@ class DMWBillService extends PSIBaseExService {
 		
 		$pdf->Output("$ref.pdf", "I");
 	}
+
+	/**
+	 * 提交成品委托生产入库单
+	 */
+	public function commitDMWBill($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$db = $this->db();
+		$db->startTrans();
+		
+		$params["loginUserId"] = $this->getLoginUserId();
+		$params["companyId"] = $this->getCompanyId();
+		
+		$dao = new DMWBillDAO($db);
+		
+		$rc = $dao->commitDMWBill($params);
+		if ($rc) {
+			$db->rollback();
+			return $rc;
+		}
+		
+		$ref = $params["ref"];
+		
+		// 业务日志
+		$log = "提交成品委托入库单: 单号 = {$ref}";
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
+		return $this->ok($id);
+	}
 }

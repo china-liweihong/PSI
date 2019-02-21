@@ -850,4 +850,72 @@ class DMWBillDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 查询成品委托生产入库单的数据，用于生成PDF文件
+	 *
+	 * @param array $params        	
+	 *
+	 * @return NULL|array
+	 */
+	public function getDataForPDF($params) {
+		$db = $this->db;
+		
+		$ref = $params["ref"];
+		
+		$sql = "select p.id, p.bill_status, p.ref, p.biz_dt, u1.name as biz_user_name, u2.name as input_user_name,
+					p.goods_money, w.name as warehouse_name, f.name as factory_name,
+					p.date_created, p.payment_type, p.company_id
+				from t_dmw_bill p, t_warehouse w, t_factory f, t_user u1, t_user u2
+				where (p.warehouse_id = w.id) and (p.factory_id = f.id)
+				and (p.biz_user_id = u1.id) and (p.input_user_id = u2.id)
+				and (p.ref = '%s')";
+		
+		$data = $db->query($sql, $ref);
+		if (! $data) {
+			return null;
+		}
+		
+		$v = $data[0];
+		$id = $v["id"];
+		$companyId = $v["company_id"];
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
+		$result = [];
+		
+		$result["billStatus"] = $v["bill_status"];
+		$result["factoryName"] = $v["factory_name"];
+		$result["goodsMoney"] = $v["goods_money"];
+		$result["bizDT"] = $this->toYMD($v["biz_dt"]);
+		$result["warehouseName"] = $v["warehouse_name"];
+		$result["bizUserName"] = $v["biz_user_name"];
+		
+		$sql = "select g.code, g.name, g.spec, u.name as unit_name,
+					convert(p.goods_count, $fmt) as goods_count, p.goods_price,
+					p.goods_money
+				from t_dmw_bill_detail p, t_goods g, t_goods_unit u
+				where p.dmwbill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
+				order by p.show_order ";
+		$items = [];
+		$data = $db->query($sql, $id);
+		
+		foreach ( $data as $v ) {
+			$items[] = [
+					"goodsCode" => $v["code"],
+					"goodsName" => $v["name"],
+					"goodsSpec" => $v["spec"],
+					"goodsCount" => $v["goods_count"],
+					"unitName" => $v["unit_name"],
+					"goodsPrice" => $v["goods_price"],
+					"goodsMoney" => $v["goods_money"]
+			];
+		}
+		
+		$result["items"] = $items;
+		
+		return $result;
+	}
 }

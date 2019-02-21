@@ -341,4 +341,16 @@ class DMController extends PSIBaseController {
 			$this->ajaxReturn($service->deleteDMWBill($params));
 		}
 	}
+
+	/**
+	 * 成品委托生产入库单生成PDF文件
+	 */
+	public function dmwBillPdf() {
+		$params = [
+				"ref" => I("get.ref")
+		];
+		
+		$service = new DMWBillService();
+		$service->pdf($params);
+	}
 }

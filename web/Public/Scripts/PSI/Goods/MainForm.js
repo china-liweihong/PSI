@@ -261,7 +261,7 @@ Ext.define("PSI.Goods.MainForm", {
 					fields : ["id", "code", "name", "spec", "unitId",
 							"unitName", "categoryId", "salePrice",
 							"purchasePrice", "barCode", "memo", "dataOrg",
-							"brandFullName", "recordStatus"]
+							"brandFullName", "recordStatus", "taxRate"]
 				});
 
 		var store = Ext.create("Ext.data.Store", {
@@ -389,6 +389,14 @@ Ext.define("PSI.Goods.MainForm", {
 						menuDisabled : true,
 						sortable : false,
 						align : "right",
+						xtype : "numbercolumn"
+					}, {
+						header : "税率",
+						dataIndex : "taxRate",
+						menuDisabled : true,
+						sortable : false,
+						align : "right",
+						format : "#",
 						xtype : "numbercolumn"
 					}, {
 						header : "条形码",
@@ -1068,7 +1076,7 @@ Ext.define("PSI.Goods.MainForm", {
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
 					fields : ["id", "text", "fullName", "code", "cnt", "leaf",
-							"children"]
+							"children", "taxRate"]
 				});
 
 		var store = Ext.create("Ext.data.TreeStore", {
@@ -1139,6 +1147,10 @@ Ext.define("PSI.Goods.MainForm", {
 									renderer : function(value) {
 										return value == 0 ? "" : value;
 									}
+								}, {
+									text : "默认税率",
+									dataIndex : "taxRate",
+									width : 80
 								}]
 					},
 					listeners : {

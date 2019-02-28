@@ -146,7 +146,7 @@ class GoodsDAO extends PSIBaseExDAO {
 		
 		$r = intval($taxRate);
 		if ($r >= 0 && $r <= 17) {
-			return $r;
+			return "{$r}%";
 		} else {
 			return null;
 		}
@@ -182,6 +182,7 @@ class GoodsDAO extends PSIBaseExDAO {
 		$memo = $params["memo"];
 		$brandId = $params["brandId"];
 		$recordStatus = $params["recordStatus"];
+		$taxRate = $params["taxRate"];
 		
 		$dataOrg = $params["dataOrg"];
 		$companyId = $params["companyId"];
@@ -248,6 +249,28 @@ class GoodsDAO extends PSIBaseExDAO {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
 		
+		// 税率
+		if ($taxRate == - 1) {
+			$sql = "update t_goods set tax_rate = null where id = '%s' ";
+			$rc = $db->execute($sql, $id);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+		} else {
+			$taxRate = intval($taxRate);
+			if ($taxRate > 17) {
+				$taxRate = 17;
+			}
+			if ($taxRate < 0) {
+				$taxRate = 0;
+			}
+			$sql = "update t_goods set tax_rate = %d where id = '%s' ";
+			$rc = $db->execute($sql, $taxRate, $id);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+		}
+		
 		$params["id"] = $id;
 		
 		// 操作成功
@@ -275,6 +298,7 @@ class GoodsDAO extends PSIBaseExDAO {
 		$memo = $params["memo"];
 		$brandId = $params["brandId"];
 		$recordStatus = $params["recordStatus"];
+		$taxRate = $params["taxRate"];
 		
 		$py = $params["py"];
 		$specPY = $params["specPY"];
@@ -336,6 +360,28 @@ class GoodsDAO extends PSIBaseExDAO {
 				$purchasePrice, $barCode, $memo, $specPY, $brandId, $brandId, $recordStatus, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 税率
+		if ($taxRate == - 1) {
+			$sql = "update t_goods set tax_rate = null where id = '%s' ";
+			$rc = $db->execute($sql, $id);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+		} else {
+			$taxRate = intval($taxRate);
+			if ($taxRate > 17) {
+				$taxRate = 17;
+			}
+			if ($taxRate < 0) {
+				$taxRate = 0;
+			}
+			$sql = "update t_goods set tax_rate = %d where id = '%s' ";
+			$rc = $db->execute($sql, $taxRate, $id);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
 		}
 		
 		// 操作成功
@@ -710,7 +756,7 @@ class GoodsDAO extends PSIBaseExDAO {
 		$categoryId = $params["categoryId"];
 		
 		$sql = "select category_id, code, name, spec, unit_id, sale_price, purchase_price,
-					bar_code, memo, brand_id, record_status
+					bar_code, memo, brand_id, record_status, tax_rate
 				from t_goods
 				where id = '%s' ";
 		$data = $db->query($sql, $id);
@@ -737,6 +783,7 @@ class GoodsDAO extends PSIBaseExDAO {
 			$result["barCode"] = $data[0]["bar_code"];
 			$result["memo"] = $data[0]["memo"];
 			$result["recordStatus"] = $data[0]["record_status"];
+			$result["taxRate"] = $data[0]["tax_rate"];
 			
 			$sql = "select full_name from t_goods_category where id = '%s' ";
 			$data = $db->query($sql, $categoryId);

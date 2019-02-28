@@ -289,6 +289,33 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 												data : [[1000, "启用"], [0, "停用"]]
 											}),
 									value : 1000
+								}, {
+									id : "PSI_Goods_GoodsEditForm_editTaxRate",
+									xtype : "combo",
+									queryMode : "local",
+									editable : false,
+									valueField : "id",
+									fieldLabel : "税率",
+									store : Ext.create("Ext.data.ArrayStore", {
+												fields : ["id", "text"],
+												data : [[-1, "[不设定]"],
+														[0, "0%"], [1, "1%"],
+														[2, "2%"], [3, "3%"],
+														[4, "4%"], [5, "5%"],
+														[6, "6%"], [7, "7%"],
+														[8, "8%"], [9, "9%"],
+														[10, "10%"],
+														[11, "11%"],
+														[12, "12%"],
+														[13, "13%"],
+														[14, "14%"],
+														[15, "15%"],
+														[16, "16%"],
+														[17, "17%"]]
+											}),
+									value : -1,
+									name : "taxRate",
+									width : 200
 								}],
 						buttons : buttons
 					}],
@@ -323,6 +350,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 		me.editMemo = Ext.getCmp("PSI_Goods_GoodsEditForm_editMemo");
 		me.editRecordStatus = Ext
 				.getCmp("PSI_Goods_GoodsEditForm_editRecordStatus");
+		me.editTaxRate = Ext.getCmp("PSI_Goods_GoodsEditForm_editTaxRate");
 
 		me.__editorList = [me.editCategory, me.editCode, me.editName,
 				me.editSpec, me.editUnit, me.editBarCode, me.editBrand,
@@ -383,6 +411,12 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 								}
 								me.editRecordStatus
 										.setValue(parseInt(data.recordStatus));
+								if (data.taxRate) {
+									me.editTaxRate
+											.setValue(parseInt(data.taxRate));
+								} else {
+									me.editTaxRate.setValue(-1);
+								}
 							} else {
 								// 新增商品
 								if (unitStore.getCount() > 0) {

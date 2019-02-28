@@ -395,9 +395,7 @@ Ext.define("PSI.Goods.MainForm", {
 						dataIndex : "taxRate",
 						menuDisabled : true,
 						sortable : false,
-						align : "right",
-						format : "#",
-						xtype : "numbercolumn"
+						align : "right"
 					}, {
 						header : "条形码",
 						dataIndex : "barCode",

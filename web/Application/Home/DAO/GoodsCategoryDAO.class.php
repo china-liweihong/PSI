@@ -18,7 +18,7 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 		$barCode = $params["barCode"];
 		
 		$result = array();
-		$sql = "select id, code, name, full_name
+		$sql = "select id, code, name, full_name, tax_rate
 				from t_goods_category c
 				where (parent_id = '%s')
 				";
@@ -41,6 +41,7 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 				$fullName = $v["name"];
 			}
 			$result[$i]["fullName"] = $fullName;
+			$result[$i]["taxRate"] = $this->toTaxRate($v["tax_rate"]);
 			
 			$children = $this->allCategoriesInternal($db, $id, $rs, $params); // 自身递归调用
 			
@@ -119,6 +120,19 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 		return $result;
 	}
 
+	private function toTaxRate($taxRate) {
+		if (! $taxRate) {
+			return null;
+		}
+		
+		$r = intval($taxRate);
+		if ($r > 0 && $r <= 17) {
+			return $r;
+		} else {
+			return null;
+		}
+	}
+
 	/**
 	 * 返回所有的商品分类
 	 *
@@ -144,7 +158,7 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 			return $this->emptyResult();
 		}
 		
-		$sql = "select id, code, name, full_name
+		$sql = "select id, code, name, full_name, tax_rate
 				from t_goods_category c
 				where (parent_id is null)
 				";
@@ -170,6 +184,7 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 				$fullName = $v["name"];
 			}
 			$result[$i]["fullName"] = $fullName;
+			$result[$i]["taxRate"] = $this->toTaxRate($v["tax_rate"]);
 			
 			$children = $this->allCategoriesInternal($db, $id, $rs, $params);
 			

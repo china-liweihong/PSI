@@ -37,7 +37,8 @@ class GoodsDAO extends PSIBaseExDAO {
 		
 		$result = [];
 		$sql = "select g.id, g.code, g.name, g.sale_price, g.spec,  g.unit_id, u.name as unit_name,
-					g.purchase_price, g.bar_code, g.memo, g.data_org, g.brand_id, g.record_status
+					g.purchase_price, g.bar_code, g.memo, g.data_org, g.brand_id, g.record_status,
+					g.tax_rate
 				from t_goods g, t_goods_unit u
 				where (g.unit_id = u.id) and (g.category_id = '%s') ";
 		$queryParam = [];
@@ -93,7 +94,8 @@ class GoodsDAO extends PSIBaseExDAO {
 					"memo" => $v["memo"],
 					"dataOrg" => $v["data_org"],
 					"brandFullName" => $brandFullName,
-					"recordStatus" => $v["record_status"]
+					"recordStatus" => $v["record_status"],
+					"taxRate" => $this->toTaxRate($v["tax_rate"])
 			];
 		}
 		
@@ -135,6 +137,19 @@ class GoodsDAO extends PSIBaseExDAO {
 				"goodsList" => $result,
 				"totalCount" => $totalCount
 		];
+	}
+
+	private function toTaxRate($taxRate) {
+		if (! $taxRate) {
+			return null;
+		}
+		
+		$r = intval($taxRate);
+		if ($r > 0 && $r <= 17) {
+			return $r;
+		} else {
+			return null;
+		}
 	}
 
 	private function getBrandFullNameById($db, $brandId) {

@@ -126,7 +126,7 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 		}
 		
 		$r = intval($taxRate);
-		if ($r > 0 && $r <= 17) {
+		if ($r >= 0 && $r <= 17) {
 			return $r;
 		} else {
 			return null;

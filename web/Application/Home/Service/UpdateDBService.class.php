@@ -213,6 +213,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20190130_01();
 		$this->update_20190213_01();
 		$this->update_20190225_01();
+		$this->update_20190228_01();
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -233,6 +234,27 @@ class UpdateDBService extends PSIBaseService {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// ============================================
 	private function notForgot() {
+	}
+
+	private function update_20190228_01() {
+		// 本次更新：商品分类和商品增加税率字段
+		$db = $this->db;
+		
+		// 商品分类
+		$tableName = "t_goods_category";
+		$columnName = "tax_rate";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} decimal(19,2) DEFAULT NULL;";
+			$db->execute($sql);
+		}
+		
+		// 商品
+		$tableName = "t_goods";
+		$columnName = "tax_rate";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} decimal(19,2) DEFAULT NULL;";
+			$db->execute($sql);
+		}
 	}
 
 	private function update_20190225_01() {

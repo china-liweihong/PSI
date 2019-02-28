@@ -1150,6 +1150,7 @@ Ext.define("PSI.Goods.MainForm", {
 								}, {
 									text : "默认税率",
 									dataIndex : "taxRate",
+									align : "center",
 									width : 80
 								}]
 					},

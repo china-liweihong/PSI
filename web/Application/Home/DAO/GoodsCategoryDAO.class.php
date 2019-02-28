@@ -127,7 +127,7 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 		
 		$r = intval($taxRate);
 		if ($r >= 0 && $r <= 17) {
-			return $r;
+			return "{$r}%";
 		} else {
 			return null;
 		}
@@ -290,6 +290,8 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 			return $this->bad("编码为 [{$code}] 的分类已经存在");
 		}
 		
+		$taxRate = $params["taxRate"];
+		
 		$id = $this->newId();
 		
 		if ($parentId) {
@@ -312,6 +314,27 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 			$sql = "insert into t_goods_category (id, code, name, data_org, full_name, company_id)
 					values ('%s', '%s', '%s', '%s', '%s', '%s')";
 			$rc = $db->execute($sql, $id, $code, $name, $dataOrg, $name, $companyId);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+		}
+		
+		if ($taxRate == - 1) {
+			$sql = "update t_goods_category set tax_rate = null where id = '%s' ";
+			$rc = $db->execute($sql, $id);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+		} else {
+			$taxRate = intval($taxRate);
+			if ($taxRate > 17) {
+				$taxRate = 17;
+			}
+			if ($taxRate < 0) {
+				$taxRate = 0;
+			}
+			$sql = "update t_goods_category set tax_rate = %d where id = '%s' ";
+			$rc = $db->execute($sql, $taxRate, $id);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
@@ -371,6 +394,7 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 		$code = trim($params["code"]);
 		$name = trim($params["name"]);
 		$parentId = $params["parentId"];
+		$taxRate = $params["taxRate"];
 		
 		if ($this->isEmptyStringAfterTrim($code)) {
 			return $this->bad("分类编码不能为空");
@@ -451,6 +475,28 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
 		
+		// 税率
+		if ($taxRate == - 1) {
+			$sql = "update t_goods_category set tax_rate = null where id = '%s' ";
+			$rc = $db->execute($sql, $id);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+		} else {
+			$taxRate = intval($taxRate);
+			if ($taxRate > 17) {
+				$taxRate = 17;
+			}
+			if ($taxRate < 0) {
+				$taxRate = 0;
+			}
+			$sql = "update t_goods_category set tax_rate = %d where id = '%s' ";
+			$rc = $db->execute($sql, $taxRate, $id);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+		}
+		
 		// 操作成功
 		return null;
 	}
@@ -516,13 +562,14 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 		
 		$result = array();
 		
-		$sql = "select code, name, parent_id from t_goods_category
+		$sql = "select code, name, parent_id, tax_rate from t_goods_category
 				where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if ($data) {
 			$v = $data[0];
 			$result["code"] = $v["code"];
 			$result["name"] = $v["name"];
+			$result["taxRate"] = $v["tax_rate"];
 			$parentId = $v["parent_id"];
 			$result["parentId"] = $parentId;
 			if ($parentId) {

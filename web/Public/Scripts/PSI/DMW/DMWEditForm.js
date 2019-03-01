@@ -1,5 +1,5 @@
 //
-// 产品委托生产入库单 - 新增或编辑界面
+// 成品委托生产入库单 - 新增或编辑界面
 //
 Ext.define("PSI.DMW.DMWEditForm", {
 	extend : "PSI.AFX.BaseDialogForm",

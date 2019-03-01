@@ -55,7 +55,6 @@ class DMOBillDAO extends PSIBaseExDAO {
 		$result = [];
 		
 		$bcDAO = new BizConfigDAO($db);
-		$result["taxRate"] = $bcDAO->getTaxRate($companyId);
 		
 		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
 		$fmt = "decimal(19, " . $dataScale . ")";

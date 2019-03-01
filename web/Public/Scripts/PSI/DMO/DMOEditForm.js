@@ -321,7 +321,6 @@ Ext.define("PSI.DMO.DMOEditForm", {
 								Ext.getCmp("editTel").setValue(data.tel);
 								Ext.getCmp("editFax").setValue(data.fax);
 							}
-							me.__taxRate = data.taxRate;
 
 							Ext.getCmp("editBizUser")
 									.setIdValue(data.bizUserId);
@@ -344,9 +343,7 @@ Ext.define("PSI.DMO.DMOEditForm", {
 								store.add(data.items);
 							}
 							if (store.getCount() == 0) {
-								store.add({
-											taxRate : me.getTaxRate()
-										});
+								store.add({});
 							}
 
 							if (data.billStatus && data.billStatus != 0) {
@@ -355,12 +352,6 @@ Ext.define("PSI.DMO.DMOEditForm", {
 						}
 					}
 				});
-	},
-
-	getTaxRate : function() {
-		var me = this;
-
-		return me.__taxRate;
 	},
 
 	onOK : function() {
@@ -413,9 +404,7 @@ Ext.define("PSI.DMO.DMOEditForm", {
 			var me = this;
 			var store = me.getGoodsGrid().getStore();
 			if (store.getCount() == 0) {
-				store.add({
-							taxRate : me.getTaxRate()
-						});
+				store.add({});
 			}
 			me.getGoodsGrid().focus();
 			me.__cellEditing.startEdit(0, 1);
@@ -612,10 +601,7 @@ Ext.define("PSI.DMO.DMOEditForm", {
 										var store = grid.getStore();
 										store.remove(store.getAt(row));
 										if (store.getCount() == 0) {
-											store.add({
-														taxRate : me
-																.getTaxRate()
-													});
+											store.add({});
 										}
 									},
 									scope : me
@@ -634,10 +620,7 @@ Ext.define("PSI.DMO.DMOEditForm", {
 									tooltip : "在当前记录之前插入新记录",
 									handler : function(grid, row) {
 										var store = grid.getStore();
-										store.insert(row, [{
-															taxRate : me
-																	.getTaxRate()
-														}]);
+										store.insert(row, [{}]);
 									},
 									scope : me
 								}]
@@ -655,10 +638,7 @@ Ext.define("PSI.DMO.DMOEditForm", {
 									tooltip : "在当前记录之后新增记录",
 									handler : function(grid, row) {
 										var store = grid.getStore();
-										store.insert(row + 1, [{
-															taxRate : me
-																	.getTaxRate()
-														}]);
+										store.insert(row + 1, [{}]);
 									},
 									scope : me
 								}]
@@ -688,6 +668,7 @@ Ext.define("PSI.DMO.DMOEditForm", {
 		goods.set("goodsName", data.name);
 		goods.set("unitName", data.unitName);
 		goods.set("goodsSpec", data.spec);
+		goods.set("taxRate", data.taxRate);
 
 		me.calcMoney(goods);
 	},
@@ -705,9 +686,7 @@ Ext.define("PSI.DMO.DMOEditForm", {
 		if (fieldName == "memo") {
 			var store = me.getGoodsGrid().getStore();
 			if (e.rowIdx == store.getCount() - 1) {
-				store.add({
-							taxRate : me.getTaxRate()
-						});
+				store.add({});
 				var row = e.rowIdx + 1;
 				me.getGoodsGrid().getSelectionModel().select(row);
 				me.__cellEditing.startEdit(row, 1);

@@ -544,6 +544,43 @@ Ext.define("PSI.DMW.DMWEditForm", {
 							id : "columnGoodsMoney",
 							summaryType : "sum"
 						}, {
+							header : "税率(%)",
+							dataIndex : "taxRate",
+							menuDisabled : true,
+							sortable : false,
+							draggable : false,
+							align : "right",
+							format : "0",
+							width : 80
+						}, {
+							header : "税金",
+							dataIndex : "tax",
+							menuDisabled : true,
+							sortable : false,
+							draggable : false,
+							align : "right",
+							xtype : "numbercolumn",
+							width : 100,
+							editor : {
+								xtype : "numberfield",
+								hideTrigger : true
+							},
+							summaryType : "sum"
+						}, {
+							header : "价税合计",
+							dataIndex : "moneyWithTax",
+							menuDisabled : true,
+							sortable : false,
+							draggable : false,
+							align : "right",
+							xtype : "numbercolumn",
+							width : 120,
+							editor : {
+								xtype : "numberfield",
+								hideTrigger : true
+							},
+							summaryType : "sum"
+						}, {
 							header : "备注",
 							dataIndex : "memo",
 							width : 200,

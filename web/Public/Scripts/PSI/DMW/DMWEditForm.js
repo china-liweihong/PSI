@@ -263,7 +263,7 @@ Ext.define("PSI.DMW.DMWEditForm", {
 
 				if (success) {
 					me.editFactory.focus();
-					
+
 					var data = me.decodeJSON(response.responseText);
 					me.editBillMemo.setValue(data.billMemo);
 
@@ -452,7 +452,16 @@ Ext.define("PSI.DMW.DMWEditForm", {
 							"goodsSpec", "unitName", "goodsCount", {
 								name : "goodsMoney",
 								type : "float"
-							}, "goodsPrice", "memo", "dmoBillDetailId"]
+							}, "goodsPrice", "memo", "dmoBillDetailId", {
+								name : "taxRate",
+								type : "int"
+							}, {
+								name : "tax",
+								type : "float"
+							}, {
+								name : "moneyWithTax",
+								type : "float"
+							}]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,

@@ -1,5 +1,5 @@
 //
-// 产品委托生产订单 - 新增或编辑界面
+// 成品委托生产订单 - 新增或编辑界面
 //  
 Ext.define("PSI.DMO.DMOEditForm", {
 	extend : "PSI.AFX.BaseDialogForm",

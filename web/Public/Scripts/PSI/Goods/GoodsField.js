@@ -47,7 +47,8 @@ Ext.define("PSI.Goods.GoodsField", {
 		var modelName = "PSIGoodsField";
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
-					fields : ["id", "code", "name", "spec", "unitName"]
+					fields : ["id", "code", "name", "spec", "unitName",
+							"taxRate"]
 				});
 
 		var store = Ext.create("Ext.data.Store", {

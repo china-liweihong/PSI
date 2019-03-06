@@ -241,7 +241,7 @@ Ext.define("PSI.DMW.DMWMainForm", {
 					fields : ["id", "ref", "bizDate", "factoryName",
 							"warehouseName", "inputUserName", "bizUserName",
 							"billStatus", "amount", "dateCreated",
-							"paymentType", "billMemo"]
+							"paymentType", "billMemo", "tax", "moneyWithTax"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -313,6 +313,18 @@ Ext.define("PSI.DMW.DMWMainForm", {
 								}, {
 									header : "金额",
 									dataIndex : "amount",
+									align : "right",
+									xtype : "numbercolumn",
+									width : 150
+								}, {
+									header : "税金",
+									dataIndex : "tax",
+									align : "right",
+									xtype : "numbercolumn",
+									width : 150
+								}, {
+									header : "价税合计",
+									dataIndex : "moneyWithTax",
 									align : "right",
 									xtype : "numbercolumn",
 									width : 150
@@ -413,7 +425,8 @@ Ext.define("PSI.DMW.DMWMainForm", {
 					extend : "Ext.data.Model",
 					fields : ["id", "goodsCode", "goodsName", "goodsSpec",
 							"unitName", "goodsCount", "goodsMoney",
-							"goodsPrice", "memo"]
+							"goodsPrice", "memo", "taxRate", "tax",
+							"moneyWithTax"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -465,15 +478,31 @@ Ext.define("PSI.DMW.DMWMainForm", {
 									dataIndex : "goodsPrice",
 									align : "right",
 									xtype : "numbercolumn",
-									width : 150,
-									hidden : me.getPermission().viewPrice == "0"
+									width : 150
 								}, {
 									header : "金额",
 									dataIndex : "goodsMoney",
 									align : "right",
 									xtype : "numbercolumn",
-									width : 150,
-									hidden : me.getPermission().viewPrice == "0"
+									width : 150
+								}, {
+									header : "税率(%)",
+									dataIndex : "taxRate",
+									align : "right",
+									format : "#",
+									xtype : "numbercolumn"
+								}, {
+									header : "税金",
+									dataIndex : "tax",
+									align : "right",
+									xtype : "numbercolumn",
+									width : 150
+								}, {
+									header : "价税合计",
+									dataIndex : "moneyWithTax",
+									align : "right",
+									xtype : "numbercolumn",
+									width : 150
 								}, {
 									header : "备注",
 									dataIndex : "memo",

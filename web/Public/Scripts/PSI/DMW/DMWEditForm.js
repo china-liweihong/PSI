@@ -745,7 +745,10 @@ Ext.define("PSI.DMW.DMWEditForm", {
 						goodsPrice : item.get("goodsPrice"),
 						goodsMoney : item.get("goodsMoney"),
 						memo : item.get("memo"),
-						dmoBillDetailId : item.get("dmoBillDetailId")
+						dmoBillDetailId : item.get("dmoBillDetailId"),
+						taxRate : item.get("taxRate"),
+						tax : item.get("tax"),
+						moneyWithTax : item.get("moneyWithTax")
 					});
 		}
 

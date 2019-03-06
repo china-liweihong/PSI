@@ -350,30 +350,38 @@ class DMWBillDAO extends PSIBaseExDAO {
 			// 采购订单明细记录id
 			$dmoBillDetailId = $item["dmoBillDetailId"];
 			
+			$taxRate = $item["taxRate"];
+			$tax = $item["tax"];
+			$moneyWithTax = $item["moneyWithTax"];
+			
 			$sql = "insert into t_dmw_bill_detail
 						(id, date_created, goods_id, goods_count, goods_price,
 						goods_money,  dmwbill_id, show_order, data_org, memo, company_id,
-						dmobilldetail_id)
-					values ('%s', now(), '%s', convert(%f, $fmt), %f, %f, '%s', %d, '%s', '%s', '%s', '%s')";
+						dmobilldetail_id, tax_rate, tax, money_with_tax)
+					values ('%s', now(), '%s', convert(%f, $fmt), %f, %f, '%s', %d, '%s', '%s', '%s', '%s',
+						%d, %f, %f)";
 			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsPrice, 
-					$goodsMoney, $id, $i, $dataOrg, $memo, $companyId, $dmoBillDetailId);
+					$goodsMoney, $id, $i, $dataOrg, $memo, $companyId, $dmoBillDetailId, $taxRate, 
+					$tax, $moneyWithTax);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
 		}
 		
 		// 同步入库单主表中的采购金额合计值
-		$sql = "select sum(goods_money) as goods_money from t_dmw_bill_detail
+		$sql = "select sum(goods_money) as goods_money, sum(money_with_tax) as money_with_tax from t_dmw_bill_detail
 				where dmwbill_id = '%s' ";
 		$data = $db->query($sql, $id);
 		$totalMoney = $data[0]["goods_money"];
 		if (! $totalMoney) {
 			$totalMoney = 0;
 		}
+		$totalMoneyWithTax = $data[0]["money_with_tax"];
+		
 		$sql = "update t_dmw_bill
-				set goods_money = %f
+				set goods_money = %f, money_with_tax = %f
 				where id = '%s' ";
-		$rc = $db->execute($sql, $totalMoney, $id);
+		$rc = $db->execute($sql, $totalMoney, $totalMoneyWithTax, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -530,32 +538,41 @@ class DMWBillDAO extends PSIBaseExDAO {
 			// 成品委托生产订单明细记录id
 			$dmoBillDetailId = $item["dmoBillDetailId"];
 			
+			$taxRate = $item["taxRate"];
+			$tax = $item["tax"];
+			$moneyWithTax = $item["moneyWithTax"];
+			
 			$sql = "insert into t_dmw_bill_detail (id, date_created, goods_id, goods_count, goods_price,
-						goods_money,  dmwbill_id, show_order, data_org, memo, company_id, dmobilldetail_id)
-					values ('%s', now(), '%s', convert(%f, $fmt), %f, %f, '%s', %d, '%s', '%s', '%s', '%s')";
+						goods_money,  dmwbill_id, show_order, data_org, memo, company_id, dmobilldetail_id,
+						tax_rate, tax, money_with_tax)
+					values ('%s', now(), '%s', convert(%f, $fmt), %f, %f, '%s', %d, '%s', '%s', '%s', '%s',
+						%d, %f, %f)";
 			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsPrice, 
-					$goodsMoney, $id, $i, $dataOrg, $memo, $companyId, $dmoBillDetailId);
+					$goodsMoney, $id, $i, $dataOrg, $memo, $companyId, $dmoBillDetailId, $taxRate, 
+					$tax, $moneyWithTax);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
 		}
 		
 		// 同步主表数据
-		$sql = "select sum(goods_money) as goods_money from t_dmw_bill_detail
+		$sql = "select sum(goods_money) as goods_money, sum(money_with_tax) as money_with_tax from t_dmw_bill_detail
 				where dmwbill_id = '%s' ";
 		$data = $db->query($sql, $id);
 		$totalMoney = $data[0]["goods_money"];
 		if (! $totalMoney) {
 			$totalMoney = 0;
 		}
+		$totalMoneyWithTax = $data[0]["money_with_tax"];
+		
 		$sql = "update t_dmw_bill
 				set goods_money = %f, warehouse_id = '%s',
 					factory_id = '%s', biz_dt = '%s',
 					biz_user_id = '%s', payment_type = %d,
-					bill_memo = '%s'
+					bill_memo = '%s', money_with_tax = %f
 				where id = '%s' ";
 		$rc = $db->execute($sql, $totalMoney, $warehouseId, $factoryId, $bizDT, $bizUserId, 
-				$paymentType, $billMemo, $id);
+				$paymentType, $billMemo, $moneyWithTax, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}

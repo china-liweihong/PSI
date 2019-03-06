@@ -1062,6 +1062,22 @@ class DMWBillDAO extends PSIBaseExDAO {
 			$dmoId = $data[0]["dmo_id"];
 		}
 		
+		// 检查入库数量、单价、金额不能为负数
+		foreach ( $items as $i => $v ) {
+			$goodsCount = $v["goods_count"];
+			if ($goodsCount < 0) {
+				return $this->bad("采购数量不能小于0");
+			}
+			$goodsPrice = floatval($v["goods_price"]);
+			if ($goodsPrice < 0) {
+				return $this->bad("采购单价不能为负数");
+			}
+			$goodsMoney = floatval($v["goods_money"]);
+			if ($goodsMoney < 0) {
+				return $this->bad("采购金额不能为负数");
+			}
+		}
+		
 		return $this->todo();
 	}
 

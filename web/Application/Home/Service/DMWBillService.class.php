@@ -92,7 +92,14 @@ class DMWBillService extends PSIBaseExService {
 			$id = $bill["id"];
 			$ref = $bill["ref"];
 			
-			$log = "新建成品委托生产入库单，单号：{$ref}";
+			$dmobillRef = $bill["dmobillRef"];
+			if ($dmobillRef) {
+				// 从成品委托生产订单生成入库单
+				$log = "从成品委托生产订单(单号：{$dmobillRef})生成成品委托生产入库单: 单号 = {$ref}";
+			} else {
+				// 手工新建入库单
+				$log = "新建成品委托生产入库单，单号：{$ref}";
+			}
 		}
 		
 		// 记录业务日志

@@ -966,6 +966,102 @@ class DMWBillDAO extends PSIBaseExDAO {
 	 * 提交成品委托生产入库单
 	 */
 	public function commitDMWBill(& $params) {
+		$db = $this->db;
+		
+		// 成品委托生产入库单id
+		$id = $params["id"];
+		
+		$loginUserId = $params["loginUserId"];
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->badParam("loginUserId");
+		}
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->badParam("companyId");
+		}
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
+		$sql = "select ref, warehouse_id, bill_status, biz_dt, biz_user_id,  
+					money_with_tax, factory_id,
+					payment_type, company_id
+				from t_dmw_bill
+				where id = '%s' ";
+		$data = $db->query($sql, $id);
+		
+		if (! $data) {
+			return $this->bad("要提交的成品委托生产入库单不存在");
+		}
+		$billStatus = $data[0]["bill_status"];
+		if ($billStatus != 0) {
+			return $this->bad("成品委托生产入库单已经提交入库，不能再次提交");
+		}
+		
+		$ref = $data[0]["ref"];
+		$bizDT = $data[0]["biz_dt"];
+		$bizUserId = $data[0]["biz_user_id"];
+		
+		// 应付总额
+		$billPayables = $data[0]["money_with_tax"];
+		
+		$factoryId = $data[0]["factory_id"];
+		$warehouseId = $data[0]["warehouse_id"];
+		$paymentType = $data[0]["payment_type"];
+		$companyId = $data[0]["company_id"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->badParam("companyId");
+		}
+		
+		$bc = new BizConfigDAO($db);
+		// true: 先进先出法
+		$fifo = $bc->getInventoryMethod($companyId) == 1;
+		
+		// 检查仓库
+		$warehouseDAO = new WarehouseDAO($db);
+		$warehouse = $warehouseDAO->getWarehouseById($warehouseId);
+		if (! $warehouse) {
+			return $this->bad("要入库的仓库不存在");
+		}
+		$inited = $warehouse["inited"];
+		if ($inited == 0) {
+			return $this->bad("仓库 [{$warehouse['name']}] 还没有完成建账，不能做成品委托生产入库的操作");
+		}
+		
+		// 检查工厂
+		$factoryDAO = new FactoryDAO($db);
+		$factory = $factoryDAO->getFactoryById($factoryId);
+		if (! $factory) {
+			return $this->bad("工厂不存在");
+		}
+		
+		// 检查业务员是否存在
+		$userDAO = new UserDAO($db);
+		$user = $userDAO->getUserById($bizUserId);
+		if (! $user) {
+			return $this->bad("业务员不存在");
+		}
+		
+		$sql = "select goods_id, convert(goods_count, $fmt) as goods_count, goods_price, goods_money, id,
+					dmobilldetail_id
+				from t_dmw_bill_detail
+				where dmwbill_id = '%s' order by show_order";
+		$items = $db->query($sql, $id);
+		if (! $items) {
+			return $this->bad("成品委托生产入库单没有明细记录，不能入库");
+		}
+		
+		// 成品委托生产入库单对应的成品委托生产订单id
+		$dmoId = null;
+		$sql = "select dmo_id
+				from t_dmo_dmw
+				where dmw_id = '%s' ";
+		$data = $db->query($sql, $id);
+		if ($data) {
+			$dmoId = $data[0]["dmo_id"];
+		}
+		
 		return $this->todo();
 	}
 

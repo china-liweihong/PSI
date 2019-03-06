@@ -126,7 +126,7 @@ class DMWBillDAO extends PSIBaseExDAO {
 			$items = [];
 			$sql = "select p.id, p.goods_id, g.code, g.name, g.spec, u.name as unit_name,
 						convert(p.goods_count, $fmt) as goods_count, p.goods_price, p.goods_money, p.memo,
-						p.dmobilldetail_id
+						p.dmobilldetail_id, p.tax_rate, p.tax, p.money_with_tax
 					from t_dmw_bill_detail p, t_goods g, t_goods_unit u
 					where p.goods_Id = g.id and g.unit_id = u.id and p.dmwbill_id = '%s'
 					order by p.show_order";
@@ -143,7 +143,10 @@ class DMWBillDAO extends PSIBaseExDAO {
 						"goodsPrice" => $v["goods_price"],
 						"goodsMoney" => $v["goods_money"],
 						"memo" => $v["memo"],
-						"dmoBillDetailId" => $v["dmobilldetail_id"]
+						"dmoBillDetailId" => $v["dmobilldetail_id"],
+						"taxRate" => $v["tax_rate"],
+						"tax" => $v["tax"],
+						"moneyWithTax" => $v["money_with_tax"]
 				];
 			}
 			
@@ -183,12 +186,18 @@ class DMWBillDAO extends PSIBaseExDAO {
 					$sql = "select p.id, p.goods_id, g.code, g.name, g.spec, u.name as unit_name,
 								convert(p.goods_count, $fmt) as goods_count,
 								p.goods_price, p.goods_money,
-								convert(p.left_count, $fmt) as left_count, p.memo
+								convert(p.left_count, $fmt) as left_count, p.memo, p.tax_rate
 							from t_dmo_bill_detail p, t_goods g, t_goods_unit u
 							where p.dmobill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
 							order by p.show_order ";
 					$data = $db->query($sql, $dmobillId);
 					foreach ( $data as $v ) {
+						$taxRate = $v["tax_rate"];
+						
+						$goodsMoney = $v["left_count"] * $v["goods_price"];
+						$tax = $goodsMoney * $taxRate / 100;
+						$moneyWithTax = $goodsMoney + $tax;
+						
 						$items[] = [
 								"id" => $v["id"],
 								"dmoBillDetailId" => $v["id"],
@@ -200,7 +209,10 @@ class DMWBillDAO extends PSIBaseExDAO {
 								"goodsCount" => $v["left_count"],
 								"goodsPrice" => $v["goods_price"],
 								"goodsMoney" => $v["left_count"] * $v["goods_price"],
-								"memo" => $v["memo"]
+								"memo" => $v["memo"],
+								"taxRate" => $taxRate,
+								"tax" => $tax,
+								"moneyWithTax" => $moneyWithTax
 						];
 					}
 					

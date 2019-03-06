@@ -662,6 +662,7 @@ Ext.define("PSI.DMW.DMWEditForm", {
 		goods.set("goodsName", data.name);
 		goods.set("unitName", data.unitName);
 		goods.set("goodsSpec", data.spec);
+		goods.set("taxRate", data.taxRate);
 
 		me.calcMoney(goods);
 	},
@@ -696,7 +697,36 @@ Ext.define("PSI.DMW.DMWEditForm", {
 			if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
 				me.calcMoney(goods);
 			}
+		} else if (fieldName == "moneyWithTax") {
+			if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
+				me.calcTax(goods);
+			}
+		} else if (fieldName == "tax") {
+			if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
+				me.calcMoneyWithTax(goods);
+			}
 		}
+	},
+
+	calcTax : function(goods) {
+		if (!goods) {
+			return;
+		}
+		var taxRate = goods.get("taxRate") / 100;
+		var tax = goods.get("moneyWithTax") * taxRate / (1 + taxRate);
+		goods.set("tax", tax);
+		goods.set("goodsMoney", goods.get("moneyWithTax") - tax);
+
+		// 计算单价
+		goods.set("goodsPrice", goods.get("goodsMoney")
+						/ goods.get("goodsCount"))
+	},
+
+	calcMoneyWithTax : function(goods) {
+		if (!goods) {
+			return;
+		}
+		goods.set("moneyWithTax", goods.get("goodsMoney") + goods.get("tax"));
 	},
 
 	calcMoney : function(goods) {
@@ -706,6 +736,8 @@ Ext.define("PSI.DMW.DMWEditForm", {
 
 		goods.set("goodsMoney", goods.get("goodsCount")
 						* goods.get("goodsPrice"));
+		goods.set("tax", goods.get("goodsMoney") * goods.get("taxRate") / 100);
+		goods.set("moneyWithTax", goods.get("goodsMoney") + goods.get("tax"));
 	},
 
 	calcPrice : function(goods) {

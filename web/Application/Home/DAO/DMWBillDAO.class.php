@@ -1066,19 +1066,223 @@ class DMWBillDAO extends PSIBaseExDAO {
 		foreach ( $items as $i => $v ) {
 			$goodsCount = $v["goods_count"];
 			if ($goodsCount < 0) {
-				return $this->bad("采购数量不能小于0");
+				return $this->bad("数量不能小于0");
 			}
 			$goodsPrice = floatval($v["goods_price"]);
 			if ($goodsPrice < 0) {
-				return $this->bad("采购单价不能为负数");
+				return $this->bad("单价不能为负数");
 			}
 			$goodsMoney = floatval($v["goods_money"]);
 			if ($goodsMoney < 0) {
-				return $this->bad("采购金额不能为负数");
+				return $this->bad("金额不能为负数");
 			}
 		}
 		
-		return $this->todo();
+		$allPaymentType = [
+				0
+		];
+		if (! in_array($paymentType, $allPaymentType)) {
+			return $this->bad("付款方式填写不正确，无法提交");
+		}
+		
+		// 遍历明细，更改库存账记录
+		foreach ( $items as $v ) {
+			$dmwbilldetailId = $v["id"];
+			
+			$dmobillDetailId = $v["dmobilldetail_id"];
+			
+			$goodsCount = $v["goods_count"];
+			if ($goodsCount <= 0) {
+				// 忽略非正入库数量
+				continue;
+			}
+			$goodsPrice = floatval($v["goods_price"]);
+			$goodsMoney = floatval($v["goods_money"]);
+			if ($goodsCount != 0) {
+				$goodsPrice = $goodsMoney / $goodsCount;
+			}
+			
+			$goodsId = $v["goods_id"];
+			
+			$balanceCount = 0;
+			$balanceMoney = 0;
+			$balancePrice = (float)0;
+			// 库存总账
+			$sql = "select convert(in_count, $fmt) as in_count, in_money, balance_count, balance_money
+					from t_inventory
+					where warehouse_id = '%s' and goods_id = '%s' ";
+			$data = $db->query($sql, $warehouseId, $goodsId);
+			if ($data) {
+				$inCount = $data[0]["in_count"];
+				$inMoney = floatval($data[0]["in_money"]);
+				$balanceCount = $data[0]["balance_count"];
+				$balanceMoney = floatval($data[0]["balance_money"]);
+				
+				$inCount += $goodsCount;
+				$inMoney += $goodsMoney;
+				$inPrice = $inMoney / $inCount;
+				
+				$balanceCount += $goodsCount;
+				$balanceMoney += $goodsMoney;
+				$balancePrice = $balanceMoney / $balanceCount;
+				
+				$sql = "update t_inventory
+						set in_count = convert(%f, $fmt), in_price = %f, in_money = %f,
+						balance_count = convert(%f, $fmt), balance_price = %f, balance_money = %f
+						where warehouse_id = '%s' and goods_id = '%s' ";
+				$rc = $db->execute($sql, $inCount, $inPrice, $inMoney, $balanceCount, $balancePrice, 
+						$balanceMoney, $warehouseId, $goodsId);
+				if ($rc === false) {
+					return $this->sqlError(__METHOD__, __LINE__);
+				}
+			} else {
+				// 首次入库
+				$inCount = $goodsCount;
+				$inMoney = $goodsMoney;
+				$inPrice = $inMoney / $inCount;
+				$balanceCount += $goodsCount;
+				$balanceMoney += $goodsMoney;
+				$balancePrice = $balanceMoney / $balanceCount;
+				
+				$sql = "insert into t_inventory (in_count, in_price, in_money, balance_count,
+							balance_price, balance_money, warehouse_id, goods_id)
+						values (convert(%f, $fmt), %f, %f, convert(%f, $fmt), %f, %f, '%s', '%s')";
+				$rc = $db->execute($sql, $inCount, $inPrice, $inMoney, $balanceCount, $balancePrice, 
+						$balanceMoney, $warehouseId, $goodsId);
+				if ($rc === false) {
+					return $this->sqlError(__METHOD__, __LINE__);
+				}
+			}
+			
+			// 库存明细账
+			$sql = "insert into t_inventory_detail (in_count, in_price, in_money, balance_count,
+						balance_price, balance_money, warehouse_id, goods_id, biz_date,
+						biz_user_id, date_created, ref_number, ref_type)
+					values (convert(%f, $fmt), %f, %f, convert(%f, $fmt), %f, %f, '%s', '%s', '%s', '%s',
+						now(), '%s', '成品委托生产入库')";
+			$rc = $db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $balanceCount, 
+					$balancePrice, $balanceMoney, $warehouseId, $goodsId, $bizDT, $bizUserId, $ref);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+			
+			// 先进先出
+			if ($fifo) {
+				// 目前的版本暂时不处理先进先出法
+			}
+			
+			// 同步成品委托生产订单中的到货情况
+			$sql = "select convert(goods_count, $fmt) as goods_count,
+						convert(dmw_count, $fmt) as dmw_count
+					from t_dmo_bill_detail
+					where id = '%s' ";
+			$dmoDetail = $db->query($sql, $dmobillDetailId);
+			if (! $dmoDetail) {
+				// 当前入库单不是由成品委托生产订单创建的
+				continue;
+			}
+			
+			$totalGoodsCount = $dmoDetail[0]["goods_count"];
+			$totalDMWCount = $dmoDetail[0]["dmw_count"];
+			$totalDMWCount += $goodsCount;
+			$totalLeftCount = $totalGoodsCount - $totalDMWCount;
+			
+			$sql = "update t_dmo_bill_detail
+					set dmw_count = convert(%f, $fmt), left_count = convert(%f, $fmt)
+					where id = '%s' ";
+			$rc = $db->execute($sql, $totalDMWCount, $totalLeftCount, $dmobillDetailId);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+		}
+		
+		// 修改本单据状态为已入库
+		$sql = "update t_dmw_bill set bill_status = 1000 where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 同步成品委托生产订单的状态
+		$sql = "select dmo_id
+				from t_dmo_dmw
+				where dmw_id = '%s' ";
+		$data = $db->query($sql, $id);
+		if ($data) {
+			$dmoBillId = $data[0]["dmo_id"];
+			
+			$sql = "select count(*) as cnt from t_dmo_bill_detail
+					where dmobill_id = '%s' and convert(left_count, $fmt) > 0 ";
+			$data = $db->query($sql, $poBillId);
+			$cnt = $data[0]["cnt"];
+			$billStatus = 1000;
+			if ($cnt > 0) {
+				// 部分入库
+				$billStatus = 2000;
+			} else {
+				// 全部入库
+				$billStatus = 3000;
+			}
+			$sql = "update t_dmo_bill
+					set bill_status = %d
+					where id = '%s' ";
+			$rc = $db->execute($sql, $billStatus, $dmoBillId);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+		}
+		
+		if ($paymentType == 0) {
+			// 记应付账款
+			// 应付明细账
+			$sql = "insert into t_payables_detail (id, pay_money, act_money, balance_money,
+					ca_id, ca_type, date_created, ref_number, ref_type, biz_date, company_id)
+					values ('%s', %f, 0, %f, '%s', 'factory', now(), '%s', '成品委托生产入库', '%s', '%s')";
+			$rc = $db->execute($sql, $this->newId(), $billPayables, $billPayables, $factoryId, $ref, 
+					$bizDT, $companyId);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+			
+			// 应付总账
+			$sql = "select id, pay_money, act_money
+					from t_payables
+					where ca_id = '%s' and ca_type = 'factory' and company_id = '%s' ";
+			$data = $db->query($sql, $factoryId, $companyId);
+			if ($data) {
+				$pId = $data[0]["id"];
+				$payMoney = floatval($data[0]["pay_money"]);
+				$payMoney += $billPayables;
+				
+				$actMoney = floatval($data[0]["act_money"]);
+				$balanMoney = $payMoney - $actMoney;
+				
+				$sql = "update t_payables
+						set pay_money = %f, balance_money = %f
+						where id = '%s' ";
+				$rc = $db->execute($sql, $payMoney, $balanMoney, $pId);
+				if ($rc === false) {
+					return $this->sqlError(__METHOD__, __LINE__);
+				}
+			} else {
+				// 首次记录应付账款
+				
+				$payMoney = $billPayables;
+				
+				$sql = "insert into t_payables (id, pay_money, act_money, balance_money,
+						ca_id, ca_type, company_id)
+						values ('%s', %f, 0, %f, '%s', 'factory', '%s')";
+				$rc = $db->execute($sql, $this->newId(), $payMoney, $payMoney, $factoryId, 
+						$companyId);
+				if ($rc === false) {
+					return $this->sqlError(__METHOD__, __LINE__);
+				}
+			}
+		}
+		
+		// 操作成功
+		$params["ref"] = $ref;
+		return null;
 	}
 
 	/**

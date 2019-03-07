@@ -1211,17 +1211,14 @@ class PWBillDAO extends PSIBaseExDAO {
 		foreach ( $items as $i => $v ) {
 			$goodsCount = $v["goods_count"];
 			if ($goodsCount < 0) {
-				$db->rollback();
 				return $this->bad("采购数量不能小于0");
 			}
 			$goodsPrice = floatval($v["goods_price"]);
 			if ($goodsPrice < 0) {
-				$db->rollback();
 				return $this->bad("采购单价不能为负数");
 			}
 			$goodsMoney = floatval($v["goods_money"]);
 			if ($goodsMoney < 0) {
-				$db->rollback();
 				return $this->bad("采购金额不能为负数");
 			}
 			

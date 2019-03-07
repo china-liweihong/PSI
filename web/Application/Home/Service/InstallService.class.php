@@ -405,6 +405,8 @@ class InstallService extends PSIBaseExService {
 				  `expand_by_bom` int(11) NOT NULL DEFAULT 0,
 				  `bill_memo` varchar(255) DEFAULT NULL,
 				  `wspbill_id` varchar(255) DEFAULT NULL,
+				  `tax` decimal(19,2) DEFAULT NULL,
+				  `money_with_tax` decimal(19,2) DEFAULT NULL,
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
@@ -424,6 +426,9 @@ class InstallService extends PSIBaseExService {
 				  `memo` varchar(1000) DEFAULT NULL,
 				  `company_id` varchar(255) DEFAULT NULL,
 				  `pobilldetail_id` varchar(255) DEFAULT NULL,
+				  `tax_rate` decimal(19,2) DEFAULT NULL,
+				  `tax` decimal(19,2) DEFAULT NULL,
+				  `money_with_tax` decimal(19,2) DEFAULT NULL,
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";

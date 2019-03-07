@@ -123,7 +123,7 @@ Ext.define("PSI.DMW.DMWMainForm", {
 				}, {
 					text : "帮助",
 					handler : function() {
-						me.showInfo("TODO");
+						window.open(me.URL("/Home/Help/index?t=dmwbill"));
 					}
 				}, "-", {
 					text : "关闭",

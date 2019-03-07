@@ -214,6 +214,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20190213_01();
 		$this->update_20190225_01();
 		$this->update_20190228_01();
+		$this->update_20190307_01();
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -234,6 +235,40 @@ class UpdateDBService extends PSIBaseService {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// ============================================
 	private function notForgot() {
+	}
+
+	private function update_20190307_01() {
+		// 本次更新：采购入库单增加税率字段
+		$db = $this->db;
+		
+		$tableName = "t_pw_bill";
+		$columnName = "tax";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} decimal(19,2) DEFAULT NULL;";
+			$db->execute($sql);
+		}
+		$columnName = "money_with_tax";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} decimal(19,2) DEFAULT NULL;";
+			$db->execute($sql);
+		}
+		
+		$tableName = "t_pw_bill_detail";
+		$columnName = "tax_rate";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} decimal(19,2) DEFAULT NULL;";
+			$db->execute($sql);
+		}
+		$columnName = "tax";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} decimal(19,2) DEFAULT NULL;";
+			$db->execute($sql);
+		}
+		$columnName = "money_with_tax";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} decimal(19,2) DEFAULT NULL;";
+			$db->execute($sql);
+		}
 	}
 
 	private function update_20190228_01() {

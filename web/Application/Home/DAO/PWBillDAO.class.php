@@ -101,7 +101,8 @@ class PWBillDAO extends PSIBaseExDAO {
 		$queryParams = [];
 		$sql = "select p.id, p.bill_status, p.ref, p.biz_dt, u1.name as biz_user_name, u2.name as input_user_name,
 					p.goods_money, w.name as warehouse_name, s.name as supplier_name,
-					p.date_created, p.payment_type, p.bill_memo, p.expand_by_bom, p.wspbill_id
+					p.date_created, p.payment_type, p.bill_memo, p.expand_by_bom, p.wspbill_id,
+					p.tax, p.money_with_tax
 				from t_pw_bill p, t_warehouse w, t_supplier s, t_user u1, t_user u2
 				where (p.warehouse_id = w.id) and (p.supplier_id = s.id)
 				and (p.biz_user_id = u1.id) and (p.input_user_id = u2.id) ";
@@ -175,7 +176,9 @@ class PWBillDAO extends PSIBaseExDAO {
 					"paymentType" => $v["payment_type"],
 					"billMemo" => $v["bill_memo"],
 					"expandByBOM" => $v["expand_by_bom"],
-					"wspBillRef" => $wspBillRef
+					"wspBillRef" => $wspBillRef,
+					"tax" => $v["tax"],
+					"moneyWithTax" => $v["money_with_tax"]
 			];
 		}
 		
@@ -254,7 +257,7 @@ class PWBillDAO extends PSIBaseExDAO {
 		
 		$sql = "select p.id, g.code, g.name, g.spec, u.name as unit_name, 
 					convert(p.goods_count, $fmt) as goods_count, p.goods_price,
-					p.goods_money, p.memo
+					p.goods_money, p.memo, p.tax_rate, p.tax, p.money_with_tax
 				from t_pw_bill_detail p, t_goods g, t_goods_unit u
 				where p.pwbill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
 				order by p.show_order ";
@@ -271,7 +274,10 @@ class PWBillDAO extends PSIBaseExDAO {
 					"goodsCount" => $v["goods_count"],
 					"goodsMoney" => $canViewPrice ? $v["goods_money"] : null,
 					"goodsPrice" => $canViewPrice ? $v["goods_price"] : null,
-					"memo" => $v["memo"]
+					"memo" => $v["memo"],
+					"taxRate" => $v["tax_rate"],
+					"tax" => $v["tax"],
+					"moneyWithTax" => $v["money_with_tax"]
 			];
 		}
 		

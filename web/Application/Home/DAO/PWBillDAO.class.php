@@ -417,30 +417,41 @@ class PWBillDAO extends PSIBaseExDAO {
 			// 采购订单明细记录id
 			$poBillDetailId = $item["poBillDetailId"];
 			
+			$taxRate = $item["taxRate"];
+			$tax = $item["tax"];
+			$moneyWithTax = $item["moneyWithTax"];
+			
 			$sql = "insert into t_pw_bill_detail
 					(id, date_created, goods_id, goods_count, goods_price,
 					goods_money,  pwbill_id, show_order, data_org, memo, company_id,
-					pobilldetail_id)
-					values ('%s', now(), '%s', convert(%f, $fmt), %f, %f, '%s', %d, '%s', '%s', '%s', '%s')";
+					pobilldetail_id, tax_rate, tax, money_with_tax)
+					values ('%s', now(), '%s', convert(%f, $fmt), %f, %f, '%s', %d, '%s', '%s', '%s', '%s',
+						%d, %f, %f)";
 			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsPrice, 
-					$goodsMoney, $id, $i, $dataOrg, $memo, $companyId, $poBillDetailId);
+					$goodsMoney, $id, $i, $dataOrg, $memo, $companyId, $poBillDetailId, $taxRate, 
+					$tax, $moneyWithTax);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
 		}
 		
 		// 同步入库单主表中的采购金额合计值
-		$sql = "select sum(goods_money) as goods_money from t_pw_bill_detail
+		$sql = "select sum(goods_money) as goods_money,
+					sum(tax) as tax, sum(money_with_tax) as money_with_tax
+				from t_pw_bill_detail
 				where pwbill_id = '%s' ";
 		$data = $db->query($sql, $id);
 		$totalMoney = $data[0]["goods_money"];
 		if (! $totalMoney) {
 			$totalMoney = 0;
 		}
+		$totalTax = $data[0]["tax"];
+		$totalMoneyWithTax = $data[0]["money_with_tax"];
+		
 		$sql = "update t_pw_bill
-				set goods_money = %f
+				set goods_money = %f, tax = %f, money_with_tax = %f
 				where id = '%s' ";
-		$rc = $db->execute($sql, $totalMoney, $id);
+		$rc = $db->execute($sql, $totalMoney, $totalTax, $totalMoneyWithTax, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -727,32 +738,45 @@ class PWBillDAO extends PSIBaseExDAO {
 			// 采购订单明细记录id
 			$poBillDetailId = $item["poBillDetailId"];
 			
+			$taxRate = $item["taxRate"];
+			$tax = $item["tax"];
+			$moneyWithTax = $item["moneyWithTax"];
+			
 			$sql = "insert into t_pw_bill_detail (id, date_created, goods_id, goods_count, goods_price,
-						goods_money,  pwbill_id, show_order, data_org, memo, company_id, pobilldetail_id)
-					values ('%s', now(), '%s', convert(%f, $fmt), %f, %f, '%s', %d, '%s', '%s', '%s', '%s')";
+						goods_money,  pwbill_id, show_order, data_org, memo, company_id, pobilldetail_id,
+						tax_rate, tax, money_with_tax)
+					values ('%s', now(), '%s', convert(%f, $fmt), %f, %f, '%s', %d, '%s', '%s', '%s', '%s',
+						%d, %f, %f)";
 			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsPrice, 
-					$goodsMoney, $id, $i, $dataOrg, $memo, $companyId, $poBillDetailId);
+					$goodsMoney, $id, $i, $dataOrg, $memo, $companyId, $poBillDetailId, $taxRate, 
+					$tax, $moneyWithTax);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
 		}
 		
 		// 同步主表数据
-		$sql = "select sum(goods_money) as goods_money from t_pw_bill_detail
+		$sql = "select sum(goods_money) as goods_money,
+					sum(tax) as tax, sum(money_with_tax) as money_with_tax
+				from t_pw_bill_detail
 				where pwbill_id = '%s' ";
 		$data = $db->query($sql, $id);
 		$totalMoney = $data[0]["goods_money"];
 		if (! $totalMoney) {
 			$totalMoney = 0;
 		}
+		$totalTax = $data[0]["tax"];
+		$totalMoneyWithTax = $data[0]["money_with_tax"];
+		
 		$sql = "update t_pw_bill
 				set goods_money = %f, warehouse_id = '%s',
 					supplier_id = '%s', biz_dt = '%s',
 					biz_user_id = '%s', payment_type = %d,
-					bill_memo = '%s', expand_by_bom = %d
+					bill_memo = '%s', expand_by_bom = %d,
+					tax = %f, money_with_tax = %f
 				where id = '%s' ";
 		$rc = $db->execute($sql, $totalMoney, $warehouseId, $supplierId, $bizDT, $bizUserId, 
-				$paymentType, $billMemo, $expandByBOM, $id);
+				$paymentType, $billMemo, $expandByBOM, $totalTax, $totalMoneyWithTax, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -928,7 +952,7 @@ class PWBillDAO extends PSIBaseExDAO {
 			$items = [];
 			$sql = "select p.id, p.goods_id, g.code, g.name, g.spec, u.name as unit_name,
 						convert(p.goods_count, $fmt) as goods_count, p.goods_price, p.goods_money, p.memo,
-						p.pobilldetail_id
+						p.pobilldetail_id, p.tax_rate, p.tax, p.money_with_tax
 					from t_pw_bill_detail p, t_goods g, t_goods_unit u
 					where p.goods_Id = g.id and g.unit_id = u.id and p.pwbill_id = '%s'
 					order by p.show_order";
@@ -945,7 +969,10 @@ class PWBillDAO extends PSIBaseExDAO {
 						"goodsPrice" => $canViewPrice ? $v["goods_price"] : null,
 						"goodsMoney" => $canViewPrice ? $v["goods_money"] : null,
 						"memo" => $v["memo"],
-						"poBillDetailId" => $v["pobilldetail_id"]
+						"poBillDetailId" => $v["pobilldetail_id"],
+						"taxRate" => intval($v["tax_rate"]),
+						"tax" => $v["tax"],
+						"moneyWithTax" => $v["money_with_tax"]
 				];
 			}
 			

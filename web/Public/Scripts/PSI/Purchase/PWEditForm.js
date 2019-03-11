@@ -835,7 +835,10 @@ Ext.define("PSI.Purchase.PWEditForm", {
 						goodsPrice : item.get("goodsPrice"),
 						goodsMoney : item.get("goodsMoney"),
 						memo : item.get("memo"),
-						poBillDetailId : item.get("poBillDetailId")
+						poBillDetailId : item.get("poBillDetailId"),
+						taxRate : item.get("taxRate"),
+						tax : item.get("tax"),
+						moneyWithTax : item.get("moneyWithTax")
 					});
 		}
 

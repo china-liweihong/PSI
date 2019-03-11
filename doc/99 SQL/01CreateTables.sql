@@ -446,6 +446,8 @@ CREATE TABLE IF NOT EXISTS `t_ws_bill` (
   `company_id` varchar(255) DEFAULT NULL,
   `memo` varchar(1000) DEFAULT NULL,
   `deal_address` varchar(255) DEFAULT NULL,
+  `tax` decimal(19,2) DEFAULT NULL,
+  `money_with_tax` decimal(19,2) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -466,6 +468,9 @@ CREATE TABLE IF NOT EXISTS `t_ws_bill_detail` (
   `memo` varchar(1000) DEFAULT NULL,
   `company_id` varchar(255) DEFAULT NULL,
   `sobilldetail_id` varchar(255) DEFAULT NULL,
+  `tax_rate` decimal(19,2) DEFAULT NULL,
+  `tax` decimal(19,2) DEFAULT NULL,
+  `money_with_tax` decimal(19,2) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

@@ -1166,7 +1166,7 @@ class PWBillDAO extends PSIBaseExDAO {
 		$fmt = "decimal(19, " . $dataScale . ")";
 		
 		$sql = "select ref, warehouse_id, bill_status, biz_dt, biz_user_id,  goods_money, supplier_id,
-					payment_type, company_id
+					payment_type, company_id, money_with_tax
 				from t_pw_bill
 				where id = '%s' ";
 		$data = $db->query($sql, $id);
@@ -1182,7 +1182,9 @@ class PWBillDAO extends PSIBaseExDAO {
 		$ref = $data[0]["ref"];
 		$bizDT = $data[0]["biz_dt"];
 		$bizUserId = $data[0]["biz_user_id"];
-		$billPayables = floatval($data[0]["goods_money"]);
+		// money_with_tax字段是之后增加的，下面的写法是考虑到该字段为null的情况，事实上似乎不用这么小心谨慎
+		// money_with_tax为null的时候，取goods_money
+		$billPayables = $data[0]["money_with_tax"] ?? floatval($data[0]["goods_money"]);
 		$supplierId = $data[0]["supplier_id"];
 		$warehouseId = $data[0]["warehouse_id"];
 		$paymentType = $data[0]["payment_type"];

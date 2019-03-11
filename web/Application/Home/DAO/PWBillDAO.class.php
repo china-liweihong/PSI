@@ -1762,7 +1762,8 @@ class PWBillDAO extends PSIBaseExDAO {
 		// 明细记录
 		$items = [];
 		$sql = "select p.id, p.goods_id, g.code, g.name, g.spec, u.name as unit_name,
-					convert(p.goods_count, $fmt) as goods_count, p.goods_price, p.goods_money, p.memo
+					convert(p.goods_count, $fmt) as goods_count, p.goods_price, p.goods_money, p.memo,
+					p.tax_rate, p.tax, p.money_with_tax
 				from t_pw_bill_detail p, t_goods g, t_goods_unit u
 				where p.goods_Id = g.id and g.unit_id = u.id and p.pwbill_id = '%s'
 				order by p.show_order";
@@ -1778,7 +1779,10 @@ class PWBillDAO extends PSIBaseExDAO {
 					"goodsCount" => $v["goods_count"],
 					"goodsPrice" => $v["goods_price"],
 					"goodsMoney" => $v["goods_money"],
-					"memo" => $v["memo"]
+					"memo" => $v["memo"],
+					"taxRate" => intval($v["tax_rate"]),
+					"tax" => $v["tax"],
+					"moneyWithTax" => $v["money_with_tax"]
 			];
 		}
 		

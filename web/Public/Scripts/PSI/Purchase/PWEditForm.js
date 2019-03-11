@@ -509,7 +509,16 @@ Ext.define("PSI.Purchase.PWEditForm", {
 							"goodsSpec", "unitName", "goodsCount", {
 								name : "goodsMoney",
 								type : "float"
-							}, "goodsPrice", "memo", "poBillDetailId"]
+							}, "goodsPrice", "memo", "poBillDetailId", {
+								name : "taxRate",
+								type : "int"
+							}, {
+								name : "tax",
+								type : "float"
+							}, {
+								name : "moneyWithTax",
+								type : "float"
+							}]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -594,6 +603,34 @@ Ext.define("PSI.Purchase.PWEditForm", {
 							summaryType : "sum",
 							hidden : !me.getViewPrice()
 						}, {
+							header : "税率(%)",
+							dataIndex : "taxRate",
+							align : "right",
+							format : "0",
+							width : 80
+						}, {
+							header : "税金",
+							dataIndex : "tax",
+							align : "right",
+							xtype : "numbercolumn",
+							width : 100,
+							editor : {
+								xtype : "numberfield",
+								hideTrigger : true
+							},
+							summaryType : "sum"
+						}, {
+							header : "价税合计",
+							dataIndex : "moneyWithTax",
+							align : "right",
+							xtype : "numbercolumn",
+							width : 120,
+							editor : {
+								xtype : "numberfield",
+								hideTrigger : true
+							},
+							summaryType : "sum"
+						}, {
 							header : "备注",
 							dataIndex : "memo",
 							width : 200,
@@ -677,6 +714,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 		goods.set("goodsName", data.name);
 		goods.set("unitName", data.unitName);
 		goods.set("goodsSpec", data.spec);
+		goods.set("taxRate", data.taxRate);
 
 		// 设置建议采购价
 		goods.set("goodsPrice", data.purchasePrice);
@@ -714,7 +752,36 @@ Ext.define("PSI.Purchase.PWEditForm", {
 			if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
 				me.calcMoney(goods);
 			}
+		} else if (fieldName == "moneyWithTax") {
+			if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
+				me.calcTax(goods);
+			}
+		} else if (fieldName == "tax") {
+			if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
+				me.calcMoneyWithTax(goods);
+			}
 		}
+	},
+
+	calcTax : function(goods) {
+		if (!goods) {
+			return;
+		}
+		var taxRate = goods.get("taxRate") / 100;
+		var tax = goods.get("moneyWithTax") * taxRate / (1 + taxRate);
+		goods.set("tax", tax);
+		goods.set("goodsMoney", goods.get("moneyWithTax") - tax);
+
+		// 计算单价
+		goods.set("goodsPrice", goods.get("goodsMoney")
+						/ goods.get("goodsCount"))
+	},
+
+	calcMoneyWithTax : function(goods) {
+		if (!goods) {
+			return;
+		}
+		goods.set("moneyWithTax", goods.get("goodsMoney") + goods.get("tax"));
 	},
 
 	calcMoney : function(goods) {
@@ -724,6 +791,9 @@ Ext.define("PSI.Purchase.PWEditForm", {
 
 		goods.set("goodsMoney", goods.get("goodsCount")
 						* goods.get("goodsPrice"));
+		goods.set("tax", goods.get("goodsMoney") * goods.get("taxRate") / 100);
+		goods.set("moneyWithTax", goods.get("goodsMoney") + goods.get("tax"));
+
 	},
 
 	calcPrice : function(goods) {

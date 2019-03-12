@@ -764,12 +764,14 @@ class GoodsDAO extends PSIBaseExDAO {
 		$result = [];
 		foreach ( $data as $v ) {
 			$goodsId = $v["id"];
+			$taxRateType = 1;
 			
 			// 查询商品的税率
 			// 目前的设计和实现，存在数据量大的情况下会查询缓慢的可能，是需要改进的地方
 			$sql = "select tax_rate from t_goods where id = '%s' and tax_rate is not null";
 			$d = $db->query($sql, $goodsId);
 			if ($d) {
+				$taxRateType = 3;
 				$taxRate = $d[0]["tax_rate"];
 			} else {
 				// 商品本身没有设置税率，就去查询该商品分类是否设置了默认税率
@@ -777,6 +779,7 @@ class GoodsDAO extends PSIBaseExDAO {
 				$sql = "select tax_rate from t_goods_category where id = '%s' and tax_rate is not null";
 				$d = $db->query($sql, $categoryId);
 				if ($d) {
+					$taxRateType = 2;
 					$taxRate = $d[0]["tax_rate"];
 				}
 			}
@@ -789,7 +792,8 @@ class GoodsDAO extends PSIBaseExDAO {
 					"unitName" => $v["unit_name"],
 					"purchasePrice" => $v["purchase_price"] == 0 ? null : $v["purchase_price"],
 					"memo" => $v["memo"],
-					"taxRate" => $taxRate
+					"taxRate" => $taxRate,
+					"taxRateType" => $taxRateType
 			];
 		}
 		

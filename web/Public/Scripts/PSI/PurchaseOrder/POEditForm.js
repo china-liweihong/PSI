@@ -349,9 +349,7 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 								store.add(data.items);
 							}
 							if (store.getCount() == 0) {
-								store.add({
-											taxRate : me.getTaxRate()
-										});
+								store.add({});
 							}
 
 							if (data.billStatus && data.billStatus != 0) {
@@ -360,16 +358,6 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 						}
 					}
 				});
-	},
-
-	getTaxRate : function() {
-		var me = this;
-
-		if (me.__taxRateBySupplier) {
-			return me.__taxRateBySupplier;
-		}
-
-		return me.__taxRate;
 	},
 
 	onOK : function() {
@@ -424,9 +412,7 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 			var me = this;
 			var store = me.getGoodsGrid().getStore();
 			if (store.getCount() == 0) {
-				store.add({
-							taxRate : me.getTaxRate()
-						});
+				store.add({});
 			}
 			me.getGoodsGrid().focus();
 			me.__cellEditing.startEdit(0, 1);
@@ -623,10 +609,7 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 										var store = grid.getStore();
 										store.remove(store.getAt(row));
 										if (store.getCount() == 0) {
-											store.add({
-														taxRate : me
-																.getTaxRate()
-													});
+											store.add({});
 										}
 									},
 									scope : me
@@ -645,10 +628,7 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 									tooltip : "在当前记录之前插入新记录",
 									handler : function(grid, row) {
 										var store = grid.getStore();
-										store.insert(row, [{
-															taxRate : me
-																	.getTaxRate()
-														}]);
+										store.insert(row, [{}]);
 									},
 									scope : me
 								}]
@@ -666,10 +646,7 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 									tooltip : "在当前记录之后新增记录",
 									handler : function(grid, row) {
 										var store = grid.getStore();
-										store.insert(row + 1, [{
-															taxRate : me
-																	.getTaxRate()
-														}]);
+										store.insert(row + 1, [{}]);
 									},
 									scope : me
 								}]
@@ -700,6 +677,18 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 		goods.set("goodsName", data.name);
 		goods.set("unitName", data.unitName);
 		goods.set("goodsSpec", data.spec);
+		if (me.__taxRateBySupplier) {
+			if (data.taxRateType > 1) {
+				// 该商品设置了自己的特定税率
+				goods.set("taxRate", data.taxRate);
+			} else {
+				// 设置了供应商税率，优先使用供应商税率
+				goods.set("taxRate", me.__taxRateBySupplier);
+			}
+		} else {
+			// 没有设置供应商税率
+			goods.set("taxRate", data.taxRate);
+		}
 
 		// 设置建议采购价
 		goods.set("goodsPrice", data.purchasePrice);
@@ -720,9 +709,7 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 		if (fieldName == "memo") {
 			var store = me.getGoodsGrid().getStore();
 			if (e.rowIdx == store.getCount() - 1) {
-				store.add({
-							taxRate : me.getTaxRate()
-						});
+				store.add({});
 				var row = e.rowIdx + 1;
 				me.getGoodsGrid().getSelectionModel().select(row);
 				me.__cellEditing.startEdit(row, 1);
@@ -758,9 +745,10 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 		var tax = goods.get("moneyWithTax") * taxRate / (1 + taxRate);
 		goods.set("tax", tax);
 		goods.set("goodsMoney", goods.get("moneyWithTax") - tax);
-		
+
 		// 计算单价
-		goods.set("goodsPrice", goods.get("goodsMoney") / goods.get("goodsCount"))
+		goods.set("goodsPrice", goods.get("goodsMoney")
+						/ goods.get("goodsCount"))
 	},
 
 	calcMoneyWithTax : function(goods) {
@@ -862,17 +850,5 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 		Ext.getCmp("editContact").setValue(data.contact01);
 
 		me.__taxRateBySupplier = data.taxRate;
-
-		// 更新明细记录里面的税率和税金
-		var store = me.getGoodsGrid().getStore();
-		for (var i = 0; i < store.getCount(); i++) {
-			var item = store.getAt(i);
-			item.set("taxRate", me.getTaxRate());
-
-			var tax = item.get("goodsMoney") * me.getTaxRate() / 100;
-
-			item.set("tax", tax);
-			item.set("moneyWithTax", item.get("goodsMoney") + tax);
-		}
 	}
 });

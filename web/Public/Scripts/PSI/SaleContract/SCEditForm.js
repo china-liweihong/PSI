@@ -371,17 +371,13 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 							me.editBizUser.setIdValue(data.bizUserId);
 							me.editBizUser.setValue(data.bizUserName);
 
-							me.__taxRate = data.taxRate;
-
 							var store = me.getGoodsGrid().getStore();
 							store.removeAll();
 							if (data.items) {
 								store.add(data.items);
 							}
 							if (store.getCount() == 0) {
-								store.add({
-											taxRate : me.__taxRate
-										});
+								store.add({});
 							}
 
 							if (data.billStatus && data.billStatus != 0) {
@@ -489,9 +485,7 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 			var me = this;
 			var store = me.getGoodsGrid().getStore();
 			if (store.getCount() == 0) {
-				store.add({
-							taxRate : me.__taxRate
-						});
+				store.add({});
 			}
 			me.getGoodsGrid().focus();
 			me.__cellEditing.startEdit(0, 1);
@@ -688,9 +682,7 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 										var store = grid.getStore();
 										store.remove(store.getAt(row));
 										if (store.getCount() == 0) {
-											store.add({
-														taxRate : me.__taxRate
-													});
+											store.add({});
 										}
 									},
 									scope : me
@@ -709,9 +701,7 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 									tooltip : "在当前记录之前插入新记录",
 									handler : function(grid, row) {
 										var store = grid.getStore();
-										store.insert(row, [{
-															taxRate : me.__taxRate
-														}]);
+										store.insert(row, [{}]);
 									},
 									scope : me
 								}]
@@ -729,9 +719,7 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 									tooltip : "在当前记录之后新增记录",
 									handler : function(grid, row) {
 										var store = grid.getStore();
-										store.insert(row + 1, [{
-															taxRate : me.__taxRate
-														}]);
+										store.insert(row + 1, [{}]);
 									},
 									scope : me
 								}]
@@ -811,6 +799,7 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 		goods.set("unitName", data.unitName);
 		goods.set("goodsSpec", data.spec);
 		goods.set("goodsPrice", data.salePrice);
+		goods.set("taxRate", data.taxRate);
 
 		me.calcMoney(goods);
 	},
@@ -828,9 +817,7 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 		if (fieldName == "memo") {
 			var store = me.getGoodsGrid().getStore();
 			if (e.rowIdx == store.getCount() - 1) {
-				store.add({
-							taxRate : me.__taxRate
-						});
+				store.add({});
 
 				var row = e.rowIdx + 1;
 				me.getGoodsGrid().getSelectionModel().select(row);

@@ -963,7 +963,7 @@ class WSBillDAO extends PSIBaseExDAO {
 		$id = $params["id"];
 		
 		$sql = "select ref, bill_status, customer_id, warehouse_id, biz_user_id, bizdt, sale_money,
-					receiving_type, company_id
+					receiving_type, company_id, money_with_tax
 				from t_ws_bill where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if (! $data) {
@@ -974,7 +974,8 @@ class WSBillDAO extends PSIBaseExDAO {
 		$bizUserId = $data[0]["biz_user_id"];
 		$billStatus = $data[0]["bill_status"];
 		$receivingType = $data[0]["receiving_type"];
-		$saleMoney = $data[0]["sale_money"];
+		// money_with_tax是后加的字段，可能没值
+		$saleMoney = $data[0]["money_with_tax"] ?? $data[0]["sale_money"];
 		$companyId = $data[0]["company_id"];
 		if ($billStatus != 0) {
 			return $this->bad("销售出库单已经提交出库，不能再次提交");

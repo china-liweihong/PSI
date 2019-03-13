@@ -646,6 +646,9 @@ class GoodsDAO extends PSIBaseExDAO {
 		$customerId = $params["customerId"];
 		$psId = $this->getPsIdForCustomer($customerId);
 		
+		$bcDAO = new BizConfigDAO($db);
+		$taxRate = $bcDAO->getTaxRate($companyId);
+		
 		if ($queryKey == null) {
 			$queryKey = "";
 		}
@@ -678,12 +681,12 @@ class GoodsDAO extends PSIBaseExDAO {
 		$result = [];
 		foreach ( $data as $v ) {
 			$priceSystem = "";
+			$goodsId = $v["id"];
 			
 			$price = $v["sale_price"];
 			
 			if ($psId) {
 				// 取价格体系里面的价格
-				$goodsId = $v["id"];
 				$sql = "select g.price, p.name
 						from t_goods_price g, t_price_system p
 						where g.goods_id = '%s' and g.ps_id = '%s'
@@ -695,6 +698,26 @@ class GoodsDAO extends PSIBaseExDAO {
 				}
 			}
 			
+			$taxRateType = 1;
+			
+			// 查询商品的税率
+			// 目前的设计和实现，存在数据量大的情况下会查询缓慢的可能，是需要改进的地方
+			$sql = "select tax_rate from t_goods where id = '%s' and tax_rate is not null";
+			$d = $db->query($sql, $goodsId);
+			if ($d) {
+				$taxRateType = 3;
+				$taxRate = $d[0]["tax_rate"];
+			} else {
+				// 商品本身没有设置税率，就去查询该商品分类是否设置了默认税率
+				$categoryId = $v["category_id"];
+				$sql = "select tax_rate from t_goods_category where id = '%s' and tax_rate is not null";
+				$d = $db->query($sql, $categoryId);
+				if ($d) {
+					$taxRateType = 2;
+					$taxRate = $d[0]["tax_rate"];
+				}
+			}
+			
 			$result[] = [
 					"id" => $v["id"],
 					"code" => $v["code"],
@@ -703,7 +726,9 @@ class GoodsDAO extends PSIBaseExDAO {
 					"unitName" => $v["unit_name"],
 					"salePrice" => $price,
 					"priceSystem" => $priceSystem,
-					"memo" => $v["memo"]
+					"memo" => $v["memo"],
+					"taxRate" => $taxRate,
+					"taxRateType" => $taxRateType
 			];
 		}
 		

@@ -521,7 +521,16 @@ Ext.define("PSI.Sale.WSEditForm", {
 							"goodsSpec", "unitName", "goodsCount", {
 								name : "goodsMoney",
 								type : "float"
-							}, "goodsPrice", "sn", "memo", "soBillDetailId"]
+							}, "goodsPrice", "sn", "memo", "soBillDetailId", {
+								name : "taxRate",
+								type : "int"
+							}, {
+								name : "tax",
+								type : "float"
+							}, {
+								name : "moneyWithTax",
+								type : "float"
+							}]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -622,6 +631,34 @@ Ext.define("PSI.Sale.WSEditForm", {
 								xtype : "numbercolumn",
 								width : 120,
 								id : "columnGoodsMoney",
+								summaryType : "sum"
+							}, {
+								header : "税率(%)",
+								dataIndex : "taxRate",
+								align : "right",
+								format : "0",
+								width : 80
+							}, {
+								header : "税金",
+								dataIndex : "tax",
+								align : "right",
+								xtype : "numbercolumn",
+								width : 100,
+								editor : {
+									xtype : "numberfield",
+									hideTrigger : true
+								},
+								summaryType : "sum"
+							}, {
+								header : "价税合计",
+								dataIndex : "moneyWithTax",
+								align : "right",
+								xtype : "numbercolumn",
+								width : 120,
+								editor : {
+									xtype : "numberfield",
+									hideTrigger : true
+								},
 								summaryType : "sum"
 							}, {
 								header : "序列号",
@@ -740,7 +777,36 @@ Ext.define("PSI.Sale.WSEditForm", {
 				me.getGoodsGrid().getSelectionModel().select(e.rowIdx + 1);
 				me.__cellEditing.startEdit(e.rowIdx + 1, 1);
 			}
+		} else if (fieldName == "moneyWithTax") {
+			if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
+				me.calcTax(goods);
+			}
+		} else if (fieldName == "tax") {
+			if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
+				me.calcMoneyWithTax(goods);
+			}
 		}
+	},
+
+	calcTax : function(goods) {
+		if (!goods) {
+			return;
+		}
+		var taxRate = goods.get("taxRate") / 100;
+		var tax = goods.get("moneyWithTax") * taxRate / (1 + taxRate);
+		goods.set("tax", tax);
+		goods.set("goodsMoney", goods.get("moneyWithTax") - tax);
+
+		// 计算单价
+		goods.set("goodsPrice", goods.get("goodsMoney")
+						/ goods.get("goodsCount"))
+	},
+
+	calcMoneyWithTax : function(goods) {
+		if (!goods) {
+			return;
+		}
+		goods.set("moneyWithTax", goods.get("goodsMoney") + goods.get("tax"));
 	},
 
 	calcMoney : function(goods) {
@@ -749,6 +815,8 @@ Ext.define("PSI.Sale.WSEditForm", {
 		}
 		goods.set("goodsMoney", goods.get("goodsCount")
 						* goods.get("goodsPrice"));
+		goods.set("tax", goods.get("goodsMoney") * goods.get("taxRate") / 100);
+		goods.set("moneyWithTax", goods.get("goodsMoney") + goods.get("tax"));
 	},
 
 	calcPrice : function(goods) {
@@ -779,6 +847,8 @@ Ext.define("PSI.Sale.WSEditForm", {
 		goods.set("unitName", data.unitName);
 		goods.set("goodsSpec", data.spec);
 		goods.set("goodsPrice", data.salePrice);
+
+		goods.set("taxRate", data.taxRate);
 
 		me.calcMoney(goods);
 	},
@@ -811,7 +881,10 @@ Ext.define("PSI.Sale.WSEditForm", {
 						goodsMoney : item.get("goodsMoney"),
 						sn : item.get("sn"),
 						memo : item.get("memo"),
-						soBillDetailId : item.get("soBillDetailId")
+						soBillDetailId : item.get("soBillDetailId"),
+						taxRate : item.get("taxRate"),
+						tax : item.get("tax"),
+						moneyWithTax : item.get("moneyWithTax")
 					});
 		}
 

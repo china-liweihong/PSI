@@ -268,7 +268,8 @@ Ext.define("PSI.Sale.WSMainForm", {
 					fields : ["id", "ref", "bizDate", "customerName",
 							"warehouseName", "inputUserName", "bizUserName",
 							"billStatus", "amount", "dateCreated",
-							"receivingType", "memo", "dealAddress"]
+							"receivingType", "memo", "dealAddress", "tax",
+							"moneyWithTax"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -372,6 +373,22 @@ Ext.define("PSI.Sale.WSMainForm", {
 								xtype : "numbercolumn",
 								width : 150
 							}, {
+								header : "税金",
+								dataIndex : "tax",
+								menuDisabled : true,
+								sortable : false,
+								align : "right",
+								xtype : "numbercolumn",
+								width : 150
+							}, {
+								header : "价税合计",
+								dataIndex : "moneyWithTax",
+								menuDisabled : true,
+								sortable : false,
+								align : "right",
+								xtype : "numbercolumn",
+								width : 150
+							}, {
 								header : "出库仓库",
 								dataIndex : "warehouseName",
 								menuDisabled : true,
@@ -465,7 +482,8 @@ Ext.define("PSI.Sale.WSMainForm", {
 					extend : "Ext.data.Model",
 					fields : ["id", "goodsCode", "goodsName", "goodsSpec",
 							"unitName", "goodsCount", "goodsMoney",
-							"goodsPrice", "sn", "memo"]
+							"goodsPrice", "sn", "memo", "taxRate", "tax",
+							"moneyWithTax"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -527,6 +545,31 @@ Ext.define("PSI.Sale.WSMainForm", {
 							}, {
 								header : "销售金额",
 								dataIndex : "goodsMoney",
+								menuDisabled : true,
+								sortable : false,
+								align : "right",
+								xtype : "numbercolumn",
+								width : 150
+							}, {
+								header : "税率(%)",
+								dataIndex : "taxRate",
+								menuDisabled : true,
+								sortable : false,
+								align : "right",
+								xtype : "numbercolumn",
+								format : "#",
+								width : 80
+							}, {
+								header : "税金",
+								dataIndex : "tax",
+								menuDisabled : true,
+								sortable : false,
+								align : "right",
+								xtype : "numbercolumn",
+								width : 150
+							}, {
+								header : "价税合计",
+								dataIndex : "moneyWithTax",
 								menuDisabled : true,
 								sortable : false,
 								align : "right",

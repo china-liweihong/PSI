@@ -80,7 +80,8 @@ class WSBillDAO extends PSIBaseExDAO {
 		
 		$sql = "select w.id, w.ref, w.bizdt, c.name as customer_name, u.name as biz_user_name,
 					user.name as input_user_name, h.name as warehouse_name, w.sale_money,
-					w.bill_status, w.date_created, w.receiving_type, w.memo, w.deal_address
+					w.bill_status, w.date_created, w.receiving_type, w.memo, w.deal_address,
+					w.tax, w.money_with_tax
 				from t_ws_bill w, t_customer c, t_user u, t_user user, t_warehouse h
 				where (w.customer_id = c.id) and (w.biz_user_id = u.id)
 				  and (w.input_user_id = user.id) and (w.warehouse_id = h.id) ";
@@ -149,7 +150,9 @@ class WSBillDAO extends PSIBaseExDAO {
 					"dateCreated" => $v["date_created"],
 					"receivingType" => $v["receiving_type"],
 					"memo" => $v["memo"],
-					"dealAddress" => $v["deal_address"]
+					"dealAddress" => $v["deal_address"],
+					"tax" => $v["tax"],
+					"moneyWithTax" => $v["money_with_tax"]
 			];
 		}
 		
@@ -231,7 +234,8 @@ class WSBillDAO extends PSIBaseExDAO {
 		$billId = $params["billId"];
 		$sql = "select d.id, g.code, g.name, g.spec, u.name as unit_name, 
 					convert(d.goods_count, $fmt) as goods_count,
-					d.goods_price, d.goods_money, d.sn_note, d.memo
+					d.goods_price, d.goods_money, d.sn_note, d.memo,
+					d.tax_rate, d.tax, d.money_with_tax
 				from t_ws_bill_detail d, t_goods g, t_goods_unit u
 				where d.wsbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id
 				order by d.show_order";
@@ -249,7 +253,10 @@ class WSBillDAO extends PSIBaseExDAO {
 					"goodsPrice" => $v["goods_price"],
 					"goodsMoney" => $v["goods_money"],
 					"sn" => $v["sn_note"],
-					"memo" => $v["memo"]
+					"memo" => $v["memo"],
+					"taxRate" => $v["tax_rate"],
+					"tax" => $v["tax"],
+					"moneyWithTax" => $v["money_with_tax"]
 			];
 		}
 		

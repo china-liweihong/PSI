@@ -389,8 +389,10 @@ class WSBillDAO extends PSIBaseExDAO {
 		// 明细表
 		$sql = "insert into t_ws_bill_detail (id, date_created, goods_id,
 					goods_count, goods_price, goods_money,
-					show_order, wsbill_id, sn_note, data_org, memo, company_id, sobilldetail_id)
-				values ('%s', now(), '%s', convert(%f, $fmt), %f, %f, %d, '%s', '%s', '%s', '%s', '%s', '%s')";
+					show_order, wsbill_id, sn_note, data_org, memo, company_id, sobilldetail_id,
+					tax_rate, tax, money_with_tax)
+				values ('%s', now(), '%s', convert(%f, $fmt), %f, %f, %d, '%s', '%s', '%s', '%s', '%s', '%s',
+					%d, %f, %f)";
 		foreach ( $items as $i => $v ) {
 			$goodsId = $v["goodsId"];
 			if ($goodsId) {
@@ -403,22 +405,33 @@ class WSBillDAO extends PSIBaseExDAO {
 				
 				$soBillDetailId = $v["soBillDetailId"];
 				
+				$taxRate = $v["taxRate"];
+				$tax = $v["tax"];
+				$moneyWithTax = $v["moneyWithTax"];
+				
 				$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsPrice, 
-						$goodsMoney, $i, $id, $sn, $dataOrg, $memo, $companyId, $soBillDetailId);
+						$goodsMoney, $i, $id, $sn, $dataOrg, $memo, $companyId, $soBillDetailId, 
+						$taxRate, $tax, $moneyWithTax);
 				if ($rc === false) {
 					return $this->sqlError(__METHOD__, __LINE__);
 				}
 			}
 		}
-		$sql = "select sum(goods_money) as sum_goods_money from t_ws_bill_detail where wsbill_id = '%s' ";
+		$sql = "select sum(goods_money) as sum_goods_money,
+					sum(tax) as tax, sum(money_with_tax) as money_with_tax 
+				from t_ws_bill_detail where wsbill_id = '%s' ";
 		$data = $db->query($sql, $id);
 		$sumGoodsMoney = $data[0]["sum_goods_money"];
 		if (! $sumGoodsMoney) {
 			$sumGoodsMoney = 0;
 		}
+		$sumTax = $data[0]["tax"];
+		$sumMoneyWithTax = $data[0]["money_with_tax"];
 		
-		$sql = "update t_ws_bill set sale_money = %f where id = '%s' ";
-		$rc = $db->execute($sql, $sumGoodsMoney, $id);
+		$sql = "update t_ws_bill 
+				set sale_money = %f, tax = %f, money_with_tax = %f 
+				where id = '%s' ";
+		$rc = $db->execute($sql, $sumGoodsMoney, $sumTax, $sumMoneyWithTax, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -554,8 +567,10 @@ class WSBillDAO extends PSIBaseExDAO {
 		
 		$sql = "insert into t_ws_bill_detail (id, date_created, goods_id,
 					goods_count, goods_price, goods_money,
-					show_order, wsbill_id, sn_note, data_org, memo, company_id, sobilldetail_id)
-				values ('%s', now(), '%s', convert(%f, $fmt), %f, %f, %d, '%s', '%s', '%s', '%s', '%s', '%s')";
+					show_order, wsbill_id, sn_note, data_org, memo, company_id, sobilldetail_id,
+					tax_rate, tax, money_with_tax)
+				values ('%s', now(), '%s', convert(%f, $fmt), %f, %f, %d, '%s', '%s', '%s', '%s', '%s', '%s',
+					%d, %f, %f)";
 		foreach ( $items as $i => $v ) {
 			$goodsId = $v["goodsId"];
 			if ($goodsId) {
@@ -568,27 +583,37 @@ class WSBillDAO extends PSIBaseExDAO {
 				
 				$soBillDetailId = $v["soBillDetailId"];
 				
+				$taxRate = $v["taxRate"];
+				$tax = $v["tax"];
+				$moneyWithTax = $v["moneyWithTax"];
+				
 				$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsPrice, 
-						$goodsMoney, $i, $id, $sn, $dataOrg, $memo, $companyId, $soBillDetailId);
+						$goodsMoney, $i, $id, $sn, $dataOrg, $memo, $companyId, $soBillDetailId, 
+						$taxRate, $tax, $moneyWithTax);
 				if ($rc === false) {
 					return $this->sqlError(__METHOD__, __LINE__);
 				}
 			}
 		}
-		$sql = "select sum(goods_money) as sum_goods_money from t_ws_bill_detail where wsbill_id = '%s' ";
+		$sql = "select sum(goods_money) as sum_goods_money,
+					sum(tax) as tax, sum(money_with_tax) as money_with_tax
+				from t_ws_bill_detail where wsbill_id = '%s' ";
 		$data = $db->query($sql, $id);
 		$sumGoodsMoney = $data[0]["sum_goods_money"];
 		if (! $sumGoodsMoney) {
 			$sumGoodsMoney = 0;
 		}
+		$sumTax = $data[0]["tax"];
+		$sumMoneyWithTax = $data[0]["money_with_tax"];
 		
 		$sql = "update t_ws_bill
 				set sale_money = %f, customer_id = '%s', warehouse_id = '%s',
 				biz_user_id = '%s', bizdt = '%s', receiving_type = %d,
-				memo = '%s', deal_address = '%s'
+				memo = '%s', deal_address = '%s',
+				tax = %f, money_with_tax = %f
 				where id = '%s' ";
 		$rc = $db->execute($sql, $sumGoodsMoney, $customerId, $warehouseId, $bizUserId, $bizDT, 
-				$receivingType, $billMemo, $dealAddress, $id);
+				$receivingType, $billMemo, $dealAddress, $sumTax, $sumMoneyWithTax, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -763,7 +788,8 @@ class WSBillDAO extends PSIBaseExDAO {
 			
 			$sql = "select d.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, 
 						convert(d.goods_count, $fmt) as goods_count,
-						d.goods_price, d.goods_money, d.sn_note, d.memo, d.sobilldetail_id
+						d.goods_price, d.goods_money, d.sn_note, d.memo, d.sobilldetail_id,
+						d.tax_rate, d.tax, d.money_with_tax
 					from t_ws_bill_detail d, t_goods g, t_goods_unit u
 					where d.wsbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id
 					order by d.show_order";
@@ -782,7 +808,10 @@ class WSBillDAO extends PSIBaseExDAO {
 						"goodsMoney" => $v["goods_money"],
 						"sn" => $v["sn_note"],
 						"memo" => $v["memo"],
-						"soBillDetailId" => $v["sobilldetail_id"]
+						"soBillDetailId" => $v["sobilldetail_id"],
+						"taxRate" => $v["tax_rate"],
+						"tax" => $v["tax"],
+						"moneyWithTax" => $v["money_with_tax"]
 				];
 			}
 			

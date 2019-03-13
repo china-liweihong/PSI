@@ -351,7 +351,6 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 								Ext.getCmp("editTel").setValue(data.tel);
 								Ext.getCmp("editFax").setValue(data.fax);
 							}
-							me.__taxRate = data.taxRate;
 
 							Ext.getCmp("editBizUser")
 									.setIdValue(data.bizUserId);
@@ -374,9 +373,7 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 								store.add(data.items);
 							}
 							if (store.getCount() == 0) {
-								store.add({
-											taxRate : me.__taxRate
-										});
+								store.add({});
 							}
 
 							if (data.billStatus && data.billStatus != 0) {
@@ -439,9 +436,7 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 			var me = this;
 			var store = me.getGoodsGrid().getStore();
 			if (store.getCount() == 0) {
-				store.add({
-							taxRate : me.__taxRate
-						});
+				store.add({});
 			}
 			me.getGoodsGrid().focus();
 			me.__cellEditing.startEdit(0, 1);
@@ -660,9 +655,7 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 									tooltip : "在当前记录之前插入新记录",
 									handler : function(grid, row) {
 										var store = grid.getStore();
-										store.insert(row, [{
-															taxRate : me.__taxRate
-														}]);
+										store.insert(row, [{}]);
 									},
 									scope : me
 								}]
@@ -680,9 +673,7 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 									tooltip : "在当前记录之后新增记录",
 									handler : function(grid, row) {
 										var store = grid.getStore();
-										store.insert(row + 1, [{
-															taxRate : me.__taxRate
-														}]);
+										store.insert(row + 1, [{}]);
 									},
 									scope : me
 								}]
@@ -714,6 +705,7 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 		goods.set("unitName", data.unitName);
 		goods.set("goodsSpec", data.spec);
 		goods.set("goodsPrice", data.salePrice);
+		goods.set("taxRate", data.taxRate);
 
 		me.calcMoney(goods);
 	},
@@ -742,9 +734,7 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
 		if (fieldName == "memo") {
 			var store = me.getGoodsGrid().getStore();
 			if (!me.getGenBill() && (e.rowIdx == store.getCount() - 1)) {
-				store.add({
-							taxRate : me.__taxRate
-						});
+				store.add({});
 				var row = e.rowIdx + 1;
 				me.getGoodsGrid().getSelectionModel().select(row);
 				me.__cellEditing.startEdit(row, 1);

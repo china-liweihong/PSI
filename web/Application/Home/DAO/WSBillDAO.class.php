@@ -730,7 +730,8 @@ class WSBillDAO extends PSIBaseExDAO {
 					$sql = "select s.id, s.goods_id, g.code, g.name, g.spec, u.name as unit_name,
 								convert(s.goods_count, " . $fmt . ") as goods_count, 
 								s.goods_price, s.goods_money, 
-								convert(s.left_count, " . $fmt . ") as left_count, s.memo
+								convert(s.left_count, " . $fmt . ") as left_count, s.memo,
+								s.tax_rate, s.tax, s.money_with_tax
 							from t_so_bill_detail s, t_goods g, t_goods_unit u
 							where s.sobill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
 							order by s.show_order ";
@@ -747,7 +748,10 @@ class WSBillDAO extends PSIBaseExDAO {
 								"goodsPrice" => $v["goods_price"],
 								"goodsMoney" => $v["left_count"] * $v["goods_price"],
 								"soBillDetailId" => $v["id"],
-								"memo" => $v["memo"]
+								"memo" => $v["memo"],
+								"taxRate" => $v["tax_rate"],
+								"tax" => $v["tax"],
+								"moneyWithTax" => $v["money_with_tax"]
 						];
 					}
 					

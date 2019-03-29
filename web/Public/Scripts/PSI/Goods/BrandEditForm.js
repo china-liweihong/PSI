@@ -171,11 +171,10 @@ Ext.define("PSI.Goods.BrandEditForm", {
 						me.getEl().unmask();
 						if (success) {
 							var data = Ext.JSON.decode(response.responseText);
-							me.editParentBrand.setValue(Ext.String
+							me.editParentBrand.setValue(me
 									.htmlDecode(data.parentBrandName));
 							me.editParentBrandId.setValue(data.parentBrandId);
-							me.editName.setValue(Ext.String
-									.htmlDecode(data.name));
+							me.editName.setValue(me.htmlDecode(data.name));
 						}
 					}
 				});

@@ -890,7 +890,8 @@ Ext.define("PSI.Purchase.PWEditForm", {
 								unitName : data.unitName,
 								goodsCount : 1,
 								goodsPrice : data.purchasePrice,
-								goodsMoney : data.purchasePrice
+								goodsMoney : data.purchasePrice,
+								taxRate : data.taxRate
 							};
 							me.addGoodsByBarCode(goods);
 							var edit = me.editBarcode;

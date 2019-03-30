@@ -493,6 +493,8 @@ class GoodsService extends PSIBaseExService {
 			return $this->notOnlineError();
 		}
 		
+		$params["companyId"] = $this->getCompanyId();
+		
 		$dao = new GoodsDAO($this->db());
 		return $dao->queryGoodsInfoByBarcode($params);
 	}

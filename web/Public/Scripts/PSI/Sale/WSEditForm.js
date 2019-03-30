@@ -1041,7 +1041,8 @@ Ext.define("PSI.Sale.WSEditForm", {
 								unitName : data.unitName,
 								goodsCount : 1,
 								goodsPrice : data.salePrice,
-								goodsMoney : data.salePrice
+								goodsMoney : data.salePrice,
+								taxRate : data.taxRate
 							};
 							me.addGoodsByBarCode(goods);
 							var edit = Ext.getCmp("editBarcode");

@@ -903,10 +903,12 @@ class GoodsDAO extends PSIBaseExDAO {
 		$db = $this->db;
 		
 		$barcode = $params["barcode"];
+		$companyId = $params["companyId"];
 		
-		$result = array();
+		$result = [];
 		
-		$sql = "select g.id, g.code, g.name, g.spec, g.sale_price, u.name as unit_name
+		$sql = "select g.id, g.code, g.name, g.spec, g.sale_price, u.name as unit_name,
+					g.category_id
 				from t_goods g, t_goods_unit u
 				where g.bar_code = '%s' and g.unit_id = u.id ";
 		$data = $db->query($sql, $barcode);
@@ -922,6 +924,27 @@ class GoodsDAO extends PSIBaseExDAO {
 			$result["spec"] = $data[0]["spec"];
 			$result["salePrice"] = $data[0]["sale_price"];
 			$result["unitName"] = $data[0]["unit_name"];
+			
+			// 税率
+			$bcDAO = new BizConfigDAO($db);
+			$taxRate = $bcDAO->getTaxRate($companyId);
+			
+			$goodsId = $data[0]["id"];
+			$categoryId = $data[0]["cateogry_id"];
+			
+			$sql = "select tax_rate from t_goods where id = '%s' and tax_rate is not null";
+			$d = $db->query($sql, $goodsId);
+			if ($d) {
+				$taxRate = $d[0]["tax_rate"];
+			} else {
+				// 商品本身没有设置税率，就去查询该商品分类是否设置了默认税率
+				$sql = "select tax_rate from t_goods_category where id = '%s' and tax_rate is not null";
+				$d = $db->query($sql, $categoryId);
+				if ($d) {
+					$taxRate = $d[0]["tax_rate"];
+				}
+			}
+			$result["taxRate"] = $taxRate;
 		}
 		
 		return $result;

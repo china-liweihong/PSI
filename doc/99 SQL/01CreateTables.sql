@@ -151,6 +151,7 @@ CREATE TABLE IF NOT EXISTS `t_supplier` (
   `company_id` varchar(255) DEFAULT NULL,
   `tax_rate` int(11) DEFAULT NULL,
   `record_status` int(11) DEFAULT 1000,
+  `goods_range` int(11) DEFAULT 1,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -1318,6 +1319,14 @@ CREATE TABLE IF NOT EXISTS `t_dmo_dmw` (
   `dmw_id` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `t_supplier_goods_range`;
+CREATE TABLE IF NOT EXISTS `t_supplier_goods_range` (
+  `id` varchar(255) NOT NULL,
+  `supplier_id` varchar(255) NOT NULL,
+  `g_id` varchar(255) NOT NULL,
+  `g_id_type` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

@@ -218,6 +218,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20190311_01();
 		$this->update_20190401_01();
 		$this->update_20190402_01();
+		$this->update_20190402_02();
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -239,8 +240,23 @@ class UpdateDBService extends PSIBaseService {
 	// ============================================
 	private function notForgot() {
 	}
-	
-	private function update_20190402_01(){
+
+	private function update_20190402_02() {
+		// 本次更新：新增表t_so_po
+		$db = $this->db;
+		
+		$tableName = "t_so_po";
+		if (! $this->tableExists($db, $tableName)) {
+			$sql = "CREATE TABLE IF NOT EXISTS `t_so_po` (
+					  `so_id` varchar(255) NOT NULL,
+					  `po_id` varchar(255) NOT NULL
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+			";
+			$db->execute($sql);
+		}
+	}
+
+	private function update_20190402_01() {
 		// 本次更新：销售订单增加生成采购订单按钮权限
 		$db = $this->db;
 		

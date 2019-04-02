@@ -30,6 +30,8 @@ class SaleController extends PSIBaseController {
 			$this->assign("pConfirm", $us->hasPermission(FIdConst::SALE_ORDER_CONFIRM) ? "1" : "0");
 			$this->assign("pGenWSBill", 
 					$us->hasPermission(FIdConst::SALE_ORDER_GEN_WSBILL) ? "1" : "0");
+			$this->assign("pGenPOBill", 
+					$us->hasPermission(FIdConst::SALE_ORDER_GEN_POBILL) ? "1" : "0");
 			
 			$this->assign("pAdd", $us->hasPermission(FIdConst::SALE_ORDER_ADD) ? "1" : "0");
 			$this->assign("pEdit", $us->hasPermission(FIdConst::SALE_ORDER_EDIT) ? "1" : "0");

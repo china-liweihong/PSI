@@ -107,6 +107,12 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 					xtype : "tbseparator",
 					id : "tbseparator2"
 				}, {
+					text : "生成采购订单",
+					hidden : me.getPermission().genPOBill == "0",
+					scope : me,
+					handler : me.onGenPOBill,
+					id : "buttonGenPOBill"
+				}, {
 					text : "生成销售出库单",
 					hidden : me.getPermission().genWSBill == "0",
 					scope : me,
@@ -661,6 +667,7 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 		Ext.getCmp("buttonCommit").setDisabled(true);
 		Ext.getCmp("buttonCancelConfirm").setDisabled(true);
 		Ext.getCmp("buttonGenWSBill").setDisabled(true);
+		Ext.getCmp("buttonGenPOBill").setDisabled(true);
 
 		var gridDetail = me.getDetailGrid();
 		gridDetail.setTitle("销售订单明细");
@@ -1024,6 +1031,12 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 		result.receivingType = receivingType;
 
 		return result;
+	},
+
+	onGenPOBill : function() {
+		var me = this;
+
+		me.showInfo("TODO");
 	},
 
 	/**

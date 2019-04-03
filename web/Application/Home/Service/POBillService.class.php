@@ -78,7 +78,12 @@ class POBillService extends PSIBaseExService {
 			$id = $bill["id"];
 			$ref = $bill["ref"];
 			
-			$log = "新建采购订单，单号：{$ref}";
+			$sobillRef = $bill["sobillRef"];
+			if ($sobillRef) {
+				$log = "从销售订单( 单号：{$sobillRef} )生成采购订单( 单号:{$ref} )";
+			} else {
+				$log = "新建采购订单，单号：{$ref}";
+			}
 		}
 		
 		// 记录业务日志

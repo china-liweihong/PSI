@@ -421,7 +421,7 @@ Ext.define("PSI.Report.SaleDayByGoodsForm", {
 		var store = me.getMainGrid().getStore();
 		var sorter = null;
 		if (store.sorters.getCount() > 0) {
-			sorter = Ext.JSON.encode(store.sorters.getAt(0));
+			sorter = Ext.JSON.encode([store.sorters.getAt(0)]);
 		}
 
 		var el = Ext.getBody();
@@ -431,7 +431,7 @@ Ext.define("PSI.Report.SaleDayByGoodsForm", {
 			params : {
 				dt : Ext.Date.format(Ext.getCmp("editQueryDT").getValue(),
 						"Y-m-d"),
-				sorter : sorter,
+				sort : sorter,
 				limit : -1
 			},
 			callback : function(options, success, response) {

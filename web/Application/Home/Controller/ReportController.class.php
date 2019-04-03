@@ -69,6 +69,24 @@ class ReportController extends PSIBaseController {
 	}
 
 	/**
+	 * 销售日报表(按商品汇总) - 生成打印页面
+	 */
+	public function genSaleDayByGoodsPrintPage() {
+		if (IS_POST) {
+			$params = [
+					"dt" => I("post.dt"),
+					"limit" => I("post.limit"),
+					"sort" => I("post.sort")
+			];
+			
+			$service = new SaleReportService();
+			$data = $service->getSaleDayByGoodsDataForLodopPrint($params);
+			$this->assign("data", $data);
+			$this->display();
+		}
+	}
+
+	/**
 	 * 销售日报表(按客户汇总)
 	 */
 	public function saleDayByCustomer() {

@@ -25,6 +25,27 @@ class SaleReportService extends PSIBaseExService {
 		return $dao->saleDayByGoodsQueryData($params);
 	}
 
+	/**
+	 * 销售日报表(按商品汇总) - 查询数据，用于Lodop打印
+	 *
+	 * @param unknown $params        	
+	 * @return array
+	 */
+	public function getSaleDayByGoodsDataForLodopPrint($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$params["companyId"] = $this->getCompanyId();
+		
+		$dao = new SaleReportDAO($this->db());
+		$items = $dao->saleDayByGoodsQueryData($params);
+		
+		return [
+				"items" => $items["dataList"]
+		];
+	}
+
 	private function saleDaySummaryQueryData($params) {
 		$dt = $params["dt"];
 		

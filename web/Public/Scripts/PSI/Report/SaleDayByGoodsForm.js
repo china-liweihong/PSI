@@ -47,7 +47,7 @@ Ext.define("PSI.Report.SaleDayByGoodsForm", {
 							}, {
 								xtype : "displayfield",
 								value : "条记录"
-							}, "-", {
+							}, {
 								id : "editQueryDT",
 								cls : "PSI-toolbox",
 								xtype : "datefield",
@@ -70,10 +70,36 @@ Ext.define("PSI.Report.SaleDayByGoodsForm", {
 								iconCls : "PSI-button-refresh",
 								handler : me.onQuery,
 								scope : me
-							}, "-", {
+							}, {
 								text : "重置查询条件",
 								handler : me.onClearQuery,
 								scope : me
+							}, "-", {
+								text : "打印",
+								menu : [{
+											text : "打印预览",
+											iconCls : "PSI-button-print-preview",
+											scope : me,
+											handler : me.onPrintPreview
+										}, "-", {
+											text : "直接打印",
+											iconCls : "PSI-button-print",
+											scope : me,
+											handler : me.onPrint
+										}]
+							}, {
+								text : "导出",
+								menu : [{
+											text : "导出PDF",
+											iconCls : "PSI-button-print-preview",
+											scope : me,
+											handler : me.onPDF
+										}, "-", {
+											text : "导出Excel",
+											iconCls : "PSI-button-print",
+											scope : me,
+											handler : me.onExcel
+										}]
 							}, "-", {
 								text : "关闭",
 								handler : function() {
@@ -381,5 +407,25 @@ Ext.define("PSI.Report.SaleDayByGoodsForm", {
 		editQueryDT.setValue(day);
 
 		me.onQuery();
+	},
+
+	onPrintPreview : function() {
+		var me = this;
+		me.showInfo("TODO");
+	},
+
+	onPrint : function() {
+		var me = this;
+		me.showInfo("TODO");
+	},
+
+	onPDF : function() {
+		var me = this;
+		me.showInfo("TODO");
+	},
+
+	onExcel : function() {
+		var me = this;
+		me.showInfo("TODO");
 	}
 });

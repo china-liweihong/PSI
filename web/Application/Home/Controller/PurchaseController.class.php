@@ -211,7 +211,9 @@ class PurchaseController extends PSIBaseController {
 	public function poBillInfo() {
 		if (IS_POST) {
 			$params = array(
-					"id" => I("post.id")
+					"id" => I("post.id"),
+					"genBill" => I("post.genBill"),
+					"sobillRef" => I("post.sobillRef")
 			);
 			
 			$ps = new POBillService();

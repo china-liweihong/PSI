@@ -1038,7 +1038,24 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 	onGenPOBill : function() {
 		var me = this;
 
-		me.showInfo("TODO");
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("没有选择要生成采购订单的销售订单");
+			return;
+		}
+		var bill = item[0];
+
+		if (bill.get("billStatus") < 1000) {
+			me.showInfo("当前销售订单还没有审核，无法生成采购订单");
+			return;
+		}
+
+		var form = Ext.create("PSI.PurchaseOrder.POEditForm", {
+					parentForm : me,
+					sobillRef : bill.get("ref"),
+					genBill : true
+				});
+		form.show();
 	},
 
 	/**

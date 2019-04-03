@@ -7,7 +7,9 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 	extend : "PSI.AFX.BaseDialogForm",
 
 	config : {
-		showAddGoodsButton : "0"
+		showAddGoodsButton : "0",
+		genBill : false,
+		sobillRef : null
 	},
 
 	/**
@@ -300,7 +302,9 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 		Ext.Ajax.request({
 					url : PSI.Const.BASE_URL + "Home/Purchase/poBillInfo",
 					params : {
-						id : Ext.getCmp("hiddenId").getValue()
+						id : Ext.getCmp("hiddenId").getValue(),
+						genBill : me.getGenBill(),
+						sobillRef : me.getSobillRef()
 					},
 					method : "POST",
 					callback : function(options, success, response) {
@@ -326,7 +330,6 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 								Ext.getCmp("editTel").setValue(data.tel);
 								Ext.getCmp("editFax").setValue(data.fax);
 							}
-							me.__taxRate = data.taxRate;
 
 							Ext.getCmp("editBizUser")
 									.setIdValue(data.bizUserId);

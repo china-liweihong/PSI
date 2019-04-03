@@ -726,6 +726,46 @@ class POBillDAO extends PSIBaseExDAO {
 			// 采购订单默认付款方式
 			$bc = new BizConfigDAO($db);
 			$result["paymentType"] = $bc->getPOBillDefaultPayment($params);
+			
+			$genBill = boolval($params["genBill"]);
+			if ($genBill) {
+				// 从销售订单生产采购订单
+				
+				// 销售订单单号
+				$sobillRef = $params["sobillRef"];
+				$sql = "select id from t_so_bill where ref = '%s' ";
+				$data = $db->query($sql, $sobillRef);
+				if ($data) {
+					$sobillId = $data[0]["id"];
+					
+					$sql = "select d.id, d.goods_id, g.code, g.name, g.spec,
+								convert(d.goods_count, " . $fmt . ") as goods_count,
+								d.goods_money, d.goods_price, d.tax, d.tax_rate, d.money_with_tax,
+								u.name as unit_name 
+							from t_so_bill_detail d, t_goods g, t_goods_unit u
+							where d.sobill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id
+							order by d.show_order";
+					$data = $db->query($sql, $sobillId);
+					foreach ( $data as $v ) {
+						$items[] = [
+								"id" => $v["id"],
+								"goodsId" => $v["goods_id"],
+								"goodsCode" => $v["code"],
+								"goodsName" => $v["name"],
+								"goodsSpec" => $v["spec"],
+								"goodsCount" => $v["goods_count"],
+								"goodsPrice" => $v["goods_price"],
+								"goodsMoney" => $v["goods_money"],
+								"taxRate" => $v["tax_rate"],
+								"tax" => $v["tax"],
+								"moneyWithTax" => $v["money_with_tax"],
+								"unitName" => $v["unit_name"]
+						];
+					}
+					
+					$result["items"] = $items;
+				}
+			}
 		}
 		
 		return $result;

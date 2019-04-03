@@ -41,7 +41,17 @@ class SaleReportService extends PSIBaseExService {
 		$dao = new SaleReportDAO($this->db());
 		$items = $dao->saleDayByGoodsQueryData($params);
 		
+		$data = $this->saleDaySummaryQueryData($params);
+		$v = $data[0];
+		
 		return [
+				"bizDate" => $params["dt"],
+				"printDT" => date("Y-m-d H:i:s"),
+				"saleMoney" => $v["saleMoney"],
+				"rejMoney" => $v["rejMoney"],
+				"m" => $v["m"],
+				"profit" => $v["profit"],
+				"rate" => $v["rate"],
 				"items" => $items["dataList"]
 		];
 	}

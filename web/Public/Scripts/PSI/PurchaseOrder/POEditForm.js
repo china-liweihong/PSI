@@ -367,28 +367,31 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 		var me = this;
 		Ext.getBody().mask("正在保存中...");
 		Ext.Ajax.request({
-			url : PSI.Const.BASE_URL + "Home/Purchase/editPOBill",
-			method : "POST",
-			params : {
-				jsonStr : me.getSaveData()
-			},
-			callback : function(options, success, response) {
-				Ext.getBody().unmask();
+					url : PSI.Const.BASE_URL + "Home/Purchase/editPOBill",
+					method : "POST",
+					params : {
+						jsonStr : me.getSaveData()
+					},
+					callback : function(options, success, response) {
+						Ext.getBody().unmask();
 
-				if (success) {
-					var data = Ext.JSON.decode(response.responseText);
-					if (data.success) {
-						PSI.MsgBox.showInfo("成功保存数据", function() {
-									me.close();
-									me.getParentForm().refreshMainGrid(data.id);
-								});
-					} else {
-						PSI.MsgBox.showInfo(data.msg);
+						if (success) {
+							var data = Ext.JSON.decode(response.responseText);
+							if (data.success) {
+								PSI.MsgBox.showInfo("成功保存数据", function() {
+											me.close();
+											if (!me.getGenBill()) {
+												me
+														.getParentForm()
+														.refreshMainGrid(data.id);
+											}
+										});
+							} else {
+								PSI.MsgBox.showInfo(data.msg);
+							}
+						}
 					}
-				}
-			}
-		});
-
+				});
 	},
 
 	onEditSpecialKey : function(field, e) {
@@ -786,7 +789,7 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 
 	getSaveData : function() {
 		var me = this;
-		
+
 		var result = {
 			id : Ext.getCmp("hiddenId").getValue(),
 			dealDate : Ext.Date.format(Ext.getCmp("editDealDate").getValue(),
@@ -800,7 +803,7 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 			bizUserId : Ext.getCmp("editBizUser").getIdValue(),
 			paymentType : Ext.getCmp("editPaymentType").getValue(),
 			billMemo : Ext.getCmp("editBillMemo").getValue(),
-			sobillRef: me.getSobillRef(),
+			sobillRef : me.getSobillRef(),
 			items : []
 		};
 

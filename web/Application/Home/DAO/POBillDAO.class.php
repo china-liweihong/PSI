@@ -765,13 +765,34 @@ class POBillDAO extends PSIBaseExDAO {
 					
 					$sql = "select d.id, d.goods_id, g.code, g.name, g.spec,
 								convert(d.goods_count, " . $fmt . ") as goods_count,
-								d.goods_money, d.goods_price, d.tax, d.tax_rate, d.money_with_tax,
-								u.name as unit_name 
+								d.tax_rate, u.name as unit_name 
 							from t_so_bill_detail d, t_goods g, t_goods_unit u
 							where d.sobill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id
 							order by d.show_order";
 					$data = $db->query($sql, $sobillId);
 					foreach ( $data as $v ) {
+						
+						// 查询商品的建议采购价
+						$goodsId = $v["goods_id"];
+						$sql = "select purchase_price from t_goods where id = '%s' ";
+						$d = $db->query($sql, $goodsId);
+						if (! $d) {
+							continue;
+						}
+						
+						$price = $d[0]["purchase_price"];
+						$cnt = $v["goods_count"];
+						$taxRate = $v["tax_rate"];
+						
+						$m = null;
+						$tax = null;
+						$moneyWithTax = null;
+						if ($price) {
+							$m = $price * $cnt;
+							$tax = $m * $taxRate / 100;
+							$moneyWithTax = $m + $tax;
+						}
+						
 						$items[] = [
 								"id" => $v["id"],
 								"goodsId" => $v["goods_id"],
@@ -779,11 +800,11 @@ class POBillDAO extends PSIBaseExDAO {
 								"goodsName" => $v["name"],
 								"goodsSpec" => $v["spec"],
 								"goodsCount" => $v["goods_count"],
-								"goodsPrice" => $v["goods_price"],
-								"goodsMoney" => $v["goods_money"],
-								"taxRate" => $v["tax_rate"],
-								"tax" => $v["tax"],
-								"moneyWithTax" => $v["money_with_tax"],
+								"goodsPrice" => $price,
+								"goodsMoney" => $m,
+								"taxRate" => $taxRate,
+								"tax" => $tax,
+								"moneyWithTax" => $moneyWithTax,
 								"unitName" => $v["unit_name"]
 						];
 					}

@@ -418,11 +418,22 @@ Ext.define("PSI.Report.SaleDayByGoodsForm", {
 
 		var me = this;
 
+		var store = me.getMainGrid().getStore();
+		var sorter = null;
+		if (store.sorters.getCount() > 0) {
+			sorter = Ext.JSON.encode(store.sorters.getAt(0));
+		}
+
 		var el = Ext.getBody();
 		el.mask("数据加载中...");
 		var r = {
 			url : PSI.Const.BASE_URL + "Home/Report/genSaleDayByGoodsPrintPage",
-			params : {},
+			params : {
+				dt : Ext.Date.format(Ext.getCmp("editQueryDT").getValue(),
+						"Y-m-d"),
+				sorter : sorter,
+				limit : -1
+			},
 			callback : function(options, success, response) {
 				el.unmask();
 

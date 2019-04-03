@@ -276,6 +276,9 @@ class POBillDAO extends PSIBaseExDAO {
 		$dealAddress = $bill["dealAddress"];
 		$billMemo = $bill["billMemo"];
 		
+		// 销售订单单号，当从销售订单生成采购订单的时候，会传入该值
+		$sobillRef = $bill["sobillRef"];
+		
 		$items = $bill["items"];
 		
 		$dataOrg = $bill["dataOrg"];
@@ -400,6 +403,21 @@ class POBillDAO extends PSIBaseExDAO {
 		$rc = $db->execute($sql, $sumGoodsMoney, $sumTax, $sumMoneyWithTax, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		if ($sobillRef) {
+			// 关联采购订单和销售订单
+			$sql = "select id from t_so_bill where ref = '%s' ";
+			$data = $db->query($sql, $sobillRef);
+			if ($data) {
+				$sobillId = $data[0]["id"];
+				
+				$sql = "insert into t_so_po (so_id, po_id) values ('%s', '%s')";
+				$rc = $db->execute($sql, $sobillId, $id);
+				if ($rc === false) {
+					return $this->sqlError(__METHOD__, __LINE__);
+				}
+			}
 		}
 		
 		$bill["id"] = $id;
@@ -617,6 +635,13 @@ class POBillDAO extends PSIBaseExDAO {
 		}
 		
 		$sql = "delete from t_po_bill where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 删除和销售订单的关联
+		$sql = "delete from t_so_po where po_id = '%s' ";
 		$rc = $db->execute($sql, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);

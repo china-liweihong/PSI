@@ -785,6 +785,8 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 	},
 
 	getSaveData : function() {
+		var me = this;
+		
 		var result = {
 			id : Ext.getCmp("hiddenId").getValue(),
 			dealDate : Ext.Date.format(Ext.getCmp("editDealDate").getValue(),
@@ -798,10 +800,11 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 			bizUserId : Ext.getCmp("editBizUser").getIdValue(),
 			paymentType : Ext.getCmp("editPaymentType").getValue(),
 			billMemo : Ext.getCmp("editBillMemo").getValue(),
+			sobillRef: me.getSobillRef(),
 			items : []
 		};
 
-		var store = this.getGoodsGrid().getStore();
+		var store = me.getGoodsGrid().getStore();
 		for (var i = 0; i < store.getCount(); i++) {
 			var item = store.getAt(i);
 			result.items.push({

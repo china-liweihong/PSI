@@ -778,6 +778,7 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 			Ext.getCmp("buttonCommit").setDisabled(true);
 			Ext.getCmp("buttonCancelConfirm").setDisabled(true);
 			Ext.getCmp("buttonGenWSBill").setDisabled(true);
+			Ext.getCmp("buttonGenPOBill").setDisabled(true);
 
 			return;
 		}
@@ -796,6 +797,7 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 		Ext.getCmp("buttonCommit").setDisabled(commited);
 		Ext.getCmp("buttonCancelConfirm").setDisabled(!commited);
 		Ext.getCmp("buttonGenWSBill").setDisabled(!commited);
+		Ext.getCmp("buttonGenPOBill").setDisabled(!commited);
 
 		me.refreshDetailGrid();
 

@@ -15,7 +15,7 @@ class PDFService {
 		$pdf = new \TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 		
 		$pdf->SetCreator(PDF_CREATOR);
-		$pdf->SetAuthor("开源进销存PSI");
+		$pdf->SetAuthor("PSI");
 		
 		$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
 		$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
@@ -27,4 +27,22 @@ class PDFService {
 		
 		return $pdf;
 	}
+	
+	public function getInstanceForReport() {
+		$pdf = new \TCPDF("L", PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+		
+		$pdf->SetCreator(PDF_CREATOR);
+		$pdf->SetAuthor("PSI");
+		
+		$pdf->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
+		$pdf->SetHeaderMargin(PDF_MARGIN_HEADER);
+		$pdf->SetFooterMargin(PDF_MARGIN_FOOTER);
+		
+		$pdf->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
+		
+		$pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+		
+		return $pdf;
+	}
+	
 }

@@ -539,6 +539,20 @@ Ext.define("PSI.Report.SaleDayByGoodsForm", {
 
 	onExcel : function() {
 		var me = this;
-		me.showInfo("TODO");
+
+		var store = me.getMainGrid().getStore();
+		var sorter = null;
+		if (store.sorters.getCount() > 0) {
+			sorter = Ext.JSON.encode([store.sorters.getAt(0)]);
+		}
+
+		var dt = Ext.Date.format(Ext.getCmp("editQueryDT").getValue(), "Y-m-d");
+
+		var url = "Home/Report/saleDayByGoodsExcel?limit=-1&dt=" + dt;
+		if (sorter) {
+			url += "&sort=" + sorter;
+		}
+
+		window.open(me.URL(url));
 	}
 });

@@ -273,8 +273,10 @@ class SaleReportService extends PSIBaseExService {
 		$lastRow = count($items) + 2;
 		$sheet->getStyle('A2:L' . $lastRow)->applyFromArray($styleArray);
 		
+		$dt = date("YmdHis");
+		
 		header('Content-Type: application/vnd.ms-excel');
-		header('Content-Disposition: attachment;filename="SDG.xlsx"');
+		header('Content-Disposition: attachment;filename="SDG_' . $dt . '.xlsx"');
 		header('Cache-Control: max-age=0');
 		
 		$writer = \PHPExcel_IOFactory::createWriter($excel, "Excel2007");

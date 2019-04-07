@@ -160,7 +160,9 @@ class SaleReportService extends PSIBaseExService {
 		
 		ob_end_clean();
 		
-		$pdf->Output("销售日报表(按商品汇总).pdf", "I");
+		$dt = date("YmdHis");
+		
+		$pdf->Output("SalesDayReportGroupByGoods_{$dt}.pdf", "I");
 	}
 
 	/**
@@ -271,8 +273,10 @@ class SaleReportService extends PSIBaseExService {
 		$lastRow = count($items) + 2;
 		$sheet->getStyle('A2:L' . $lastRow)->applyFromArray($styleArray);
 		
+		$dt = date("YmdHis");
+		$fileName = "销售日报表(按商品汇总)_{$dt}.xlsx";
 		header('Content-Type: application/vnd.ms-excel');
-		header('Content-Disposition: attachment;filename="销售日报表(按商品汇总).xlsx"');
+		header('Content-Disposition: attachment;filename="' . $fileName . '"');
 		header('Cache-Control: max-age=0');
 		
 		$writer = \PHPExcel_IOFactory::createWriter($excel, "Excel2007");

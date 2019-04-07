@@ -4,6 +4,8 @@ namespace Home\Service;
 
 use Home\DAO\SaleReportDAO;
 
+require __DIR__ . '/../Common/Excel/PHPExcel/IOFactory.php';
+
 /**
  * 销售报表Service
  *
@@ -195,8 +197,6 @@ class SaleReportService extends PSIBaseExService {
 		$bls = new BizlogService($this->db());
 		$bls->insertBizlog($log, $this->LOG_CATEGORY);
 		
-		require __DIR__ . '/../Common/Excel/PHPExcel/IOFactory.php';
-		
 		$excel = new \PHPExcel();
 		
 		$sheet = $excel->getActiveSheet();
@@ -276,7 +276,7 @@ class SaleReportService extends PSIBaseExService {
 		$dt = date("YmdHis");
 		
 		header('Content-Type: application/vnd.ms-excel');
-		header('Content-Disposition: attachment;filename="销售日报表(按商品汇总).xlsx"');
+		header('Content-Disposition: attachment;filename="销售日报表(按商品汇总)_' . $dt . '.xlsx"');
 		header('Cache-Control: max-age=0');
 		
 		$writer = \PHPExcel_IOFactory::createWriter($excel, "Excel2007");

@@ -162,7 +162,7 @@ class SaleReportService extends PSIBaseExService {
 		
 		$dt = date("YmdHis");
 		
-		$pdf->Output("SalesDayReportGroupByGoods_{$dt}.pdf", "I");
+		$pdf->Output("SDG_{$dt}.pdf", "I");
 	}
 
 	/**
@@ -274,7 +274,7 @@ class SaleReportService extends PSIBaseExService {
 		$sheet->getStyle('A2:L' . $lastRow)->applyFromArray($styleArray);
 		
 		$dt = date("YmdHis");
-		$fileName = "销售日报表(按商品汇总)_{$dt}.xlsx";
+		$fileName = "SDG_{$dt}.xlsx";
 		header('Content-Type: application/vnd.ms-excel');
 		header('Content-Disposition: attachment;filename="' . $fileName . '"');
 		header('Cache-Control: max-age=0');

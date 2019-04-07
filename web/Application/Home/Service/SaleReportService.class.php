@@ -274,7 +274,7 @@ class SaleReportService extends PSIBaseExService {
 		$sheet->getStyle('A2:L' . $lastRow)->applyFromArray($styleArray);
 		
 		$dt = date("YmdHis");
-		$fileName = "SDG_{$dt}.xlsx";
+		$fileName = "SDG.xlsx";
 		header('Content-Type: application/vnd.ms-excel');
 		header('Content-Disposition: attachment;filename="' . $fileName . '"');
 		header('Cache-Control: max-age=0');

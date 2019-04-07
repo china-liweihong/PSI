@@ -276,7 +276,7 @@ class SaleReportService extends PSIBaseExService {
 		$dt = date("YmdHis");
 		
 		header('Content-Type: application/vnd.ms-excel');
-		header('Content-Disposition: attachment;filename="SDG_' . $dt . '.xlsx"');
+		header('Content-Disposition: attachment;filename="销售日报表(按商品汇总).xlsx"');
 		header('Cache-Control: max-age=0');
 		
 		$writer = \PHPExcel_IOFactory::createWriter($excel, "Excel2007");

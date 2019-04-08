@@ -281,6 +281,20 @@ class ReportController extends PSIBaseController {
 	}
 
 	/**
+	 * 销售日报表(按仓库汇总) - 生成PDF文件
+	 */
+	public function saleDayByWarehousePdf() {
+		$params = [
+				"dt" => I("get.dt"),
+				"limit" => I("get.limit"),
+				"sort" => I("get.sort")
+		];
+		
+		$service = new SaleReportService();
+		$service->saleDayByWarehousePdf($params);
+	}
+
+	/**
 	 * 销售日报表(按业务员汇总)
 	 */
 	public function saleDayByBizuser() {

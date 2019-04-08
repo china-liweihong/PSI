@@ -883,6 +883,37 @@ class SaleReportService extends PSIBaseExService {
 	}
 
 	/**
+	 * 销售日报表(按业务员汇总) - 查询数据，用于Lodop打印
+	 *
+	 * @param array $params        	
+	 * @return array
+	 */
+	public function getSaleDayByBizuserDataForLodopPrint($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$params["companyId"] = $this->getCompanyId();
+		
+		$dao = new SaleReportDAO($this->db());
+		$items = $dao->saleDayByBizuserQueryData($params);
+		
+		$data = $this->saleDaySummaryQueryData($params);
+		$v = $data[0];
+		
+		return [
+				"bizDate" => $params["dt"],
+				"printDT" => date("Y-m-d H:i:s"),
+				"saleMoney" => $v["saleMoney"],
+				"rejMoney" => $v["rejMoney"],
+				"m" => $v["m"],
+				"profit" => $v["profit"],
+				"rate" => $v["rate"],
+				"items" => $items["dataList"]
+		];
+	}
+
+	/**
 	 * 销售月报表(按商品汇总) - 查询数据
 	 */
 	public function saleMonthByGoodsQueryData($params) {

@@ -360,6 +360,24 @@ class ReportController extends PSIBaseController {
 	}
 
 	/**
+	 * 销售日报表(按业务员汇总) - 生成打印页面
+	 */
+	public function genSaleDayByBizuserPrintPage() {
+		if (IS_POST) {
+			$params = [
+					"dt" => I("post.dt"),
+					"limit" => I("post.limit"),
+					"sort" => I("post.sort")
+			];
+			
+			$service = new SaleReportService();
+			$data = $service->getSaleDayByBizuserDataForLodopPrint($params);
+			$this->assign("data", $data);
+			$this->display();
+		}
+	}
+
+	/**
 	 * 销售月报表(按商品汇总)
 	 */
 	public function saleMonthByGoods() {

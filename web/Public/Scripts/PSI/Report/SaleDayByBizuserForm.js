@@ -47,7 +47,7 @@ Ext.define("PSI.Report.SaleDayByBizuserForm", {
 							}, {
 								xtype : "displayfield",
 								value : "条记录"
-							}, "-", {
+							}, {
 								id : "editQueryDT",
 								cls : "PSI-toolbox",
 								xtype : "datefield",
@@ -70,10 +70,36 @@ Ext.define("PSI.Report.SaleDayByBizuserForm", {
 								iconCls : "PSI-button-refresh",
 								handler : me.onQuery,
 								scope : me
-							}, "-", {
+							}, {
 								text : "重置查询条件",
 								handler : me.onClearQuery,
 								scope : me
+							}, "-", {
+								text : "打印",
+								menu : [{
+											text : "打印预览",
+											iconCls : "PSI-button-print-preview",
+											scope : me,
+											handler : me.onPrintPreview
+										}, "-", {
+											text : "直接打印",
+											iconCls : "PSI-button-print",
+											scope : me,
+											handler : me.onPrint
+										}]
+							}, {
+								text : "导出",
+								menu : [{
+											text : "导出PDF",
+											iconCls : "PSI-button-print-preview",
+											scope : me,
+											handler : me.onPDF
+										}, "-", {
+											text : "导出Excel",
+											iconCls : "PSI-button-print",
+											scope : me,
+											handler : me.onExcel
+										}]
 							}, "-", {
 								text : "关闭",
 								handler : function() {
@@ -353,5 +379,127 @@ Ext.define("PSI.Report.SaleDayByBizuserForm", {
 		editQueryDT.setValue(day);
 
 		me.onQuery();
+	},
+
+	onPrintPreview : function() {
+		var lodop = getLodop();
+		if (!lodop) {
+			PSI.MsgBox.showInfo("没有安装Lodop控件，无法打印");
+			return;
+		}
+
+		var me = this;
+
+		var store = me.getMainGrid().getStore();
+		var sorter = null;
+		if (store.sorters.getCount() > 0) {
+			sorter = Ext.JSON.encode([store.sorters.getAt(0)]);
+		}
+
+		var el = Ext.getBody();
+		el.mask("数据加载中...");
+		var r = {
+			url : PSI.Const.BASE_URL
+					+ "Home/Report/genSaleDayByBizuserPrintPage",
+			params : {
+				dt : Ext.Date.format(Ext.getCmp("editQueryDT").getValue(),
+						"Y-m-d"),
+				sort : sorter,
+				limit : -1
+			},
+			callback : function(options, success, response) {
+				el.unmask();
+
+				if (success) {
+					var data = response.responseText;
+					me.previewReport("销售日报表(按客户汇总)", data);
+				}
+			}
+		};
+		me.ajax(r);
+	},
+
+	PRINT_PAGE_WIDTH : "200mm",
+	PRINT_PAGE_HEIGHT : "95mm",
+
+	previewReport : function(ref, data) {
+		var me = this;
+
+		var lodop = getLodop();
+		if (!lodop) {
+			PSI.MsgBox.showInfo("Lodop打印控件没有正确安装");
+			return;
+		}
+
+		lodop.PRINT_INIT(ref);
+		lodop.SET_PRINT_PAGESIZE(1, me.PRINT_PAGE_WIDTH, me.PRINT_PAGE_HEIGHT,
+				"");
+		lodop.ADD_PRINT_HTM("0mm", "0mm", "100%", "100%", data);
+		var result = lodop.PREVIEW("_blank");
+	},
+
+	onPrint : function() {
+		var lodop = getLodop();
+		if (!lodop) {
+			PSI.MsgBox.showInfo("没有安装Lodop控件，无法打印");
+			return;
+		}
+
+		var me = this;
+
+		var store = me.getMainGrid().getStore();
+		var sorter = null;
+		if (store.sorters.getCount() > 0) {
+			sorter = Ext.JSON.encode([store.sorters.getAt(0)]);
+		}
+
+		var el = Ext.getBody();
+		el.mask("数据加载中...");
+		var r = {
+			url : PSI.Const.BASE_URL
+					+ "Home/Report/genSaleDayByBizuserPrintPage",
+			params : {
+				dt : Ext.Date.format(Ext.getCmp("editQueryDT").getValue(),
+						"Y-m-d"),
+				sort : sorter,
+				limit : -1
+			},
+			callback : function(options, success, response) {
+				el.unmask();
+
+				if (success) {
+					var data = response.responseText;
+					me.printReport("销售日报表(按客户汇总)", data);
+				}
+			}
+		};
+		me.ajax(r);
+	},
+
+	printReport : function(ref, data) {
+		var me = this;
+
+		var lodop = getLodop();
+		if (!lodop) {
+			PSI.MsgBox.showInfo("Lodop打印控件没有正确安装");
+			return;
+		}
+
+		lodop.PRINT_INIT(ref);
+		lodop.SET_PRINT_PAGESIZE(1, me.PRINT_PAGE_WIDTH, me.PRINT_PAGE_HEIGHT,
+				"");
+		lodop.ADD_PRINT_HTM("0mm", "0mm", "100%", "100%", data);
+		var result = lodop.PRINT();
+	},
+
+	onPDF : function() {
+		var me = this;
+		me.showInfo("TODO");
+	},
+
+	onExcel : function() {
+		var me = this;
+		me.showInfo("TODO");
 	}
+
 });

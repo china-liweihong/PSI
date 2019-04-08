@@ -402,6 +402,110 @@ class SaleReportService extends PSIBaseExService {
 				"items" => $items["dataList"]
 		];
 	}
+	
+	/**
+	 * 销售日报表(按客户汇总) - 生成PDF文件
+	 *
+	 * @param array $params
+	 */
+	public function saleDayByCustomerPdf($params) {
+		if ($this->isNotOnline()) {
+			return;
+		}
+		
+		$params["companyId"] = $this->getCompanyId();
+		
+		$bizDT = $params["dt"];
+		
+		$bs = new BizConfigService();
+		$productionName = $bs->getProductionName();
+		
+		$dao = new SaleReportDAO($this->db());
+		
+		$data = $dao->saleDayByCustomerQueryData($params);
+		$items = $data["dataList"];
+		
+		$data = $this->saleDaySummaryQueryData($params);
+		$summary = $data[0];
+		
+		// 记录业务日志
+		$log = "销售日报表(按客户汇总)导出PDF文件";
+		$bls = new BizlogService($this->db());
+		$bls->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		ob_start();
+		
+		$ps = new PDFService();
+		$pdf = $ps->getInstanceForReport();
+		$pdf->SetTitle("销售日报表(按客户汇总)");
+		
+		$pdf->setHeaderFont(array(
+				"stsongstdlight",
+				"",
+				16
+		));
+		
+		$pdf->setFooterFont(array(
+				"stsongstdlight",
+				"",
+				14
+		));
+		
+		$pdf->SetHeaderData("", 0, $productionName, "销售日报表(按客户汇总)");
+		
+		$pdf->SetFont("stsongstdlight", "", 10);
+		$pdf->AddPage();
+		
+		/**
+		 * 注意：
+		 * TCPDF中，用来拼接HTML的字符串需要用单引号，否则HTML中元素的属性就不会被解析
+		 */
+		$html = '
+				<table>
+					<tr>
+						<td>业务日期：' . $bizDT . '</td>
+						<td>销售出库金额：' . $summary["saleMoney"] . '</td>
+						<td>退回入库金额：' . $summary["rejMoney"] . '</td>
+						<td>净销售金额：' . $summary["m"] . '</td>
+					</tr>
+					<tr>
+						<td>毛利：' . $summary["profit"] . '</td>
+						<td>毛利率：' . $summary["rate"] . '</td>
+						<td></td>
+						<td></td>
+					</tr>
+				</table>
+				';
+		$pdf->writeHTML($html);
+		
+		$html = '<table border="1" cellpadding="1">
+					<tr><td>客户编号</td><td>客户名称</td>
+						<td>销售出库金额</td><td>退货入库金额</td>
+						<td>净销售金额</td><td>毛利</td><td>毛利率</td>
+					</tr>
+				';
+		foreach ( $items as $v ) {
+			$html .= '<tr>';
+			$html .= '<td>' . $v["customerCode"] . '</td>';
+			$html .= '<td>' . $v["customerName"] . '</td>';
+			$html .= '<td align="right">' . $v["saleMoney"] . '</td>';
+			$html .= '<td align="right">' . $v["rejMoney"] . '</td>';
+			$html .= '<td align="right">' . $v["m"] . '</td>';
+			$html .= '<td align="right">' . $v["profit"] . '</td>';
+			$html .= '<td align="right">' . $v["rate"] . '</td>';
+			$html .= '</tr>';
+		}
+		
+		$html .= '</table>';
+		$pdf->writeHTML($html, true, false, true, false, '');
+		
+		ob_end_clean();
+		
+		$dt = date("YmdHis");
+		
+		$pdf->Output("SDC_{$dt}.pdf", "I");
+	}
+	
 
 	/**
 	 * 销售日报表(按仓库汇总) - 查询数据

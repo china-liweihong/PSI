@@ -392,6 +392,20 @@ class ReportController extends PSIBaseController {
 	}
 
 	/**
+	 * 销售日报表(按业务员汇总) - 生成ExcelF文件
+	 */
+	public function saleDayByBizuserExcel() {
+		$params = [
+				"dt" => I("get.dt"),
+				"limit" => I("get.limit"),
+				"sort" => I("get.sort")
+		];
+		
+		$service = new SaleReportService();
+		$service->saleDayByBizuserExcel($params);
+	}
+
+	/**
 	 * 销售月报表(按商品汇总)
 	 */
 	public function saleMonthByGoods() {

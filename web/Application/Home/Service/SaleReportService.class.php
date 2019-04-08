@@ -1017,6 +1017,102 @@ class SaleReportService extends PSIBaseExService {
 	}
 
 	/**
+	 * 销售日报表(按业务员汇总) - 生成Excel文件
+	 *
+	 * @param array $params        	
+	 */
+	public function saleDayByBizuserExcel($params) {
+		if ($this->isNotOnline()) {
+			return;
+		}
+		
+		$params["companyId"] = $this->getCompanyId();
+		
+		$bizDT = $params["dt"];
+		
+		$bs = new BizConfigService();
+		$productionName = $bs->getProductionName();
+		
+		$dao = new SaleReportDAO($this->db());
+		
+		$data = $dao->saleDayByBizuserQueryData($params);
+		$items = $data["dataList"];
+		
+		$data = $this->saleDaySummaryQueryData($params);
+		$summary = $data[0];
+		
+		// 记录业务日志
+		$log = "销售日报表(按业务员汇总)导出Excel文件";
+		$bls = new BizlogService($this->db());
+		$bls->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$excel = new \PHPExcel();
+		
+		$sheet = $excel->getActiveSheet();
+		if (! $sheet) {
+			$sheet = $excel->createSheet();
+		}
+		
+		$sheet->setTitle("销售日报表(按业务员汇总)");
+		
+		$sheet->getRowDimension('1')->setRowHeight(22);
+		$info = "业务日期: " . $bizDT . " 销售出库金额: " . $summary["saleMoney"] . " 退货入库金额: " . $summary["rejMoney"] . " 毛利: " . $summary["profit"] . " 毛利率: " . $summary["rate"];
+		$sheet->setCellValue("A1", $info);
+		
+		$sheet->getColumnDimension('A')->setWidth(15);
+		$sheet->setCellValue("A2", "业务员编码");
+		
+		$sheet->getColumnDimension('B')->setWidth(40);
+		$sheet->setCellValue("B2", "业务员");
+		
+		$sheet->getColumnDimension('C')->setWidth(15);
+		$sheet->setCellValue("C2", "销售出库金额");
+		
+		$sheet->getColumnDimension('D')->setWidth(15);
+		$sheet->setCellValue("D2", "退货入库金额");
+		
+		$sheet->getColumnDimension('E')->setWidth(15);
+		$sheet->setCellValue("E2", "净销售金额");
+		
+		$sheet->getColumnDimension('F')->setWidth(15);
+		$sheet->setCellValue("F2", "毛利");
+		
+		$sheet->getColumnDimension('G')->setWidth(15);
+		$sheet->setCellValue("G2", "毛利率");
+		
+		foreach ( $items as $i => $v ) {
+			$row = $i + 3;
+			$sheet->setCellValue("A" . $row, $v["userCode"]);
+			$sheet->setCellValue("B" . $row, $v["userName"]);
+			$sheet->setCellValue("C" . $row, $v["saleMoney"]);
+			$sheet->setCellValue("D" . $row, $v["rejMoney"]);
+			$sheet->setCellValue("E" . $row, $v["m"]);
+			$sheet->setCellValue("F" . $row, $v["profit"]);
+			$sheet->setCellValue("G" . $row, $v["rate"]);
+		}
+		
+		// 画表格边框
+		$styleArray = [
+				'borders' => [
+						'allborders' => [
+								'style' => 'thin'
+						]
+				]
+		];
+		$lastRow = count($items) + 2;
+		$sheet->getStyle('A2:G' . $lastRow)->applyFromArray($styleArray);
+		
+		$dt = date("YmdHis");
+		
+		header('Content-Type: application/vnd.ms-excel');
+		header('Content-Disposition: attachment;filename="销售日报表(按业务员汇总)_' . $dt . '.xlsx"');
+		header('Cache-Control: max-age=0');
+		
+		$writer = \PHPExcel_IOFactory::createWriter($excel, "Excel2007");
+		$writer->save("php://output");
+	}
+
+	/**
 	 * 销售月报表(按商品汇总) - 查询数据
 	 */
 	public function saleMonthByGoodsQueryData($params) {

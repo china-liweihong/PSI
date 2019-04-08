@@ -523,7 +523,8 @@ class SaleReportDAO extends PSIBaseExDAO {
 		}
 		
 		$start = $params["start"];
-		$limit = $params["limit"];
+		$limit = intval($params["limit"]);
+		$showAllData = $limit == - 1;
 		
 		$sort = $params["sort"];
 		$sortProperty = "goods_code";
@@ -663,10 +664,15 @@ class SaleReportDAO extends PSIBaseExDAO {
 					sale_money, convert(sale_count, $fmt) as sale_count, rej_money,
 					convert(rej_count, $fmt) as rej_count, m, convert(c, $fmt) as c, profit, rate
 				from psi_sale_report
-				order by %s %s
-				limit %d, %d
-		";
-		$data = $db->query($sql, $sortProperty, $sortDirection, $start, $limit);
+				order by %s %s ";
+		if (! $showAllData) {
+			$sql .= " limit %d, %d ";
+		}
+		if ($showAllData) {
+			$data = $db->query($sql, $sortProperty, $sortDirection);
+		} else {
+			$data = $db->query($sql, $sortProperty, $sortDirection, $start, $limit);
+		}
 		$result = [];
 		foreach ( $data as $v ) {
 			$result[] = [

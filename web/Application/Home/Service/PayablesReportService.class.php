@@ -9,6 +9,19 @@ namespace Home\Service;
  */
 class PayablesReportService extends PSIBaseService {
 
+	private function caTypeToName($caType) {
+		switch ($caType) {
+			case "customer" :
+				return "客户";
+			case "supplier" :
+				return "供应商";
+			case "factory" :
+				return "工厂";
+			default :
+				return "";
+		}
+	}
+
 	/**
 	 * 应付账款账龄分析
 	 */
@@ -38,14 +51,19 @@ class PayablesReportService extends PSIBaseService {
 					from t_payables p, t_supplier s
 					where p.ca_id = s.id and p.ca_type = 'supplier'
 						and p.company_id = '%s'
+					union
+					select p.ca_type, f.id, f.code, f.name, p.balance_money
+					from t_payables p, t_factory f
+					where p.ca_id = f.id and p.ca_type = 'factory'
+						and p.company_id = '%s'
 				) t
 				order by t.ca_type desc, t.code
 				limit %d, %d";
-		$data = $db->query($sql, $companyId, $companyId, $start, $limit);
+		$data = $db->query($sql, $companyId, $companyId, $companyId, $start, $limit);
 		
 		foreach ( $data as $i => $v ) {
 			$caType = $v["ca_type"];
-			$result[$i]["caType"] = $caType == "customer" ? "客户" : "供应商";
+			$result[$i]["caType"] = $this->caTypeToName($caType);
 			$caId = $v["id"];
 			$result[$i]["caCode"] = $v["code"];
 			$result[$i]["caName"] = $v["name"];

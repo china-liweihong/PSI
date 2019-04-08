@@ -114,7 +114,8 @@ Ext.define("PSI.Report.PayablesAgeForm", {
 					border : 0,
 					columnLines : true,
 					columns : [{
-								xtype : "rownumberer"
+								xtype : "rownumberer",
+								width : 60
 							}, {
 								header : "往来单位性质",
 								dataIndex : "caType",

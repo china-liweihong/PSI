@@ -1353,6 +1353,130 @@ class SaleReportService extends PSIBaseExService {
 	}
 
 	/**
+	 * 销售月报表(按商品汇总) - 生成Excel文件
+	 *
+	 * @param array $params        	
+	 */
+	public function saleMonthByGoodsExcel($params) {
+		if ($this->isNotOnline()) {
+			return;
+		}
+		
+		$params["companyId"] = $this->getCompanyId();
+		
+		$year = $params["year"];
+		$month = $params["month"];
+		
+		$bizDT = "";
+		if ($month < 10) {
+			$bizDT = "$year-0$month";
+		} else {
+			$bizDT = "$year-$month";
+		}
+		
+		$bs = new BizConfigService();
+		$productionName = $bs->getProductionName();
+		
+		$dao = new SaleReportDAO($this->db());
+		
+		$data = $dao->saleMonthByGoodsQueryData($params);
+		$items = $data["dataList"];
+		
+		$data = $this->saleMonthSummaryQueryData($params);
+		$summary = $data[0];
+		
+		// 记录业务日志
+		$log = "销售月报表(按商品汇总)导出Excel文件";
+		$bls = new BizlogService($this->db());
+		$bls->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$excel = new \PHPExcel();
+		
+		$sheet = $excel->getActiveSheet();
+		if (! $sheet) {
+			$sheet = $excel->createSheet();
+		}
+		
+		$sheet->setTitle("销售月报表(按商品汇总)");
+		
+		$sheet->getRowDimension('1')->setRowHeight(22);
+		$info = "月份: " . $bizDT . " 销售出库金额: " . $summary["saleMoney"] . " 退货入库金额: " . $summary["rejMoney"] . " 毛利: " . $summary["profit"] . " 毛利率: " . $summary["rate"];
+		$sheet->setCellValue("A1", $info);
+		
+		$sheet->getColumnDimension('A')->setWidth(15);
+		$sheet->setCellValue("A2", "商品编码");
+		
+		$sheet->getColumnDimension('B')->setWidth(40);
+		$sheet->setCellValue("B2", "商品名称");
+		
+		$sheet->getColumnDimension('C')->setWidth(40);
+		$sheet->setCellValue("C2", "规格型号");
+		
+		$sheet->getColumnDimension('D')->setWidth(15);
+		$sheet->setCellValue("D2", "销售出库数量");
+		
+		$sheet->getColumnDimension('E')->setWidth(10);
+		$sheet->setCellValue("E2", "单位");
+		
+		$sheet->getColumnDimension('F')->setWidth(15);
+		$sheet->setCellValue("F2", "销售出库金额");
+		
+		$sheet->getColumnDimension('G')->setWidth(15);
+		$sheet->setCellValue("G2", "退货入库数量");
+		
+		$sheet->getColumnDimension('H')->setWidth(15);
+		$sheet->setCellValue("H2", "退货入库金额");
+		
+		$sheet->getColumnDimension('I')->setWidth(15);
+		$sheet->setCellValue("I2", "净销售数量");
+		
+		$sheet->getColumnDimension('J')->setWidth(15);
+		$sheet->setCellValue("J2", "净销售金额");
+		
+		$sheet->getColumnDimension('K')->setWidth(15);
+		$sheet->setCellValue("K2", "毛利");
+		
+		$sheet->getColumnDimension('L')->setWidth(15);
+		$sheet->setCellValue("L2", "毛利率");
+		
+		foreach ( $items as $i => $v ) {
+			$row = $i + 3;
+			$sheet->setCellValue("A" . $row, $v["goodsCode"]);
+			$sheet->setCellValue("B" . $row, $v["goodsName"]);
+			$sheet->setCellValue("C" . $row, $v["goodsSpec"]);
+			$sheet->setCellValue("D" . $row, $v["saleCount"]);
+			$sheet->setCellValue("E" . $row, $v["unitName"]);
+			$sheet->setCellValue("F" . $row, $v["saleMoney"]);
+			$sheet->setCellValue("G" . $row, $v["rejCount"]);
+			$sheet->setCellValue("H" . $row, $v["rejMoney"]);
+			$sheet->setCellValue("I" . $row, $v["c"]);
+			$sheet->setCellValue("J" . $row, $v["m"]);
+			$sheet->setCellValue("K" . $row, $v["profit"]);
+			$sheet->setCellValue("L" . $row, $v["rate"]);
+		}
+		
+		// 画表格边框
+		$styleArray = [
+				'borders' => [
+						'allborders' => [
+								'style' => 'thin'
+						]
+				]
+		];
+		$lastRow = count($items) + 2;
+		$sheet->getStyle('A2:L' . $lastRow)->applyFromArray($styleArray);
+		
+		$dt = date("YmdHis");
+		
+		header('Content-Type: application/vnd.ms-excel');
+		header('Content-Disposition: attachment;filename="销售月报表(按商品汇总)_' . $dt . '.xlsx"');
+		header('Cache-Control: max-age=0');
+		
+		$writer = \PHPExcel_IOFactory::createWriter($excel, "Excel2007");
+		$writer->save("php://output");
+	}
+
+	/**
 	 * 销售月报表(按客户汇总) - 查询数据
 	 */
 	public function saleMonthByCustomerQueryData($params) {

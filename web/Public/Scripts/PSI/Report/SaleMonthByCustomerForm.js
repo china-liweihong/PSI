@@ -113,7 +113,7 @@ Ext.define("PSI.Report.SaleMonthByCustomerForm", {
 											handler : me.onPDF
 										}, "-", {
 											text : "导出Excel",
-											iconCls : "PSI-button-print",
+											iconCls : "PSI-button-excel",
 											scope : me,
 											handler : me.onExcel
 										}]

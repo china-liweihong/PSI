@@ -91,12 +91,12 @@ Ext.define("PSI.Report.SaleDayByGoodsForm", {
 								text : "导出",
 								menu : [{
 											text : "导出PDF",
-											iconCls : "PSI-button-print-preview",
+											iconCls : "PSI-button-pdf",
 											scope : me,
 											handler : me.onPDF
 										}, "-", {
 											text : "导出Excel",
-											iconCls : "PSI-button-print",
+											iconCls : "PSI-button-excel",
 											scope : me,
 											handler : me.onExcel
 										}]

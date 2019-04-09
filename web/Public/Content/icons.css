@@ -90,6 +90,10 @@
     background-image:url(../Images/icons/gen_bill.png?v=2017061504) !important;
 }
 
+.PSI-button-excel {
+    background-image:url(../Images/icons/excel01.png?v=2019040901) !important;
+}
+
 .PSI-button-excelimport {
     background-image:url(../Images/icons/excel.png?v=2017061504) !important;
 }

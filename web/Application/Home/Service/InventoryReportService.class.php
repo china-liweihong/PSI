@@ -3,13 +3,14 @@
 namespace Home\Service;
 
 use Home\Common\FIdConst;
+use Home\DAO\BizConfigDAO;
 
 /**
  * 库存报表Service
  *
  * @author 李静波
  */
-class InventoryReportService extends PSIBaseService {
+class InventoryReportService extends PSIBaseExService {
 
 	/**
 	 * 安全库存明细表 - 数据查询
@@ -28,6 +29,11 @@ class InventoryReportService extends PSIBaseService {
 		
 		$db = M();
 		
+		$companyId = $this->getCompanyId();
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		$ds = new DataOrgService();
 		$rs = $ds->buildSQL(FIdConst::REPORT_SAFETY_INVENTORY, "w");
 		$queryParams = array();
@@ -35,7 +41,8 @@ class InventoryReportService extends PSIBaseService {
 		$sql = "select w.code as warehouse_code, w.name as warehouse_name,
 					g.code as goods_code, g.name as goods_name, g.spec as goods_spec,
 					u.name as unit_name,
-					s.safety_inventory, i.balance_count
+					convert(s.safety_inventory, $fmt) as safety_inventory, 
+					convert(i.balance_count, $fmt) as balance_count
 				from t_inventory i, t_goods g, t_goods_unit u, t_goods_si s, t_warehouse w
 				where i.warehouse_id = w.id and i.goods_id = g.id and g.unit_id = u.id
 					and s.warehouse_id = i.warehouse_id and s.goods_id = g.id
@@ -157,7 +164,7 @@ class InventoryReportService extends PSIBaseService {
 
 	/**
 	 * 安全库存明细表 - 查询数据，用于Lodop打印
-	 * 
+	 *
 	 * @param array $params        	
 	 */
 	public function getSafetyInventoryDataForLodopPrint($params) {

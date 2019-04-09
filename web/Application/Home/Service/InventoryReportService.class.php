@@ -154,4 +154,22 @@ class InventoryReportService extends PSIBaseService {
 				"totalCount" => $cnt
 		);
 	}
+
+	/**
+	 * 安全库存明细表 - 查询数据，用于Lodop打印
+	 * 
+	 * @param array $params        	
+	 */
+	public function getSafetyInventoryDataForLodopPrint($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$items = $this->safetyInventoryQueryData($params);
+		
+		return [
+				"printDT" => date("Y-m-d H:i:s"),
+				"items" => $items["dataList"]
+		];
+	}
 }

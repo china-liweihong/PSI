@@ -848,6 +848,25 @@ class ReportController extends PSIBaseController {
 	}
 
 	/**
+	 * 安全库存明细表 - 生成打印页面
+	 */
+	public function genSafetyInventoryPrintPage() {
+		if (IS_POST) {
+			$params = [
+					"page" => I("post.page"),
+					"start" => I("post.start"),
+					"limit" => I("post.limit")
+			];
+			
+			$service = new InventoryReportService();
+			
+			$data = $service->getSafetyInventoryDataForLodopPrint($params);
+			$this->assign("data", $data);
+			$this->display();
+		}
+	}
+
+	/**
 	 * 应收账款账龄分析表
 	 */
 	public function receivablesAge() {

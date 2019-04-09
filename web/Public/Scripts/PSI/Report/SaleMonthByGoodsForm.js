@@ -531,7 +531,23 @@ Ext.define("PSI.Report.SaleMonthByGoodsForm", {
 
 	onPDF : function() {
 		var me = this;
-		me.showInfo("TODO");
+
+		var store = me.getMainGrid().getStore();
+		var sorter = null;
+		if (store.sorters.getCount() > 0) {
+			sorter = Ext.JSON.encode([store.sorters.getAt(0)]);
+		}
+
+		var year = Ext.getCmp("editQueryYear").getValue();
+		var month = Ext.getCmp("editQueryMonth").getValue();
+
+		var url = "Home/Report/saleMonthByGoodsPdf?limit=-1&year=" + year
+				+ "&month=" + month;
+		if (sorter) {
+			url += "&sort=" + sorter;
+		}
+
+		window.open(me.URL(url));
 	},
 
 	onExcel : function() {

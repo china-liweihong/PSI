@@ -524,6 +524,23 @@ Ext.define("PSI.Report.SaleMonthByWarehouseForm", {
 	},
 
 	onExcel : function() {
+		var me = this;
 
+		var store = me.getMainGrid().getStore();
+		var sorter = null;
+		if (store.sorters.getCount() > 0) {
+			sorter = Ext.JSON.encode([store.sorters.getAt(0)]);
+		}
+
+		var year = Ext.getCmp("editQueryYear").getValue();
+		var month = Ext.getCmp("editQueryMonth").getValue();
+
+		var url = "Home/Report/saleMonthByWarehouseExcel?limit=-1&year=" + year
+				+ "&month=" + month;
+		if (sorter) {
+			url += "&sort=" + sorter;
+		}
+
+		window.open(me.URL(url));
 	}
 });

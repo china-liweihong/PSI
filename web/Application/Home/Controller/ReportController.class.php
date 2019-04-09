@@ -697,6 +697,21 @@ class ReportController extends PSIBaseController {
 	}
 
 	/**
+	 * 销售月报表(按仓库汇总) - 生成Excel文件
+	 */
+	public function saleMonthByWarehouseExcel() {
+		$params = [
+				"year" => I("get.year"),
+				"month" => I("get.month"),
+				"limit" => I("get.limit"),
+				"sort" => I("get.sort")
+		];
+		
+		$service = new SaleReportService();
+		$service->saleMonthByWarehouseExcel($params);
+	}
+
+	/**
 	 * 销售月报表(按业务员汇总)
 	 */
 	public function saleMonthByBizuser() {

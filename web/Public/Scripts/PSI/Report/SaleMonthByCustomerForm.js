@@ -108,7 +108,7 @@ Ext.define("PSI.Report.SaleMonthByCustomerForm", {
 								text : "导出",
 								menu : [{
 											text : "导出PDF",
-											iconCls : "PSI-button-print-preview",
+											iconCls : "PSI-button-pdf",
 											scope : me,
 											handler : me.onPDF
 										}, "-", {
@@ -503,7 +503,24 @@ Ext.define("PSI.Report.SaleMonthByCustomerForm", {
 	},
 
 	onPDF : function() {
+		var me = this;
 
+		var store = me.getMainGrid().getStore();
+		var sorter = null;
+		if (store.sorters.getCount() > 0) {
+			sorter = Ext.JSON.encode([store.sorters.getAt(0)]);
+		}
+
+		var year = Ext.getCmp("editQueryYear").getValue();
+		var month = Ext.getCmp("editQueryMonth").getValue();
+
+		var url = "Home/Report/saleMonthByCustomerPdf?limit=-1&year=" + year
+				+ "&month=" + month;
+		if (sorter) {
+			url += "&sort=" + sorter;
+		}
+
+		window.open(me.URL(url));
 	},
 
 	onExcel : function() {

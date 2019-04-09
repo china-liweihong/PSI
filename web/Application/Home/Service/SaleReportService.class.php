@@ -2062,4 +2062,45 @@ class SaleReportService extends PSIBaseExService {
 		
 		return $this->saleMonthSummaryQueryData($params);
 	}
+
+	/**
+	 * 销售月报表(按业务员汇总) - 查询数据，用于Lodop打印
+	 *
+	 * @param array $params        	
+	 * @return array
+	 */
+	public function getSaleMonthByBizuserDataForLodopPrint($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$year = $params["year"];
+		$month = $params["month"];
+		
+		$bizDT = "";
+		if ($month < 10) {
+			$bizDT = "$year-0$month";
+		} else {
+			$bizDT = "$year-$month";
+		}
+		
+		$params["companyId"] = $this->getCompanyId();
+		
+		$dao = new SaleReportDAO($this->db());
+		$items = $dao->saleMonthByBizuserQueryData($params);
+		
+		$data = $this->saleMonthSummaryQueryData($params);
+		$v = $data[0];
+		
+		return [
+				"bizDate" => $bizDT,
+				"printDT" => date("Y-m-d H:i:s"),
+				"saleMoney" => $v["saleMoney"],
+				"rejMoney" => $v["rejMoney"],
+				"m" => $v["m"],
+				"profit" => $v["profit"],
+				"rate" => $v["rate"],
+				"items" => $items["dataList"]
+		];
+	}
 }

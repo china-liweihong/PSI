@@ -765,6 +765,25 @@ class ReportController extends PSIBaseController {
 	}
 
 	/**
+	 * 销售月报表(按业务员汇总) - 生成打印页面
+	 */
+	public function genSaleMonthByBizuserPrintPage() {
+		if (IS_POST) {
+			$params = [
+					"year" => I("post.year"),
+					"month" => I("post.month"),
+					"limit" => I("post.limit"),
+					"sort" => I("post.sort")
+			];
+			
+			$service = new SaleReportService();
+			$data = $service->getSaleMonthByBizuserDataForLodopPrint($params);
+			$this->assign("data", $data);
+			$this->display();
+		}
+	}
+
+	/**
 	 * 安全库存明细表
 	 */
 	public function safetyInventory() {

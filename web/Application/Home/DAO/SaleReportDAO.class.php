@@ -1206,7 +1206,8 @@ class SaleReportDAO extends PSIBaseExDAO {
 		}
 		
 		$start = $params["start"];
-		$limit = $params["limit"];
+		$limit = intval($params["limit"]);
+		$showAllData = $limit == - 1;
 		
 		$year = $params["year"];
 		$month = $params["month"];
@@ -1320,10 +1321,12 @@ class SaleReportDAO extends PSIBaseExDAO {
 					sale_money, rej_money,
 					m, profit, rate
 				from psi_sale_report
-				order by %s %s
-				limit %d, %d
-				";
-		$data = $db->query($sql, $sortProperty, $sortDirection, $start, $limit);
+				order by %s %s ";
+		if (! $showAllData) {
+			$sql .= " limit %d, %d ";
+		}
+		$data = $showAllData ? $db->query($sql, $sortProperty, $sortDirection) : $db->query($sql, 
+				$sortProperty, $sortDirection, $start, $limit);
 		foreach ( $data as $v ) {
 			$result[] = [
 					"bizDT" => $this->toYMD($v["biz_dt"]),

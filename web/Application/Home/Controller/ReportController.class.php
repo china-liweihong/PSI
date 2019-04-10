@@ -9,6 +9,9 @@ use Home\Service\ReceivablesReportService;
 use Home\Service\SaleReportService;
 use Home\Service\UserService;
 
+
+require __DIR__ . '/../Common/Excel/PHPExcel/IOFactory.php';
+
 /**
  * 报表Controller
  *
@@ -876,6 +879,18 @@ class ReportController extends PSIBaseController {
 		
 		$service = new InventoryReportService();
 		$service->safetyInventoryPdf($params);
+	}
+
+	/**
+	 * 安全库存明细表 - 生成Excel文件
+	 */
+	public function safetyInventoryExcel() {
+		$params = [
+				"limit" => I("get.limit")
+		];
+		
+		$service = new InventoryReportService();
+		$service->safetyInventoryExcel($params);
 	}
 
 	/**

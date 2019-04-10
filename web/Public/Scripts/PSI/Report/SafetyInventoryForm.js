@@ -314,6 +314,8 @@ Ext.define("PSI.Report.SafetyInventoryForm", {
 
 	onExcel : function() {
 		var me = this;
-		me.showInfo("TODO");
+
+		var url = "Home/Report/SafetyInventoryExcel?limit=-1";
+		window.open(me.URL(url));
 	}
 });

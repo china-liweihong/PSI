@@ -301,6 +301,13 @@ Ext.define("PSI.Report.InventoryUpperForm", {
 				"");
 		lodop.ADD_PRINT_HTM("0mm", "0mm", "100%", "100%", data);
 		var result = lodop.PRINT();
+	},
+
+	onPDF : function() {
+		var me = this;
+
+		var url = "Home/Report/inventoryUpperPdf?limit=-1";
+		window.open(me.URL(url));
 	}
 
 });

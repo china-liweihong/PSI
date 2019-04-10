@@ -385,4 +385,85 @@ class InventoryReportService extends PSIBaseExService {
 				"items" => $items["dataList"]
 		];
 	}
+
+	/**
+	 * 库存超上限明细表 - 生成PDF文件
+	 *
+	 * @param array $params        	
+	 */
+	public function inventoryUpperPdf($params) {
+		if ($this->isNotOnline()) {
+			return;
+		}
+		
+		$params["companyId"] = $this->getCompanyId();
+		
+		$bs = new BizConfigService();
+		$productionName = $bs->getProductionName();
+		
+		$data = $this->inventoryUpperQueryData($params);
+		$items = $data["dataList"];
+		
+		// 记录业务日志
+		$log = "库存超上限明细表导出PDF文件";
+		$bls = new BizlogService($this->db());
+		$bls->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		ob_start();
+		
+		$ps = new PDFService();
+		$pdf = $ps->getInstanceForReport();
+		$pdf->SetTitle("库存超上限明细表");
+		
+		$pdf->setHeaderFont(array(
+				"stsongstdlight",
+				"",
+				16
+		));
+		
+		$pdf->setFooterFont(array(
+				"stsongstdlight",
+				"",
+				14
+		));
+		
+		$pdf->SetHeaderData("", 0, $productionName, "库存超上限明细表");
+		
+		$pdf->SetFont("stsongstdlight", "", 10);
+		$pdf->AddPage();
+		
+		/**
+		 * 注意：
+		 * TCPDF中，用来拼接HTML的字符串需要用单引号，否则HTML中元素的属性就不会被解析
+		 */
+		$html = '<table border="1" cellpadding="1">
+					<tr><td>仓库编码</td><td>仓库</td>
+						<td>商品编码</td><td>商品名称</td>
+						<td>规格型号</td><td>库存上限</td><td>当前库存</td>
+						<td>存货超量</td><td>计量单位</td>
+					</tr>
+				';
+		foreach ( $items as $v ) {
+			$html .= '<tr>';
+			$html .= '<td>' . $v["warehouseCode"] . '</td>';
+			$html .= '<td>' . $v["warehouseName"] . '</td>';
+			$html .= '<td>' . $v["goodsCode"] . '</td>';
+			$html .= '<td>' . $v["goodsName"] . '</td>';
+			$html .= '<td>' . $v["goodsSpec"] . '</td>';
+			$html .= '<td align="right">' . $v["iuCount"] . '</td>';
+			$html .= '<td align="right">' . $v["invCount"] . '</td>';
+			$html .= '<td align="right">' . $v["delta"] . '</td>';
+			$html .= '<td>' . $v["unitName"] . '</td>';
+			$html .= '</tr>';
+		}
+		
+		$html .= '</table>';
+		$pdf->writeHTML($html, true, false, true, false, '');
+		
+		ob_end_clean();
+		
+		$dt = date("YmdHis");
+		
+		$pdf->Output("IU_{$dt}.pdf", "I");
+	}
 }

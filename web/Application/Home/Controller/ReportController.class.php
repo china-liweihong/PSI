@@ -1032,4 +1032,16 @@ class ReportController extends PSIBaseController {
 			$this->display();
 		}
 	}
+
+	/**
+	 * 库存超上限明细表 - 生成PDF文件
+	 */
+	public function inventoryUpperPdf() {
+		$params = [
+				"limit" => I("get.limit")
+		];
+		
+		$service = new InventoryReportService();
+		$service->inventoryUpperPdf($params);
+	}
 }

@@ -9,7 +9,6 @@ use Home\Service\ReceivablesReportService;
 use Home\Service\SaleReportService;
 use Home\Service\UserService;
 
-
 require __DIR__ . '/../Common/Excel/PHPExcel/IOFactory.php';
 
 /**
@@ -1014,6 +1013,23 @@ class ReportController extends PSIBaseController {
 			$is = new InventoryReportService();
 			
 			$this->ajaxReturn($is->inventoryUpperQueryData($params));
+		}
+	}
+
+	/**
+	 * 库存超上限明细表 - 生成打印页面
+	 */
+	public function genInventoryUpperPrintPage() {
+		if (IS_POST) {
+			$params = [
+					"limit" => I("post.limit")
+			];
+			
+			$service = new InventoryReportService();
+			
+			$data = $service->getInventoryUpperDataForLodopPrint($params);
+			$this->assign("data", $data);
+			$this->display();
 		}
 	}
 }

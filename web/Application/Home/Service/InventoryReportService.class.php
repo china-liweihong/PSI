@@ -107,14 +107,22 @@ class InventoryReportService extends PSIBaseExService {
 		
 		$result = array();
 		
+		$companyId = $this->getCompanyId();
+		
 		$db = M();
+		
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
 		$ds = new DataOrgService();
 		$rs = $ds->buildSQL(FIdConst::REPORT_INVENTORY_UPPER, "w");
 		
 		$sql = "select w.code as warehouse_code, w.name as warehouse_name,
 					g.code as goods_code, g.name as goods_name, g.spec as goods_spec,
 					u.name as unit_name,
-					s.inventory_upper, i.balance_count
+					convert(s.inventory_upper, $fmt) as inventory_upper, 
+					convert(i.balance_count, $fmt) as balance_count
 				from t_inventory i, t_goods g, t_goods_unit u, t_goods_si s, t_warehouse w
 				where i.warehouse_id = w.id and i.goods_id = g.id and g.unit_id = u.id
 					and s.warehouse_id = i.warehouse_id and s.goods_id = g.id
@@ -358,5 +366,23 @@ class InventoryReportService extends PSIBaseExService {
 		
 		$writer = \PHPExcel_IOFactory::createWriter($excel, "Excel2007");
 		$writer->save("php://output");
+	}
+
+	/**
+	 * 库存超上限明细表 - 查询数据，用于Lodop打印
+	 *
+	 * @param array $params        	
+	 */
+	public function getInventoryUpperDataForLodopPrint($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$items = $this->inventoryUpperQueryData($params);
+		
+		return [
+				"printDT" => date("Y-m-d H:i:s"),
+				"items" => $items["dataList"]
+		];
 	}
 }

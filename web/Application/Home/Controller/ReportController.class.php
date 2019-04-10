@@ -867,6 +867,18 @@ class ReportController extends PSIBaseController {
 	}
 
 	/**
+	 * 安全库存明细表 - 生成PDF文件
+	 */
+	public function safetyInventoryPdf() {
+		$params = [
+				"limit" => I("get.limit")
+		];
+		
+		$service = new InventoryReportService();
+		$service->safetyInventoryPdf($params);
+	}
+
+	/**
 	 * 应收账款账龄分析表
 	 */
 	public function receivablesAge() {

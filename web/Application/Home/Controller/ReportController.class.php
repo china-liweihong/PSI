@@ -1044,4 +1044,16 @@ class ReportController extends PSIBaseController {
 		$service = new InventoryReportService();
 		$service->inventoryUpperPdf($params);
 	}
+
+	/**
+	 * 库存超上限明细表 - 生成Excel文件
+	 */
+	public function inventoryUpperExcel() {
+		$params = [
+				"limit" => I("get.limit")
+		];
+		
+		$service = new InventoryReportService();
+		$service->inventoryUpperExcel($params);
+	}
 }

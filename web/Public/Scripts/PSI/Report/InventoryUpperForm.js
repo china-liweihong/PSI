@@ -308,6 +308,12 @@ Ext.define("PSI.Report.InventoryUpperForm", {
 
 		var url = "Home/Report/inventoryUpperPdf?limit=-1";
 		window.open(me.URL(url));
-	}
+	},
 
+	onExcel : function() {
+		var me = this;
+
+		var url = "Home/Report/inventoryUpperExcel?limit=-1";
+		window.open(me.URL(url));
+	}
 });

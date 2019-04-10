@@ -466,4 +466,99 @@ class InventoryReportService extends PSIBaseExService {
 		
 		$pdf->Output("IU_{$dt}.pdf", "I");
 	}
+
+	/**
+	 * 库存超上限明细表 - 生成Excel文件
+	 *
+	 * @param array $params        	
+	 */
+	public function inventoryUpperExcel($params) {
+		if ($this->isNotOnline()) {
+			return;
+		}
+		
+		$params["companyId"] = $this->getCompanyId();
+		
+		$bs = new BizConfigService();
+		$productionName = $bs->getProductionName();
+		
+		$data = $this->inventoryUpperQueryData($params);
+		$items = $data["dataList"];
+		
+		// 记录业务日志
+		$log = "库存超上限明细表导出Excel文件";
+		$bls = new BizlogService($this->db());
+		$bls->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$excel = new \PHPExcel();
+		
+		$sheet = $excel->getActiveSheet();
+		if (! $sheet) {
+			$sheet = $excel->createSheet();
+		}
+		
+		$sheet->setTitle("库存超上限明细表");
+		
+		$sheet->getRowDimension('1')->setRowHeight(22);
+		
+		$sheet->getColumnDimension('A')->setWidth(15);
+		$sheet->setCellValue("A2", "仓库编码");
+		
+		$sheet->getColumnDimension('B')->setWidth(40);
+		$sheet->setCellValue("B2", "仓库");
+		
+		$sheet->getColumnDimension('C')->setWidth(15);
+		$sheet->setCellValue("C2", "商品编码");
+		
+		$sheet->getColumnDimension('D')->setWidth(40);
+		$sheet->setCellValue("D2", "商品名称");
+		
+		$sheet->getColumnDimension('E')->setWidth(40);
+		$sheet->setCellValue("E2", "规格型号");
+		
+		$sheet->getColumnDimension('F')->setWidth(15);
+		$sheet->setCellValue("F2", "库存上限");
+		
+		$sheet->getColumnDimension('G')->setWidth(15);
+		$sheet->setCellValue("G2", "当前库存");
+		
+		$sheet->getColumnDimension('H')->setWidth(15);
+		$sheet->setCellValue("H2", "存货超量");
+		
+		$sheet->getColumnDimension('I')->setWidth(15);
+		$sheet->setCellValue("I2", "计量单位");
+		
+		foreach ( $items as $i => $v ) {
+			$row = $i + 3;
+			$sheet->setCellValue("A" . $row, $v["warehouseCode"]);
+			$sheet->setCellValue("B" . $row, $v["warehouseName"]);
+			$sheet->setCellValue("C" . $row, $v["goodsCode"]);
+			$sheet->setCellValue("D" . $row, $v["goodsName"]);
+			$sheet->setCellValue("E" . $row, $v["goodsSpec"]);
+			$sheet->setCellValue("F" . $row, $v["iuCount"]);
+			$sheet->setCellValue("G" . $row, $v["invCount"]);
+			$sheet->setCellValue("H" . $row, $v["delta"]);
+			$sheet->setCellValue("I" . $row, $v["unitName"]);
+		}
+		
+		// 画表格边框
+		$styleArray = [
+				'borders' => [
+						'allborders' => [
+								'style' => 'thin'
+						]
+				]
+		];
+		$lastRow = count($items) + 2;
+		$sheet->getStyle('A2:I' . $lastRow)->applyFromArray($styleArray);
+		
+		$dt = date("YmdHis");
+		
+		header('Content-Type: application/vnd.ms-excel');
+		header('Content-Disposition: attachment;filename="库存超上限明细表_' . $dt . '.xlsx"');
+		header('Cache-Control: max-age=0');
+		
+		$writer = \PHPExcel_IOFactory::createWriter($excel, "Excel2007");
+		$writer->save("php://output");
+	}
 }

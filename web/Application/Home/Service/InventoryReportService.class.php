@@ -102,7 +102,8 @@ class InventoryReportService extends PSIBaseExService {
 		
 		$page = $params["page"];
 		$start = $params["start"];
-		$limit = $params["limit"];
+		$limit = intval($params["limit"]);
+		$showAllData = $limit == - 1;
 		
 		$result = array();
 		
@@ -124,10 +125,12 @@ class InventoryReportService extends PSIBaseExService {
 			$sql .= " and " . $rs[0];
 			$queryParams = array_merge($queryParams, $rs[1]);
 		}
-		$sql .= " order by w.code, g.code
-				limit %d, %d";
-		$queryParams[] = $start;
-		$queryParams[] = $limit;
+		$sql .= " order by w.code, g.code ";
+		if (! $showAllData) {
+			$sql .= " limit %d, %d";
+			$queryParams[] = $start;
+			$queryParams[] = $limit;
+		}
 		$data = $db->query($sql, $queryParams);
 		foreach ( $data as $i => $v ) {
 			$result[$i]["warehouseCode"] = $v["warehouse_code"];

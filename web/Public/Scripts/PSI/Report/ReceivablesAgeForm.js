@@ -114,7 +114,8 @@ Ext.define("PSI.Report.ReceivablesAgeForm", {
 					border : 0,
 					columnLines : true,
 					columns : [{
-								xtype : "rownumberer"
+								xtype : "rownumberer",
+								width : 60
 							}, {
 								header : "往来单位性质",
 								dataIndex : "caType",
@@ -150,6 +151,7 @@ Ext.define("PSI.Report.ReceivablesAgeForm", {
 							}, {
 								header : "账龄30-60天",
 								dataIndex : "money30to60",
+								width : 120,
 								menuDisabled : true,
 								sortable : false,
 								align : "right",
@@ -157,6 +159,7 @@ Ext.define("PSI.Report.ReceivablesAgeForm", {
 							}, {
 								header : "账龄60-90天",
 								dataIndex : "money60to90",
+								width : 120,
 								menuDisabled : true,
 								sortable : false,
 								align : "right",
@@ -164,6 +167,7 @@ Ext.define("PSI.Report.ReceivablesAgeForm", {
 							}, {
 								header : "账龄大于90天",
 								dataIndex : "money90",
+								width : 120,
 								menuDisabled : true,
 								sortable : false,
 								align : "right",
@@ -218,6 +222,7 @@ Ext.define("PSI.Report.ReceivablesAgeForm", {
 							}, {
 								header : "账龄30-60天",
 								dataIndex : "money30to60",
+								width : 120,
 								menuDisabled : true,
 								sortable : false,
 								align : "right",
@@ -225,6 +230,7 @@ Ext.define("PSI.Report.ReceivablesAgeForm", {
 							}, {
 								header : "账龄60-90天",
 								dataIndex : "money60to90",
+								width : 120,
 								menuDisabled : true,
 								sortable : false,
 								align : "right",
@@ -232,6 +238,7 @@ Ext.define("PSI.Report.ReceivablesAgeForm", {
 							}, {
 								header : "账龄大于90天",
 								dataIndex : "money90",
+								width : 120,
 								menuDisabled : true,
 								sortable : false,
 								align : "right",

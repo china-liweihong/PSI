@@ -19,7 +19,8 @@ class ReceivablesReportService extends PSIBaseService {
 		
 		$page = $params["page"];
 		$start = $params["start"];
-		$limit = $params["limit"];
+		$limit = intval($params["limit"]);
+		$showAllData = $limit == - 1;
 		
 		$result = array();
 		
@@ -39,9 +40,12 @@ class ReceivablesReportService extends PSIBaseService {
 					where r.ca_id = s.id and r.ca_type = 'supplier'
 						and r.company_id = '%s'
 				) t
-				order by t.ca_type, t.code
-				limit %d, %d";
-		$data = $db->query($sql, $companyId, $companyId, $start, $limit);
+				order by t.ca_type, t.code ";
+		if (! $showAllData) {
+			$sql .= "limit %d, %d";
+		}
+		$data = $showAllData ? $db->query($sql, $companyId, $companyId) : $db->query($sql, 
+				$companyId, $companyId, $start, $limit);
 		
 		foreach ( $data as $i => $v ) {
 			$caType = $v["ca_type"];

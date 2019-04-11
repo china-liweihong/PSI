@@ -199,4 +199,30 @@ class ReceivablesReportService extends PSIBaseService {
 		
 		return $result;
 	}
+
+	/**
+	 * 应收账款账龄分析表 - 查询数据，用于Lodop打印
+	 *
+	 * @param array $params        	
+	 */
+	public function getReceivablesAgeDataForLodopPrint($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$items = $this->receivablesAgeQueryData($params);
+		
+		$data = $this->receivablesSummaryQueryData();
+		$v = $data[0];
+		
+		return [
+				"balanceMoney" => $v["balanceMoney"],
+				"money30" => $v["money30"],
+				"money30to60" => $v["money30to60"],
+				"money60to90" => $v["money60to90"],
+				"money90" => $v["money90"],
+				"printDT" => date("Y-m-d H:i:s"),
+				"items" => $items["dataList"]
+		];
+	}
 }

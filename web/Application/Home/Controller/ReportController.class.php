@@ -938,6 +938,23 @@ class ReportController extends PSIBaseController {
 	}
 
 	/**
+	 * 应收账款账龄分析表 - 生成打印页面
+	 */
+	public function genReceivablesAgePrintPage() {
+		if (IS_POST) {
+			$params = [
+					"limit" => I("post.limit")
+			];
+			
+			$service = new ReceivablesReportService();
+			
+			$data = $service->getReceivablesAgeDataForLodopPrint($params);
+			$this->assign("data", $data);
+			$this->display();
+		}
+	}
+
+	/**
 	 * 应付账款账龄分析表
 	 */
 	public function payablesAge() {

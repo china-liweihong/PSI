@@ -150,7 +150,7 @@ class SupplierDAO extends PSIBaseExDAO {
 					contact02, qq02, tel02, mobile02, init_payables, init_payables_dt,
 					address, address_shipping,
 					bank_name, bank_account, tax_number, fax, note, data_org, tax_rate,
-					record_status
+					record_status, goods_range
 				from t_supplier
 				where (category_id = '%s')";
 		$queryParam = [];
@@ -237,7 +237,8 @@ class SupplierDAO extends PSIBaseExDAO {
 					"note" => $v["note"],
 					"dataOrg" => $v["data_org"],
 					"taxRate" => $taxRate,
-					"recordStatus" => $v["record_status"]
+					"recordStatus" => $v["record_status"],
+					"goodsRange" => $v["goods_range"]
 			];
 		}
 		

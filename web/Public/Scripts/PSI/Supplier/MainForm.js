@@ -341,7 +341,7 @@ Ext.define("PSI.Supplier.MainForm", {
 							"mobile02", "qq02", "categoryId", "initPayables",
 							"initPayablesDT", "address", "addressShipping",
 							"bankName", "bankAccount", "tax", "fax", "note",
-							"dataOrg", "taxRate", "recordStatus"]
+							"dataOrg", "taxRate", "recordStatus", "goodsRange"]
 				});
 
 		var store = Ext.create("Ext.data.Store", {
@@ -474,6 +474,15 @@ Ext.define("PSI.Supplier.MainForm", {
 							header : "应付期初余额日期",
 							dataIndex : "initPayablesDT",
 							width : 150
+						}, {
+							header : "关联商品的范围",
+							dataIndex : "goodsRange",
+							width : 120,
+							renderer : function(value) {
+								return value == 1
+										? "全部商品"
+										: "<span style='color:red'>部分设置的商品</span>";
+							}
 						}, {
 							header : "备注",
 							dataIndex : "note",

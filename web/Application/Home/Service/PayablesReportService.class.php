@@ -217,4 +217,30 @@ class PayablesReportService extends PSIBaseService {
 		
 		return $result;
 	}
+
+	/**
+	 * 应付账款账龄分析表 - 查询数据，用于Lodop打印
+	 *
+	 * @param array $params        	
+	 */
+	public function getPayablesAgeDataForLodopPrint($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$items = $this->payablesAgeQueryData($params);
+		
+		$data = $this->payablesSummaryQueryData();
+		$v = $data[0];
+		
+		return [
+				"balanceMoney" => $v["balanceMoney"],
+				"money30" => $v["money30"],
+				"money30to60" => $v["money30to60"],
+				"money60to90" => $v["money60to90"],
+				"money90" => $v["money90"],
+				"printDT" => date("Y-m-d H:i:s"),
+				"items" => $items["dataList"]
+		];
+	}
 }

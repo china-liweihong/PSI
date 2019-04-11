@@ -977,7 +977,7 @@ class ReportController extends PSIBaseController {
 		$service = new ReceivablesReportService();
 		$service->receivablesAgeExcel($params);
 	}
-	
+
 	/**
 	 * 应付账款账龄分析表
 	 */
@@ -1020,6 +1020,23 @@ class ReportController extends PSIBaseController {
 			$ps = new PayablesReportService();
 			
 			$this->ajaxReturn($ps->payablesSummaryQueryData());
+		}
+	}
+
+	/**
+	 * 应付账款账龄分析表 - 生成打印页面
+	 */
+	public function genPayablesAgePrintPage() {
+		if (IS_POST) {
+			$params = [
+					"limit" => I("post.limit")
+			];
+			
+			$service = new PayablesReportService();
+			
+			$data = $service->getPayablesAgeDataForLodopPrint($params);
+			$this->assign("data", $data);
+			$this->display();
 		}
 	}
 

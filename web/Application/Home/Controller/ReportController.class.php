@@ -967,6 +967,18 @@ class ReportController extends PSIBaseController {
 	}
 
 	/**
+	 * 应收账款账龄分析表 - 生成Excel文件
+	 */
+	public function receivablesAgeExcel() {
+		$params = [
+				"limit" => I("get.limit")
+		];
+		
+		$service = new ReceivablesReportService();
+		$service->receivablesAgeExcel($params);
+	}
+	
+	/**
 	 * 应付账款账龄分析表
 	 */
 	public function payablesAge() {

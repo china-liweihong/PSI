@@ -8,6 +8,7 @@ namespace Home\Service;
  * @author 李静波
  */
 class PayablesReportService extends PSIBaseExService {
+	private $LOG_CATEGORY = "应付账款报表";
 
 	private function caTypeToName($caType) {
 		switch ($caType) {
@@ -343,5 +344,101 @@ class PayablesReportService extends PSIBaseExService {
 		$dt = date("YmdHis");
 		
 		$pdf->Output("PA_{$dt}.pdf", "I");
+	}
+
+	/**
+	 * 应付账款账龄分析表 - 生成Excel文件
+	 *
+	 * @param array $params        	
+	 */
+	public function payablesAgeExcel($params) {
+		if ($this->isNotOnline()) {
+			return;
+		}
+		
+		$params["companyId"] = $this->getCompanyId();
+		
+		$bs = new BizConfigService();
+		$productionName = $bs->getProductionName();
+		
+		$data = $this->payablesAgeQueryData($params);
+		$items = $data["dataList"];
+		
+		$data = $this->payablesSummaryQueryData();
+		$summary = $data[0];
+		
+		// 记录业务日志
+		$log = "应付账款账龄分析表导出Excel文件";
+		$bls = new BizlogService($this->db());
+		$bls->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$excel = new \PHPExcel();
+		
+		$sheet = $excel->getActiveSheet();
+		if (! $sheet) {
+			$sheet = $excel->createSheet();
+		}
+		
+		$sheet->setTitle("应付账款账龄分析表");
+		
+		$sheet->getRowDimension('1')->setRowHeight(22);
+		$info = "当前余额: " . $summary["balanceMoney"] . " 账龄30天内: " . $summary["money30"] . " 账龄30-60天: " . $summary["money30to60"] . " 账龄60-90天: " . $summary["money60to90"] . " 账龄大于90天: " . $summary["money90"];
+		$sheet->setCellValue("A1", $info);
+		
+		$sheet->getColumnDimension('A')->setWidth(15);
+		$sheet->setCellValue("A2", "往来单位性质");
+		
+		$sheet->getColumnDimension('B')->setWidth(15);
+		$sheet->setCellValue("B2", "往来单位编码");
+		
+		$sheet->getColumnDimension('C')->setWidth(40);
+		$sheet->setCellValue("C2", "往来单位");
+		
+		$sheet->getColumnDimension('D')->setWidth(15);
+		$sheet->setCellValue("D2", "当前余额");
+		
+		$sheet->getColumnDimension('E')->setWidth(15);
+		$sheet->setCellValue("E2", "账龄30天内");
+		
+		$sheet->getColumnDimension('F')->setWidth(15);
+		$sheet->setCellValue("F2", "账龄30-60天");
+		
+		$sheet->getColumnDimension('G')->setWidth(15);
+		$sheet->setCellValue("G2", "账龄60-90天");
+		
+		$sheet->getColumnDimension('H')->setWidth(15);
+		$sheet->setCellValue("H2", "账龄大于90天");
+		
+		foreach ( $items as $i => $v ) {
+			$row = $i + 3;
+			$sheet->setCellValue("A" . $row, $v["caType"]);
+			$sheet->setCellValue("B" . $row, $v["caCode"]);
+			$sheet->setCellValue("C" . $row, $v["caName"]);
+			$sheet->setCellValue("D" . $row, $v["balanceMoney"]);
+			$sheet->setCellValue("E" . $row, $v["money30"]);
+			$sheet->setCellValue("F" . $row, $v["money30to60"]);
+			$sheet->setCellValue("G" . $row, $v["money60to90"]);
+			$sheet->setCellValue("H" . $row, $v["money90"]);
+		}
+		
+		// 画表格边框
+		$styleArray = [
+				'borders' => [
+						'allborders' => [
+								'style' => 'thin'
+						]
+				]
+		];
+		$lastRow = count($items) + 2;
+		$sheet->getStyle('A2:H' . $lastRow)->applyFromArray($styleArray);
+		
+		$dt = date("YmdHis");
+		
+		header('Content-Type: application/vnd.ms-excel');
+		header('Content-Disposition: attachment;filename="应付账款账龄分析表_' . $dt . '.xlsx"');
+		header('Cache-Control: max-age=0');
+		
+		$writer = \PHPExcel_IOFactory::createWriter($excel, "Excel2007");
+		$writer->save("php://output");
 	}
 }

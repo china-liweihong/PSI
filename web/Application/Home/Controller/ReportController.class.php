@@ -1039,7 +1039,7 @@ class ReportController extends PSIBaseController {
 			$this->display();
 		}
 	}
-	
+
 	/**
 	 * 应付账款账龄分析表 - 生成PDF文件
 	 */
@@ -1050,6 +1050,18 @@ class ReportController extends PSIBaseController {
 		
 		$service = new PayablesReportService();
 		$service->payablesAgePdf($params);
+	}
+
+	/**
+	 * 应付账款账龄分析表 - 生成Excel文件
+	 */
+	public function payablesAgeExcel() {
+		$params = [
+				"limit" => I("get.limit")
+		];
+		
+		$service = new PayablesReportService();
+		$service->payablesAgeExcel($params);
 	}
 
 	/**

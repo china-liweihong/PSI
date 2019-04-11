@@ -408,6 +408,12 @@ Ext.define("PSI.Report.PayablesAgeForm", {
 
 		var url = "Home/Report/payablesAgePdf?limit=-1";
 		window.open(me.URL(url));
-	}
+	},
 
+	onExcel : function() {
+		var me = this;
+
+		var url = "Home/Report/payablesAgeExcel?limit=-1";
+		window.open(me.URL(url));
+	}
 });

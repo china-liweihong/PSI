@@ -151,6 +151,7 @@ Ext.define("PSI.Report.PayablesAgeForm", {
 							}, {
 								header : "账龄30-60天",
 								dataIndex : "money30to60",
+								width : 120,
 								menuDisabled : true,
 								sortable : false,
 								align : "right",
@@ -158,6 +159,7 @@ Ext.define("PSI.Report.PayablesAgeForm", {
 							}, {
 								header : "账龄60-90天",
 								dataIndex : "money60to90",
+								width : 120,
 								menuDisabled : true,
 								sortable : false,
 								align : "right",
@@ -165,6 +167,7 @@ Ext.define("PSI.Report.PayablesAgeForm", {
 							}, {
 								header : "账龄大于90天",
 								dataIndex : "money90",
+								width : 120,
 								menuDisabled : true,
 								sortable : false,
 								align : "right",
@@ -219,6 +222,7 @@ Ext.define("PSI.Report.PayablesAgeForm", {
 							}, {
 								header : "账龄30-60天",
 								dataIndex : "money30to60",
+								width : 120,
 								menuDisabled : true,
 								sortable : false,
 								align : "right",
@@ -226,6 +230,7 @@ Ext.define("PSI.Report.PayablesAgeForm", {
 							}, {
 								header : "账龄60-90天",
 								dataIndex : "money60to90",
+								width : 120,
 								menuDisabled : true,
 								sortable : false,
 								align : "right",
@@ -233,6 +238,7 @@ Ext.define("PSI.Report.PayablesAgeForm", {
 							}, {
 								header : "账龄大于90天",
 								dataIndex : "money90",
+								width : 120,
 								menuDisabled : true,
 								sortable : false,
 								align : "right",

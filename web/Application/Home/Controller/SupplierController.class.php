@@ -175,7 +175,8 @@ class SupplierController extends PSIBaseController {
 					"categoryId" => I("post.categoryId"),
 					"initPayables" => I("post.initPayables"),
 					"initPayablesDT" => I("post.initPayablesDT"),
-					"recordStatus" => I("post.recordStatus")
+					"recordStatus" => I("post.recordStatus"),
+					"goodsRange" => I("post.goodsRange")
 			);
 			$ss = new SupplierService();
 			$this->ajaxReturn($ss->editSupplier($params));

@@ -391,6 +391,20 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
 												data : [[1000, "启用"], [0, "停用"]]
 											}),
 									value : 1000
+								}, {
+									id : "PSI_Supplier_SupplierEditForm_editGoodsRange",
+									xtype : "combo",
+									queryMode : "local",
+									editable : false,
+									valueField : "id",
+									fieldLabel : "关联商品",
+									name : "goodsRange",
+									store : Ext.create("Ext.data.ArrayStore", {
+												fields : ["id", "text"],
+												data : [[1, "全部商品"],
+														[2, "部分设置的商品"]]
+											}),
+									value : 1
 								}],
 						buttons : buttons
 					}],
@@ -447,6 +461,8 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
 
 		me.editRecordStatus = Ext
 				.getCmp("PSI_Supplier_SupplierEditForm_editRecordStatus");
+		me.editGoodsRange = Ext
+				.getCmp("PSI_Supplier_SupplierEditForm_editGoodsRange");
 
 		me.__editorList = [me.editCategory, me.editCode, me.editName,
 				me.editAddress, me.editContact01, me.editMobile01,
@@ -548,6 +564,8 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
 								me.editTaxRate.setValue(data.taxRate);
 								me.editRecordStatus
 										.setValue(parseInt(data.recordStatus));
+								me.editGoodsRange
+										.setValue(parseInt(data.goodsRange));
 							}
 
 							el.unmask();

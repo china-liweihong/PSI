@@ -470,6 +470,7 @@ class SupplierDAO extends PSIBaseExDAO {
 		$fax = $params["fax"];
 		$note = $params["note"];
 		$recordStatus = $params["recordStatus"];
+		$goodsRange = $params["goodsRange"];
 		
 		$taxRate = $params["taxRate"];
 		if ($taxRate == "") {
@@ -508,15 +509,15 @@ class SupplierDAO extends PSIBaseExDAO {
 					qq01, tel01, mobile01, contact02, qq02,
 					tel02, mobile02, address, address_shipping,
 					bank_name, bank_account, tax_number, fax, note, data_org, company_id, tax_rate,
-					record_status)
+					record_status, goods_range)
 				values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
 						'%s', '%s', '%s', '%s',
 						'%s', '%s', '%s', '%s', '%s', '%s', '%s', %d,
-						%d)  ";
+						%d, %d)  ";
 		$rc = $db->execute($sql, $id, $categoryId, $code, $name, $py, $contact01, $qq01, $tel01, 
 				$mobile01, $contact02, $qq02, $tel02, $mobile02, $address, $addressShipping, 
 				$bankName, $bankAccount, $tax, $fax, $note, $dataOrg, $companyId, $taxRate, 
-				$recordStatus);
+				$recordStatus, $goodsRange);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -682,6 +683,7 @@ class SupplierDAO extends PSIBaseExDAO {
 		$fax = $params["fax"];
 		$note = $params["note"];
 		$recordStatus = $params["recordStatus"];
+		$goodsRange = $params["goodsRange"];
 		
 		$taxRate = $params["taxRate"];
 		if ($taxRate == "") {
@@ -710,12 +712,14 @@ class SupplierDAO extends PSIBaseExDAO {
 					contact02 = '%s', qq02 = '%s', tel02 = '%s', mobile02 = '%s',
 					address = '%s', address_shipping = '%s',
 					bank_name = '%s', bank_account = '%s', tax_number = '%s',
-					fax = '%s', note = '%s', tax_rate = %d, record_status = %d
+					fax = '%s', note = '%s', tax_rate = %d, record_status = %d,
+					goods_range = %d
 				where id = '%s'  ";
 		
 		$rc = $db->execute($sql, $code, $name, $categoryId, $py, $contact01, $qq01, $tel01, 
 				$mobile01, $contact02, $qq02, $tel02, $mobile02, $address, $addressShipping, 
-				$bankName, $bankAccount, $tax, $fax, $note, $taxRate, $recordStatus, $id);
+				$bankName, $bankAccount, $tax, $fax, $note, $taxRate, $recordStatus, $goodsRange, 
+				$id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -907,7 +911,7 @@ class SupplierDAO extends PSIBaseExDAO {
 					contact02, qq02, mobile02, tel02, address, address_shipping,
 					init_payables, init_payables_dt,
 					bank_name, bank_account, tax_number, fax, note, tax_rate,
-					record_status
+					record_status, goods_range
 				from t_supplier
 				where id = '%s' ";
 		$data = $db->query($sql, $id);
@@ -943,6 +947,7 @@ class SupplierDAO extends PSIBaseExDAO {
 			$result["taxRate"] = $taxRate;
 			
 			$result["recordStatus"] = $data[0]["record_status"];
+			$result["goodsRange"] = $data[0]["goods_range"];
 		}
 		
 		return $result;

@@ -7,7 +7,8 @@ namespace Home\Service;
  *
  * @author 李静波
  */
-class ReceivablesReportService extends PSIBaseService {
+class ReceivablesReportService extends PSIBaseExService {
+	private $LOG_CATEGORY = "应收账款报表";
 
 	/**
 	 * 应收账款账龄分析
@@ -224,5 +225,106 @@ class ReceivablesReportService extends PSIBaseService {
 				"printDT" => date("Y-m-d H:i:s"),
 				"items" => $items["dataList"]
 		];
+	}
+
+	/**
+	 * 应收账款账龄分析 - 生成PDF文件
+	 *
+	 * @param array $params        	
+	 */
+	public function receivablesAgePdf($params) {
+		if ($this->isNotOnline()) {
+			return;
+		}
+		
+		$params["companyId"] = $this->getCompanyId();
+		
+		$bs = new BizConfigService();
+		$productionName = $bs->getProductionName();
+		
+		$data = $this->receivablesAgeQueryData($params);
+		$items = $data["dataList"];
+		
+		$data = $this->receivablesSummaryQueryData();
+		$summary = $data[0];
+		
+		// 记录业务日志
+		$log = "应收账款账龄分析表导出PDF文件";
+		$bls = new BizlogService($this->db());
+		$bls->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		ob_start();
+		
+		$ps = new PDFService();
+		$pdf = $ps->getInstanceForReport();
+		$pdf->SetTitle("应收账款账龄分析表");
+		
+		$pdf->setHeaderFont(array(
+				"stsongstdlight",
+				"",
+				16
+		));
+		
+		$pdf->setFooterFont(array(
+				"stsongstdlight",
+				"",
+				14
+		));
+		
+		$pdf->SetHeaderData("", 0, $productionName, "应收账款账龄分析表");
+		
+		$pdf->SetFont("stsongstdlight", "", 10);
+		$pdf->AddPage();
+		
+		/**
+		 * 注意：
+		 * TCPDF中，用来拼接HTML的字符串需要用单引号，否则HTML中元素的属性就不会被解析
+		 */
+		$html = '
+				<table>
+					<tr>
+						<td>当期余额：' . $summary["balanceMoney"] . '</td>
+						<td>账龄30天内：' . $summary["money30"] . '</td>
+						<td>账龄30-60天：' . $summary["money30to60"] . '</td>
+						<td>账龄60-90天：' . $summary["money60to90"] . '</td>
+					</tr>
+					<tr>
+						<td>账龄大于90天：' . $summary["money90"] . '</td>
+						<td></td>
+						<td></td>
+						<td></td>
+					</tr>
+				</table>
+				';
+		$pdf->writeHTML($html);
+		
+		$html = '<table border="1" cellpadding="1">
+					<tr><td>往来单位性质</td><td>往来单位编码</td>
+						<td>往来单位</td><td>当前余额</td>
+						<td>账龄30天内</td><td>账龄30-60天</td>
+						<td>账龄60-90天</td><td>账龄大于90天</td>
+					</tr>
+				';
+		foreach ( $items as $v ) {
+			$html .= '<tr>';
+			$html .= '<td>' . $v["caType"] . '</td>';
+			$html .= '<td>' . $v["caCode"] . '</td>';
+			$html .= '<td>' . $v["caName"] . '</td>';
+			$html .= '<td align="right">' . $v["balanceMoney"] . '</td>';
+			$html .= '<td align="right">' . $v["money30"] . '</td>';
+			$html .= '<td align="right">' . $v["money30to60"] . '</td>';
+			$html .= '<td align="right">' . $v["money60to90"] . '</td>';
+			$html .= '<td align="right">' . $v["money90"] . '</td>';
+			$html .= '</tr>';
+		}
+		
+		$html .= '</table>';
+		$pdf->writeHTML($html, true, false, true, false, '');
+		
+		ob_end_clean();
+		
+		$dt = date("YmdHis");
+		
+		$pdf->Output("RA_{$dt}.pdf", "I");
 	}
 }

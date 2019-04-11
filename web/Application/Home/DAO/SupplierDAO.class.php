@@ -787,6 +787,13 @@ class SupplierDAO extends PSIBaseExDAO {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
 		
+		// 删除关联商品
+		$sql = "delete from t_supplier_goods_range where supplier_id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
 		// 删除应付总账
 		$sql = "delete from t_payables where ca_id = '%s' and ca_type = 'supplier' ";
 		$rc = $db->execute($sql, $id);

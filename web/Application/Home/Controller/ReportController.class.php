@@ -1039,6 +1039,18 @@ class ReportController extends PSIBaseController {
 			$this->display();
 		}
 	}
+	
+	/**
+	 * 应付账款账龄分析表 - 生成PDF文件
+	 */
+	public function payablesAgePdf() {
+		$params = [
+				"limit" => I("get.limit")
+		];
+		
+		$service = new PayablesReportService();
+		$service->payablesAgePdf($params);
+	}
 
 	/**
 	 * 库存超上限明细表

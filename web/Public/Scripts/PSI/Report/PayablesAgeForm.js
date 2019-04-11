@@ -401,5 +401,13 @@ Ext.define("PSI.Report.PayablesAgeForm", {
 				"");
 		lodop.ADD_PRINT_HTM("0mm", "0mm", "100%", "100%", data);
 		var result = lodop.PRINT();
+	},
+
+	onPDF : function() {
+		var me = this;
+
+		var url = "Home/Report/payablesAgePdf?limit=-1";
+		window.open(me.URL(url));
 	}
+
 });

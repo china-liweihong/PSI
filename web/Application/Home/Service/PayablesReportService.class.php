@@ -32,7 +32,8 @@ class PayablesReportService extends PSIBaseService {
 		
 		$page = $params["page"];
 		$start = $params["start"];
-		$limit = $params["limit"];
+		$limit = intval($params["limit"]);
+		$showAllData = $limit == - 1;
 		
 		$result = array();
 		
@@ -57,9 +58,12 @@ class PayablesReportService extends PSIBaseService {
 					where p.ca_id = f.id and p.ca_type = 'factory'
 						and p.company_id = '%s'
 				) t
-				order by t.ca_type desc, t.code
-				limit %d, %d";
-		$data = $db->query($sql, $companyId, $companyId, $companyId, $start, $limit);
+				order by t.ca_type desc, t.code ";
+		if (! $showAllData) {
+			$sql .= " limit %d, %d";
+		}
+		$data = $showAllData ? $db->query($sql, $companyId, $companyId, $companyId) : $db->query(
+				$sql, $companyId, $companyId, $companyId, $start, $limit);
 		
 		foreach ( $data as $i => $v ) {
 			$caType = $v["ca_type"];

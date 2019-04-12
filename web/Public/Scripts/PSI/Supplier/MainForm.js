@@ -982,6 +982,10 @@ Ext.define("PSI.Supplier.MainForm", {
 						height : 30,
 						title : me.formatGridHeaderTitle("按商品分类设置")
 					},
+					selModel : {
+						mode : "MULTI"
+					},
+					selType : "checkboxmodel",
 					tbar : [{
 								text : "添加商品分类",
 								scope : me,
@@ -1038,6 +1042,10 @@ Ext.define("PSI.Supplier.MainForm", {
 						height : 30,
 						title : me.formatGridHeaderTitle("按个别商品设置")
 					},
+					selModel : {
+						mode : "MULTI"
+					},
+					selType : "checkboxmodel",
 					tbar : [{
 								text : "添加商品",
 								scope : me,
@@ -1076,5 +1084,26 @@ Ext.define("PSI.Supplier.MainForm", {
 				});
 
 		return me.__grgoodsGrid;
+	},
+
+	onAddGRCategory : function() {
+		var me = this;
+		me.showInfo("TODO");
+	},
+
+	onDeleteGRCategory : function() {
+		var me = this;
+		me.showInfo("TODO");
+	},
+
+	onAddGRGoods : function() {
+		var me = this;
+		me.showInfo("TODO");
+	},
+
+	onDeleteGRGoods : function() {
+		var me = this;
+		me.showInfo("TODO");
 	}
+
 });

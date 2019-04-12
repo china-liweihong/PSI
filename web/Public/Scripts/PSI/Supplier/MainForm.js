@@ -1088,7 +1088,9 @@ Ext.define("PSI.Supplier.MainForm", {
 
 	onAddGRCategory : function() {
 		var me = this;
-		me.showInfo("TODO");
+
+		var form = Ext.create("PSI.Supplier.GRCategoryEditForm", {});
+		form.show();
 	},
 
 	onDeleteGRCategory : function() {

@@ -982,6 +982,15 @@ Ext.define("PSI.Supplier.MainForm", {
 						height : 30,
 						title : me.formatGridHeaderTitle("按商品分类设置")
 					},
+					tbar : [{
+								text : "添加商品分类",
+								scope : me,
+								handler : me.onAddGRCategory
+							}, "-", {
+								text : "移除商品分类",
+								scope : me,
+								handler : me.onDeleteGRCategory
+							}],
 					columnLines : true,
 					columns : [{
 								header : "商品分类编码",
@@ -1029,6 +1038,15 @@ Ext.define("PSI.Supplier.MainForm", {
 						height : 30,
 						title : me.formatGridHeaderTitle("按个别商品设置")
 					},
+					tbar : [{
+								text : "添加商品",
+								scope : me,
+								handler : me.onAddGRGoods
+							}, "-", {
+								text : "移除商品",
+								scope : me,
+								handler : me.onDeleteGRGoods
+							}],
 					columnLines : true,
 					columns : [{
 								header : "商品编码",

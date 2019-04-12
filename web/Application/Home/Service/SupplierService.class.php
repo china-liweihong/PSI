@@ -280,4 +280,15 @@ class SupplierService extends PSIBaseExService {
 			return "";
 		}
 	}
+
+	/**
+	 * 关联商品 - 添加商品分类
+	 */
+	public function addGRCategory($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		return $this->todo();
+	}
 }

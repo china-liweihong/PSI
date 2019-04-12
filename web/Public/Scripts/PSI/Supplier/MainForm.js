@@ -1089,7 +1089,18 @@ Ext.define("PSI.Supplier.MainForm", {
 	onAddGRCategory : function() {
 		var me = this;
 
-		var form = Ext.create("PSI.Supplier.GRCategoryEditForm", {});
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("请选择要设置关联商品的供应商");
+			return;
+		}
+
+		var supplier = item[0];
+
+		var form = Ext.create("PSI.Supplier.GRCategoryEditForm", {
+					entity : supplier,
+					parentForm : me
+				});
 		form.show();
 	},
 

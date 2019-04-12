@@ -102,6 +102,10 @@ Ext.define("PSI.Supplier.GRCategoryEditForm", {
 							id : "PSI_Supplier_GRCategoryEditForm_editCategoryId",
 							name : "categoryId",
 							xtype : "hidden"
+						}, {
+							name : "id",
+							xtype : "hidden",
+							value : me.getEntity().get("id")
 						}],
 						buttons : buttons
 					}],
@@ -183,6 +187,8 @@ Ext.define("PSI.Supplier.GRCategoryEditForm", {
 	clearEdit : function() {
 		var me = this;
 
+		me.editCategory.setIdValue(null);
+		me.editCategory.setValue(null);
 	},
 
 	onWndClose : function() {

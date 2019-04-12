@@ -17,45 +17,77 @@ Ext.define("PSI.Supplier.MainForm", {
 		var me = this;
 
 		Ext.apply(me, {
-					tbar : me.getToolbarCmp(),
-					items : [{
-								id : "panelQueryCmp",
-								region : "north",
-								height : 65,
-								border : 0,
-								collapsible : true,
-								collapseMode : "mini",
-								header : false,
-								layout : {
-									type : "table",
-									columns : 4
-								},
-								items : me.getQueryCmp()
-							}, {
-								region : "center",
-								xtype : "container",
-								layout : "border",
-								border : 0,
-								items : [{
-											region : "center",
-											xtype : "panel",
-											layout : "fit",
-											border : 0,
-											items : [me.getMainGrid()]
-										}, {
-											id : "panelCategory",
-											xtype : "panel",
-											region : "west",
-											layout : "fit",
-											width : 370,
-											split : true,
-											collapsible : true,
-											header : false,
-											border : 0,
-											items : [me.getCategoryGrid()]
-										}]
-							}]
-				});
+			tbar : me.getToolbarCmp(),
+			items : [{
+						id : "panelQueryCmp",
+						region : "north",
+						height : 65,
+						border : 0,
+						collapsible : true,
+						collapseMode : "mini",
+						header : false,
+						layout : {
+							type : "table",
+							columns : 4
+						},
+						items : me.getQueryCmp()
+					}, {
+						region : "center",
+						xtype : "container",
+						layout : "border",
+						border : 0,
+						items : [{
+							region : "center",
+							xtype : "panel",
+							layout : "border",
+							border : 0,
+							items : [{
+										region : "center",
+										layout : "fit",
+										border : 0,
+										items : [me.getMainGrid()]
+									}, {
+										region : "south",
+										height : 200,
+										layout : "border",
+										split : true,
+										collapsible : true,
+										border : 0,
+										header : {
+											height : 30,
+											title : me
+													.formatGridHeaderTitle("关联商品")
+										},
+										items : [{
+													region : "center",
+													layout : "fit",
+													border : 0,
+													items : [me
+															.getGRCategoryGrid()]
+												}, {
+													region : "east",
+													width : "50%",
+													layout : "fit",
+													split : true,
+													border : 0,
+													items : [me
+															.getGRGoodsGrid()]
+												}]
+									}]
+						}, {
+							id : "panelCategory",
+							xtype : "panel",
+							region : "west",
+							layout : "fit",
+							width : 370,
+							split : true,
+							collapsible : true,
+							header : false,
+							border : 0,
+							items : [me.getCategoryGrid()]
+						}]
+					}]
+		});
 
 		me.callParent(arguments);
 
@@ -926,5 +958,105 @@ Ext.define("PSI.Supplier.MainForm", {
 		}
 
 		me.onQuery();
+	},
+
+	// 关联商品 - 按商品类别设置
+	getGRCategoryGrid : function() {
+		var me = this;
+		if (me.__grcategoryGrid) {
+			return me.__grcategoryGrid;
+		}
+
+		var modelName = "PSISupplierGRCategory";
+		Ext.define(modelName, {
+					extend : "Ext.data.Model",
+					fields : ["id", "code", "name"]
+				});
+
+		me.__grcategoryGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
+					viewConfig : {
+						enableTextSelection : true
+					},
+					header : {
+						height : 30,
+						title : me.formatGridHeaderTitle("按商品分类设置")
+					},
+					columnLines : true,
+					columns : [{
+								header : "商品分类编码",
+								dataIndex : "code",
+								width : 120,
+								menuDisabled : true,
+								sortable : false
+							}, {
+								header : "商品分类",
+								dataIndex : "name",
+								width : 160,
+								menuDisabled : true,
+								sortable : false
+							}],
+					store : Ext.create("Ext.data.Store", {
+								model : modelName,
+								autoLoad : false,
+								data : []
+							}),
+					listeners : {}
+				});
+
+		return me.__grcategoryGrid;
+	},
+
+	// 关联商品 - 个别商品设置
+	getGRGoodsGrid : function() {
+		var me = this;
+		if (me.__grgoodsGrid) {
+			return me.__grgoodsGrid;
+		}
+
+		var modelName = "PSISupplierGRGoods";
+		Ext.define(modelName, {
+					extend : "Ext.data.Model",
+					fields : ["id", "code", "name", "spec"]
+				});
+
+		me.__grgoodsGrid = Ext.create("Ext.grid.Panel", {
+					cls : "PSI",
+					viewConfig : {
+						enableTextSelection : true
+					},
+					header : {
+						height : 30,
+						title : me.formatGridHeaderTitle("按个别商品设置")
+					},
+					columnLines : true,
+					columns : [{
+								header : "商品编码",
+								dataIndex : "code",
+								width : 120,
+								menuDisabled : true,
+								sortable : false
+							}, {
+								header : "商品名称",
+								dataIndex : "name",
+								width : 160,
+								menuDisabled : true,
+								sortable : false
+							}, {
+								header : "规格型号",
+								dataIndex : "spec",
+								width : 160,
+								menuDisabled : true,
+								sortable : false
+							}],
+					store : Ext.create("Ext.data.Store", {
+								model : modelName,
+								autoLoad : false,
+								data : []
+							}),
+					listeners : {}
+				});
+
+		return me.__grgoodsGrid;
 	}
 });

@@ -574,6 +574,10 @@ Ext.define("PSI.Supplier.MainForm", {
 				itemdblclick : {
 					fn : me.onEditSupplier,
 					scope : me
+				},
+				select : {
+					fn : me.onSupplierSelect,
+					scope : me
 				}
 			}
 		});
@@ -1117,6 +1121,49 @@ Ext.define("PSI.Supplier.MainForm", {
 	onDeleteGRGoods : function() {
 		var me = this;
 		me.showInfo("TODO");
+	},
+
+	onSupplierSelect : function() {
+		var me = this;
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			return;
+		}
+
+		me.refreshGRCategoryGrid();
+	},
+
+	refreshGRCategoryGrid : function() {
+		var me = this;
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			return;
+		}
+
+		var supplier = item[0];
+
+		var grid = me.getGRCategoryGrid();
+		var el = grid.getEl() || Ext.getBody();
+		el.mask(PSI.Const.LOADING);
+		me.ajax({
+					url : me.URL("Home/Supplier/grCategoryList"),
+					method : "POST",
+					params : {
+						id : supplier.get("id")
+					},
+					callback : function(options, success, response) {
+						var store = grid.getStore();
+
+						store.removeAll();
+
+						if (success) {
+							var data = me.decodeJSON(response.responseText);
+							store.add(data);
+						}
+
+						el.unmask();
+					}
+				});
 	}
 
 });

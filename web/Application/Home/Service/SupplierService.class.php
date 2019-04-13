@@ -4,6 +4,7 @@ namespace Home\Service;
 
 use Home\DAO\SupplierDAO;
 use Home\Service\BizlogService;
+use Home\DAO\SubjectDAO;
 
 /**
  * 供应商档案Service
@@ -290,5 +291,17 @@ class SupplierService extends PSIBaseExService {
 		}
 		
 		return $this->todo();
+	}
+
+	/**
+	 * 关联商品 - 已经设置的商品分类
+	 */
+	public function grCategoryList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new SubjectDAO($this->db());
+		return $dao->grCategoryList($params);
 	}
 }

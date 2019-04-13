@@ -1075,4 +1075,53 @@ class SupplierDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 关联商品 - 添加个别商品
+	 */
+	public function addGRGoods(& $params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		$goodsId = $params["goodsId"];
+		
+		// 检查供应商是否存在
+		$supplier = $this->getSupplierById($id);
+		if (! $supplier) {
+			return $this->bad("供应商不存在");
+		}
+		$supplierCode = $supplier["code"];
+		$supplierName = $supplier["name"];
+		
+		// 检查商品不存在
+		$dao = new GoodsDAO($db);
+		$goods = $dao->getGoodsById($goodsId);
+		if (! $goods) {
+			return $this->bad("商品不存在");
+		}
+		$goodsName = $goods["name"];
+		
+		// 检查是否已经关联过该商品了
+		$sql = "select count(*) as cnt
+				from t_supplier_goods_range
+				where supplier_id = '%s' and g_id = '%s' and g_id_type = 1";
+		$data = $db->query($sql, $id, $goodsId);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("供应商[{$supplierName}]已经关联商品[{$goodsName}]了");
+		}
+		
+		$sql = "insert into t_supplier_goods_range (id, supplier_id, g_id, g_id_type)
+				values ('%s', '%s', '%s', 1)";
+		$rc = $db->execute($sql, $this->newId(), $id, $goodsId);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		$params["code"] = $supplierCode;
+		$params["name"] = $supplierName;
+		$params["goodsName"] = $goodsName;
+		return null;
+	}
 }

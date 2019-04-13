@@ -367,4 +367,35 @@ class SupplierService extends PSIBaseExService {
 		$dao = new SupplierDAO($this->db());
 		return $dao->grGoodsList($params);
 	}
+
+	/**
+	 * 关联商品 - 添加个别商品
+	 */
+	public function addGRGoods($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$db = $this->db();
+		$db->startTrans();
+		
+		$dao = new SupplierDAO($db);
+		
+		$rc = $dao->addGRGoods($params);
+		if ($rc) {
+			$db->rollback();
+			return $rc;
+		}
+		
+		$code = $params["code"];
+		$name = $params["name"];
+		$goodsName = $params["goodsName"];
+		$log = "给供应商(编码 = {$code},  名称 = {$name})设置关联个别商品({$goodsName})";
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
+		return $this->ok();
+	}
 }

@@ -97,6 +97,10 @@ Ext.define("PSI.Supplier.GRGoodsEditForm", {
 									name : "id",
 									value : me.getEntity().get("id")
 								}, {
+									xtype : "hidden",
+									id : "PSI_Supplier_GRGoodsEditForm_editGoodsId",
+									name : "goodsId"
+								}, {
 									id : "PSI_Supplier_GRGoodsEditForm_editGoodsCode",
 									fieldLabel : "商品编码",
 									width : 470,
@@ -133,6 +137,7 @@ Ext.define("PSI.Supplier.GRGoodsEditForm", {
 
 		me.editForm = Ext.getCmp("PSI_Supplier_GRGoodsEditForm_editForm");
 
+		me.editGoodsId = Ext.getCmp("PSI_Supplier_GRGoodsEditForm_editGoodsId");
 		me.editGoodsCode = Ext
 				.getCmp("PSI_Supplier_GRGoodsEditForm_editGoodsCode");
 		me.editGoodsName = Ext
@@ -215,56 +220,18 @@ Ext.define("PSI.Supplier.GRGoodsEditForm", {
 
 		Ext.get(window).on('beforeunload', me.onWindowBeforeUnload);
 
-		var subGoods = me.getEntity();
-		if (!subGoods) {
-			// 新增子商品
-
-			var editCode = me.editSubGoodsCode;
-			editCode.focus();
-			editCode.setValue(editCode.getValue());
-
-			return;
-		}
-
-		// 编辑子商品
-		var r = {
-			url : me.URL("Home/Goods/getSubGoodsInfo"),
-			params : {
-				goodsId : me.getGoods().get("id"),
-				subGoodsId : subGoods.get("goodsId")
-			},
-			callback : function(options, success, response) {
-				if (success) {
-					var data = me.decodeJSON(response.responseText);
-					if (data.success) {
-						me.editSubGoodsCode.setValue(data.code);
-						me.editSubGoodsName.setValue(data.name);
-						me.editSubGoodsSpec.setValue(data.spec);
-						me.editSubGoodsUnitName.setValue(data.unitName);
-						me.editSubGoodsCount.setValue(data.count);
-						me.editCostWeight.setValue(data.costWeight);
-
-						me.editSubGoodsId.setValue(subGoods.get("goodsId"));
-
-						me.editSubGoodsCode.setReadOnly(true);
-						me.editSubGoodsCount.focus();
-					} else {
-						me.showInfo(data.msg);
-					}
-				} else {
-					me.showInfo("网络错误");
-				}
-			}
-		};
-		me.ajax(r);
+		var editCode = me.editGoodsCode;
+		editCode.focus();
 	},
 
 	__setGoodsInfo : function(goods) {
 		var me = this;
 		if (goods) {
+			me.editGoodsId.setValue(goods.id);
 			me.editGoodsName.setValue(goods.name);
 			me.editGoodsSpec.setValue(goods.spec);
 		} else {
+			me.editGoodsId.setValue(null);
 			me.editGoodsName.setValue(null);
 			me.editGoodsSpec.setValue(null);
 		}

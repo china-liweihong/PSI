@@ -279,4 +279,18 @@ class SupplierController extends PSIBaseController {
 			$this->ajaxReturn($service->grGoodsList($params));
 		}
 	}
+
+	/**
+	 * 关联商品 - 添加个别商品
+	 */
+	public function addGRGoods() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id"),
+					"goodsId" => I("post.goodsId")
+			];
+			$service = new SupplierService();
+			$this->ajaxReturn($service->addGRGoods($params));
+		}
+	}
 }

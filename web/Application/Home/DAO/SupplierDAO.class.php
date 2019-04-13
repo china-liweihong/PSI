@@ -1046,4 +1046,33 @@ class SupplierDAO extends PSIBaseExDAO {
 		$params["name"] = $supplierName;
 		return null;
 	}
+
+	/**
+	 * 关联商品 - 已经设置的商品
+	 */
+	public function grGoodsList($params) {
+		$db = $this->db;
+		
+		// 供应商id
+		$id = $params["id"];
+		
+		$sql = "select r.id, g.code, g.name, g.spec
+				from t_supplier_goods_range r, t_goods g
+				where r.supplier_id = '%s' and r.g_id = g.id and r.g_id_type = 1
+				order by g.code";
+		
+		$result = [];
+		
+		$data = $db->query($sql, $id);
+		foreach ( $data as $v ) {
+			$result[] = [
+					"id" => $v["id"],
+					"code" => $v["code"],
+					"name" => $v["name"],
+					"spec" => $v["spec"]
+			];
+		}
+		
+		return $result;
+	}
 }

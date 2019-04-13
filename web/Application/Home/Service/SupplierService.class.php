@@ -355,4 +355,16 @@ class SupplierService extends PSIBaseExService {
 		
 		return $this->ok();
 	}
+
+	/**
+	 * 关联商品 - 已经设置的商品
+	 */
+	public function grGoodsList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new SupplierDAO($this->db());
+		return $dao->grGoodsList($params);
+	}
 }

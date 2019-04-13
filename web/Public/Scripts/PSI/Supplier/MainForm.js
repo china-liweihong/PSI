@@ -1172,7 +1172,8 @@ Ext.define("PSI.Supplier.MainForm", {
 		var supplier = item[0];
 
 		var form = Ext.create("PSI.Supplier.GRGoodsEditForm", {
-					entity : supplier
+					entity : supplier,
+					parentForm : me
 				});
 		form.show();
 	},
@@ -1202,6 +1203,7 @@ Ext.define("PSI.Supplier.MainForm", {
 		Ext.getCmp("panelGoodsRange").setTitle(info);
 
 		me.refreshGRCategoryGrid();
+		me.refreshGRGoodsGrid();
 	},
 
 	refreshGRCategoryGrid : function() {
@@ -1235,6 +1237,38 @@ Ext.define("PSI.Supplier.MainForm", {
 						el.unmask();
 					}
 				});
-	}
+	},
 
+	refreshGRGoodsGrid : function() {
+		var me = this;
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			return;
+		}
+
+		var supplier = item[0];
+
+		var grid = me.getGRGoodsGrid();
+		var el = grid.getEl() || Ext.getBody();
+		el.mask(PSI.Const.LOADING);
+		me.ajax({
+					url : me.URL("Home/Supplier/grGoodsList"),
+					method : "POST",
+					params : {
+						id : supplier.get("id")
+					},
+					callback : function(options, success, response) {
+						var store = grid.getStore();
+
+						store.removeAll();
+
+						if (success) {
+							var data = me.decodeJSON(response.responseText);
+							store.add(data);
+						}
+
+						el.unmask();
+					}
+				});
+	}
 });

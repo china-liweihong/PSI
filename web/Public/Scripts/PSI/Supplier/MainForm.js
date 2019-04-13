@@ -1111,7 +1111,53 @@ Ext.define("PSI.Supplier.MainForm", {
 
 	onDeleteGRCategory : function() {
 		var me = this;
-		me.showInfo("TODO");
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("没有选择供应商");
+			return;
+		}
+
+		var supplier = item[0];
+
+		var item = me.getGRCategoryGrid().getSelectionModel().getSelection();
+		if (item == null || item.length == 0) {
+			me.showInfo("没有选择要移除的商品分类");
+			return;
+		}
+
+		var idArray = [];
+		for (var i = 0; i < item.length; i++) {
+			idArray.push(item[i].get("id"));
+		}
+
+		var info = "请确认是否要移除选中的商品分类?";
+		var confirmFunc = function() {
+			var el = Ext.getBody();
+			el.mask("正在删除中...");
+			var r = {
+				url : me.URL("/Home/Supplier/deleteGRCategory"),
+				params : {
+					id : supplier.get("id"),
+					idList : idArray.join(",")
+				},
+				callback : function(options, success, response) {
+					el.unmask();
+
+					if (success) {
+						var data = me.decodeJSON(response.responseText);
+						if (data.success) {
+							me.tip("成功完成删除操作");
+							me.refreshGRCategoryGrid();
+						} else {
+							me.showInfo(data.msg);
+						}
+					}
+				}
+			};
+			me.ajax(r);
+		};
+
+		me.confirm(info, confirmFunc);
 	},
 
 	onAddGRGoods : function() {

@@ -252,4 +252,18 @@ class SupplierController extends PSIBaseController {
 			$this->ajaxReturn($service->grCategoryList($params));
 		}
 	}
+
+	/**
+	 * 关联商品 - 移除商品分类
+	 */
+	public function deleteGRCategory() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id"),
+					"idList" => I("post.idList")
+			];
+			$service = new SupplierService();
+			$this->ajaxReturn($service->deleteGRCategory($params));
+		}
+	}
 }

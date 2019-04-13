@@ -325,4 +325,34 @@ class SupplierService extends PSIBaseExService {
 		$dao = new SubjectDAO($this->db());
 		return $dao->grCategoryList($params);
 	}
+
+	/**
+	 * 关联商品 - 移除商品分类
+	 */
+	public function deleteGRCategory($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$db = $this->db();
+		$db->startTrans();
+		
+		$dao = new SupplierDAO($db);
+		
+		$rc = $dao->deleteGRCategory($params);
+		if ($rc) {
+			$db->rollback();
+			return $rc;
+		}
+		
+		$code = $params["code"];
+		$name = $params["name"];
+		$log = "给供应商(编码 = {$code},  名称 = {$name})移除关联商品分类";
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
+		return $this->ok();
+	}
 }

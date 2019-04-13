@@ -1032,10 +1032,10 @@ class SupplierDAO extends PSIBaseExDAO {
 		$supplierCode = $supplier["code"];
 		$supplierName = $supplier["name"];
 		
-		foreach ( $idList as $categoryId ) {
+		foreach ( $idList as $grId ) {
 			$sql = "delete from t_supplier_goods_range 
 					where supplier_id = '%s' and id = '%s' and g_id_type = 2";
-			$rc = $db->execute($sql, $id, $categoryId);
+			$rc = $db->execute($sql, $id, $grId);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
@@ -1122,6 +1122,42 @@ class SupplierDAO extends PSIBaseExDAO {
 		$params["code"] = $supplierCode;
 		$params["name"] = $supplierName;
 		$params["goodsName"] = $goodsName;
+		return null;
+	}
+
+	/**
+	 * 关联商品 - 移除商品
+	 */
+	public function deleteGRGoods(& $params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		$idList = explode(",", $params["idList"]);
+		
+		if (count($idList) == 0) {
+			return $this->bad("商品不存在");
+		}
+		
+		// 检查供应商是否存在
+		$supplier = $this->getSupplierById($id);
+		if (! $supplier) {
+			return $this->bad("供应商不存在");
+		}
+		$supplierCode = $supplier["code"];
+		$supplierName = $supplier["name"];
+		
+		foreach ( $idList as $grId ) {
+			$sql = "delete from t_supplier_goods_range
+					where supplier_id = '%s' and id = '%s' and g_id_type = 1";
+			$rc = $db->execute($sql, $id, $grId);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+		}
+		
+		// 操作成功
+		$params["code"] = $supplierCode;
+		$params["name"] = $supplierName;
 		return null;
 	}
 }

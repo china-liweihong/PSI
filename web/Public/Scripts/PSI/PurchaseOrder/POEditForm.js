@@ -485,7 +485,9 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 								editor : {
 									xtype : "psi_goods_with_purchaseprice_field",
 									parentCmp : me,
-									showAddButton : me.getShowAddGoodsButton() == "1"
+									showAddButton : me.getShowAddGoodsButton() == "1",
+									supplierIdFunc : me.__supplierIdFunc,
+									supplierIdScope : me
 								}
 							}, {
 								header : "商品名称",
@@ -859,5 +861,9 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 		Ext.getCmp("editContact").setValue(data.contact01);
 
 		me.__taxRateBySupplier = data.taxRate;
+	},
+
+	__supplierIdFunc : function() {
+		return Ext.getCmp("editSupplier").getIdValue();
 	}
 });

@@ -1162,7 +1162,19 @@ Ext.define("PSI.Supplier.MainForm", {
 
 	onAddGRGoods : function() {
 		var me = this;
-		me.showInfo("TODO");
+
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("请选择要设置关联商品的供应商");
+			return;
+		}
+
+		var supplier = item[0];
+
+		var form = Ext.create("PSI.Supplier.GRGoodsEditForm", {
+					entity : supplier
+				});
+		form.show();
 	},
 
 	onDeleteGRGoods : function() {

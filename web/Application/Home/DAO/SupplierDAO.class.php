@@ -1160,4 +1160,51 @@ class SupplierDAO extends PSIBaseExDAO {
 		$params["name"] = $supplierName;
 		return null;
 	}
+
+	/**
+	 * 检查某个商品是否在该供应商关联商品内
+	 *
+	 * @param string $supplierId        	
+	 * @param string $goodsId        	
+	 * @return bool true: 存在
+	 */
+	public function goodsIdIsInGoodsRange($supplierId, $goodsId) {
+		$db = $this->db;
+		
+		$sql = "select goods_range from t_supplier where id = '%s' ";
+		$data = $db->query($sql, $supplierId);
+		if (! $data) {
+			// 供应商不存在
+			return false;
+		}
+		
+		$goodsRange = $data[0]["goods_range"];
+		if ($goodsRange == 1) {
+			// 全部商品
+			return true;
+		}
+		
+		// 商品分类
+		$sql = "select count(*) as cnt
+				from t_supplier_goods_range r, t_goods g, t_goods_category c
+				where r.supplier_id = '%s' and r.g_id = c.id 
+					and c.id  = g.category_id and g.id = '%s' ";
+		$data = $db->query($sql, $supplierId, $goodsId);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return true;
+		}
+		
+		// 个别商品
+		$sql = "select count(*) as cnt 
+				from t_supplier_goods_range r, t_goods g
+				where r.supplier_id = '%s' and r.g_id = g.id and g.id = '%s' ";
+		$data = $db->query($sql, $supplierId, $goodsId);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return true;
+		}
+		
+		return false;
+	}
 }

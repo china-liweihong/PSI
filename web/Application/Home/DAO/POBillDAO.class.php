@@ -359,6 +359,12 @@ class POBillDAO extends PSIBaseExDAO {
 				return $this->bad("采购单价不能是负数");
 			}
 			
+			// 检查供应商关联商品
+			if (! $supplierDAO->goodsIdIsInGoodsRange($supplierId, $goodsId)) {
+				$recordInde = $i + 1;
+				return $this->bad("第{$recordInde}条记录中的商品不在当前供应商的关联商品内，不能保存");
+			}
+			
 			$goodsMoney = $v["goodsMoney"];
 			$taxRate = $v["taxRate"];
 			$tax = $v["tax"];
@@ -522,6 +528,13 @@ class POBillDAO extends PSIBaseExDAO {
 			if ($goodsPrice < 0) {
 				return $this->bad("采购单价不能是负数");
 			}
+			
+			// 检查供应商关联商品
+			if (! $supplierDAO->goodsIdIsInGoodsRange($supplierId, $goodsId)) {
+				$recordInde = $i + 1;
+				return $this->bad("第{$recordInde}条记录中的商品不在当前供应商的关联商品内，不能保存");
+			}
+			
 			$goodsMoney = $v["goodsMoney"];
 			$taxRate = $v["taxRate"];
 			$tax = $v["tax"];

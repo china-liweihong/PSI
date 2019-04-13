@@ -7,7 +7,9 @@ Ext.define("PSI.Goods.GoodsWithPurchaseFieldField", {
 
 	config : {
 		parentCmp : null,
-		showAddButton : false
+		showAddButton : false,
+		supplierIdFunc : null,
+		supplierIdScope : null
 	},
 
 	/**
@@ -180,12 +182,18 @@ Ext.define("PSI.Goods.GoodsWithPurchaseFieldField", {
 
 		var editName = Ext.getCmp("__editGoods");
 		editName.on("change", function() {
+			var supplierId = null;
+			var supplierIdFunc = me.getSupplierIdFunc();
+			if (supplierIdFunc) {
+				supplierId = supplierIdFunc.apply(me.getSupplierIdScope());
+			}
 			var store = me.lookupGrid.getStore();
 			Ext.Ajax.request({
 						url : PSI.Const.BASE_URL
 								+ "Home/Goods/queryDataWithPurchasePrice",
 						params : {
-							queryKey : editName.getValue()
+							queryKey : editName.getValue(),
+							supplierId: supplierId
 						},
 						method : "POST",
 						callback : function(opt, success, response) {

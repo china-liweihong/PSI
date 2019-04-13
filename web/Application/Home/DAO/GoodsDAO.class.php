@@ -741,8 +741,123 @@ class GoodsDAO extends PSIBaseExDAO {
 	 * @param array $params        	
 	 * @return array
 	 */
+	private function queryDataWithPurchasePriceWithSupplier($params) {
+		$db = $this->db;
+		
+		$supplierId = $params["supplierId"];
+		
+		$queryKey = $params["queryKey"];
+		$loginUserId = $params["loginUserId"];
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->emptyResult();
+		}
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->emptyResult();
+		}
+		$bcDAO = new BizConfigDAO($db);
+		$taxRate = $bcDAO->getTaxRate($companyId);
+		
+		if ($queryKey == null) {
+			$queryKey = "";
+		}
+		
+		$key = "%{$queryKey}%";
+		
+		$sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name, g.purchase_price, g.memo,
+					g.tax_rate
+				from (
+						select g.*
+						from t_supplier_goods_range r, t_goods g
+						where r.supplier_id = '%s' and r.g_id = g.id and r.g_id_type = 1
+						union
+						select g.*
+						from t_supplier_goods_range r, t_goods_category c, t_goods g
+						where r.supplier_id = '%s' and r.g_id = c.id and c.id = g.category_id
+						) g, t_goods_unit u
+				where (g.unit_id = u.id) and (g.record_status = 1000)
+				and (g.code like '%s' or g.name like '%s' or g.py like '%s'
+					or g.spec like '%s' or g.spec_py like '%s') ";
+		
+		$queryParams = [];
+		$queryParams[] = $supplierId;
+		$queryParams[] = $supplierId;
+		$queryParams[] = $key;
+		$queryParams[] = $key;
+		$queryParams[] = $key;
+		$queryParams[] = $key;
+		$queryParams[] = $key;
+		
+		$ds = new DataOrgDAO($db);
+		$rs = $ds->buildSQL(FIdConst::GOODS_BILL, "g", $loginUserId);
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = array_merge($queryParams, $rs[1]);
+		}
+		
+		$sql .= " order by g.code
+				limit 20";
+		$data = $db->query($sql, $queryParams);
+		$result = [];
+		foreach ( $data as $v ) {
+			$goodsId = $v["id"];
+			$taxRateType = 1;
+			
+			// 查询商品的税率
+			// 目前的设计和实现，存在数据量大的情况下会查询缓慢的可能，是需要改进的地方
+			$sql = "select tax_rate from t_goods where id = '%s' and tax_rate is not null";
+			$d = $db->query($sql, $goodsId);
+			if ($d) {
+				$taxRateType = 3;
+				$taxRate = $d[0]["tax_rate"];
+			} else {
+				// 商品本身没有设置税率，就去查询该商品分类是否设置了默认税率
+				$categoryId = $v["category_id"];
+				$sql = "select tax_rate from t_goods_category where id = '%s' and tax_rate is not null";
+				$d = $db->query($sql, $categoryId);
+				if ($d) {
+					$taxRateType = 2;
+					$taxRate = $d[0]["tax_rate"];
+				}
+			}
+			
+			$result[] = [
+					"id" => $v["id"],
+					"code" => $v["code"],
+					"name" => $v["name"],
+					"spec" => $v["spec"],
+					"unitName" => $v["unit_name"],
+					"purchasePrice" => $v["purchase_price"] == 0 ? null : $v["purchase_price"],
+					"memo" => $v["memo"],
+					"taxRate" => $taxRate,
+					"taxRateType" => $taxRateType
+			];
+		}
+		
+		return $result;
+	}
+
+	/**
+	 * 商品字段，查询数据
+	 *
+	 * @param array $params        	
+	 * @return array
+	 */
 	public function queryDataWithPurchasePrice($params) {
 		$db = $this->db;
+		
+		$supplierId = $params["supplierId"];
+		if ($supplierId) {
+			$sql = "select goods_range from t_supplier where id = '%s' ";
+			$data = $db->query($sql, $supplierId);
+			if ($data) {
+				$goodsRange = $data[0]["goods_range"];
+				if ($goodsRange == 2) {
+					// 该供应商启用了关联商品
+					return $this->queryDataWithPurchasePriceWithSupplier($params);
+				}
+			}
+		}
 		
 		$queryKey = $params["queryKey"];
 		$loginUserId = $params["loginUserId"];

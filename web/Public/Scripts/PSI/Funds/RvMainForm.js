@@ -51,10 +51,23 @@ Ext.define("PSI.Funds.RvMainForm", {
 											autoLoad : false,
 											data : []
 										})
+							}, " ", "-", " ", {
+								xtype : "displayfield",
+								value : "客户 "
+							}, {
+								cls : "PSI-toolbox",
+								id : "editCustomerQuery",
+								xtype : "psi_customerfield",
+								width : 200,
+								showModal : true
 							}, {
 								text : "查询",
 								iconCls : "PSI-button-refresh",
 								handler : me.onQuery,
+								scope : me
+							}, {
+								text : "清空查询条件查询",
+								handler : me.onClearQuery,
 								scope : me
 							}, "-", {
 								text : "关闭",
@@ -130,7 +143,9 @@ Ext.define("PSI.Funds.RvMainForm", {
 					Ext.apply(store.proxy.extraParams, {
 								caType : Ext.getCmp("comboCA").getValue(),
 								categoryId : Ext.getCmp("comboCategory")
-										.getValue()
+										.getValue(),
+								customerId : Ext.getCmp("editCustomerQuery")
+										.getIdValue()
 							});
 				});
 
@@ -205,7 +220,7 @@ Ext.define("PSI.Funds.RvMainForm", {
 
 	onRvGridSelect : function() {
 		var me = this;
-		
+
 		this.getRvRecordGrid().getStore().removeAll();
 		this.getRvRecordGrid().setTitle(me.formatGridHeaderTitle("收款记录"));
 
@@ -339,7 +354,7 @@ Ext.define("PSI.Funds.RvMainForm", {
 
 	onRvDetailGridSelect : function() {
 		var me = this;
-		
+
 		var grid = this.getRvRecordGrid();
 		var item = this.getRvDetailGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
@@ -577,5 +592,12 @@ Ext.define("PSI.Funds.RvMainForm", {
 					}
 
 				});
+	},
+
+	onClearQuery : function() {
+		var me = this;
+
+		Ext.getCmp("editCustomerQuery").clearIdValue();
+		me.onQuery();
 	}
 });

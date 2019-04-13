@@ -85,6 +85,7 @@ class ReceivablesDAO extends PSIBaseExDAO {
 		
 		$caType = $params["caType"];
 		$categoryId = $params["categoryId"];
+		$customerId = $params["customerId"];
 		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
@@ -103,7 +104,10 @@ class ReceivablesDAO extends PSIBaseExDAO {
 				$queryParams = array_merge($queryParams, $rs[1]);
 			}
 			
-			if ($categoryId) {
+			if ($customerId) {
+				$sql .= " and c.id = '%s' ";
+				$queryParams[] = $customerId;
+			} else if ($categoryId) {
 				$sql .= " and c.category_id = '%s' ";
 				$queryParams[] = $categoryId;
 			}
@@ -438,7 +442,7 @@ class ReceivablesDAO extends PSIBaseExDAO {
 
 	/**
 	 * 刷新应收记录详情
-	 * 
+	 *
 	 * @param array $params        	
 	 * @return array
 	 */

@@ -397,6 +397,12 @@ class PWBillDAO extends PSIBaseExDAO {
 				return $this->bad("选择的商品不存在");
 			}
 			
+			// 检查供应商关联商品
+			if (! $supplierDAO->goodsIdIsInGoodsRange($supplierId, $goodsId)) {
+				$recordInde = $i + 1;
+				return $this->bad("第{$recordInde}条记录中的商品不在当前供应商的关联商品内，不能保存");
+			}
+			
 			// 关于入库数量为什么允许填写0：
 			// 当由采购订单生成采购入库单的时候，采购订单中有多种商品，但是是部分到货
 			// 那么就存在有些商品的数量是0的情形。
@@ -716,6 +722,12 @@ class PWBillDAO extends PSIBaseExDAO {
 			$goods = $goodsDAO->getGoodsById($goodsId);
 			if (! $goods) {
 				return $this->bad("选择的商品不存在");
+			}
+			
+			// 检查供应商关联商品
+			if (! $supplierDAO->goodsIdIsInGoodsRange($supplierId, $goodsId)) {
+				$recordInde = $i + 1;
+				return $this->bad("第{$recordInde}条记录中的商品不在当前供应商的关联商品内，不能保存");
 			}
 			
 			// 关于入库数量为什么允许填写0：

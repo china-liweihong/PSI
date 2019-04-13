@@ -290,7 +290,28 @@ class SupplierService extends PSIBaseExService {
 			return $this->notOnlineError();
 		}
 		
-		return $this->todo();
+		$db = $this->db();
+		$db->startTrans();
+		
+		$dao = new SupplierDAO($db);
+		
+		$rc = $dao->addGRCategory($params);
+		if ($rc) {
+			$db->rollback();
+			return $rc;
+		}
+		
+		$code = $params["code"];
+		$name = $params["name"];
+		$categoryCode = $params["categoryCode"];
+		$categoryName = $params["categoryName"];
+		$log = "给供应商(编码 = {$code},  名称 = {$name})设置关联商品分类(编码={$categoryCode} 分类={$categoryName})";
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
+		return $this->ok();
 	}
 
 	/**

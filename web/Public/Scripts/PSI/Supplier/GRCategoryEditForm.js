@@ -9,21 +9,16 @@ Ext.define("PSI.Supplier.GRCategoryEditForm", {
 	 */
 	initComponent : function() {
 		var me = this;
-		var entity = me.getEntity();
-
-		me.adding = entity == null;
 
 		var buttons = [];
-		if (!entity) {
-			buttons.push({
-						text : "保存并继续新增",
-						formBind : true,
-						handler : function() {
-							me.onOK(true);
-						},
-						scope : me
-					});
-		}
+		buttons.push({
+					text : "保存并继续新增",
+					formBind : true,
+					handler : function() {
+						me.onOK(true);
+					},
+					scope : me
+				});
 
 		buttons.push({
 					text : "保存",
@@ -34,7 +29,7 @@ Ext.define("PSI.Supplier.GRCategoryEditForm", {
 					},
 					scope : me
 				}, {
-					text : entity == null ? "关闭" : "取消",
+					text : "取消",
 					handler : function() {
 						me.close();
 					},
@@ -179,7 +174,7 @@ Ext.define("PSI.Supplier.GRCategoryEditForm", {
 		if (e.getKey() == e.ENTER) {
 			var f = me.editForm;
 			if (f.getForm().isValid()) {
-				me.onOK(me.adding);
+				me.onOK();
 			}
 		}
 	},
@@ -189,11 +184,17 @@ Ext.define("PSI.Supplier.GRCategoryEditForm", {
 
 		me.editCategory.setIdValue(null);
 		me.editCategory.setValue(null);
+
+		me.editCatgory.focus();
 	},
 
 	onWndClose : function() {
 		var me = this;
 
 		Ext.get(window).un('beforeunload', me.onWindowBeforeUnload);
+
+		if (me.getParentForm()) {
+			me.getParentForm().refreshGRCategoryGrid();
+		}
 	}
 });

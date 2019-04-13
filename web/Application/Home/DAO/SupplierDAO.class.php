@@ -959,4 +959,55 @@ class SupplierDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 关联商品 - 添加商品分类
+	 */
+	public function addGRCategory(& $params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		$categoryId = $params["categoryId"];
+		
+		// 检查供应商是否存在
+		$supplier = $this->getSupplierById($id);
+		if (! $supplier) {
+			return $this->bad("供应商不存在");
+		}
+		$supplierCode = $supplier["code"];
+		$supplierName = $supplier["name"];
+		
+		// 检查商品分类是否存在
+		$dao = new GoodsCategoryDAO($db);
+		$category = $dao->getGoodsCategoryById($categoryId);
+		if (! $category) {
+			return $this->bad("商品分类不存在");
+		}
+		$categoryCode = $category["code"];
+		$categoryName = $category["name"];
+		
+		// 检查是否已经关联该商品分类了
+		$sql = "select count(*) as cnt 
+				from t_supplier_goods_range
+				where supplier_id = '%s' and g_id = '%s' and g_id_type = 2";
+		$data = $db->query($sql, $id, $categoryId);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("供应商[{$supplierName}]已经关联商品分类[{$categoryName}]了");
+		}
+		
+		$sql = "insert into t_supplier_goods_range (id, supplier_id, g_id, g_id_type)
+				values ('%s', '%s', '%s', 2)";
+		$rc = $db->execute($sql, $this->newId(), $id, $categoryId);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		$params["code"] = $supplierCode;
+		$params["name"] = $supplierName;
+		$params["categoryCode"] = $categoryCode;
+		$params["categoryName"] = $categoryName;
+		return null;
+	}
 }

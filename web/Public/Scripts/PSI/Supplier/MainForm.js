@@ -53,6 +53,7 @@ Ext.define("PSI.Supplier.MainForm", {
 										split : true,
 										collapsible : true,
 										border : 0,
+										id : "panelGoodsRange",
 										header : {
 											height : 30,
 											title : me
@@ -1129,6 +1130,18 @@ Ext.define("PSI.Supplier.MainForm", {
 		if (item == null || item.length != 1) {
 			return;
 		}
+
+		var supplier = item[0];
+		var goodsRange = supplier.get("goodsRange");
+
+		var info = "供应商[" + supplier.get("name") + "]";
+		if (goodsRange == 1) {
+			info += "能使用全部商品(下表的设置不生效)";
+		} else {
+			info += "只能使用如下设置中的关联商品";
+		}
+		info = "<span style='font-size:120%;'>" + info + "</span>";
+		Ext.getCmp("panelGoodsRange").setTitle(info);
 
 		me.refreshGRCategoryGrid();
 	},

@@ -219,6 +219,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20190401_01();
 		$this->update_20190402_01();
 		$this->update_20190402_02();
+		$this->update_20190415_01();
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -239,6 +240,40 @@ class UpdateDBService extends PSIBaseService {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// ============================================
 	private function notForgot() {
+	}
+
+	private function update_20190415_01() {
+		// 本次更新：新增表t_dict_table_category和t_dict_table_md
+		$db = $this->db;
+		
+		$tableName = "t_dict_table_category";
+		if (! $this->tableExists($db, $tableName)) {
+			$sql = "CREATE TABLE IF NOT EXISTS `t_dict_table_category` (
+					  `id` varchar(255) NOT NULL,
+					  `code` varchar(255) NOT NULL,
+					  `name` varchar(255) NOT NULL,
+					  `parent_id` varchar(255) DEFAULT NULL,
+					  PRIMARY KEY (`id`)
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+			";
+			$db->execute($sql);
+		}
+		
+		$tableName = "t_dict_table_md";
+		if (! $this->tableExists($db, $tableName)) {
+			$sql = "CREATE TABLE IF NOT EXISTS `t_dict_table_md` (
+					  `id` varchar(255) NOT NULL,
+					  `code` varchar(255) NOT NULL,
+					  `name` varchar(255) NOT NULL,
+					  `table_name` varchar(255) NOT NULL,
+					  `category_id` varchar(255) NOT NULL,
+					  `memo` varchar(1000) DEFAULT NULL,
+					  `py` varchar(255) DEFAULT NULL,
+					  PRIMARY KEY (`id`)
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+			";
+			$db->execute($sql);
+		}
 	}
 
 	private function update_20190402_02() {

@@ -56,6 +56,9 @@ class FundsController extends PSIBaseController {
 			$params = array(
 					"caType" => I("post.caType"),
 					"categoryId" => I("post.categoryId"),
+					"supplierId" => I("post.supplierId"),
+					"customerId" => I("post.customerId"),
+					"factoryId" => I("post.factoryId"),
 					"page" => I("post.page"),
 					"start" => I("post.start"),
 					"limit" => I("post.limit")

@@ -52,10 +52,38 @@ Ext.define("PSI.Funds.PayMainForm", {
 											autoLoad : false,
 											data : []
 										})
+							}, " ", "-", " ", {
+								id : "editQueryLabel",
+								xtype : "displayfield",
+								value : "供应商 "
+							}, {
+								cls : "PSI-toolbox",
+								id : "editSupplierQuery",
+								xtype : "psi_supplierfield",
+								width : 200,
+								showModal : true
+							}, {
+								cls : "PSI-toolbox",
+								id : "editCustomerQuery",
+								xtype : "psi_customerfield",
+								hidden : true,
+								width : 200,
+								showModal : true
+							}, {
+								cls : "PSI-toolbox",
+								id : "editFactoryQuery",
+								xtype : "psi_factoryfield",
+								hidden : true,
+								width : 200,
+								showModal : true
 							}, {
 								text : "查询",
 								iconCls : "PSI-button-refresh",
 								handler : me.onQuery,
+								scope : me
+							}, {
+								text : "清空查询条件查询",
+								handler : me.onClearQuery,
 								scope : me
 							}, "-", {
 								text : "关闭",
@@ -132,7 +160,13 @@ Ext.define("PSI.Funds.PayMainForm", {
 					Ext.apply(store.proxy.extraParams, {
 								caType : Ext.getCmp("comboCA").getValue(),
 								categoryId : Ext.getCmp("comboCategory")
-										.getValue()
+										.getValue(),
+								customerId : Ext.getCmp("editCustomerQuery")
+										.getIdValue(),
+								supplierId : Ext.getCmp("editSupplierQuery")
+										.getIdValue(),
+								factoryId : Ext.getCmp("editFactoryQuery")
+										.getIdValue()
 							});
 				});
 
@@ -436,6 +470,28 @@ Ext.define("PSI.Funds.PayMainForm", {
 
 	onComboCASelect : function() {
 		var me = this;
+
+		var caType = Ext.getCmp("comboCA").getValue();
+		if (caType == "supplier") {
+			// 供应商
+			Ext.getCmp("editQueryLabel").setValue("供应商");
+			Ext.getCmp("editSupplierQuery").setVisible(true);
+			Ext.getCmp("editCustomerQuery").setVisible(false);
+			Ext.getCmp("editFactoryQuery").setVisible(false);
+		} else if (caType == "customer") {
+			// 客户
+			Ext.getCmp("editQueryLabel").setValue("客户");
+			Ext.getCmp("editSupplierQuery").setVisible(false);
+			Ext.getCmp("editCustomerQuery").setVisible(true);
+			Ext.getCmp("editFactoryQuery").setVisible(false);
+		} else {
+			// 工厂
+			Ext.getCmp("editQueryLabel").setValue("工厂");
+			Ext.getCmp("editSupplierQuery").setVisible(false);
+			Ext.getCmp("editCustomerQuery").setVisible(false);
+			Ext.getCmp("editFactoryQuery").setVisible(true);
+		}
+
 		me.getPayGrid().getStore().removeAll();
 		me.getPayDetailGrid().getStore().removeAll();
 		me.getPayRecordGrid().getStore().removeAll();
@@ -571,5 +627,15 @@ Ext.define("PSI.Funds.PayMainForm", {
 					}
 
 				});
+	},
+
+	onClearQuery : function() {
+		var me = this;
+
+		Ext.getCmp("editCustomerQuery").clearIdValue();
+		Ext.getCmp("editSupplierQuery").clearIdValue();
+		Ext.getCmp("editFactoryQuery").clearIdValue();
+		me.onQuery();
 	}
+
 });

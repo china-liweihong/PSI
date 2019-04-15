@@ -115,7 +115,7 @@ Ext.define("PSI.Factory.FactoryField", {
 									}, {
 										xtype : "displayfield",
 										fieldLabel : " ",
-										value : "输入编码、供应商拼音字头可以过滤查询",
+										value : "输入编码、工厂拼音字头可以过滤查询",
 										labelWidth : 50,
 										labelAlign : "right",
 										labelSeparator : ""

@@ -96,6 +96,9 @@ class PayablesDAO extends PSIBaseExDAO {
 		
 		$caType = $params["caType"];
 		$categoryId = $params["categoryId"];
+		$customerId = $params["customerId"];
+		$supplierId = $params["supplierId"];
+		$factoryId = $params["factoryId"];
 		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
@@ -105,7 +108,10 @@ class PayablesDAO extends PSIBaseExDAO {
 			$sql = "select p.id, p.pay_money, p.act_money, p.balance_money, s.id as ca_id, s.code, s.name
 					from t_payables p, t_supplier s
 					where p.ca_id = s.id and p.ca_type = 'supplier' ";
-			if ($categoryId) {
+			if ($supplierId) {
+				$sql .= " and s.id = '%s' ";
+				$queryParams[] = $supplierId;
+			} else if ($categoryId) {
 				$sql .= " and s.category_id = '%s' ";
 				$queryParams[] = $categoryId;
 			}
@@ -134,7 +140,10 @@ class PayablesDAO extends PSIBaseExDAO {
 			$queryParams[] = array();
 			$sql = "select count(*) as cnt from t_payables p, t_supplier s
 					where p.ca_id = s.id and p.ca_type = 'supplier' ";
-			if ($categoryId) {
+			if ($supplierId) {
+				$sql .= " and s.id = '%s' ";
+				$queryParams[] = $supplierId;
+			} else if ($categoryId) {
 				$sql .= " and s.category_id = '%s' ";
 				$queryParams[] = $categoryId;
 			}
@@ -156,7 +165,10 @@ class PayablesDAO extends PSIBaseExDAO {
 			$sql = "select p.id, p.pay_money, p.act_money, p.balance_money, s.id as ca_id, s.code, s.name
 					from t_payables p, t_factory s
 					where p.ca_id = s.id and p.ca_type = 'factory' ";
-			if ($categoryId) {
+			if ($factoryId) {
+				$sql .= " and s.id = '%s' ";
+				$queryParams[] = $factoryId;
+			} else if ($categoryId) {
 				$sql .= " and s.category_id = '%s' ";
 				$queryParams[] = $categoryId;
 			}
@@ -185,7 +197,10 @@ class PayablesDAO extends PSIBaseExDAO {
 			$queryParams[] = array();
 			$sql = "select count(*) as cnt from t_payables p, t_supplier s
 					where p.ca_id = s.id and p.ca_type = 'factory' ";
-			if ($categoryId) {
+			if ($factoryId) {
+				$sql .= " and s.id = '%s' ";
+				$queryParams[] = $factoryId;
+			} else if ($categoryId) {
 				$sql .= " and s.category_id = '%s' ";
 				$queryParams[] = $categoryId;
 			}
@@ -203,11 +218,15 @@ class PayablesDAO extends PSIBaseExDAO {
 					"totalCount" => $cnt
 			);
 		} else {
+			// 客户
 			$queryParams = array();
 			$sql = "select p.id, p.pay_money, p.act_money, p.balance_money, s.id as ca_id, s.code, s.name
 					from t_payables p, t_customer s
 					where p.ca_id = s.id and p.ca_type = 'customer' ";
-			if ($categoryId) {
+			if ($customerId) {
+				$sql .= " and s.id = '%s' ";
+				$queryParams[] = $customerId;
+			} else if ($categoryId) {
 				$sql .= " and s.category_id = '%s' ";
 				$queryParams[] = $categoryId;
 			}
@@ -236,7 +255,10 @@ class PayablesDAO extends PSIBaseExDAO {
 			$queryParams = array();
 			$sql = "select count(*) as cnt from t_payables p, t_customer s
 					where p.ca_id = s.id and p.ca_type = 'customer' ";
-			if ($categoryId) {
+			if ($customerId) {
+				$sql .= " and s.id = '%s' ";
+				$queryParams[] = $customerId;
+			} else if ($categoryId) {
 				$sql .= " and s.category_id = '%s' ";
 				$queryParams[] = $categoryId;
 			}

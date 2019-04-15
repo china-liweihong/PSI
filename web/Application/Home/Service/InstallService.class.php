@@ -1525,6 +1525,31 @@ class InstallService extends PSIBaseExService {
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
 		$db->execute($sql);
+		
+		// t_dict_table_category
+		$sql = "CREATE TABLE IF NOT EXISTS `t_dict_table_category` (
+				  `id` varchar(255) NOT NULL,
+				  `code` varchar(255) NOT NULL,
+				  `name` varchar(255) NOT NULL,
+				  `parent_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_dict_table_md
+		$sql = "CREATE TABLE IF NOT EXISTS `t_dict_table_md` (
+				  `id` varchar(255) NOT NULL,
+				  `code` varchar(255) NOT NULL,
+				  `name` varchar(255) NOT NULL,
+				  `table_name` varchar(255) NOT NULL,
+				  `category_id` varchar(255) NOT NULL,
+				  `memo` varchar(1000) DEFAULT NULL,
+				  `py` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
 	}
 
 	/**

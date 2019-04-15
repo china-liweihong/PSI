@@ -4,8 +4,6 @@ namespace Home\Service;
 
 use Home\DAO\SaleReportDAO;
 
-require __DIR__ . '/../Common/Excel/PHPExcel/IOFactory.php';
-
 /**
  * 销售报表Service
  *

@@ -52,12 +52,20 @@ Ext.define("PSI.Funds.RvMainForm", {
 											data : []
 										})
 							}, " ", "-", " ", {
+								id : "editQueryLabel",
 								xtype : "displayfield",
 								value : "客户 "
 							}, {
 								cls : "PSI-toolbox",
 								id : "editCustomerQuery",
 								xtype : "psi_customerfield",
+								width : 200,
+								showModal : true
+							}, {
+								cls : "PSI-toolbox",
+								id : "editSupplierQuery",
+								xtype : "psi_supplierfield",
+								hidden : true,
 								width : 200,
 								showModal : true
 							}, {
@@ -145,6 +153,8 @@ Ext.define("PSI.Funds.RvMainForm", {
 								categoryId : Ext.getCmp("comboCategory")
 										.getValue(),
 								customerId : Ext.getCmp("editCustomerQuery")
+										.getIdValue(),
+								supplierId : Ext.getCmp("editSupplierQuery")
 										.getIdValue()
 							});
 				});
@@ -484,6 +494,18 @@ Ext.define("PSI.Funds.RvMainForm", {
 
 	onComboCASelect : function() {
 		var me = this;
+
+		var caType = Ext.getCmp("comboCA").getValue();
+		if (caType == "customer") {
+			Ext.getCmp("editQueryLabel").setValue("客户");
+			Ext.getCmp("editCustomerQuery").setVisible(true);
+			Ext.getCmp("editSupplierQuery").setVisible(false);
+		} else {
+			Ext.getCmp("editQueryLabel").setValue("供应商");
+			Ext.getCmp("editCustomerQuery").setVisible(false);
+			Ext.getCmp("editSupplierQuery").setVisible(true);
+		}
+
 		me.getRvGrid().getStore().removeAll();
 		me.getRvDetailGrid().getStore().removeAll();
 		me.getRvRecordGrid().getStore().removeAll();
@@ -598,6 +620,7 @@ Ext.define("PSI.Funds.RvMainForm", {
 		var me = this;
 
 		Ext.getCmp("editCustomerQuery").clearIdValue();
+		Ext.getCmp("editSupplierQuery").clearIdValue();
 		me.onQuery();
 	}
 });

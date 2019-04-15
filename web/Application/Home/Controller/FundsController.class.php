@@ -197,6 +197,7 @@ class FundsController extends PSIBaseController {
 					"caType" => I("post.caType"),
 					"categoryId" => I("post.categoryId"),
 					"customerId" => I("post.customerId"),
+					"supplierId" => I("post.supplierId"),
 					"page" => I("post.page"),
 					"start" => I("post.start"),
 					"limit" => I("post.limit")

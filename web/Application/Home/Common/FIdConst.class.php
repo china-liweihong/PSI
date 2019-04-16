@@ -29,6 +29,13 @@ class FIdConst {
 	const FORM_VIEW_SYSTEM_DEV = "-7997";
 	
 	/**
+	 * 码表设置
+	 * 
+	 * @var string
+	 */
+	const CODE_TABLE = "-7996";
+	
+	/**
 	 * 首页
 	 */
 	const HOME = "-9997";

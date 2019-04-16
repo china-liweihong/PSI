@@ -1550,6 +1550,49 @@ class InstallService extends PSIBaseExService {
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
 		$db->execute($sql);
+		
+		// t_code_table_category
+		$sql = "CREATE TABLE IF NOT EXISTS `t_code_table_category` (
+				  `id` varchar(255) NOT NULL,
+				  `code` varchar(255) NOT NULL,
+				  `name` varchar(255) NOT NULL,
+				  `parent_id` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_code_table_md
+		$sql = "CREATE TABLE IF NOT EXISTS `t_code_table_md` (
+				  `id` varchar(255) NOT NULL,
+				  `code` varchar(255) NOT NULL,
+				  `name` varchar(255) NOT NULL,
+				  `table_name` varchar(255) NOT NULL,
+				  `category_id` varchar(255) NOT NULL,
+				  `memo` varchar(1000) DEFAULT NULL,
+				  `py` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
+		
+		// t_code_table_cols_md
+		$sql = "CREATE TABLE IF NOT EXISTS `t_code_table_cols_md` (
+				  `id` varchar(255) NOT NULL,
+				  `table_id` varchar(255) NOT NULL,
+				  `caption` varchar(255) NOT NULL,
+				  `db_field_name` varchar(255) NOT NULL,
+				  `db_field_type` varchar(255) NOT NULL,
+				  `db_field_length` int(11) NOT NULL,
+				  `db_field_decimal` int(11) NOT NULL,
+				  `show_order` int(11) NOT NULL,
+				  `value_from` int(11) DEFAULT NULL,
+				  `value_from_table_name` varchar(255) DEFAULT NULL,
+				  `value_from_col_name` varchar(255) DEFAULT NULL,
+				  PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+		";
+		$db->execute($sql);
 	}
 
 	/**

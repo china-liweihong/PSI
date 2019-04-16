@@ -220,6 +220,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20190402_01();
 		$this->update_20190402_02();
 		$this->update_20190415_01();
+		$this->update_20190416_01();
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -240,6 +241,63 @@ class UpdateDBService extends PSIBaseService {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// ============================================
 	private function notForgot() {
+	}
+
+	private function update_20190416_01() {
+		// 本次更新：新增表t_code_table_category、t_code_table_md和t_code_table_cols_md
+		$db = $this->db;
+		
+		// t_code_table_category
+		$tableName = "t_code_table_category";
+		if (! $this->tableExists($db, $tableName)) {
+			$sql = "CREATE TABLE IF NOT EXISTS `t_code_table_category` (
+					  `id` varchar(255) NOT NULL,
+					  `code` varchar(255) NOT NULL,
+					  `name` varchar(255) NOT NULL,
+					  `parent_id` varchar(255) DEFAULT NULL,
+					  PRIMARY KEY (`id`)
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+			";
+			$db->execute($sql);
+		}
+		
+		// t_code_table_md
+		$tableName = "t_code_table_md";
+		if (! $this->tableExists($db, $tableName)) {
+			$sql = "CREATE TABLE IF NOT EXISTS `t_code_table_md` (
+					  `id` varchar(255) NOT NULL,
+					  `code` varchar(255) NOT NULL,
+					  `name` varchar(255) NOT NULL,
+					  `table_name` varchar(255) NOT NULL,
+					  `category_id` varchar(255) NOT NULL,
+					  `memo` varchar(1000) DEFAULT NULL,
+					  `py` varchar(255) DEFAULT NULL,
+					  PRIMARY KEY (`id`)
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+			";
+			$db->execute($sql);
+		}
+		
+		// t_code_table_cols_md
+		$tableName = "t_code_table_cols_md";
+		if (! $this->tableExists($db, $tableName)) {
+			$sql = "CREATE TABLE IF NOT EXISTS `t_code_table_cols_md` (
+					  `id` varchar(255) NOT NULL,
+					  `table_id` varchar(255) NOT NULL,
+					  `caption` varchar(255) NOT NULL,
+					  `db_field_name` varchar(255) NOT NULL,
+					  `db_field_type` varchar(255) NOT NULL,
+					  `db_field_length` int(11) NOT NULL,
+					  `db_field_decimal` int(11) NOT NULL,
+					  `show_order` int(11) NOT NULL,
+					  `value_from` int(11) DEFAULT NULL,
+					  `value_from_table_name` varchar(255) DEFAULT NULL,
+					  `value_from_col_name` varchar(255) DEFAULT NULL,
+					  PRIMARY KEY (`id`)
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+			";
+			$db->execute($sql);
+		}
 	}
 
 	private function update_20190415_01() {

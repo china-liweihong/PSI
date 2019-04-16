@@ -253,6 +253,10 @@ class MainMenuController extends Controller {
 				// 成品委托生产入库
 				redirect(__ROOT__ . "/Home/DM/dmwbillIndex");
 				break;
+			case FIdConst::CODE_TABLE :
+				// 码表设置
+				redirect(__ROOT__ . "/Home/CodeTable/index");
+				break;
 			default :
 				redirect(__ROOT__ . "/Home");
 		}

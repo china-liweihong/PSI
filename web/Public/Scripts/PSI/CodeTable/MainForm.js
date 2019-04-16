@@ -19,8 +19,8 @@ Ext.define("PSI.CodeTable.MainForm", {
 													region : "center",
 													xtype : "panel",
 													layout : "fit",
-													// border : 0,
-													items : []
+													border : 0,
+													items : [me.getMainGrid()]
 												}, {
 													id : "panelCategory",
 													xtype : "panel",
@@ -118,6 +118,71 @@ Ext.define("PSI.CodeTable.MainForm", {
 						});
 
 				return me.__categoryGrid;
+			},
+
+			getMainGrid : function() {
+				var me = this;
+
+				if (me.__mainGrid) {
+					return me.__mainGrid;
+				}
+
+				var modelName = "PSICodeTable";
+
+				Ext.define(modelName, {
+							extend : "Ext.data.Model",
+							fields : ["id", "code", "name", "tableName", "memo"]
+						});
+
+				me.__mainGrid = Ext.create("Ext.grid.Panel", {
+							cls : "PSI",
+							viewConfig : {
+								enableTextSelection : true
+							},
+							header : {
+								height : 30,
+								title : me.formatGridHeaderTitle("码表")
+							},
+							columnLines : true,
+							columns : [{
+										header : "编码",
+										dataIndex : "code",
+										width : 80,
+										menuDisabled : true,
+										sortable : false
+									}, {
+										header : "码表名称",
+										dataIndex : "name",
+										width : 200,
+										menuDisabled : true,
+										sortable : false
+									}, {
+										header : "数据库名",
+										dataIndex : "tableName",
+										width : 200,
+										menuDisabled : true,
+										sortable : false
+									}, {
+										header : "备注",
+										dataIndex : "memo",
+										width : 300,
+										menuDisabled : true,
+										sortable : false
+									}],
+							store : Ext.create("Ext.data.Store", {
+										model : modelName,
+										autoLoad : false,
+										data : []
+									}),
+							listeners : {
+								select : {
+									fn : me.onMainGridSelect,
+									scope : me
+								}
+							}
+						});
+
+				return me.__mainGrid;
 			},
 
 			onAddCategory : function() {

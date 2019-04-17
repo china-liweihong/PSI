@@ -4,6 +4,7 @@ namespace Home\Controller;
 
 use Home\Common\FIdConst;
 use Home\Service\UserService;
+use Home\Service\CodeTableService;
 
 /**
  * 码表Controller
@@ -27,6 +28,22 @@ class CodeTableController extends PSIBaseController {
 			$this->display();
 		} else {
 			$this->gotoLoginPage("/Home/CodeTable/index");
+		}
+	}
+
+	/**
+	 * 新增或编辑码表分类
+	 */
+	public function editCodeTableCategory() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id"),
+					"code" => I("post.code"),
+					"name" => I("post.name")
+			];
+			
+			$service = new CodeTableService();
+			$this->ajaxReturn($service->editCodeTableCategory($params));
 		}
 	}
 }

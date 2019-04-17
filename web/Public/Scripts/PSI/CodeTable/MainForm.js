@@ -187,6 +187,11 @@ Ext.define("PSI.CodeTable.MainForm", {
 
 			onAddCategory : function() {
 				var me = this;
-				me.showInfo("TODO");
+
+				var form = Ext.create("PSI.CodeTable.CategoryEditForm", {
+							parentForm : me
+						});
+
+				form.show();
 			}
 		});

@@ -38,6 +38,8 @@ Ext.define("PSI.CodeTable.MainForm", {
 						});
 
 				me.callParent(arguments);
+				
+				me.refreshCategoryGrid();
 			},
 
 			getToolbarCmp : function() {
@@ -193,5 +195,40 @@ Ext.define("PSI.CodeTable.MainForm", {
 						});
 
 				form.show();
+			},
+
+			refreshCategoryGrid : function(id) {
+				var me = this;
+				var grid = me.getCategoryGrid();
+				var el = grid.getEl() || Ext.getBody();
+				el.mask(PSI.Const.LOADING);
+				var r = {
+					url : me.URL("Home/CodeTable/categoryList"),
+					callback : function(options, success, response) {
+						var store = grid.getStore();
+
+						store.removeAll();
+
+						if (success) {
+							var data = me.decodeJSON(response.responseText);
+							store.add(data);
+
+							if (store.getCount() > 0) {
+								if (id) {
+									var r = store.findExact("id", id);
+									if (r != -1) {
+										grid.getSelectionModel().select(r);
+									}
+								} else {
+									grid.getSelectionModel().select(0);
+								}
+							}
+						}
+
+						el.unmask();
+					}
+				};
+
+				me.ajax(r);
 			}
 		});

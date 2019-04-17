@@ -13,6 +13,18 @@ class CodeTableService extends PSIBaseExService {
 	private $LOG_CATEGORY = "码表";
 
 	/**
+	 * 码表分类列表
+	 */
+	public function categoryList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new CodeTableDAO($this->db());
+		return $dao->categoryList($params);
+	}
+
+	/**
 	 * 新增或编辑码表分类
 	 */
 	public function editCodeTableCategory($params) {

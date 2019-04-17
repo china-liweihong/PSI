@@ -32,6 +32,18 @@ class CodeTableController extends PSIBaseController {
 	}
 
 	/**
+	 * 码表分类列表
+	 */
+	public function categoryList() {
+		if (IS_POST) {
+			$params = [];
+			
+			$service = new CodeTableService();
+			$this->ajaxReturn($service->categoryList($params));
+		}
+	}
+
+	/**
 	 * 新增或编辑码表分类
 	 */
 	public function editCodeTableCategory() {

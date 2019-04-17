@@ -41,7 +41,8 @@ class CodeTableDAO extends PSIBaseExDAO {
 	public function addCodeTableCategory(& $params) {
 		$db = $this->db;
 		
-		$code = $params["code"];
+		$code = $params["code"] ?? "";
+		$code = strtoupper($code);
 		$name = $params["name"];
 		
 		// 检查编码是否存在
@@ -87,7 +88,8 @@ class CodeTableDAO extends PSIBaseExDAO {
 		$db = $this->db;
 		
 		$id = $params["id"];
-		$code = $params["code"];
+		$code = $params["code"] ?? "";
+		$code = strtoupper($code);
 		$name = $params["name"];
 		
 		$category = $this->getCodeTableCategoryById($id);

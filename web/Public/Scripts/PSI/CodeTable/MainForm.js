@@ -38,7 +38,7 @@ Ext.define("PSI.CodeTable.MainForm", {
 						});
 
 				me.callParent(arguments);
-				
+
 				me.refreshCategoryGrid();
 			},
 
@@ -48,6 +48,10 @@ Ext.define("PSI.CodeTable.MainForm", {
 				return [{
 							text : "新增码表分类",
 							handler : me.onAddCategory,
+							scope : me
+						}, {
+							text : "编辑码表分类",
+							handler : me.onEditCategory,
 							scope : me
 						}, "-", {
 							text : "帮助",
@@ -230,5 +234,25 @@ Ext.define("PSI.CodeTable.MainForm", {
 				};
 
 				me.ajax(r);
+			},
+
+			onEditCategory : function() {
+				var me = this;
+
+				var item = me.getCategoryGrid().getSelectionModel()
+						.getSelection();
+				if (item == null || item.length != 1) {
+					me.showInfo("请选择要编辑的码表分类");
+					return;
+				}
+
+				var category = item[0];
+
+				var form = Ext.create("PSI.CodeTable.CategoryEditForm", {
+							parentForm : me,
+							entity : category
+						});
+
+				form.show();
 			}
 		});

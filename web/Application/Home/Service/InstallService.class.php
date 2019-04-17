@@ -1589,6 +1589,7 @@ class InstallService extends PSIBaseExService {
 				  `value_from` int(11) DEFAULT NULL,
 				  `value_from_table_name` varchar(255) DEFAULT NULL,
 				  `value_from_col_name` varchar(255) DEFAULT NULL,
+				  `must_input` int(11) DEFAULT 1,
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";

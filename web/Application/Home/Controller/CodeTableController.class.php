@@ -58,4 +58,18 @@ class CodeTableController extends PSIBaseController {
 			$this->ajaxReturn($service->editCodeTableCategory($params));
 		}
 	}
+
+	/**
+	 * 删除码表分类
+	 */
+	public function deleteCodeTableCategory() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id")
+			];
+			
+			$service = new CodeTableService();
+			$this->ajaxReturn($service->deleteCodeTableCategory($params));
+		}
+	}
 }

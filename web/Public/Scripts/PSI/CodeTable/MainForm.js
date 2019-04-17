@@ -53,6 +53,10 @@ Ext.define("PSI.CodeTable.MainForm", {
 							text : "编辑码表分类",
 							handler : me.onEditCategory,
 							scope : me
+						}, {
+							text : "删除码表分类",
+							handler : me.onDeleteCategory,
+							scope : me
 						}, "-", {
 							text : "帮助",
 							handler : function() {
@@ -254,5 +258,60 @@ Ext.define("PSI.CodeTable.MainForm", {
 						});
 
 				form.show();
+			},
+
+			onDeleteCategory : function() {
+				var me = this;
+				var item = me.getCategoryGrid().getSelectionModel()
+						.getSelection();
+				if (item == null || item.length != 1) {
+					me.showInfo("请选择要删除的码表分类");
+					return;
+				}
+
+				var category = item[0];
+
+				var store = me.getCategoryGrid().getStore();
+				var index = store.findExact("id", category.get("id"));
+				index--;
+				var preIndex = null;
+				var preItem = store.getAt(index);
+				if (preItem) {
+					preIndex = preItem.get("id");
+				}
+
+				var info = "请确认是否删除码表分类: <span style='color:red'>"
+						+ category.get("name") + "</span>";
+
+				var funcConfirm = function() {
+					var el = Ext.getBody();
+					el.mask("正在删除中...");
+
+					var r = {
+						url : me.URL("Home/CodeTable/deleteCodeTableCategory"),
+						params : {
+							id : category.get("id")
+						},
+						callback : function(options, success, response) {
+							el.unmask();
+
+							if (success) {
+								var data = me.decodeJSON(response.responseText);
+								if (data.success) {
+									me.tip("成功完成删除操作");
+									me.refreshCategoryGrid(preIndex);
+								} else {
+									me.showInfo(data.msg);
+								}
+							} else {
+								me.showInfo("网络错误");
+							}
+						}
+					};
+
+					me.ajax(r);
+				};
+
+				me.confirm(info, funcConfirm);
 			}
 		});

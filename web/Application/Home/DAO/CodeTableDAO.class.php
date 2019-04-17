@@ -144,4 +144,38 @@ class CodeTableDAO extends PSIBaseExDAO {
 			return null;
 		}
 	}
+
+	/**
+	 * 删除码表分类
+	 */
+	public function deleteCodeTableCategory(& $params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		
+		$category = $this->getCodeTableCategoryById($id);
+		if (! $category) {
+			return $this->bad("要删除的码表分类不存在");
+		}
+		$name = $category["name"];
+		
+		// 查询该分类是否被使用了
+		$sql = "select count(*) as cnt from t_code_table_md
+				where category_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("码表分类[$name]下还有码表，不能删除");
+		}
+		
+		$sql = "delete from t_code_table_category where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		$params["name"] = $name;
+		return null;
+	}
 }

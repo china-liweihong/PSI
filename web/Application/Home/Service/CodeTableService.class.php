@@ -69,4 +69,34 @@ class CodeTableService extends PSIBaseExService {
 		
 		return $this->ok($id);
 	}
+
+	/**
+	 * 删除码表分类
+	 */
+	public function deleteCodeTableCategory($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$db = $this->db();
+		$db->startTrans();
+		
+		$dao = new CodeTableDAO($db);
+		$rc = $dao->deleteCodeTableCategory($params);
+		if ($rc) {
+			$db->rollback();
+			return $rc;
+		}
+		
+		$name = $params["name"];
+		$log = "删除码表分类：{$name}";
+		
+		// 记录业务日志
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
+		return $this->ok();
+	}
 }

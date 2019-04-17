@@ -325,12 +325,15 @@ Ext.define("PSI.CodeTable.MainForm", {
 				var item = me.getCategoryGrid().getSelectionModel()
 						.getSelection();
 				if (item == null || item.length != 1) {
+					me.getMainGrid().setTitle(me.formatGridHeaderTitle("码表"));
 					return;
 				}
 
 				var category = item[0];
 
 				var grid = me.getMainGrid();
+				grid.setTitle(me.formatGridHeaderTitle("属于分类["
+						+ category.get("name") + "]的码表"));
 				var el = grid.getEl() || Ext.getBody();
 				el.mask(PSI.Const.LOADING);
 				var r = {

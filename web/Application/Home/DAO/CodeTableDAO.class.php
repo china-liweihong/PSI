@@ -178,4 +178,31 @@ class CodeTableDAO extends PSIBaseExDAO {
 		$params["name"] = $name;
 		return null;
 	}
+
+	/**
+	 * 码表列表
+	 */
+	public function codeTableList($params) {
+		$db = $this->db;
+		
+		$categoryId = $params["categoryId"];
+		
+		$sql = "select id, code, name, table_name, memo
+				from t_code_table_md
+				where category_id = '%s' 
+				order by code, table_name";
+		$data = $db->query($sql, $categoryId);
+		
+		$result = [];
+		foreach ( $data as $v ) {
+			$result[] = [
+					"id" => $v["id"],
+					"code" => $v["code"],
+					"name" => $v["name"],
+					"tableName" => $v["table_name"],
+					"memo" => $v["memo"]
+			];
+		}
+		return $result;
+	}
 }

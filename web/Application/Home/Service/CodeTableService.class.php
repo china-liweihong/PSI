@@ -99,4 +99,16 @@ class CodeTableService extends PSIBaseExService {
 		
 		return $this->ok();
 	}
+
+	/**
+	 * 码表列表
+	 */
+	public function codeTableList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new CodeTableDAO($this->db());
+		return $dao->codeTableList($params);
+	}
 }

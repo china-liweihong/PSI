@@ -52,7 +52,7 @@ Ext.define("PSI.CodeTable.CodeTableEditForm", {
 				height : 40
 			},
 			width : 550,
-			height : 490,
+			height : 300,
 			layout : "border",
 			items : [{
 						region : "north",

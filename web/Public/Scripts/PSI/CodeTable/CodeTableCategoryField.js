@@ -104,7 +104,7 @@ Ext.define("PSI.CodeTable.CodeTableCategoryField", {
 							items : [{
 										id : "PSI_CodeTable_CodeTableCategoryField_editCategory",
 										xtype : "textfield",
-										fieldLabel : "码表分类",
+										fieldLabel : "分类",
 										labelWidth : 50,
 										labelAlign : "right",
 										labelSeparator : ""

@@ -58,6 +58,10 @@ Ext.define("PSI.CodeTable.MainForm", {
 							handler : me.onDeleteCategory,
 							scope : me
 						}, "-", {
+							text : "新增码表",
+							handler : me.onAddCodeTable,
+							scope : me
+						}, "-", {
 							text : "帮助",
 							handler : function() {
 								me.showInfo("TODO");
@@ -367,5 +371,14 @@ Ext.define("PSI.CodeTable.MainForm", {
 				};
 
 				me.ajax(r);
+			},
+
+			onAddCodeTable : function() {
+				var me = this;
+
+				var form = Ext.create("PSI.CodeTable.CodeTableEditForm", {
+							parentForm : me
+						});
+				form.show();
 			}
 		});

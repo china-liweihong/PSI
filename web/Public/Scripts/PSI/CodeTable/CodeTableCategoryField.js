@@ -83,7 +83,7 @@ Ext.define("PSI.CodeTable.CodeTableCategoryField", {
 			header : false,
 			border : 0,
 			width : 500,
-			height : 380,
+			height : 300,
 			layout : "border",
 			items : [{
 						region : "center",

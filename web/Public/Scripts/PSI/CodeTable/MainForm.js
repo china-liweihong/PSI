@@ -376,8 +376,18 @@ Ext.define("PSI.CodeTable.MainForm", {
 			onAddCodeTable : function() {
 				var me = this;
 
+				var item = me.getCategoryGrid().getSelectionModel()
+						.getSelection();
+				if (item == null || item.length != 1) {
+					me.showInfo("请选择一个的码表分类");
+					return;
+				}
+
+				var category = item[0];
+
 				var form = Ext.create("PSI.CodeTable.CodeTableEditForm", {
-							parentForm : me
+							parentForm : me,
+							category : category
 						});
 				form.show();
 			}

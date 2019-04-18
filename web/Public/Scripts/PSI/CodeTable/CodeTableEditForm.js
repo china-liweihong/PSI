@@ -4,6 +4,10 @@
 Ext.define("PSI.CodeTable.CodeTableEditForm", {
 	extend : "PSI.AFX.BaseDialogForm",
 
+	config : {
+		category : null
+	},
+
 	initComponent : function() {
 		var me = this;
 		var entity = me.getEntity();
@@ -26,11 +30,6 @@ Ext.define("PSI.CodeTable.CodeTableEditForm", {
 					},
 					scope : me
 				});
-
-		var categoryStore = null;
-		if (me.getParentForm()) {
-			categoryStore = me.getParentForm().getCategoryGrid().getStore();
-		}
 
 		var t = entity == null ? "新增码表" : "编辑码表";
 		var f = entity == null
@@ -82,6 +81,10 @@ Ext.define("PSI.CodeTable.CodeTableEditForm", {
 									name : "id",
 									value : entity == null ? null : entity
 											.get("id")
+								}, {
+									id : "PSI_CodeTable_CodeTableEditForm_editCategoryId",
+									xtype : "hidden",
+									name : "categoryId"
 								}, {
 									id : "PSI_CodeTable_CodeTableEditForm_editCategory",
 									xtype : "psi_codetablecategoryfield",
@@ -170,6 +173,8 @@ Ext.define("PSI.CodeTable.CodeTableEditForm", {
 
 		me.editForm = Ext.getCmp("PSI_CodeTable_CodeTableEditForm_editForm");
 
+		me.editCategoryId = Ext
+				.getCmp("PSI_CodeTable_CodeTableEditForm_editCategoryId");
 		me.editCategory = Ext
 				.getCmp("PSI_CodeTable_CodeTableEditForm_editCategory");
 		me.editCode = Ext.getCmp("PSI_CodeTable_CodeTableEditForm_editCode");
@@ -180,6 +185,12 @@ Ext.define("PSI.CodeTable.CodeTableEditForm", {
 
 		me.__editorList = [me.editCategory, me.editCode, me.editName,
 				me.editTableName, me.editMemo];
+
+		var c = me.getCategory();
+		if (c) {
+			me.editCategory.setIdValue(c.get("id"));
+			me.editCategory.setValue(c.get("name"));
+		}
 	},
 
 	onWndShow : function() {
@@ -203,7 +214,8 @@ Ext.define("PSI.CodeTable.CodeTableEditForm", {
 							if (success) {
 								var data = Ext.JSON
 										.decode(response.responseText);
-								me.editCategory.setValue(data.categoryId);
+								me.editCategory.setIdValue(data.categoryId);
+								me.editCategory.setValue(data.categoryName);
 								me.editCode.setValue(data.code);
 								me.editName.setValue(data.name);
 								me.editTableName.setValue(data.tableName);
@@ -223,6 +235,8 @@ Ext.define("PSI.CodeTable.CodeTableEditForm", {
 	onOK : function() {
 		var me = this;
 
+		me.editCategoryId.setValue(me.editCategory.getIdValue());
+		
 		var f = me.editForm;
 		var el = f.getEl();
 		el && el.mask(PSI.Const.SAVING);

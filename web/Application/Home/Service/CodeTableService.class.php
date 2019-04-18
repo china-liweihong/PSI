@@ -123,4 +123,50 @@ class CodeTableService extends PSIBaseExService {
 		$dao = new CodeTableDAO($this->db());
 		return $dao->queryDataForCategory($params);
 	}
+
+	/**
+	 * 新增或编辑码表
+	 */
+	public function editCodeTable($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$id = $params["id"];
+		$name = $params["name"];
+		
+		$db = $this->db();
+		$db->startTrans();
+		
+		$log = null;
+		$dao = new CodeTableDAO($db);
+		if ($id) {
+			// 编辑
+			$rc = $dao->updateCodeTable($params);
+			if ($rc) {
+				$db->rollback();
+				return $rc;
+			}
+			
+			$log = "编辑码表：{$name}";
+		} else {
+			// 新增
+			$rc = $dao->addCodeTable($params);
+			if ($rc) {
+				$db->rollback();
+				return $rc;
+			}
+			
+			$id = $params["id"];
+			$log = "新增码表：{$name}";
+		}
+		
+		// 记录业务日志
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
+		return $this->ok($id);
+	}
 }

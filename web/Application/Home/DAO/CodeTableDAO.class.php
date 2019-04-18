@@ -236,4 +236,16 @@ class CodeTableDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 新增码表
+	 * 
+	 * @param array $params        	
+	 * @return array|null
+	 */
+	public function addCodeTable(&$params) {
+		$db = $this->db;
+		
+		return $this->todo();
+	}
 }

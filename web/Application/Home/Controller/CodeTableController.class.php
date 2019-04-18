@@ -100,4 +100,22 @@ class CodeTableController extends PSIBaseController {
 			$this->ajaxReturn($service->queryDataForCategory($params));
 		}
 	}
+
+	/**
+	 * 新增或编辑码表
+	 */
+	public function editCodeTable() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id"),
+					"code" => I("post.code"),
+					"name" => I("post.name"),
+					"tableName" => I("post.tableName"),
+					"memo" => I("post.memo")
+			];
+			
+			$service = new CodeTableService();
+			$this->ajaxReturn($service->editCodeTable($params));
+		}
+	}
 }

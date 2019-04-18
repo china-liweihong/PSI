@@ -86,4 +86,18 @@ class CodeTableController extends PSIBaseController {
 			$this->ajaxReturn($service->codeTableList($params));
 		}
 	}
+
+	/**
+	 * 码表分类自定义字段 - 查询数据
+	 */
+	public function queryDataForCategory() {
+		if (IS_POST) {
+			$params = [
+					"queryKey" => I("post.queryKey")
+			];
+			
+			$service = new CodeTableService();
+			$this->ajaxReturn($service->queryDataForCategory($params));
+		}
+	}
 }

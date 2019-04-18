@@ -111,4 +111,16 @@ class CodeTableService extends PSIBaseExService {
 		$dao = new CodeTableDAO($this->db());
 		return $dao->codeTableList($params);
 	}
+
+	/**
+	 * 码表分类自定义字段 - 查询数据
+	 */
+	public function queryDataForCategory($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new CodeTableDAO($this->db());
+		return $dao->queryDataForCategory($params);
+	}
 }

@@ -38,10 +38,23 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 											autoLoad : false,
 											data : []
 										})
+							}, " ", "-", " ", {
+								xtype : "displayfield",
+								value : "客户 "
+							}, {
+								cls : "PSI-toolbox",
+								id : "editCustomerQuery",
+								xtype : "psi_customerfield",
+								width : 200,
+								showModal : true
 							}, {
 								text : "查询",
 								iconCls : "PSI-button-refresh",
 								handler : me.onQuery,
+								scope : me
+							}, {
+								text : "清空查询条件查询",
+								handler : me.onClearQuery,
 								scope : me
 							}, "-", {
 								text : "关闭",
@@ -106,7 +119,9 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 		store.on("beforeload", function() {
 					Ext.apply(store.proxy.extraParams, {
 								categoryId : Ext.getCmp("comboCategory")
-										.getValue()
+										.getValue(),
+								customerId : Ext.getCmp("editCustomerQuery")
+										.getIdValue()
 							});
 				});
 
@@ -371,6 +386,10 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 
 						if (success) {
 							var data = Ext.JSON.decode(response.responseText);
+							store.add({
+										id : "",
+										name : "[全部]"
+									});
 							store.add(data);
 
 							if (store.getCount() > 0) {
@@ -411,5 +430,12 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
 		}
 
 		this.getDetailGrid().getStore().loadPage(1);
+	},
+
+	onClearQuery : function() {
+		var me = this;
+
+		Ext.getCmp("editCustomerQuery").clearIdValue();
+		me.onQuery();
 	}
 });

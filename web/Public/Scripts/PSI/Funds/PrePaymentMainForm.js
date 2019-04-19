@@ -38,10 +38,24 @@ Ext.define("PSI.Funds.PrePaymentMainForm", {
 											autoLoad : false,
 											data : []
 										})
+							}, " ", "-", " ", {
+								id : "editQueryLabel",
+								xtype : "displayfield",
+								value : "供应商 "
+							}, {
+								cls : "PSI-toolbox",
+								id : "editSupplierQuery",
+								xtype : "psi_supplierfield",
+								width : 200,
+								showModal : true
 							}, {
 								text : "查询",
 								iconCls : "PSI-button-refresh",
 								handler : me.onQuery,
+								scope : me
+							}, {
+								text : "清空查询条件查询",
+								handler : me.onClearQuery,
 								scope : me
 							}, "-", {
 								text : "关闭",
@@ -105,7 +119,9 @@ Ext.define("PSI.Funds.PrePaymentMainForm", {
 		store.on("beforeload", function() {
 					Ext.apply(store.proxy.extraParams, {
 								categoryId : Ext.getCmp("comboCategory")
-										.getValue()
+										.getValue(),
+								supplierId : Ext.getCmp("editSupplierQuery")
+										.getIdValue()
 							});
 				});
 
@@ -371,6 +387,10 @@ Ext.define("PSI.Funds.PrePaymentMainForm", {
 
 						if (success) {
 							var data = Ext.JSON.decode(response.responseText);
+							store.add({
+										id : "",
+										name : "[全部]"
+									});
 							store.add(data);
 
 							if (store.getCount() > 0) {
@@ -411,5 +431,12 @@ Ext.define("PSI.Funds.PrePaymentMainForm", {
 		}
 
 		this.getDetailGrid().getStore().loadPage(1);
+	},
+
+	onClearQuery : function() {
+		var me = this;
+
+		Ext.getCmp("editSupplierQuery").clearIdValue();
+		me.onQuery();
 	}
 });

@@ -512,6 +512,7 @@ class FundsController extends PSIBaseController {
 		if (IS_POST) {
 			$params = array(
 					"categoryId" => I("post.categoryId"),
+					"supplierId" => I("post.supplierId"),
 					"page" => I("post.page"),
 					"start" => I("post.start"),
 					"limit" => I("post.limit")

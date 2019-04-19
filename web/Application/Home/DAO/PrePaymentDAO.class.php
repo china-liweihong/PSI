@@ -222,20 +222,31 @@ class PrePaymentDAO extends PSIBaseExDAO {
 		$limit = $params["limit"];
 		
 		$categoryId = $params["categoryId"];
+		$supplierId = $params["supplierId"];
 		$companyId = $params["companyId"];
 		if ($this->companyIdNotExists($companyId)) {
 			return $this->emptyResult();
 		}
 		
+		$queryParams = [];
 		$sql = "select r.id, c.id as supplier_id, c.code, c.name,
 					r.in_money, r.out_money, r.balance_money
 				from t_pre_payment r, t_supplier c
-				where r.supplier_id = c.id and c.category_id = '%s'
-					and r.company_id = '%s'
-				order by c.code
+				where r.supplier_id = c.id and r.company_id = '%s' ";
+		$queryParams[] = $companyId;
+		if ($supplierId) {
+			$sql .= " and c.id = '%s' ";
+			$queryParams[] = $supplierId;
+		} else if ($categoryId) {
+			$sql .= " and c.category_id = '%s' ";
+			$queryParams[] = $categoryId;
+		}
+		$sql .= " order by c.code
 				limit %d , %d
 				";
-		$data = $db->query($sql, $categoryId, $companyId, $start, $limit);
+		$queryParams[] = $start;
+		$queryParams[] = $limit;
+		$data = $db->query($sql, $queryParams);
 		
 		$result = array();
 		foreach ( $data as $i => $v ) {
@@ -248,12 +259,21 @@ class PrePaymentDAO extends PSIBaseExDAO {
 			$result[$i]["balanceMoney"] = $v["balance_money"];
 		}
 		
+		$queryParams = [];
 		$sql = "select count(*) as cnt
 				from t_pre_payment r, t_supplier c
-				where r.supplier_id = c.id and c.category_id = '%s'
+				where r.supplier_id = c.id 
 					and r.company_id = '%s'
 				";
-		$data = $db->query($sql, $categoryId, $companyId);
+		$queryParams[] = $companyId;
+		if ($supplierId) {
+			$sql .= " and c.id = '%s' ";
+			$queryParams[] = $supplierId;
+		} else if ($categoryId) {
+			$sql .= " and c.category_id = '%s' ";
+			$queryParams[] = $categoryId;
+		}
+		$data = $db->query($sql, $queryParams);
 		$cnt = $data[0]["cnt"];
 		
 		return array(
@@ -264,7 +284,7 @@ class PrePaymentDAO extends PSIBaseExDAO {
 
 	/**
 	 * 预付款详情列表
-	 * 
+	 *
 	 * @param array $params        	
 	 * @return array
 	 */

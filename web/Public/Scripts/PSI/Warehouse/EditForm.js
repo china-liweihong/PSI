@@ -62,49 +62,49 @@ Ext.define("PSI.Warehouse.EditForm", {
 				+ "</h2>"
 				+ "<p style='color:#196d83'>标记 <span style='color:red;font-weight:bold'>*</span>的是必须录入数据的字段</p>";
 		Ext.apply(me, {
-					header : {
-						title : me.formatTitle(PSI.Const.PROD_NAME),
-						height : 40
-					},
-					width : 400,
-					height : 240,
-					layout : "border",
-					listeners : {
-						show : {
-							fn : me.onWndShow,
-							scope : me
+			header : {
+				title : me.formatTitle(PSI.Const.PROD_NAME),
+				height : 40
+			},
+			width : 400,
+			height : me.adding ? 240 : 270,
+			layout : "border",
+			listeners : {
+				show : {
+					fn : me.onWndShow,
+					scope : me
+				},
+				close : {
+					fn : me.onWndClose,
+					scope : me
+				}
+			},
+			items : [{
+						region : "north",
+						height : 90,
+						border : 0,
+						html : logoHtml
+					}, {
+						region : "center",
+						border : 0,
+						id : "PSI_Warehouse_EditForm_editForm",
+						xtype : "form",
+						layout : {
+							type : "table",
+							columns : 1
 						},
-						close : {
-							fn : me.onWndClose,
-							scope : me
-						}
-					},
-					items : [{
-								region : "north",
-								height : 90,
-								border : 0,
-								html : logoHtml
-							}, {
-								region : "center",
-								border : 0,
-								id : "PSI_Warehouse_EditForm_editForm",
-								xtype : "form",
-								layout : {
-									type : "table",
-									columns : 1
-								},
-								height : "100%",
-								bodyPadding : 5,
-								defaultType : 'textfield',
-								fieldDefaults : {
-									labelWidth : 60,
-									labelAlign : "right",
-									labelSeparator : "",
-									msgTarget : 'side',
-									width : 370,
-									margin : "5"
-								},
-								items : [{
+						height : "100%",
+						bodyPadding : 5,
+						defaultType : 'textfield',
+						fieldDefaults : {
+							labelWidth : 60,
+							labelAlign : "right",
+							labelSeparator : "",
+							msgTarget : 'side',
+							width : 370,
+							margin : "5"
+						},
+						items : [{
 									xtype : "hidden",
 									name : "id",
 									value : entity == null ? null : entity
@@ -139,10 +139,33 @@ Ext.define("PSI.Warehouse.EditForm", {
 											scope : me
 										}
 									}
+								}, {
+									id : "PSI_Warehouse_EditForm_editEnabled",
+									xtype : "combo",
+									queryMode : "local",
+									editable : false,
+									valueField : "id",
+									labelWidth : 60,
+									labelAlign : "right",
+									labelSeparator : "",
+									fieldLabel : "状态",
+									beforeLabelTextTpl : PSI.Const.REQUIRED,
+									store : Ext.create("Ext.data.ArrayStore", {
+												fields : ["id", "text"],
+												data : [[1, "启用"], [2, "停用"]]
+											}),
+									hidden : me.adding,
+									value : entity == null
+											? 1
+											: parseInt(entity.get("enabled"))
+								}, {
+									id : "PSI_Warehouse_EditForm_hiddenEnabled",
+									xtype : "hidden",
+									name : "enabled"
 								}],
-								buttons : buttons
-							}]
-				});
+						buttons : buttons
+					}]
+		});
 
 		me.callParent(arguments);
 
@@ -150,6 +173,8 @@ Ext.define("PSI.Warehouse.EditForm", {
 
 		me.editCode = Ext.getCmp("PSI_Warehouse_EditForm_editCode");
 		me.editName = Ext.getCmp("PSI_Warehouse_EditForm_editName");
+		me.editEnabled = Ext.getCmp("PSI_Warehouse_EditForm_editEnabled");
+		me.hiddenEnabled = Ext.getCmp("PSI_Warehouse_EditForm_hiddenEnabled");
 	},
 
 	/**
@@ -157,6 +182,9 @@ Ext.define("PSI.Warehouse.EditForm", {
 	 */
 	onOK : function(thenAdd) {
 		var me = this;
+
+		me.hiddenEnabled.setValue(me.editEnabled.getValue());
+
 		var f = me.editForm;
 		var el = f.getEl();
 		el.mask(PSI.Const.SAVING);

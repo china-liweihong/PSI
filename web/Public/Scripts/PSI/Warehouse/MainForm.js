@@ -137,7 +137,9 @@ Ext.define("PSI.Warehouse.MainForm", {
 							dataIndex : "enabled",
 							width : 90,
 							renderer : function(value) {
-								return value == 1 ? "启用" : "停用";
+								return value == 1
+										? "启用"
+										: "<span style='color:red'>停用</span>";
 							}
 						}]
 			},

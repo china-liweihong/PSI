@@ -34,7 +34,7 @@ class WarehouseDAO extends PSIBaseExDAO {
 			$queryParams = $rs[1];
 		}
 		
-		$sql .= " order by code";
+		$sql .= " order by enabled, code";
 		
 		$result = [];
 		$data = $db->query($sql, $queryParams);
@@ -116,6 +116,7 @@ class WarehouseDAO extends PSIBaseExDAO {
 		$code = trim($params["code"]);
 		$name = trim($params["name"]);
 		$py = $params["py"];
+		$enabled = intval($params["enabled"]);
 		
 		if ($this->isEmptyStringAfterTrim($code)) {
 			return $this->bad("仓库编码不能为空");
@@ -141,9 +142,10 @@ class WarehouseDAO extends PSIBaseExDAO {
 		}
 		
 		$sql = "update t_warehouse
-				set code = '%s', name = '%s', py = '%s'
+				set code = '%s', name = '%s', py = '%s',
+					enabled = %d
 				where id = '%s' ";
-		$rc = $db->execute($sql, $code, $name, $py, $id);
+		$rc = $db->execute($sql, $code, $name, $py, $enabled, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}

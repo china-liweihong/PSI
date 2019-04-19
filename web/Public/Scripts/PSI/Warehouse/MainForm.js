@@ -84,59 +84,75 @@ Ext.define("PSI.Warehouse.MainForm", {
 		var modelName = "PSI_Warehouse_MainForm_PSIWarehouse";
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
-					fields : ["id", "code", "name", "inited", "dataOrg"]
+					fields : ["id", "code", "name", "inited", "dataOrg",
+							"enabled"]
 				});
 
 		me.__mainGrid = Ext.create("Ext.grid.Panel", {
-					cls : "PSI",
-					border : 0,
-					viewConfig : {
-						enableTextSelection : true
-					},
-					columnLines : true,
-					columns : {
-						defaults : {
-							menuDisabled : true,
-							sortable : false
-						},
-						items : [{
-									xtype : "rownumberer",
-									width : 40
-								}, {
-									header : "仓库编码",
-									dataIndex : "code",
-									width : 100
-								}, {
-									header : "仓库名称",
-									dataIndex : "name",
-									width : 300
-								}, {
-									header : "库存建账",
-									dataIndex : "inited",
-									width : 90,
-									renderer : function(value) {
-										return value == 1
-												? "建账完毕"
-												: "<span style='color:red'>待建账</span>";
-									}
-								}, {
-									header : "创建人的数据域",
-									dataIndex : "dataOrg",
-									width : 150
-								}]
-					},
-					store : Ext.create("Ext.data.Store", {
-								model : modelName,
-								autoLoad : false,
-								data : []
-							}),
-					listeners : {
-						itemdblclick : {
-							fn : me.onEditWarehouse,
-							scope : me
-						}
-					}
-				});
+			cls : "PSI",
+			border : 0,
+			viewConfig : {
+				enableTextSelection : true
+			},
+			columnLines : true,
+			columns : {
+				defaults : {
+					menuDisabled : true,
+					sortable : false
+				},
+				items : [{
+							xtype : "rownumberer",
+							width : 40
+						}, {
+							header : "仓库编码",
+							dataIndex : "code",
+							width : 100,
+							renderer : function(value, metaData, record) {
+								if (parseInt(record.get("enabled")) == 1) {
+									return value;
+								} else {
+									return "<span style='color:gray;text-decoration:line-through;'>"
+											+ value + "</span>";
+								}
+							}
+						}, {
+							header : "仓库名称",
+							dataIndex : "name",
+							width : 300
+						}, {
+							header : "库存建账",
+							dataIndex : "inited",
+							width : 90,
+							renderer : function(value) {
+								return value == 1
+										? "建账完毕"
+										: "<span style='color:red'>待建账</span>";
+							}
+						}, {
+							header : "创建人的数据域",
+							dataIndex : "dataOrg",
+							width : 150
+						}, {
+							header : "仓库状态",
+							dataIndex : "enabled",
+							width : 90,
+							renderer : function(value) {
+								return value == 1 ? "启用" : "停用";
+							}
+						}]
+			},
+			store : Ext.create("Ext.data.Store", {
+						model : modelName,
+						autoLoad : false,
+						data : []
+					}),
+			listeners : {
+				itemdblclick : {
+					fn : me.onEditWarehouse,
+					scope : me
+				}
+			}
+		});
 
 		return me.__mainGrid;
 	},

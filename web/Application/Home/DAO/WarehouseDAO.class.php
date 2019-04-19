@@ -25,7 +25,7 @@ class WarehouseDAO extends PSIBaseExDAO {
 			return $this->emptyResult();
 		}
 		
-		$sql = "select id, code, name, inited, data_org from t_warehouse ";
+		$sql = "select id, code, name, inited, data_org, enabled from t_warehouse ";
 		$ds = new DataOrgDAO($db);
 		$queryParams = [];
 		$rs = $ds->buildSQL(FIdConst::WAREHOUSE, "t_warehouse", $loginUserId);
@@ -44,7 +44,8 @@ class WarehouseDAO extends PSIBaseExDAO {
 					"code" => $v["code"],
 					"name" => $v["name"],
 					"inited" => $v["inited"],
-					"dataOrg" => $v["data_org"]
+					"dataOrg" => $v["data_org"],
+					"enabled" => $v["enabled"]
 			];
 		}
 		

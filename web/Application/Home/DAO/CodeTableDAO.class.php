@@ -237,14 +237,173 @@ class CodeTableDAO extends PSIBaseExDAO {
 		return $result;
 	}
 
+	private function checkTableName($tableName) {
+		$tableName = strtolower($tableName);
+		
+		$len = strlen($tableName);
+		if ($len == 0) {
+			return $this->bad("表名不能为空");
+		}
+		
+		$c = ord($tableName{0});
+		$isABC = ord('a') <= $c && ord('z') >= $c;
+		if (! $isABC) {
+			return $this->bad("表名需要以字符开头");
+		}
+		
+		for($i = 1; $i < $len; $i ++) {
+			$c = ord($tableName{$i});
+			$isABC = ord('a') <= $c && ord('z') >= $c;
+			$isNumber = ord('0') <= $c && ord('9') >= $c;
+			$isOK = $isABC || $isNumber || ord('_') == $c;
+			if (! $isOK) {
+				$index = $i + 1;
+				return $this->bad("表名的第{$index}个字符非法");
+			}
+		}
+		
+		// 表名正确
+		return null;
+	}
+
+	/**
+	 * 返回码表的系统固有列
+	 *
+	 * @return array
+	 */
+	private function getCodeTableSysCols() {
+		$result = [];
+		
+		// id
+		$result[] = [
+				"caption" => "id",
+				"fieldName" => "id",
+				"fieldType" => "varchar(",
+				"fieldLength" => 255,
+				"fieldDecimal" => 0,
+				"valueFrom" => "",
+				"valueFromTableName" => "",
+				"valueFromColName" => "",
+				"mustInput" => 1,
+				"showOrder" => - 1000
+		];
+		
+		// code
+		$result[] = [
+				"caption" => "编码",
+				"fieldName" => "code",
+				"fieldType" => "varchar",
+				"fieldLength" => 255,
+				"fieldDecimal" => 0,
+				"valueFrom" => "",
+				"valueFromTableName" => "",
+				"valueFromColName" => "",
+				"mustInput" => 1,
+				"showOrder" => 0
+		];
+		
+		// name
+		$result[] = [
+				"caption" => "名称",
+				"fieldName" => "name",
+				"fieldType" => "varchar",
+				"fieldLength" => 255,
+				"fieldDecimal" => 0,
+				"valueFrom" => "",
+				"valueFromTableName" => "",
+				"valueFromColName" => "",
+				"mustInput" => 1,
+				"showOrder" => 1
+		];
+		
+		// 拼音字头
+		$result[] = [
+				"caption" => "拼音字头",
+				"fieldName" => "py",
+				"fieldType" => "varchar",
+				"fieldLength" => 255,
+				"fieldDecimal" => 0,
+				"valueFrom" => "",
+				"valueFromTableName" => "",
+				"valueFromColName" => "",
+				"mustInput" => 0,
+				"showOrder" => -900
+		];
+		
+		
+		// 数据域data_org
+		$result[] = [
+				"caption" => "数据域",
+				"fieldName" => "data_org",
+				"fieldType" => "varchar",
+				"fieldLength" => 255,
+				"fieldDecimal" => 0,
+				"valueFrom" => "",
+				"valueFromTableName" => "",
+				"valueFromColName" => "",
+				"mustInput" => 0,
+				"showOrder" => -800
+		];
+		
+		return $result;
+	}
+
 	/**
 	 * 新增码表
-	 * 
+	 *
 	 * @param array $params        	
 	 * @return array|null
 	 */
 	public function addCodeTable(&$params) {
 		$db = $this->db;
+		
+		$code = strtoupper($params["code"] ?? "");
+		$name = $params["name"];
+		$memo = $params["memo"] ?? "";
+		$tableName = strtolower($params["tableName"]);
+		
+		// 检查编码是否已经存在
+		if ($code) {
+			$sql = "select count(*) as cnt from t_code_table_md
+					where code = '%s' ";
+			$data = $db->query($sql, $code);
+			$cnt = $data[0]["cnt"];
+			if ($cnt > 0) {
+				return $this->bad("编码为[{$code}]的码表已经存在");
+			}
+		}
+		
+		// 检查名称是否已经存在
+		$sql = "select count(*) as cnt from t_code_table_md
+					where name = '%s' ";
+		$data = $db->query($sql, $name);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("名称为[{$name}]的码表已经存在");
+		}
+		
+		// 检查表名是否正确
+		$rc = $this->checkTableName($tableName);
+		if ($rc) {
+			return $rc;
+		}
+		// 检查名表是否已经存在
+		$sql = "select count(*) as cnt from t_code_table_md
+					where table_name = '%s' ";
+		$data = $db->query($sql, $tableName);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("表名为[{$tableName}]的码表已经存在");
+		}
+		
+		$id = $this->newId();
+		
+		$sql = "insert into t_code_table_md (id, code, name, table_name, memo)
+				values ('%s', '%s', '%s', '%s', '%s')";
+		$rc = $db->execute($sql, $id, $code, $name, $tableName, $memo);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
 		
 		return $this->todo();
 	}

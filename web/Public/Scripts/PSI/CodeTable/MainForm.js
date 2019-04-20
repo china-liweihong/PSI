@@ -271,7 +271,7 @@ Ext.define("PSI.CodeTable.MainForm", {
 										menuDisabled : true,
 										sortable : false
 									}, {
-										header : "列小数长度",
+										header : "列小数位数",
 										dataIndex : "fieldDecimal",
 										width : 100,
 										menuDisabled : true,

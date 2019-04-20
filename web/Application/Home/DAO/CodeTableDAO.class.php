@@ -327,9 +327,8 @@ class CodeTableDAO extends PSIBaseExDAO {
 				"valueFromTableName" => "",
 				"valueFromColName" => "",
 				"mustInput" => 0,
-				"showOrder" => -900
+				"showOrder" => - 900
 		];
-		
 		
 		// 数据域data_org
 		$result[] = [
@@ -342,7 +341,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 				"valueFromTableName" => "",
 				"valueFromColName" => "",
 				"mustInput" => 0,
-				"showOrder" => -800
+				"showOrder" => - 800
 		];
 		
 		return $result;
@@ -357,9 +356,15 @@ class CodeTableDAO extends PSIBaseExDAO {
 	public function addCodeTable(&$params) {
 		$db = $this->db;
 		
+		$categoryId = $params["categoryId"];
+		if (! $this->getCodeTableCategoryById($categoryId)) {
+			return $this->bad("码表分类不存在");
+		}
+		
 		$code = strtoupper($params["code"] ?? "");
 		$name = $params["name"];
 		$memo = $params["memo"] ?? "";
+		$py = $params["py"];
 		$tableName = strtolower($params["tableName"]);
 		
 		// 检查编码是否已经存在
@@ -398,13 +403,35 @@ class CodeTableDAO extends PSIBaseExDAO {
 		
 		$id = $this->newId();
 		
-		$sql = "insert into t_code_table_md (id, code, name, table_name, memo)
-				values ('%s', '%s', '%s', '%s', '%s')";
-		$rc = $db->execute($sql, $id, $code, $name, $tableName, $memo);
+		$sql = "insert into t_code_table_md (id, category_id, code, name, table_name, py, memo)
+				values ('%s', '%s', '%s', '%s', '%s', '%s', '%s')";
+		$rc = $db->execute($sql, $id, $categoryId, $code, $name, $tableName, $py, $memo);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
 		
-		return $this->todo();
+		// 码表标准列
+		$cols = $this->getCodeTableSysCols();
+		foreach ( $cols as $v ) {
+			$sql = "insert into t_code_table_cols_md (id, table_id,
+						caption, db_field_name, db_field_type, db_field_length,
+						db_field_decimal, show_order, value_from, value_from_table_name,
+						value_from_col_name, must_input)
+					values ('%s', '%s',
+						'%s', '%s', '%s', %d,
+						%d, %d, %d, '%s',
+						'%s', %d)";
+			$rc = $db->execute($sql, $this->newId(), $id, $v["caption"], $v["fieldName"], 
+					$v["fieldType"], $v["fieldLength"], $v["fieldDecimal"], $v["showOrder"], 
+					$v["valueFrom"], $v["valueFromTableName"], $v["valueFromColName"], 
+					$v["mustInput"]);
+			if ($rc === false) {
+				return $this->sqlError(__METHOD__, __LINE__);
+			}
+		}
+		
+		// 操作成功
+		$params["id"] = $id;
+		return null;
 	}
 }

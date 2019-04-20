@@ -108,6 +108,7 @@ class CodeTableController extends PSIBaseController {
 		if (IS_POST) {
 			$params = [
 					"id" => I("post.id"),
+					"categoryId" => I("post.categoryId"),
 					"code" => I("post.code"),
 					"name" => I("post.name"),
 					"tableName" => I("post.tableName"),

@@ -135,6 +135,10 @@ class CodeTableService extends PSIBaseExService {
 		$id = $params["id"];
 		$name = $params["name"];
 		
+		$pyService = new PinyinService();
+		$py = $pyService->toPY($name);
+		$params["py"] = $py;
+		
 		$db = $this->db();
 		$db->startTrans();
 		

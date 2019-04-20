@@ -12,29 +12,42 @@ Ext.define("PSI.CodeTable.MainForm", {
 							tbar : me.getToolbarCmp(),
 							layout : "border",
 							items : [{
-										region : "center",
-										layout : "border",
-										border : 0,
-										items : [{
-													region : "center",
-													xtype : "panel",
-													layout : "fit",
-													border : 0,
-													items : [me.getMainGrid()]
-												}, {
-													id : "panelCategory",
-													xtype : "panel",
-													region : "west",
-													layout : "fit",
-													width : 300,
-													split : true,
-													collapsible : true,
-													header : false,
-													border : 0,
-													items : [me
-															.getCategoryGrid()]
-												}]
-									}]
+								region : "center",
+								layout : "border",
+								border : 0,
+								items : [{
+											region : "center",
+											xtype : "panel",
+											layout : "border",
+											border : 0,
+											items : [{
+														region : "center",
+														layout : "fit",
+														border : 0,
+														items : me
+																.getMainGrid()
+													}, {
+														region : "south",
+														layout : "fit",
+														border : 0,
+														height : "60%",
+														split : true,
+														items : [me
+																.getColsGrid()]
+													}]
+										}, {
+											id : "panelCategory",
+											xtype : "panel",
+											region : "west",
+											layout : "fit",
+											width : 300,
+											split : true,
+											collapsible : true,
+											header : false,
+											border : 0,
+											items : [me.getCategoryGrid()]
+										}]
+							}]
 						});
 
 				me.callParent(arguments);
@@ -197,6 +210,99 @@ Ext.define("PSI.CodeTable.MainForm", {
 						});
 
 				return me.__mainGrid;
+			},
+
+			getColsGrid : function() {
+				var me = this;
+
+				if (me.__colsGrid) {
+					return me.__colsGrid;
+				}
+
+				var modelName = "PSICodeTableCols";
+
+				Ext.define(modelName, {
+							extend : "Ext.data.Model",
+							fields : ["id", "caption", "fieldName",
+									"fieldType", "fieldLength", "fieldDecimal",
+									"valueFrom", "valueFromTableName",
+									"valueFromColName", "mustInput",
+									"showOrder"]
+						});
+
+				me.__colsGrid = Ext.create("Ext.grid.Panel", {
+							cls : "PSI",
+							viewConfig : {
+								enableTextSelection : true
+							},
+							header : {
+								height : 30,
+								title : me.formatGridHeaderTitle("码表列")
+							},
+							columnLines : true,
+							columns : [{
+										header : "显示次序",
+										dataIndex : "showOrder",
+										width : 100,
+										menuDisabled : true,
+										sortable : false
+									}, {
+										header : "列标题",
+										dataIndex : "caption",
+										width : 150,
+										menuDisabled : true,
+										sortable : false
+									}, {
+										header : "列数据库名",
+										dataIndex : "fieldName",
+										width : 150,
+										menuDisabled : true,
+										sortable : false
+									}, {
+										header : "列数据类型",
+										dataIndex : "fieldType",
+										width : 100,
+										menuDisabled : true,
+										sortable : false
+									}, {
+										header : "列数据长度",
+										dataIndex : "fieldLength",
+										width : 100,
+										menuDisabled : true,
+										sortable : false
+									}, {
+										header : "列小数长度",
+										dataIndex : "fieldDecimal",
+										width : 100,
+										menuDisabled : true,
+										sortable : false
+									}, {
+										header : "值来源",
+										dataIndex : "valueFrom",
+										width : 100,
+										menuDisabled : true,
+										sortable : false
+									}, {
+										header : "值来源表",
+										dataIndex : "valueFromTableName",
+										width : 100,
+										menuDisabled : true,
+										sortable : false
+									}, {
+										header : "值来源字段",
+										dataIndex : "valueFromColName",
+										width : 100,
+										menuDisabled : true,
+										sortable : false
+									}],
+							store : Ext.create("Ext.data.Store", {
+										model : modelName,
+										autoLoad : false,
+										data : []
+									})
+						});
+
+				return me.__colsGrid;
 			},
 
 			onAddCategory : function() {
@@ -390,5 +496,59 @@ Ext.define("PSI.CodeTable.MainForm", {
 							category : category
 						});
 				form.show();
+			},
+
+			onMainGridSelect : function() {
+				var me = this;
+				me.refreshColsGrid();
+			},
+
+			refreshColsGrid : function(id) {
+				var me = this;
+				var item = me.getMainGrid().getSelectionModel().getSelection();
+				if (item == null || item.length != 1) {
+					me.getMainGrid().setTitle(me.formatGridHeaderTitle("码表"));
+					me.getColsGrid().setTitle(me.formatGridHeaderTitle("码表列"));
+					return;
+				}
+
+				var codeTable = item[0];
+
+				var grid = me.getColsGrid();
+				grid.setTitle(me.formatGridHeaderTitle("属于码表["
+						+ codeTable.get("name") + "]的列"));
+				var el = grid.getEl() || Ext.getBody();
+				el.mask(PSI.Const.LOADING);
+				var r = {
+					url : me.URL("Home/CodeTable/codeTableColsList"),
+					params : {
+						id : codeTable.get("id")
+					},
+					callback : function(options, success, response) {
+						var store = grid.getStore();
+
+						store.removeAll();
+
+						if (success) {
+							var data = me.decodeJSON(response.responseText);
+							store.add(data);
+
+							if (store.getCount() > 0) {
+								if (id) {
+									var r = store.findExact("id", id);
+									if (r != -1) {
+										grid.getSelectionModel().select(r);
+									}
+								} else {
+									grid.getSelectionModel().select(0);
+								}
+							}
+						}
+
+						el.unmask();
+					}
+				};
+
+				me.ajax(r);
 			}
 		});

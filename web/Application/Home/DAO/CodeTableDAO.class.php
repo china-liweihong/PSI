@@ -278,7 +278,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 		$result[] = [
 				"caption" => "id",
 				"fieldName" => "id",
-				"fieldType" => "varchar(",
+				"fieldType" => "varchar",
 				"fieldLength" => 255,
 				"fieldDecimal" => 0,
 				"valueFrom" => "",
@@ -433,5 +433,42 @@ class CodeTableDAO extends PSIBaseExDAO {
 		// 操作成功
 		$params["id"] = $id;
 		return null;
+	}
+
+	/**
+	 * 某个码表的列
+	 */
+	public function codeTableColsList($params) {
+		$db = $this->db;
+		
+		// 码表id
+		$id = $params["id"];
+		
+		$sql = "select id, caption, db_field_name, db_field_type, db_field_length,
+						db_field_decimal, show_order, value_from, value_from_table_name,
+						value_from_col_name, must_input
+				from t_code_table_cols_md
+				where table_id = '%s' 
+				order by show_order";
+		$data = $db->query($sql, $id);
+		
+		$result = [];
+		foreach ( $data as $v ) {
+			$result[] = [
+					"id" => $v["id"],
+					"caption" => $v["caption"],
+					"fieldName" => $v["db_field_name"],
+					"fieldType" => $v["db_field_type"],
+					"fieldLength" => $v["db_field_length"],
+					"fieldDecimal" => $v["db_field_decimal"],
+					"showOrder" => $v["show_order"],
+					"valueFrom" => $v["value_from"],
+					"valueFromTableName" => $v["value_from_table_name"],
+					"valueFromColName" => $v["value_from_col_name"],
+					"mustInput" => $v["must_input"]
+			];
+		}
+		
+		return $result;
 	}
 }

@@ -173,4 +173,16 @@ class CodeTableService extends PSIBaseExService {
 		
 		return $this->ok($id);
 	}
+
+	/**
+	 * 某个码表的列
+	 */
+	public function codeTableColsList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new CodeTableDAO($this->db());
+		return $dao->codeTableColsList($params);
+	}
 }

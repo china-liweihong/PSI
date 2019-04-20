@@ -281,7 +281,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 				"fieldType" => "varchar",
 				"fieldLength" => 255,
 				"fieldDecimal" => 0,
-				"valueFrom" => "",
+				"valueFrom" => 1,
 				"valueFromTableName" => "",
 				"valueFromColName" => "",
 				"mustInput" => 1,
@@ -295,7 +295,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 				"fieldType" => "varchar",
 				"fieldLength" => 255,
 				"fieldDecimal" => 0,
-				"valueFrom" => "",
+				"valueFrom" => 1,
 				"valueFromTableName" => "",
 				"valueFromColName" => "",
 				"mustInput" => 1,
@@ -309,7 +309,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 				"fieldType" => "varchar",
 				"fieldLength" => 255,
 				"fieldDecimal" => 0,
-				"valueFrom" => "",
+				"valueFrom" => 1,
 				"valueFromTableName" => "",
 				"valueFromColName" => "",
 				"mustInput" => 1,
@@ -323,7 +323,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 				"fieldType" => "varchar",
 				"fieldLength" => 255,
 				"fieldDecimal" => 0,
-				"valueFrom" => "",
+				"valueFrom" => 1,
 				"valueFromTableName" => "",
 				"valueFromColName" => "",
 				"mustInput" => 0,
@@ -337,7 +337,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 				"fieldType" => "varchar",
 				"fieldLength" => 255,
 				"fieldDecimal" => 0,
-				"valueFrom" => "",
+				"valueFrom" => 1,
 				"valueFromTableName" => "",
 				"valueFromColName" => "",
 				"mustInput" => 0,
@@ -435,6 +435,19 @@ class CodeTableDAO extends PSIBaseExDAO {
 		return null;
 	}
 
+	private function valueFromCodeToName($valueFrom) {
+		switch ($valueFrom) {
+			case 1 :
+				return "直接录入";
+			case 2 :
+				return "引用系统数据字典";
+			case 3 :
+				return "引用其他码表";
+			default :
+				return "";
+		}
+	}
+
 	/**
 	 * 某个码表的列
 	 */
@@ -462,7 +475,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 					"fieldLength" => $v["db_field_length"],
 					"fieldDecimal" => $v["db_field_decimal"],
 					"showOrder" => $v["show_order"],
-					"valueFrom" => $v["value_from"],
+					"valueFrom" => $this->valueFromCodeToName($v["value_from"]),
 					"valueFromTableName" => $v["value_from_table_name"],
 					"valueFromColName" => $v["value_from_col_name"],
 					"mustInput" => $v["must_input"]

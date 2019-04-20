@@ -297,7 +297,7 @@ Ext.define("PSI.CodeTable.CodeTableEditForm", {
 
 		if (me.__lastId) {
 			if (me.getParentForm()) {
-				me.getParentForm().freshMainGrid(me.__lastId);
+				me.getParentForm().refreshMainGrid(me.__lastId);
 			}
 		}
 	}

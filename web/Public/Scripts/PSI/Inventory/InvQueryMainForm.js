@@ -9,7 +9,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 
 		Ext.define("PSIWarehouse", {
 					extend : "Ext.data.Model",
-					fields : ["id", "code", "name"]
+					fields : ["id", "code", "name", "enabled"]
 				});
 
 		Ext.define("PSIInventory", {
@@ -176,43 +176,61 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 		}
 
 		me.__warehouseGrid = Ext.create("Ext.grid.Panel", {
-					cls : "PSI",
-					header : {
-						height : 30,
-						title : me.formatGridHeaderTitle("已经建账的仓库")
-					},
-					tools : [{
-								type : "close",
-								handler : function() {
-									Ext.getCmp("panelWarehouse").collapse();
-								}
-							}],
-					columnLines : true,
-					columns : [{
-								header : "仓库编码",
-								dataIndex : "code",
-								menuDisabled : true,
-								sortable : false,
-								width : 80
-							}, {
-								header : "仓库名称",
-								dataIndex : "name",
-								menuDisabled : true,
-								sortable : false,
-								flex : 1
-							}],
-					store : Ext.create("Ext.data.Store", {
-								model : "PSIWarehouse",
-								autoLoad : false,
-								data : []
-							}),
-					listeners : {
-						select : {
-							fn : me.onWarehouseGridSelect,
-							scope : me
+			cls : "PSI",
+			header : {
+				height : 30,
+				title : me.formatGridHeaderTitle("已经建账的仓库")
+			},
+			tools : [{
+						type : "close",
+						handler : function() {
+							Ext.getCmp("panelWarehouse").collapse();
 						}
+					}],
+			columnLines : true,
+			columns : [{
+				header : "仓库编码",
+				dataIndex : "code",
+				menuDisabled : true,
+				sortable : false,
+				width : 80,
+				renderer : function(value, metaData, record) {
+					if (parseInt(record.get("enabled")) == 1) {
+						return value;
+					} else {
+						return "<span style='color:gray;text-decoration:line-through;'>"
+								+ value + "</span>";
 					}
-				});
+				}
+			}, {
+				header : "仓库名称",
+				dataIndex : "name",
+				menuDisabled : true,
+				sortable : false,
+				flex : 1,
+				renderer : function(value, metaData, record) {
+					if (parseInt(record.get("enabled")) == 1) {
+						return value;
+					} else {
+						return "<span style='color:gray;text-decoration:line-through;'>"
+								+ value
+								+ "</span>"
+								+ "<span style='color:red;'>(已停用)</span>";
+					}
+				}
+			}],
+			store : Ext.create("Ext.data.Store", {
+						model : "PSIWarehouse",
+						autoLoad : false,
+						data : []
+					}),
+			listeners : {
+				select : {
+					fn : me.onWarehouseGridSelect,
+					scope : me
+				}
+			}
+		});
 
 		return me.__warehouseGrid;
 	},

@@ -17,7 +17,7 @@ class InventoryService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$sql = "select id, code, name from t_warehouse 
+		$sql = "select id, code, name, enabled from t_warehouse 
 				where (inited = 1) ";
 		$queryParams = [];
 		
@@ -28,7 +28,7 @@ class InventoryService extends PSIBaseService {
 			$queryParams = array_merge($queryParams, $rs[1]);
 		}
 		
-		$sql .= " order by code";
+		$sql .= " order by enabled, code";
 		
 		return M()->query($sql, $queryParams);
 	}

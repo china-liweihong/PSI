@@ -227,7 +227,7 @@ Ext.define("PSI.CodeTable.MainForm", {
 									"fieldType", "fieldLength", "fieldDecimal",
 									"valueFrom", "valueFromTableName",
 									"valueFromColName", "mustInput",
-									"showOrder"]
+									"showOrder", "sysCol", "isVisible"]
 						});
 
 				me.__colsGrid = Ext.create("Ext.grid.Panel", {
@@ -240,61 +240,57 @@ Ext.define("PSI.CodeTable.MainForm", {
 								title : me.formatGridHeaderTitle("码表列")
 							},
 							columnLines : true,
-							columns : [{
-										header : "显示次序",
-										dataIndex : "showOrder",
-										width : 100,
-										menuDisabled : true,
-										sortable : false
-									}, {
-										header : "列标题",
-										dataIndex : "caption",
-										width : 150,
-										menuDisabled : true,
-										sortable : false
-									}, {
-										header : "列数据库名",
-										dataIndex : "fieldName",
-										width : 150,
-										menuDisabled : true,
-										sortable : false
-									}, {
-										header : "列数据类型",
-										dataIndex : "fieldType",
-										width : 100,
-										menuDisabled : true,
-										sortable : false
-									}, {
-										header : "列数据长度",
-										dataIndex : "fieldLength",
-										width : 100,
-										menuDisabled : true,
-										sortable : false
-									}, {
-										header : "列小数位数",
-										dataIndex : "fieldDecimal",
-										width : 100,
-										menuDisabled : true,
-										sortable : false
-									}, {
-										header : "值来源",
-										dataIndex : "valueFrom",
-										width : 100,
-										menuDisabled : true,
-										sortable : false
-									}, {
-										header : "值来源表",
-										dataIndex : "valueFromTableName",
-										width : 100,
-										menuDisabled : true,
-										sortable : false
-									}, {
-										header : "值来源字段",
-										dataIndex : "valueFromColName",
-										width : 100,
-										menuDisabled : true,
-										sortable : false
-									}],
+							columns : {
+								defaults : {
+									menuDisabled : true,
+									sortable : false
+								},
+								items : [{
+											header : "显示次序",
+											dataIndex : "showOrder",
+											width : 100
+										}, {
+											header : "列标题",
+											dataIndex : "caption",
+											width : 150
+										}, {
+											header : "列数据库名",
+											dataIndex : "fieldName",
+											width : 150
+										}, {
+											header : "列数据类型",
+											dataIndex : "fieldType",
+											width : 100
+										}, {
+											header : "列数据长度",
+											dataIndex : "fieldLength",
+											width : 100
+										}, {
+											header : "列小数位数",
+											dataIndex : "fieldDecimal",
+											width : 100
+										}, {
+											header : "值来源",
+											dataIndex : "valueFrom",
+											width : 100
+										}, {
+											header : "值来源表",
+											dataIndex : "valueFromTableName",
+											width : 100
+										}, {
+											header : "值来源字段",
+											dataIndex : "valueFromColName",
+											width : 100
+										}, {
+											header : "系统字段",
+											dataIndex : "sysCol",
+											width : 100
+										}, {
+											header : "对用户可见",
+											dataIndex : "isVisible",
+											width : 100
+										}]
+							},
 							store : Ext.create("Ext.data.Store", {
 										model : modelName,
 										autoLoad : false,

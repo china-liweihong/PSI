@@ -459,7 +459,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 		
 		$sql = "select id, caption, db_field_name, db_field_type, db_field_length,
 						db_field_decimal, show_order, value_from, value_from_table_name,
-						value_from_col_name, must_input
+						value_from_col_name, must_input, sys_col, is_visible
 				from t_code_table_cols_md
 				where table_id = '%s' 
 				order by show_order";
@@ -478,7 +478,9 @@ class CodeTableDAO extends PSIBaseExDAO {
 					"valueFrom" => $this->valueFromCodeToName($v["value_from"]),
 					"valueFromTableName" => $v["value_from_table_name"],
 					"valueFromColName" => $v["value_from_col_name"],
-					"mustInput" => $v["must_input"]
+					"mustInput" => $v["must_input"],
+					"sysCol" => $v["sys_col"] == 1 ? "系统列" : "",
+					"isVisible" => $v["is_visible"] == 1 ? "可见" : "不可见"
 			];
 		}
 		

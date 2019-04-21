@@ -285,7 +285,9 @@ class CodeTableDAO extends PSIBaseExDAO {
 				"valueFromTableName" => "",
 				"valueFromColName" => "",
 				"mustInput" => 1,
-				"showOrder" => - 1000
+				"showOrder" => - 1000,
+				"sysCol" => 1,
+				"isVisible" => 2
 		];
 		
 		// code
@@ -299,7 +301,9 @@ class CodeTableDAO extends PSIBaseExDAO {
 				"valueFromTableName" => "",
 				"valueFromColName" => "",
 				"mustInput" => 1,
-				"showOrder" => 0
+				"showOrder" => 0,
+				"sysCol" => 1,
+				"isVisible" => 1
 		];
 		
 		// name
@@ -313,7 +317,9 @@ class CodeTableDAO extends PSIBaseExDAO {
 				"valueFromTableName" => "",
 				"valueFromColName" => "",
 				"mustInput" => 1,
-				"showOrder" => 1
+				"showOrder" => 1,
+				"sysCol" => 1,
+				"isVisible" => 1
 		];
 		
 		// 拼音字头
@@ -327,7 +333,9 @@ class CodeTableDAO extends PSIBaseExDAO {
 				"valueFromTableName" => "",
 				"valueFromColName" => "",
 				"mustInput" => 0,
-				"showOrder" => - 900
+				"showOrder" => - 900,
+				"sysCol" => 1,
+				"isVisible" => 2
 		];
 		
 		// 数据域data_org
@@ -341,7 +349,9 @@ class CodeTableDAO extends PSIBaseExDAO {
 				"valueFromTableName" => "",
 				"valueFromColName" => "",
 				"mustInput" => 0,
-				"showOrder" => - 800
+				"showOrder" => - 800,
+				"sysCol" => 1,
+				"isVisible" => 2
 		];
 		
 		return $result;
@@ -416,15 +426,15 @@ class CodeTableDAO extends PSIBaseExDAO {
 			$sql = "insert into t_code_table_cols_md (id, table_id,
 						caption, db_field_name, db_field_type, db_field_length,
 						db_field_decimal, show_order, value_from, value_from_table_name,
-						value_from_col_name, must_input)
+						value_from_col_name, must_input, sys_col, is_visible)
 					values ('%s', '%s',
 						'%s', '%s', '%s', %d,
 						%d, %d, %d, '%s',
-						'%s', %d)";
+						'%s', %d, %d, %d)";
 			$rc = $db->execute($sql, $this->newId(), $id, $v["caption"], $v["fieldName"], 
 					$v["fieldType"], $v["fieldLength"], $v["fieldDecimal"], $v["showOrder"], 
 					$v["valueFrom"], $v["valueFromTableName"], $v["valueFromColName"], 
-					$v["mustInput"]);
+					$v["mustInput"], $v["sysCol"], $v["isVisible"]);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}

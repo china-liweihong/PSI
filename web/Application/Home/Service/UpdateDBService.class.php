@@ -226,6 +226,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20190418_01();
 		$this->update_20190421_01();
 		$this->update_20190422_01();
+		$this->update_20190422_02();
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -246,6 +247,26 @@ class UpdateDBService extends PSIBaseService {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// ============================================
 	private function notForgot() {
+	}
+
+	private function update_20190422_02() {
+		// 本次更新：新增表t_permission_plus
+		$db = $this->db;
+		$tableName = "t_permission_plus";
+		if (! $this->tableExists($db, $tableName)) {
+			$sql = "CREATE TABLE IF NOT EXISTS `t_permission_plus` (
+					  `id` varchar(255) NOT NULL,
+					  `fid` varchar(255) NOT NULL,
+					  `name` varchar(255) NOT NULL,
+					  `note` varchar(255) DEFAULT NULL,
+					  `category` varchar(255) DEFAULT NULL,
+					  `py` varchar(255) DEFAULT NULL,
+					  `show_order` int(11) DEFAULT NULL,
+					  PRIMARY KEY (`id`)
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+			";
+			$db->execute($sql);
+		}
 	}
 
 	private function update_20190422_01() {

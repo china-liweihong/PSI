@@ -1572,6 +1572,7 @@ class InstallService extends PSIBaseExService {
 				  `category_id` varchar(255) NOT NULL,
 				  `memo` varchar(1000) DEFAULT NULL,
 				  `py` varchar(255) DEFAULT NULL,
+				  `fid` varchar(255) DEFAULT NULL,
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";

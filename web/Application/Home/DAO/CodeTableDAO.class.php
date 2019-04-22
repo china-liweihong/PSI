@@ -484,6 +484,15 @@ class CodeTableDAO extends PSIBaseExDAO {
 		return null;
 	}
 
+	/**
+	 * 编辑码表主表元数据
+	 * 
+	 * @param array $params        	
+	 */
+	public function updateCodeTable(& $params) {
+		return $this->todo();
+	}
+
 	private function valueFromCodeToName($valueFrom) {
 		switch ($valueFrom) {
 			case 1 :
@@ -583,5 +592,33 @@ class CodeTableDAO extends PSIBaseExDAO {
 		// 操作成功
 		$params["name"] = $name;
 		return null;
+	}
+
+	/**
+	 * 查询码表主表元数据
+	 */
+	public function codeTableInfo($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		
+		$sql = "select c.name as category_name, d.code, d.name,
+					d.table_name, d.category_id, d.memo
+				from t_code_table_md d, t_code_table_category c
+				where d.id = '%s' and d.category_id = c.id ";
+		$data = $db->query($sql, $id);
+		if ($data) {
+			$v = $data[0];
+			return [
+					"code" => $v["code"],
+					"name" => $v["name"],
+					"tableName" => $v["table_name"],
+					"categoryId" => $v["category_id"],
+					"categoryName" => $v["category_name"],
+					"memo" => $v["memo"]
+			];
+		} else {
+			return $this->emptyResult();
+		}
 	}
 }

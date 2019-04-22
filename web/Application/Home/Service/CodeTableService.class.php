@@ -215,4 +215,16 @@ class CodeTableService extends PSIBaseExService {
 		
 		return $this->ok();
 	}
+
+	/**
+	 * 查询码表主表元数据
+	 */
+	public function codeTableInfo($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new CodeTableDAO($this->db());
+		return $dao->codeTableInfo($params);
+	}
 }

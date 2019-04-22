@@ -146,4 +146,18 @@ class CodeTableController extends PSIBaseController {
 			$this->ajaxReturn($service->deleteCodeTable($params));
 		}
 	}
+
+	/**
+	 * 查询码表主表元数据
+	 */
+	public function codeTableInfo() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id")
+			];
+			
+			$service = new CodeTableService();
+			$this->ajaxReturn($service->codeTableInfo($params));
+		}
+	}
 }

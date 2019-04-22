@@ -75,6 +75,10 @@ Ext.define("PSI.CodeTable.MainForm", {
 							handler : me.onAddCodeTable,
 							scope : me
 						}, {
+							text : "编辑码表",
+							handler : me.onEditCodeTable,
+							scope : me
+						}, {
 							text : "删除码表",
 							handler : me.onDeleteCodeTable,
 							scope : me
@@ -500,6 +504,24 @@ Ext.define("PSI.CodeTable.MainForm", {
 				var form = Ext.create("PSI.CodeTable.CodeTableEditForm", {
 							parentForm : me,
 							category : category
+						});
+				form.show();
+			},
+
+			onEditCodeTable : function() {
+				var me = this;
+
+				var item = me.getMainGrid().getSelectionModel().getSelection();
+				if (item == null || item.length != 1) {
+					me.showInfo("请选择要编辑的码表");
+					return;
+				}
+
+				var codeTable = item[0];
+
+				var form = Ext.create("PSI.CodeTable.CodeTableEditForm", {
+							parentForm : me,
+							entity : codeTable
 						});
 				form.show();
 			},

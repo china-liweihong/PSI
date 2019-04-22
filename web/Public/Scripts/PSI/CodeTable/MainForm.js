@@ -74,6 +74,10 @@ Ext.define("PSI.CodeTable.MainForm", {
 							text : "新增码表",
 							handler : me.onAddCodeTable,
 							scope : me
+						}, {
+							text : "删除码表",
+							handler : me.onDeleteCodeTable,
+							scope : me
 						}, "-", {
 							text : "帮助",
 							handler : function() {
@@ -432,6 +436,8 @@ Ext.define("PSI.CodeTable.MainForm", {
 
 			refreshMainGrid : function(id) {
 				var me = this;
+				me.getColsGrid().getStore().removeAll();
+
 				var item = me.getCategoryGrid().getSelectionModel()
 						.getSelection();
 				if (item == null || item.length != 1) {
@@ -550,5 +556,60 @@ Ext.define("PSI.CodeTable.MainForm", {
 				};
 
 				me.ajax(r);
+			},
+
+			onDeleteCodeTable : function() {
+				var me = this;
+				var item = me.getMainGrid().getSelectionModel().getSelection();
+				if (item == null || item.length != 1) {
+					me.showInfo("请选择要删除的码表");
+					return;
+				}
+
+				var codeTable = item[0];
+
+				var store = me.getMainGrid().getStore();
+				var index = store.findExact("id", codeTable.get("id"));
+				index--;
+				var preIndex = null;
+				var preItem = store.getAt(index);
+				if (preItem) {
+					preIndex = preItem.get("id");
+				}
+
+				var info = "请确认是否删除码表: <span style='color:red'>"
+						+ codeTable.get("name")
+						+ "</span><br /><br />当前操作只删除码表元数据，数据库实际表不会删除";
+
+				var funcConfirm = function() {
+					var el = Ext.getBody();
+					el.mask("正在删除中...");
+
+					var r = {
+						url : me.URL("Home/CodeTable/deleteCodeTable"),
+						params : {
+							id : codeTable.get("id")
+						},
+						callback : function(options, success, response) {
+							el.unmask();
+
+							if (success) {
+								var data = me.decodeJSON(response.responseText);
+								if (data.success) {
+									me.tip("成功完成删除操作");
+									me.refreshMainGrid(preIndex);
+								} else {
+									me.showInfo(data.msg);
+								}
+							} else {
+								me.showInfo("网络错误");
+							}
+						}
+					};
+
+					me.ajax(r);
+				};
+
+				me.confirm(info, funcConfirm);
 			}
 		});

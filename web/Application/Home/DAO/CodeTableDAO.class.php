@@ -478,6 +478,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
+		
 		// 操作成功
 		$params["id"] = $id;
 		return null;
@@ -533,5 +534,54 @@ class CodeTableDAO extends PSIBaseExDAO {
 		}
 		
 		return $result;
+	}
+
+	public function getCodeTableById($id) {
+		$db = $this->db;
+		
+		$sql = "select code, name from t_code_table_md where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if ($data) {
+			return [
+					"code" => $data[0]["code"],
+					"name" => $data[0]["name"]
+			];
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * 删除码表
+	 */
+	public function deleteCodeTable(& $params) {
+		$db = $this->db;
+		
+		// 码表id
+		$id = $params["id"];
+		
+		$codeTable = $this->getCodeTableById($id);
+		if (! $codeTable) {
+			return $this->bad("要删除的码表不存在");
+		}
+		$name = $codeTable["name"];
+		
+		// 列
+		$sql = "delete from t_code_table_cols_md where table_id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 主表
+		$sql = "delete from t_code_table_md where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		$params["name"] = $name;
+		return null;
 	}
 }

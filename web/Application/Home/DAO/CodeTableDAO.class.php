@@ -445,6 +445,39 @@ class CodeTableDAO extends PSIBaseExDAO {
 			}
 		}
 		
+		// 创建数据库表
+		$sql = "CREATE TABLE IF NOT EXISTS `{$tableName}` (";
+		foreach ( $cols as $v ) {
+			$fieldName = $v["fieldName"];
+			$fieldType = $v["fieldType"];
+			$fieldLength = $v["fieldLength"];
+			$fieldDecimal = $v["fieldDecimal"];
+			$mustInput = $v["mustInput"];
+			
+			$type = $fieldType;
+			
+			if ($fieldType == "varchar") {
+				$type .= "({$fieldLength})";
+			} else if ($fieldType == "decimal") {
+				$type .= "(19, {$fieldDecimal})";
+			} else if ($fieldType == "int") {
+				$type .= "(11)";
+			}
+			
+			$sql .= "`{$fieldName}` {$type} ";
+			if ($mustInput == 1) {
+				$sql .= " NOT NULL";
+			} else {
+				$sql .= " DEFAULT NULL";
+			}
+			$sql .= ",";
+		}
+		$sql .= "PRIMARY KEY (`id`)
+				) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+		$rc = $db->execute($sql);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
 		// 操作成功
 		$params["id"] = $id;
 		return null;
@@ -493,7 +526,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 					"valueFrom" => $this->valueFromCodeToName($v["value_from"]),
 					"valueFromTableName" => $v["value_from_table_name"],
 					"valueFromColName" => $v["value_from_col_name"],
-					"mustInput" => $v["must_input"],
+					"mustInput" => $v["must_input"] == 1 ? "必录项" : "",
 					"sysCol" => $v["sys_col"] == 1 ? "系统列" : "",
 					"isVisible" => $v["is_visible"] == 1 ? "可见" : "不可见"
 			];

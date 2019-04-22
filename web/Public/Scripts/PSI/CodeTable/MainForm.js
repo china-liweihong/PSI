@@ -289,6 +289,10 @@ Ext.define("PSI.CodeTable.MainForm", {
 											header : "对用户可见",
 											dataIndex : "isVisible",
 											width : 100
+										}, {
+											header : "必须录入",
+											dataIndex : "mustInput",
+											width : 100
 										}]
 							},
 							store : Ext.create("Ext.data.Store", {

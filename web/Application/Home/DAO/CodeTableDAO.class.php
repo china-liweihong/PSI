@@ -189,7 +189,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 		
 		$categoryId = $params["categoryId"];
 		
-		$sql = "select id, code, name, table_name, memo
+		$sql = "select id, code, name, table_name, memo, fid
 				from t_code_table_md
 				where category_id = '%s' 
 				order by code, table_name";
@@ -202,6 +202,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 					"code" => $v["code"],
 					"name" => $v["name"],
 					"tableName" => $v["table_name"],
+					"fid" => $v["fid"],
 					"memo" => $v["memo"]
 			];
 		}

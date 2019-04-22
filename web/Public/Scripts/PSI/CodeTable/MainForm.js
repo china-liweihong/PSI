@@ -166,7 +166,8 @@ Ext.define("PSI.CodeTable.MainForm", {
 
 				Ext.define(modelName, {
 							extend : "Ext.data.Model",
-							fields : ["id", "code", "name", "tableName", "memo"]
+							fields : ["id", "code", "name", "tableName",
+									"memo", "fid"]
 						});
 
 				me.__mainGrid = Ext.create("Ext.grid.Panel", {
@@ -194,6 +195,12 @@ Ext.define("PSI.CodeTable.MainForm", {
 									}, {
 										header : "数据库名",
 										dataIndex : "tableName",
+										width : 200,
+										menuDisabled : true,
+										sortable : false
+									}, {
+										header : "fid",
+										dataIndex : "fid",
 										width : 200,
 										menuDisabled : true,
 										sortable : false

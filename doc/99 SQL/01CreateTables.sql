@@ -1396,6 +1396,22 @@ CREATE TABLE IF NOT EXISTS `t_code_table_cols_md` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `t_fid_plus`;
+CREATE TABLE IF NOT EXISTS `t_fid_plus` (
+  `fid` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `t_menu_item_plus`;
+CREATE TABLE IF NOT EXISTS `t_menu_item_plus` (
+  `id` varchar(255) NOT NULL,
+  `caption` varchar(255) NOT NULL,
+  `fid` varchar(255) DEFAULT NULL,
+  `parent_id` varchar(255) DEFAULT NULL,
+  `show_order` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

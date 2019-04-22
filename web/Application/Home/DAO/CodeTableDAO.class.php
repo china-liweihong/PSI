@@ -417,10 +417,11 @@ class CodeTableDAO extends PSIBaseExDAO {
 		}
 		
 		$id = $this->newId();
+		$fid = "ct" . date("YmdHis");
 		
-		$sql = "insert into t_code_table_md (id, category_id, code, name, table_name, py, memo)
-				values ('%s', '%s', '%s', '%s', '%s', '%s', '%s')";
-		$rc = $db->execute($sql, $id, $categoryId, $code, $name, $tableName, $py, $memo);
+		$sql = "insert into t_code_table_md (id, category_id, code, name, table_name, py, memo, fid)
+				values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')";
+		$rc = $db->execute($sql, $id, $categoryId, $code, $name, $tableName, $py, $memo, $fid);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -444,6 +445,23 @@ class CodeTableDAO extends PSIBaseExDAO {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
 		}
+		
+		// fid: t_fid_plus
+		$sql = "insert into t_fid_plus (fid, name) values ('%s', '%s')";
+		$rc = $db->execute($sql, $fid, $name);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 权限: t_permission_plus
+		$sql = "insert into t_permission_plus (id, fid, name, note, category, py, show_order)
+				values ('%s', '%s', '%s', '%s', '%s','%s', %d)";
+		$rc = $db->execute($sql, $fid, $fid, $name, "模块权限：通过菜单进入{$name}模块的权限", $name, "", 100);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// TODO 权限细化到按钮
 		
 		// 创建数据库表
 		$sql = "CREATE TABLE IF NOT EXISTS `{$tableName}` (";

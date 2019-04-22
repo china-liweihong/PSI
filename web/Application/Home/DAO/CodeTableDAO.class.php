@@ -410,6 +410,11 @@ class CodeTableDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("表名为[{$tableName}]的码表已经存在");
 		}
+		// 检查数据库中是否已经存在该表了
+		$dbUtilDAO = new DBUtilDAO($db);
+		if ($dbUtilDAO->tableExists($tableName)) {
+			return $this->bad("表[{$tableName}]已经在数据库中存在了");
+		}
 		
 		$id = $this->newId();
 		

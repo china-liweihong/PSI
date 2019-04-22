@@ -1412,6 +1412,19 @@ CREATE TABLE IF NOT EXISTS `t_menu_item_plus` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `t_permission_plus`;
+CREATE TABLE IF NOT EXISTS `t_permission_plus` (
+  `id` varchar(255) NOT NULL,
+  `fid` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `note` varchar(255) DEFAULT NULL,
+  `category` varchar(255) DEFAULT NULL,
+  `py` varchar(255) DEFAULT NULL,
+  `show_order` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

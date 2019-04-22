@@ -486,11 +486,39 @@ class CodeTableDAO extends PSIBaseExDAO {
 
 	/**
 	 * 编辑码表主表元数据
-	 * 
+	 *
 	 * @param array $params        	
 	 */
 	public function updateCodeTable(& $params) {
-		return $this->todo();
+		$db = $this->db;
+		
+		// 码表id
+		$id = $params["id"];
+		$code = strtoupper($params["code"]) ?? "";
+		$name = $params["name"];
+		$categoryId = $params["categoryId"];
+		$memo = $params["memo"] ?? "";
+		
+		if (! $this->getCodeTableCategoryById($categoryId)) {
+			return $this->bad("码表分类不存在");
+		}
+		
+		$codeTable = $this->getCodeTableById($id);
+		if (! $codeTable) {
+			return $this->bad("要编辑的码表不存在");
+		}
+		
+		$sql = "update t_code_table_md
+				set code = '%s', name = '%s',
+					category_id = '%s', memo = '%s'
+				where id = '%s' ";
+		$rc = $db->execute($sql, $code, $name, $categoryId, $memo, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		return null;
 	}
 
 	private function valueFromCodeToName($valueFrom) {

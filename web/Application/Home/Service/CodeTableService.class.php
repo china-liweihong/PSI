@@ -10,7 +10,7 @@ use Home\DAO\CodeTableDAO;
  * @author 李静波
  */
 class CodeTableService extends PSIBaseExService {
-	private $LOG_CATEGORY = "码表";
+	private $LOG_CATEGORY = "码表设置";
 
 	/**
 	 * 码表分类列表
@@ -152,7 +152,7 @@ class CodeTableService extends PSIBaseExService {
 				return $rc;
 			}
 			
-			$log = "编辑码表：{$name}";
+			$log = "编辑码表[{$name}]的元数据";
 		} else {
 			// 新增
 			$rc = $dao->addCodeTable($params);

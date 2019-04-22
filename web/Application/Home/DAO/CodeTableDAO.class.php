@@ -595,12 +595,13 @@ class CodeTableDAO extends PSIBaseExDAO {
 	public function getCodeTableById($id) {
 		$db = $this->db;
 		
-		$sql = "select code, name from t_code_table_md where id = '%s' ";
+		$sql = "select code, name, fid from t_code_table_md where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if ($data) {
 			return [
 					"code" => $data[0]["code"],
-					"name" => $data[0]["name"]
+					"name" => $data[0]["name"],
+					"fid" => $data[0]["fid"]
 			];
 		} else {
 			return null;
@@ -621,6 +622,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 			return $this->bad("要删除的码表不存在");
 		}
 		$name = $codeTable["name"];
+		$fid = $codeTable["fid"];
 		
 		// 列
 		$sql = "delete from t_code_table_cols_md where table_id = '%s' ";
@@ -632,6 +634,21 @@ class CodeTableDAO extends PSIBaseExDAO {
 		// 主表
 		$sql = "delete from t_code_table_md where id = '%s' ";
 		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// fid
+		$sql = "delete from t_fid_plus where fid = '%s' ";
+		$rc = $db->execute($sql, $fid);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 权限
+		// 用like是为了处理按钮权限
+		$sql = "delete from t_permission_plus where fid like '%s' ";
+		$rc = $db->execute($sql, "{$fid}%");
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}

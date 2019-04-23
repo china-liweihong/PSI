@@ -55,7 +55,8 @@ class FIdService {
 		// 不加上r.click_count就会出错。
 		//
 		$sql = " select distinct f.fid, f.name, r.click_count 
-				from t_recent_fid r,  t_fid f, t_permission p, t_role_permission rp, t_role_user ru
+				from t_recent_fid r,  t_fid f, (select * from t_permission union select * from t_permission_plus) p, 
+					t_role_permission rp, t_role_user ru
 				where r.fid = f.fid and r.user_id = '%s' and r.fid = p.fid 
 				and p.id = rp.permission_id and rp.role_id = ru.role_id 
 				and ru.user_id = '%s' 

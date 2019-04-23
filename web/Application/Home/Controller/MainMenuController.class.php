@@ -15,7 +15,7 @@ use Home\Service\MainMenuService;
  * @author 李静波
  *        
  */
-class MainMenuController extends Controller {
+class MainMenuController extends PSIBaseController {
 
 	/**
 	 * 页面跳转
@@ -257,6 +257,10 @@ class MainMenuController extends Controller {
 				// 码表设置
 				redirect(__ROOT__ . "/Home/CodeTable/index");
 				break;
+			case FIdConst::MAIN_MENU :
+				// 主菜单维护
+				redirect(__ROOT__ . "/Home/MainMenu/maintainIndex");
+				break;
 			default :
 				redirect(__ROOT__ . "/Home");
 		}
@@ -283,6 +287,23 @@ class MainMenuController extends Controller {
 			$data = $fidService->recentFid();
 			
 			$this->ajaxReturn($data);
+		}
+	}
+
+	/**
+	 * 主菜单维护 - 主界面
+	 */
+	public function maintainIndex() {
+		$us = new UserService();
+		
+		if ($us->hasPermission(FIdConst::MAIN_MENU)) {
+			$this->initVar();
+			
+			$this->assign("title", "主菜单维护");
+			
+			$this->display();
+		} else {
+			$this->gotoLoginPage("/Home/MainMenu/maintainIndex");
 		}
 	}
 }

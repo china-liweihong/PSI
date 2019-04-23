@@ -2,8 +2,6 @@
 
 namespace Home\Service;
 
-
-
 /**
  * 主菜单Service
  *
@@ -17,7 +15,7 @@ class MainMenuService extends PSIBaseService {
 	public function mainMenuItems() {
 		$us = new UserService();
 		
-		$sql = "select id, caption, fid from t_menu_item
+		$sql = "select id, caption, fid from (select * from t_menu_item union select * from t_menu_item_plus) m
 					where parent_id is null order by show_order";
 		$db = M();
 		$m1 = $db->query($sql);
@@ -28,7 +26,7 @@ class MainMenuService extends PSIBaseService {
 			
 			$children1 = array();
 			
-			$sql = "select id, caption, fid from t_menu_item
+			$sql = "select id, caption, fid from (select * from t_menu_item union select * from t_menu_item_plus) m
 						where parent_id = '%s' order by show_order ";
 			$m2 = $db->query($sql, $menuItem1["id"]);
 			
@@ -36,7 +34,7 @@ class MainMenuService extends PSIBaseService {
 			$index2 = 0;
 			foreach ( $m2 as $menuItem2 ) {
 				$children2 = array();
-				$sql = "select id, caption, fid from t_menu_item
+				$sql = "select id, caption, fid from (select * from t_menu_item union select * from t_menu_item_plus) m
 							where parent_id = '%s' order by show_order ";
 				$m3 = $db->query($sql, $menuItem2["id"]);
 				

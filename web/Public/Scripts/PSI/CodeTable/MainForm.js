@@ -287,11 +287,11 @@ Ext.define("PSI.CodeTable.MainForm", {
 										}, {
 											header : "值来源",
 											dataIndex : "valueFrom",
-											width : 70
+											width : 120
 										}, {
 											header : "值来源表",
 											dataIndex : "valueFromTableName",
-											width : 100
+											width : 120
 										}, {
 											header : "值来源字段",
 											dataIndex : "valueFromColName",

@@ -242,14 +242,14 @@ class CodeTableDAO extends PSIBaseExDAO {
 		$tableName = strtolower($tableName);
 		
 		$len = strlen($tableName);
-		if ($len == 0) {
-			return $this->bad("表名不能为空");
+		if ($len < 5) {
+			return $this->bad("数据库表名长度不能小于5");
 		}
 		
 		$c = ord($tableName{0});
 		$isABC = ord('a') <= $c && ord('z') >= $c;
 		if (! $isABC) {
-			return $this->bad("表名需要以字符开头");
+			return $this->bad("数据库表名需要以字符开头");
 		}
 		
 		for($i = 1; $i < $len; $i ++) {
@@ -259,8 +259,13 @@ class CodeTableDAO extends PSIBaseExDAO {
 			$isOK = $isABC || $isNumber || ord('_') == $c;
 			if (! $isOK) {
 				$index = $i + 1;
-				return $this->bad("表名的第{$index}个字符非法");
+				return $this->bad("数据库表名的第{$index}个字符非法");
 			}
+		}
+		
+		// 码表需要以t_ct开头
+		if (! (substr($tableName, 0, 4) == "t_ct")) {
+			return $this->bad("数据库表名需要以 <span style='color:red'>t_ct</span> 开头");
 		}
 		
 		// 表名正确
@@ -433,6 +438,22 @@ class CodeTableDAO extends PSIBaseExDAO {
 				"showOrder" => - 696,
 				"sysCol" => 1,
 				"isVisible" => 2
+		];
+		
+		// 状态
+		$result[] = [
+				"caption" => "状态",
+				"fieldName" => "record_status",
+				"fieldType" => "int",
+				"fieldLength" => 11,
+				"fieldDecimal" => 0,
+				"valueFrom" => 2,
+				"valueFromTableName" => "t_sysdict_record_status",
+				"valueFromColName" => "codeInt",
+				"mustInput" => 1,
+				"showOrder" => 2,
+				"sysCol" => 1,
+				"isVisible" => 1
 		];
 		
 		return $result;

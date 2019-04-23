@@ -62,7 +62,8 @@ Ext.define("PSI.MainMenu.MainForm", {
 				var modelName = "PSIMainMenu";
 				Ext.define(modelName, {
 							extend : "Ext.data.Model",
-							fields : ["id", "text", "fid", "leaf", "children"]
+							fields : ["id", "caption", "fid", "leaf",
+									"children"]
 						});
 
 				var store = Ext.create("Ext.data.TreeStore", {
@@ -99,9 +100,9 @@ Ext.define("PSI.MainMenu.MainForm", {
 								items : [{
 											xtype : "treecolumn",
 											text : "标题",
-											dataIndex : "text",
+											dataIndex : "caption",
 											width : 220
-										},{
+										}, {
 											text : "fid",
 											dataIndex : "fid",
 											width : 220

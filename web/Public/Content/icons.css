@@ -382,6 +382,10 @@
     background-image:url(../Images/icons/org2.png?v=2017062701) !important;
 }
 
+.PSI-MainMenuItemIconClass {
+    background-image:url(../Images/icons/mainmenuitemiconclass.png) !important;
+}
+
 .PSI-GoodsCategory {
     background-image:url(../Images/icons/goodscategory.png) !important;
 }

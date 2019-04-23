@@ -81,7 +81,8 @@ class PermissionDAO extends PSIBaseExDAO {
 		$roleId = $params["roleId"];
 		
 		$sql = "select p.id, p.name, p.note
-				from t_role r, t_role_permission rp, t_permission p
+				from t_role r, t_role_permission rp, 
+					(select * from t_permission union select * from t_permission_plus) p
 				where r.id = rp.role_id and r.id = '%s' and rp.permission_id = p.id
 				order by convert(p.name USING gbk) collate gbk_chinese_ci";
 		$data = $db->query($sql, $roleId);
@@ -249,9 +250,13 @@ class PermissionDAO extends PSIBaseExDAO {
 		
 		$result[0]["name"] = $this->ALL_CATEGORY;
 		
-		$sql = "select distinct category
-				from t_permission
-				order by convert(category USING gbk) collate gbk_chinese_ci";
+		$sql = "select p.category from (
+					select distinct category
+					from t_permission
+					union
+					select distinct category
+					from t_permission_plus ) p
+				order by convert(p.category USING gbk) collate gbk_chinese_ci ";
 		$data = $db->query($sql);
 		foreach ( $data as $i => $v ) {
 			$result[$i + 1]["name"] = $v["category"];
@@ -271,21 +276,26 @@ class PermissionDAO extends PSIBaseExDAO {
 		
 		$category = $params["category"];
 		
-		$sql = "select id, name, note
-				from t_permission ";
+		$sql = "select p.id, p.name, p.note, p.show_order, p.category from (
+					select id, name, note, show_order, category
+					from t_permission
+					union 
+					select id, name, note, show_order, category
+					from t_permission_plus
+				) p ";
 		
 		$queryParams = [];
 		if ($category != $this->ALL_CATEGORY) {
 			$queryParams[] = $category;
 			
-			$sql .= " where category = '%s' ";
+			$sql .= " where p.category = '%s' ";
 		}
 		
 		if ($category == $this->ALL_CATEGORY) {
 			// using gbk : 为了按拼音排序
-			$sql .= " order by convert(category USING gbk) collate gbk_chinese_ci ";
+			$sql .= " order by convert(p.category USING gbk) collate gbk_chinese_ci ";
 		} else {
-			$sql .= " order by show_order";
+			$sql .= " order by p.show_order";
 		}
 		
 		$data = $db->query($sql, $queryParams);

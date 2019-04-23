@@ -18,7 +18,7 @@ Ext.define("PSI.MainMenu.MainForm", {
 										region : "center",
 										layout : "fit",
 										border : 0,
-										items : []
+										items : [me.getMainGrid()]
 									}]
 						});
 
@@ -51,6 +51,65 @@ Ext.define("PSI.MainMenu.MainForm", {
 								me.closeWindow();
 							}
 						}];
+			},
+
+			getMainGrid : function() {
+				var me = this;
+				if (me.__mainGrid) {
+					return me.__mainGrid;
+				}
+
+				var modelName = "PSIMainMenu";
+				Ext.define(modelName, {
+							extend : "Ext.data.Model",
+							fields : ["id", "text", "fid", "leaf", "children"]
+						});
+
+				var store = Ext.create("Ext.data.TreeStore", {
+							model : modelName,
+							proxy : {
+								type : "ajax",
+								actionMethods : {
+									read : "POST"
+								},
+								url : me
+										.URL("Home/MainMenu/allMenuItemsForMaintain")
+							}
+
+						});
+
+				me.__mainGrid = Ext.create("Ext.tree.Panel", {
+							cls : "PSI",
+							header : {
+								height : 30,
+								title : me.formatGridHeaderTitle("主菜单")
+							},
+							store : store,
+							rootVisible : false,
+							useArrows : true,
+							viewConfig : {
+								loadMask : true
+							},
+							columns : {
+								defaults : {
+									sortable : false,
+									menuDisabled : true,
+									draggable : false
+								},
+								items : [{
+											xtype : "treecolumn",
+											text : "标题",
+											dataIndex : "text",
+											width : 220
+										},{
+											text : "fid",
+											dataIndex : "fid",
+											width : 220
+										}]
+							}
+						});
+
+				return me.__mainGrid;
 			},
 
 			onAddMenu : function() {

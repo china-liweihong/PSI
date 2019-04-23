@@ -306,4 +306,14 @@ class MainMenuController extends PSIBaseController {
 			$this->gotoLoginPage("/Home/MainMenu/maintainIndex");
 		}
 	}
+
+	/**
+	 * 查询所有的主菜单项 - 主菜单维护模块中使用
+	 */
+	public function allMenuItemsForMaintain() {
+		if (IS_POST) {
+			$service = new MainMenuService();
+			$this->ajaxReturn($service->allMenuItemsForMaintain());
+		}
+	}
 }

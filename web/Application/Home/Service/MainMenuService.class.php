@@ -2,17 +2,23 @@
 
 namespace Home\Service;
 
+use Home\DAO\MainMenuDAO;
+
 /**
  * 主菜单Service
  *
  * @author 李静波
  */
-class MainMenuService extends PSIBaseService {
+class MainMenuService extends PSIBaseExService {
 
 	/**
 	 * 当前用户有权限访问的所有菜单项
 	 */
 	public function mainMenuItems() {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
 		$us = new UserService();
 		
 		$sql = "select id, caption, fid from (select * from t_menu_item union select * from t_menu_item_plus) m
@@ -80,5 +86,17 @@ class MainMenuService extends PSIBaseService {
 		}
 		
 		return $result;
+	}
+
+	/**
+	 * 查询所有的主菜单项 - 主菜单维护模块中使用
+	 */
+	public function allMenuItemsForMaintain() {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new MainMenuDAO($this->db());
+		return $dao->allMenuItemsForMaintain();
 	}
 }

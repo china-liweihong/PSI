@@ -77,7 +77,7 @@ class FIdService {
 	}
 
 	public function getFIdName($fid) {
-		$sql = "select name from t_fid where fid = '%s' ";
+		$sql = "select name from (select * from t_fid union select * from t_fid_plus) f where fid = '%s' ";
 		$data = M()->query($sql, $fid);
 		if ($data) {
 			return $data[0]["name"];

@@ -30,10 +30,17 @@ class FIdConst {
 	
 	/**
 	 * 码表设置
-	 * 
+	 *
 	 * @var string
 	 */
 	const CODE_TABLE = "-7996";
+	
+	/**
+	 * 主菜单维护
+	 * 
+	 * @var string
+	 */
+	const MAIN_MENU = "-7995";
 	
 	/**
 	 * 首页

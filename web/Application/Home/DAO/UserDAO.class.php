@@ -67,7 +67,8 @@ class UserDAO extends PSIBaseExDAO {
 	public function hasPermission($userId, $fid) {
 		$db = $this->db;
 		$sql = "select count(*) as cnt
-				from  t_role_user ru, t_role_permission rp, t_permission p
+				from  t_role_user ru, t_role_permission rp, 
+						(select * from t_permission union select * from t_permission_plus) p
 				where ru.user_id = '%s' and ru.role_id = rp.role_id
 				      and rp.permission_id = p.id and p.fid = '%s' ";
 		$data = $db->query($sql, $userId, $fid);

@@ -355,6 +355,86 @@ class CodeTableDAO extends PSIBaseExDAO {
 				"isVisible" => 2
 		];
 		
+		// company_id
+		$result[] = [
+				"caption" => "公司Id",
+				"fieldName" => "company_id",
+				"fieldType" => "varchar",
+				"fieldLength" => 255,
+				"fieldDecimal" => 0,
+				"valueFrom" => 1,
+				"valueFromTableName" => "",
+				"valueFromColName" => "",
+				"mustInput" => 0,
+				"showOrder" => - 700,
+				"sysCol" => 1,
+				"isVisible" => 2
+		];
+		
+		// 记录创建时间
+		$result[] = [
+				"caption" => "记录创建时间",
+				"fieldName" => "date_created",
+				"fieldType" => "datetime",
+				"fieldLength" => 0,
+				"fieldDecimal" => 0,
+				"valueFrom" => 1,
+				"valueFromTableName" => "",
+				"valueFromColName" => "",
+				"mustInput" => 0,
+				"showOrder" => - 699,
+				"sysCol" => 1,
+				"isVisible" => 2
+		];
+		
+		// 记录创建人id
+		$result[] = [
+				"caption" => "记录创建人Id",
+				"fieldName" => "create_user_id",
+				"fieldType" => "varchar",
+				"fieldLength" => 255,
+				"fieldDecimal" => 0,
+				"valueFrom" => 1,
+				"valueFromTableName" => "",
+				"valueFromColName" => "",
+				"mustInput" => 0,
+				"showOrder" => - 698,
+				"sysCol" => 1,
+				"isVisible" => 2
+		];
+		
+		// 记录最后一次编辑时间
+		$result[] = [
+				"caption" => "最后一次编辑时间",
+				"fieldName" => "update_dt",
+				"fieldType" => "datetime",
+				"fieldLength" => 0,
+				"fieldDecimal" => 0,
+				"valueFrom" => 1,
+				"valueFromTableName" => "",
+				"valueFromColName" => "",
+				"mustInput" => 0,
+				"showOrder" => - 697,
+				"sysCol" => 1,
+				"isVisible" => 2
+		];
+		
+		// 记录最后一次编辑人id
+		$result[] = [
+				"caption" => "最后一次编辑人id",
+				"fieldName" => "update_user_id",
+				"fieldType" => "varchar",
+				"fieldLength" => 255,
+				"fieldDecimal" => 0,
+				"valueFrom" => 1,
+				"valueFromTableName" => "",
+				"valueFromColName" => "",
+				"mustInput" => 0,
+				"showOrder" => - 696,
+				"sysCol" => 1,
+				"isVisible" => 2
+		];
+		
 		return $result;
 	}
 
@@ -577,8 +657,8 @@ class CodeTableDAO extends PSIBaseExDAO {
 					"caption" => $v["caption"],
 					"fieldName" => $v["db_field_name"],
 					"fieldType" => $v["db_field_type"],
-					"fieldLength" => $v["db_field_length"],
-					"fieldDecimal" => $v["db_field_decimal"],
+					"fieldLength" => $v["db_field_type"] == "datetime" ? null : $v["db_field_length"],
+					"fieldDecimal" => $v["db_field_type"] == "decimal" ? $v["db_field_decimal"] : null,
 					"showOrder" => $v["show_order"],
 					"valueFrom" => $this->valueFromCodeToName($v["value_from"]),
 					"valueFromTableName" => $v["value_from_table_name"],

@@ -263,7 +263,7 @@ Ext.define("PSI.CodeTable.MainForm", {
 								items : [{
 											header : "显示次序",
 											dataIndex : "showOrder",
-											width : 100
+											width : 70
 										}, {
 											header : "列标题",
 											dataIndex : "caption",
@@ -275,19 +275,19 @@ Ext.define("PSI.CodeTable.MainForm", {
 										}, {
 											header : "列数据类型",
 											dataIndex : "fieldType",
-											width : 100
+											width : 80
 										}, {
 											header : "列数据长度",
 											dataIndex : "fieldLength",
-											width : 100
+											width : 80
 										}, {
 											header : "列小数位数",
 											dataIndex : "fieldDecimal",
-											width : 100
+											width : 80
 										}, {
 											header : "值来源",
 											dataIndex : "valueFrom",
-											width : 100
+											width : 70
 										}, {
 											header : "值来源表",
 											dataIndex : "valueFromTableName",
@@ -299,15 +299,15 @@ Ext.define("PSI.CodeTable.MainForm", {
 										}, {
 											header : "系统字段",
 											dataIndex : "sysCol",
-											width : 100
+											width : 70
 										}, {
 											header : "对用户可见",
 											dataIndex : "isVisible",
-											width : 100
+											width : 80
 										}, {
 											header : "必须录入",
 											dataIndex : "mustInput",
-											width : 100
+											width : 70
 										}]
 							},
 							store : Ext.create("Ext.data.Store", {

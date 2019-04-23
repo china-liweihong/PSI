@@ -298,8 +298,39 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 					},
 					bbar : ["->", {
 								xtype : "pagingtoolbar",
+								id : "pagingToolbarInv",
 								border : 0,
 								store : store
+							}, "-", {
+								xtype : "displayfield",
+								value : "每页显示"
+							}, {
+								id : "comboCountPerPage",
+								xtype : "combobox",
+								editable : false,
+								width : 60,
+								store : Ext.create("Ext.data.ArrayStore", {
+											fields : ["text"],
+											data : [["20"], ["50"], ["100"],
+													["300"], ["1000"]]
+										}),
+								value : 20,
+								listeners : {
+									change : {
+										fn : function() {
+											store.pageSize = Ext
+													.getCmp("comboCountPerPage")
+													.getValue();
+											store.currentPage = 1;
+											Ext.getCmp("pagingToolbarInv")
+													.doRefresh();
+										},
+										scope : me
+									}
+								}
+							}, {
+								xtype : "displayfield",
+								value : "条记录"
 							}],
 					columnLines : true,
 					columns : [{
@@ -505,8 +536,39 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 								scope : me
 							}, "->", {
 								xtype : "pagingtoolbar",
+								id : "pagingtoolbarDetail",
 								border : 0,
 								store : store
+							}, "-", {
+								xtype : "displayfield",
+								value : "每页显示"
+							}, {
+								id : "comboCountPerPageDetail",
+								xtype : "combobox",
+								editable : false,
+								width : 60,
+								store : Ext.create("Ext.data.ArrayStore", {
+											fields : ["text"],
+											data : [["20"], ["50"], ["100"],
+													["300"], ["1000"]]
+										}),
+								value : 20,
+								listeners : {
+									change : {
+										fn : function() {
+											store.pageSize = Ext
+													.getCmp("comboCountPerPageDetail")
+													.getValue();
+											store.currentPage = 1;
+											Ext.getCmp("pagingtoolbarDetail")
+													.doRefresh();
+										},
+										scope : me
+									}
+								}
+							}, {
+								xtype : "displayfield",
+								value : "条记录"
 							}],
 					columnLines : true,
 					columns : [Ext.create("Ext.grid.RowNumberer", {

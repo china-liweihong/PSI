@@ -82,4 +82,32 @@ class MainMenuDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * Fid字段查询数据
+	 */
+	public function queryDataForFid($params) {
+		$db = $this->db;
+		
+		$queryKey = $params["queryKey"] ?? "";
+		
+		$sql = "select fid, name from t_fid_plus
+				where fid like '%s' or name like '%s' 
+				order by fid ";
+		$queryParams = [];
+		$queryParams[] = "%{$queryKey}%";
+		$queryParams[] = "%{$queryKey}%";
+		
+		$data = $db->query($sql, $queryParams);
+		$result = [];
+		
+		foreach ( $data as $v ) {
+			$result[] = [
+					"id" => $v["fid"],
+					"name" => $v["name"]
+			];
+		}
+		
+		return $result;
+	}
 }

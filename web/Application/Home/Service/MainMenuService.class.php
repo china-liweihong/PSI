@@ -99,4 +99,16 @@ class MainMenuService extends PSIBaseExService {
 		$dao = new MainMenuDAO($this->db());
 		return $dao->allMenuItemsForMaintain();
 	}
+
+	/**
+	 * Fid字段查询数据
+	 */
+	public function queryDataForFid($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new MainMenuDAO($this->db());
+		return $dao->queryDataForFid($params);
+	}
 }

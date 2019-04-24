@@ -316,4 +316,18 @@ class MainMenuController extends PSIBaseController {
 			$this->ajaxReturn($service->allMenuItemsForMaintain());
 		}
 	}
+
+	/**
+	 * Fid字段查询数据
+	 */
+	public function queryDataForFid() {
+		if (IS_POST) {
+			$params = [
+					"queryKey" => I("post.queryKey")
+			];
+			
+			$service = new MainMenuService();
+			$this->ajaxReturn($service->queryDataForFid($params));
+		}
+	}
 }

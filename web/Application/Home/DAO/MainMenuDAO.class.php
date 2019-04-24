@@ -93,7 +93,7 @@ class MainMenuDAO extends PSIBaseExDAO {
 		
 		$sql = "select fid, name from t_fid_plus
 				where fid like '%s' or name like '%s' 
-				order by fid ";
+				order by fid limit 20";
 		$queryParams = [];
 		$queryParams[] = "%{$queryKey}%";
 		$queryParams[] = "%{$queryKey}%";

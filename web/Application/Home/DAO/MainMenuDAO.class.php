@@ -15,7 +15,7 @@ class MainMenuDAO extends PSIBaseExDAO {
 	public function allMenuItemsForMaintain() {
 		$db = $this->db;
 		
-		$sql = "select id, caption, fid from (select * from t_menu_item union select * from t_menu_item_plus) m
+		$sql = "select id, caption, fid, show_order from (select * from t_menu_item union select * from t_menu_item_plus) m
 					where parent_id is null order by show_order";
 		$m1 = $db->query($sql);
 		$result = [];
@@ -27,7 +27,7 @@ class MainMenuDAO extends PSIBaseExDAO {
 			
 			$children1 = [];
 			
-			$sql = "select id, caption, fid from (select * from t_menu_item union select * from t_menu_item_plus) m
+			$sql = "select id, caption, fid, show_order from (select * from t_menu_item union select * from t_menu_item_plus) m
 						where parent_id = '%s' order by show_order ";
 			$m2 = $db->query($sql, $menuItem1["id"]);
 			
@@ -35,7 +35,7 @@ class MainMenuDAO extends PSIBaseExDAO {
 			$index2 = 0;
 			foreach ( $m2 as $menuItem2 ) {
 				$children2 = [];
-				$sql = "select id, caption, fid from (select * from t_menu_item union select * from t_menu_item_plus) m
+				$sql = "select id, caption, fid, show_order from (select * from t_menu_item union select * from t_menu_item_plus) m
 							where parent_id = '%s' order by show_order ";
 				$m3 = $db->query($sql, $menuItem2["id"]);
 				
@@ -45,6 +45,7 @@ class MainMenuDAO extends PSIBaseExDAO {
 					$children2[$index3]["id"] = $menuItem3["id"];
 					$children2[$index3]["caption"] = $menuItem3["caption"];
 					$children2[$index3]["fid"] = $menuItem3["fid"];
+					$children2[$index3]["showOrder"] = $menuItem3["show_order"];
 					$children2[$index3]["children"] = [];
 					$children2[$index3]["iconCls"] = $iconCls;
 					$index3 ++;
@@ -56,6 +57,7 @@ class MainMenuDAO extends PSIBaseExDAO {
 					$children1[$index2]["id"] = $menuItem2["id"];
 					$children1[$index2]["caption"] = $menuItem2["caption"];
 					$children1[$index2]["fid"] = $menuItem2["fid"];
+					$children1[$index2]["showOrder"] = $menuItem2["show_order"];
 					$children1[$index2]["children"] = $children2;
 					$children1[$index2]["iconCls"] = $iconCls;
 					$index2 ++;
@@ -65,6 +67,7 @@ class MainMenuDAO extends PSIBaseExDAO {
 						$children1[$index2]["id"] = $menuItem2["id"];
 						$children1[$index2]["caption"] = $menuItem2["caption"];
 						$children1[$index2]["fid"] = $menuItem2["fid"];
+						$children1[$index2]["showOrder"] = $menuItem2["show_order"];
 						$children1[$index2]["children"] = $children2;
 						$children1[$index2]["iconCls"] = $iconCls;
 						$index2 ++;

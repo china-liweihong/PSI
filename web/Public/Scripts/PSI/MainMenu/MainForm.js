@@ -62,7 +62,7 @@ Ext.define("PSI.MainMenu.MainForm", {
 				var modelName = "PSIMainMenu";
 				Ext.define(modelName, {
 							extend : "Ext.data.Model",
-							fields : ["id", "caption", "fid", "leaf",
+							fields : ["id", "caption", "fid", "showOrder", "leaf",
 									"children"]
 						});
 
@@ -106,6 +106,10 @@ Ext.define("PSI.MainMenu.MainForm", {
 											text : "fid",
 											dataIndex : "fid",
 											width : 220
+										}, {
+											text : "显示排序",
+											dataIndex : "showOrder",
+											width : 80
 										}]
 							}
 						});

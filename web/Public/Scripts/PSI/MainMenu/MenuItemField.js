@@ -1,9 +1,9 @@
 //
-// fid自定义字段
+// 主菜单自定义字段
 //
-Ext.define("PSI.Fid.FidField", {
+Ext.define("PSI.MainMenu.MenuItemField", {
 	extend : "Ext.form.field.Trigger",
-	alias : "widget.psi_fidfield",
+	alias : "widget.psi_menuitemfield",
 
 	config : {
 		callbackFunc : null,
@@ -66,11 +66,7 @@ Ext.define("PSI.Fid.FidField", {
 					border : 0,
 					store : store,
 					columns : [{
-								header : "fid",
-								dataIndex : "id",
-								menuDisabled : true
-							}, {
-								header : "名称",
+								header : "菜单标题",
 								dataIndex : "name",
 								menuDisabled : true,
 								flex : 1
@@ -80,7 +76,7 @@ Ext.define("PSI.Fid.FidField", {
 		me.lookupGrid.on("itemdblclick", me.onOK, me);
 
 		var wnd = Ext.create("Ext.window.Window", {
-			title : "选择 - fid",
+			title : "选择 - 菜单项",
 			modal : me.getShowModal(),
 			header : false,
 			border : 0,
@@ -104,9 +100,9 @@ Ext.define("PSI.Fid.FidField", {
 									layout : "form",
 									bodyPadding : 5,
 									items : [{
-												id : "PSI_Fid_FidField_editFid",
+												id : "PSI_MainMenu_MenuItemField_editName",
 												xtype : "textfield",
-												fieldLabel : "fid",
+												fieldLabel : "菜单项",
 												labelWidth : 50,
 												labelAlign : "right",
 												labelSeparator : ""
@@ -135,12 +131,12 @@ Ext.define("PSI.Fid.FidField", {
 		}
 		me.wnd = wnd;
 
-		var editName = Ext.getCmp("PSI_Fid_FidField_editFid");
+		var editName = Ext.getCmp("PSI_MainMenu_MenuItemField_editName");
 		editName.on("change", function() {
 			var store = me.lookupGrid.getStore();
 			Ext.Ajax.request({
 						url : PSI.Const.BASE_URL
-								+ "Home/MainMenu/queryDataForFid",
+								+ "Home/MainMenu/queryDataForMenuItem",
 						params : {
 							queryKey : editName.getValue()
 						},

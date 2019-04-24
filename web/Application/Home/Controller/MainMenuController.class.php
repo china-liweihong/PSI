@@ -318,7 +318,7 @@ class MainMenuController extends PSIBaseController {
 	}
 
 	/**
-	 * Fid字段查询数据
+	 * Fid自定义字段 - 查询数据
 	 */
 	public function queryDataForFid() {
 		if (IS_POST) {
@@ -328,6 +328,20 @@ class MainMenuController extends PSIBaseController {
 			
 			$service = new MainMenuService();
 			$this->ajaxReturn($service->queryDataForFid($params));
+		}
+	}
+
+	/**
+	 * 菜单项自定义字段 - 查询数据
+	 */
+	public function queryDataForMenuItem() {
+		if (IS_POST) {
+			$params = [
+					"queryKey" => I("post.queryKey")
+			];
+			
+			$service = new MainMenuService();
+			$this->ajaxReturn($service->queryDataForMenuItem($params));
 		}
 	}
 }

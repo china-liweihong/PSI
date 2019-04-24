@@ -110,4 +110,32 @@ class MainMenuDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 菜单项自定义字段 - 查询数据
+	 */
+	public function queryDataForMenuItem($params) {
+		$db = $this->db;
+		
+		$queryKey = $params["queryKey"] ?? "";
+		
+		$sql = "select id, caption
+				from t_menu_item
+				where fid is null and caption like '%s' 
+				order by caption limit 20";
+		$queryParams = [];
+		$queryParams[] = "%{$queryKey}%";
+		
+		$data = $db->query($sql, $queryParams);
+		
+		$result = [];
+		foreach ( $data as $v ) {
+			$result[] = [
+					"id" => $v["id"],
+					"name" => $v["caption"]
+			];
+		}
+		
+		return $result;
+	}
 }

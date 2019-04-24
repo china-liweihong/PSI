@@ -111,4 +111,16 @@ class MainMenuService extends PSIBaseExService {
 		$dao = new MainMenuDAO($this->db());
 		return $dao->queryDataForFid($params);
 	}
+
+	/**
+	 * 菜单项自定义字段 - 查询数据
+	 */
+	public function queryDataForMenuItem($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new MainMenuDAO($this->db());
+		return $dao->queryDataForMenuItem($params);
+	}
 }

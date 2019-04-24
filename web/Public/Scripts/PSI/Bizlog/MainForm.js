@@ -18,15 +18,9 @@ Ext.define("PSI.Bizlog.MainForm", {
 
 		var store = me.getMainGrid().getStore();
 
-		var buttons = ["登录名", {
+		var buttons = ["登录名/姓名/IP", {
 					xtype : "textfield",
-					id : "editLoginName",
-					cls : "PSI-toolbox",
-					width : 90
-
-				}, "IP", {
-					xtype : "textfield",
-					id : "editIP",
+					id : "editQueryKey",
 					cls : "PSI-toolbox",
 					width : 90
 				}, " ", {
@@ -203,9 +197,15 @@ Ext.define("PSI.Bizlog.MainForm", {
 
 	onCellDbclick : function(ths, td, cellIndex, record, tr, rowIndex, e, eOpts) {
 		var me = this;
-
-		if (cellIndex == 3) {
-			Ext.getCmp("editIP").setValue(record.get("ip"));
+		if (cellIndex == 1) {
+			Ext.getCmp("editQueryKey").setValue(record.get("loginName"));
+			me.onRefresh();
+		} else if (cellIndex == 2) {
+			Ext.getCmp("editQueryKey").setValue(record.get("userName"));
+			me.onRefresh();
+		} else if (cellIndex == 3) {
+			Ext.getCmp("editQueryKey").setValue(record.get("ip"));
+			me.onRefresh();
 		}
 	},
 
@@ -262,16 +262,14 @@ Ext.define("PSI.Bizlog.MainForm", {
 
 	getQueryParam : function() {
 		return {
-			loginName : Ext.getCmp("editLoginName").getValue(),
-			ip : Ext.getCmp("editIP").getValue()
+			queryKey : Ext.getCmp("editQueryKey").getValue()
 		};
 	},
 
 	onClearQuery : function() {
 		var me = this;
 
-		Ext.getCmp("editLoginName").setValue(null);
-		Ext.getCmp("editIP").setValue(null);
+		Ext.getCmp("editQueryKey").setValue(null);
 
 		me.getMainGrid().getStore().currentPage = 1;
 

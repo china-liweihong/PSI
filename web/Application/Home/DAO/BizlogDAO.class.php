@@ -18,14 +18,13 @@ class BizlogDAO extends PSIBaseExDAO {
 	 * @return array
 	 */
 	public function logList($params) {
+		$db = $this->db;
+		
 		$loginUserId = $params["loginUserId"];
 		$start = $params["start"];
 		$limit = $params["limit"];
 		
-		$ip = $params["ip"];
-		$loginName = $params["loginName"];
-		
-		$db = $this->db;
+		$queryKey = $params["queryKey"] ?? "";
 		
 		$sql = "select b.id, u.login_name, u.name, b.ip, b.info, b.date_created,
 					b.log_category, b.ip_from
@@ -39,13 +38,11 @@ class BizlogDAO extends PSIBaseExDAO {
 			$queryParams = $rs[1];
 		}
 		
-		if ($ip) {
-			$sql .= " and (b.ip like '%s') ";
-			$queryParams[] = "{$ip}%";
-		}
-		if ($loginName) {
-			$sql .= " and (u.login_name like '%s') ";
-			$queryParams[] = "{$loginName}%";
+		if ($queryKey) {
+			$sql .= " and (b.ip like '%s' or u.login_name like '%s' or u.name like '%s' ) ";
+			$queryParams[] = "{$queryKey}%";
+			$queryParams[] = "{$queryKey}%";
+			$queryParams[] = "{$queryKey}%";
 		}
 		
 		$sql .= " order by b.date_created desc
@@ -80,13 +77,11 @@ class BizlogDAO extends PSIBaseExDAO {
 			$queryParams = $rs[1];
 		}
 		
-		if ($ip) {
-			$sql .= " and (b.ip like '%s') ";
-			$queryParams[] = "{$ip}%";
-		}
-		if ($loginName) {
-			$sql .= " and (u.login_name like '%s') ";
-			$queryParams[] = "{$loginName}%";
+		if ($queryKey) {
+			$sql .= " and (b.ip like '%s' or u.login_name like '%s' or u.name like '%s' ) ";
+			$queryParams[] = "{$queryKey}%";
+			$queryParams[] = "{$queryKey}%";
+			$queryParams[] = "{$queryKey}%";
 		}
 		
 		$data = $db->query($sql, $queryParams);

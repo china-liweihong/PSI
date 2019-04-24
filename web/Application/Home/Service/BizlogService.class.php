@@ -9,7 +9,7 @@ use Home\DAO\BizlogDAO;
  *
  * @author 李静波
  */
-class BizlogService extends PSIBaseService {
+class BizlogService extends PSIBaseExService {
 	var $db;
 
 	function __construct($db = null) {
@@ -28,13 +28,9 @@ class BizlogService extends PSIBaseService {
 			return $this->emptyResult();
 		}
 		
-		$start = $params["start"];
-		$limit = $params["limit"];
-		
 		$db = $this->db;
 		
-		$us = new UserService();
-		$params["loginUserId"] = $us->getLoginUserId();
+		$params["loginUserId"] = $this->getLoginUserId();
 		
 		$dao = new BizlogDAO($db);
 		return $dao->logList($params);

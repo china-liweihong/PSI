@@ -115,7 +115,11 @@ Ext.define("PSI.MainMenu.MainForm", {
 
 			onAddMenu : function() {
 				var me = this;
-				me.showInfo("TODO");
+
+				var form = Ext.create("PSI.MainMenu.MenuItemEditForm", {
+							parentForm : me
+						});
+				form.show();
 			},
 
 			onEditMenu : function() {

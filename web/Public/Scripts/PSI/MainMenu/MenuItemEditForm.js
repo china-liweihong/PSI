@@ -55,7 +55,7 @@ Ext.define("PSI.MainMenu.MenuItemEditForm", {
 				height : 40
 			},
 			width : 400,
-			height : 270,
+			height : 310,
 			layout : "border",
 			listeners : {
 				show : {
@@ -105,13 +105,16 @@ Ext.define("PSI.MainMenu.MenuItemEditForm", {
 									showModal : true,
 									blankText : "没有输入fid",
 									beforeLabelTextTpl : PSI.Const.REQUIRED,
-									name : "fid",
 									listeners : {
 										specialkey : {
 											fn : me.onEditFidSpecialKey,
 											scope : me
 										}
 									}
+								}, {
+									id : "PSI_MainMenu_MenuItemEditForm_hiddenFid",
+									name : "fid",
+									xtype : "hidden"
 								}, {
 									id : "PSI_MainMenu_MenuItemEditForm_editCaption",
 									fieldLabel : "菜单标题",
@@ -139,6 +142,26 @@ Ext.define("PSI.MainMenu.MenuItemEditForm", {
 											scope : me
 										}
 									}
+								}, {
+									id : "PSI_MainMenu_MenuItemEditForm_hiddenParentMenuId",
+									name : "parentMenuId",
+									xtype : "hidden"
+								}, {
+									id : "PSI_MainMenu_MenuItemEditForm_editShowOrder",
+									xtype : "numberfield",
+									fieldLabel : "显示次序",
+									hideTrigger : true,
+									allowDecimals : false,
+									allowBlank : false,
+									blankText : "没有输入显示次序",
+									beforeLabelTextTpl : PSI.Const.REQUIRED,
+									name : "showOrder",
+									listeners : {
+										specialkey : {
+											fn : me.onEditShowOrderSpecialKey,
+											scope : me
+										}
+									}
 								}],
 						buttons : buttons
 					}]
@@ -153,6 +176,12 @@ Ext.define("PSI.MainMenu.MenuItemEditForm", {
 				.getCmp("PSI_MainMenu_MenuItemEditForm_editCaption");
 		me.editParentMenu = Ext
 				.getCmp("PSI_MainMenu_MenuItemEditForm_editParentMenu");
+		me.editShowOrder = Ext
+				.getCmp("PSI_MainMenu_MenuItemEditForm_editShowOrder");
+
+		me.hiddenFid = Ext.getCmp("PSI_MainMenu_MenuItemEditForm_hiddenFid");
+		me.hiddenParentMenuId = Ext
+				.getCmp("PSI_MainMenu_MenuItemEditForm_hiddenParentMenuId");
 	},
 
 	/**
@@ -161,7 +190,8 @@ Ext.define("PSI.MainMenu.MenuItemEditForm", {
 	onOK : function() {
 		var me = this;
 
-		me.hiddenEnabled.setValue(me.editEnabled.getValue());
+		me.hiddenFid.setValue(me.editFid.getIdValue());
+		me.hiddenParentMenuId.setValue(me.editParentMenu.getIdValue());
 
 		var f = me.editForm;
 		var el = f.getEl();
@@ -188,23 +218,40 @@ Ext.define("PSI.MainMenu.MenuItemEditForm", {
 		f.submit(sf);
 	},
 
-	onEditCodeSpecialKey : function(field, e) {
+	onEditFidSpecialKey : function(field, e) {
 		var me = this;
 
 		if (e.getKey() == e.ENTER) {
-			var editName = me.editName;
-			editName.focus();
-			editName.setValue(editName.getValue());
+			me.editCaption.focus();
+			me.editCaption.setValue(me.editCaption.getValue());
 		}
 	},
 
-	onEditNameSpecialKey : function(field, e) {
+	onEditCaptionSpecialKey : function(field, e) {
+		var me = this;
+
+		if (e.getKey() == e.ENTER) {
+			me.editParentMenu.focus();
+			me.editParentMenu.setValue(me.editParentMenu.getValue());
+		}
+	},
+
+	onEditParentMenuSpecialKey : function(field, e) {
+		var me = this;
+
+		if (e.getKey() == e.ENTER) {
+			me.editShowOrder.focus();
+			me.editShowOrder.setValue(me.editShowOrder.getValue());
+		}
+	},
+
+	onEditShowOrderSpecialKey : function(field, e) {
 		var me = this;
 
 		if (e.getKey() == e.ENTER) {
 			var f = me.editForm;
 			if (f.getForm().isValid()) {
-				me.onOK(me.adding);
+				me.onOK();
 			}
 		}
 	},
@@ -230,8 +277,6 @@ Ext.define("PSI.MainMenu.MenuItemEditForm", {
 
 		Ext.get(window).on('beforeunload', me.onWindowBeforeUnload);
 
-		var editCode = me.editCode;
-		editCode.focus();
-		editCode.setValue(editCode.getValue());
+		me.editFid.focus();
 	}
 });

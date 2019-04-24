@@ -344,4 +344,22 @@ class MainMenuController extends PSIBaseController {
 			$this->ajaxReturn($service->queryDataForMenuItem($params));
 		}
 	}
+
+	/**
+	 * 主菜单维护 - 新增或编辑菜单项
+	 */
+	public function editMenuItem() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id"),
+					"fid" => I("post.fid"),
+					"caption" => I("post.caption"),
+					"parentMenuId" => I("post.parentMenuId"),
+					"showOrder" => I("post.showOrder")
+			];
+			
+			$service = new MainMenuService();
+			$this->ajaxReturn($service->editMenuItem($params));
+		}
+	}
 }

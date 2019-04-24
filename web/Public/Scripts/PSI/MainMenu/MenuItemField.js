@@ -81,7 +81,7 @@ Ext.define("PSI.MainMenu.MenuItemField", {
 			header : false,
 			border : 0,
 			width : 500,
-			height : 380,
+			height : 350,
 			layout : "border",
 			items : [{
 						region : "center",

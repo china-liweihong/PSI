@@ -123,4 +123,15 @@ class MainMenuService extends PSIBaseExService {
 		$dao = new MainMenuDAO($this->db());
 		return $dao->queryDataForMenuItem($params);
 	}
+
+	/**
+	 * 主菜单维护 - 新增或编辑菜单项
+	 */
+	public function editMenuItem() {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		return $this->todo();
+	}
 }

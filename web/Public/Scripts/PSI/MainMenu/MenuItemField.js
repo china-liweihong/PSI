@@ -92,7 +92,7 @@ Ext.define("PSI.MainMenu.MenuItemField", {
 					}, {
 						xtype : "panel",
 						region : "south",
-						height : 90,
+						height : 40,
 						layout : "fit",
 						border : 0,
 						items : [{

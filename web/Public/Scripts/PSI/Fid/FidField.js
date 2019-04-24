@@ -68,7 +68,8 @@ Ext.define("PSI.Fid.FidField", {
 					columns : [{
 								header : "fid",
 								dataIndex : "id",
-								menuDisabled : true
+								menuDisabled : true,
+								width: 150
 							}, {
 								header : "名称",
 								dataIndex : "name",
@@ -85,7 +86,7 @@ Ext.define("PSI.Fid.FidField", {
 			header : false,
 			border : 0,
 			width : 500,
-			height : 380,
+			height : 300,
 			layout : "border",
 			items : [{
 						region : "center",
@@ -96,7 +97,7 @@ Ext.define("PSI.Fid.FidField", {
 					}, {
 						xtype : "panel",
 						region : "south",
-						height : 90,
+						height : 40,
 						layout : "fit",
 						border : 0,
 						items : [{

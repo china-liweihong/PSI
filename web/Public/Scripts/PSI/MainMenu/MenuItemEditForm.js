@@ -102,6 +102,7 @@ Ext.define("PSI.MainMenu.MenuItemEditForm", {
 									fieldLabel : "fid",
 									xtype : "psi_fidfield",
 									allowBlank : false,
+									showModal : true,
 									blankText : "没有输入fid",
 									beforeLabelTextTpl : PSI.Const.REQUIRED,
 									name : "fid",
@@ -128,6 +129,9 @@ Ext.define("PSI.MainMenu.MenuItemEditForm", {
 									id : "PSI_MainMenu_MenuItemEditForm_editParentMenu",
 									xtype : "psi_menuitemfield",
 									fieldLabel : "上级菜单",
+									allowBlank : false,
+									blankText : "没有输入上级菜单",
+									showModal : true,
 									beforeLabelTextTpl : PSI.Const.REQUIRED,
 									listeners : {
 										specialkey : {
@@ -172,7 +176,7 @@ Ext.define("PSI.MainMenu.MenuItemEditForm", {
 
 				PSI.MsgBox.tip("数据保存成功");
 				me.focus();
-					me.close();
+				me.close();
 			},
 			failure : function(form, action) {
 				el.unmask();

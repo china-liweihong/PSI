@@ -138,6 +138,7 @@ class MainMenuService extends PSIBaseExService {
 		$db = $this->db();
 		$db->startTrans();
 		
+		$id = $params["id"];
 		$caption = $params["caption"];
 		
 		$log = null;

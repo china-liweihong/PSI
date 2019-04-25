@@ -299,4 +299,64 @@ class MainMenuDAO extends PSIBaseExDAO {
 			return $this->emptyResult();
 		}
 	}
+
+	/**
+	 * 编辑菜单项
+	 *
+	 * @param array $params        	
+	 * @return array|null
+	 */
+	public function updateMenuItem(&$params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		
+		$fid = $params["fid"];
+		$caption = $params["caption"];
+		$parentMenuId = $params["parentMenuId"];
+		$showOrder = intval($params["showOrder"]);
+		$isDemo = $params["isDemo"];
+		
+		// 检查fid
+		$sql = "select count(*) as cnt from t_fid_plus where fid = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt != 1) {
+			return $this->bad("fid在表t_fid_plus中不存在");
+		}
+		
+		$len = strlen($caption);
+		if ($len <= 0) {
+			return $this->bad("没有输入标题");
+		} else if ($len > 20) {
+			return $this->bad("标题过长，不能大于20个字符");
+		}
+		
+		// 检查上级菜单id
+		$sql = "select count(*) as cnt from t_menu_item where id = '%s' and parent_id is null ";
+		$data = $db->query($sql, $parentMenuId);
+		$cnt = $data[0]["cnt"];
+		if ($cnt != 1) {
+			return $this->bad("上级菜单不存在");
+		}
+		
+		if ($isDemo) {
+			// 在演示环境中，菜单只能挂在基础数据下
+			if ($parentMenuId != "08") {
+				return $this->bad("在演示环境中，自定义菜单只能设置在[基础数据]菜单项下");
+			}
+		}
+		
+		$sql = "update t_menu_item_plus
+					set caption = '%s', fid = '%s', parent_id = '%s',
+						show_order = %d
+				where id = '%s' ";
+		$rc = $db->execute($sql, $caption, $fid, $parentMenuId, $showOrder, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		return null;
+	}
 }

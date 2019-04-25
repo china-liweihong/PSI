@@ -110,7 +110,9 @@ Ext.define("PSI.MainMenu.MenuItemEditForm", {
 											fn : me.onEditFidSpecialKey,
 											scope : me
 										}
-									}
+									},
+									callbackFunc : me.__fidCallbackFunc,
+									callbackScope : me
 								}, {
 									id : "PSI_MainMenu_MenuItemEditForm_hiddenFid",
 									name : "fid",
@@ -278,5 +280,14 @@ Ext.define("PSI.MainMenu.MenuItemEditForm", {
 		Ext.get(window).on('beforeunload', me.onWindowBeforeUnload);
 
 		me.editFid.focus();
+	},
+
+	// 自定义字段psi_fidfield回调本方法
+	__fidCallbackFunc : function(data, scope) {
+		var me = scope;
+
+		if (!me.editCaption.getValue()) {
+			me.editCaption.setValue(data.get("name"));
+		}
 	}
 });

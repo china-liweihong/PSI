@@ -63,7 +63,7 @@ Ext.define("PSI.MainMenu.MainForm", {
 				Ext.define(modelName, {
 							extend : "Ext.data.Model",
 							fields : ["id", "caption", "fid", "showOrder",
-									"leaf", "children"]
+									"sysItem", "leaf", "children"]
 						});
 
 				var store = Ext.create("Ext.data.TreeStore", {
@@ -88,6 +88,7 @@ Ext.define("PSI.MainMenu.MainForm", {
 							store : store,
 							rootVisible : false,
 							useArrows : true,
+							columnLines : true,
 							viewConfig : {
 								loadMask : true
 							},
@@ -110,6 +111,17 @@ Ext.define("PSI.MainMenu.MainForm", {
 											text : "显示排序",
 											dataIndex : "showOrder",
 											width : 80
+										}, {
+											text : "性质",
+											dataIndex : "sysItem",
+											width : 120,
+											renderer : function(value) {
+												if (parseInt(value) == 1) {
+													return "系统菜单";
+												} else {
+													return "自定义模块菜单";
+												}
+											}
 										}]
 							}
 						});
@@ -128,6 +140,19 @@ Ext.define("PSI.MainMenu.MainForm", {
 
 			onEditMenu : function() {
 				var me = this;
+				var item = me.getMainGrid().getSelectionModel().getSelection();
+				if (item == null || item.length != 1) {
+					me.showInfo("请选择要编辑的菜单项");
+					return;
+				}
+
+				var menuItem = item[0];
+
+				if (parseInt(menuItem.get("sysItem")) == 1) {
+					me.showInfo("不能编辑系统菜单项");
+					return;
+				}
+
 				me.showInfo("TODO");
 			},
 
@@ -140,6 +165,12 @@ Ext.define("PSI.MainMenu.MainForm", {
 				}
 
 				var menuItem = item[0];
+
+				if (parseInt(menuItem.get("sysItem")) == 1) {
+					me.showInfo("不能删除系统菜单项");
+					return;
+				}
+
 				var info = "请确认是否删除菜单项: <span style='color:red'>"
 						+ menuItem.get("caption") + "</span>";
 

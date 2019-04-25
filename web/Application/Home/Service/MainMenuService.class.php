@@ -10,6 +10,7 @@ use Home\DAO\MainMenuDAO;
  * @author 李静波
  */
 class MainMenuService extends PSIBaseExService {
+	private $LOG_CATEGORY = "主菜单维护";
 
 	/**
 	 * 当前用户有权限访问的所有菜单项
@@ -127,11 +128,47 @@ class MainMenuService extends PSIBaseExService {
 	/**
 	 * 主菜单维护 - 新增或编辑菜单项
 	 */
-	public function editMenuItem() {
+	public function editMenuItem($params) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
 		
-		return $this->todo();
+		$params["isDemo"] = $this->isDemo();
+		
+		$db = $this->db();
+		$db->startTrans();
+		
+		$caption = $params["caption"];
+		
+		$log = null;
+		$dao = new MainMenuDAO($db);
+		if ($id) {
+			// 编辑
+			$rc = $dao->updateMenuItem($params);
+			if ($rc) {
+				$db->rollback();
+				return $rc;
+			}
+			
+			$log = "编辑主菜单项：{$caption}";
+		} else {
+			// 新增
+			$rc = $dao->addMenuItem($params);
+			if ($rc) {
+				$db->rollback();
+				return $rc;
+			}
+			
+			$id = $params["id"];
+			$log = "新增主菜单项：{$caption}";
+		}
+		
+		// 记录业务日志
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
+		return $this->ok($id);
 	}
 }

@@ -151,4 +151,71 @@ class MainMenuDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 新增主菜单项
+	 *
+	 * @param array $params        	
+	 * @return array|NULL
+	 */
+	public function addMenuItem(& $params) {
+		$db = $this->db;
+		
+		$fid = $params["fid"];
+		$caption = $params["caption"];
+		$parentMenuId = $params["parentMenuId"];
+		$showOrder = intval($params["showOrder"]);
+		$isDemo = $params["isDemo"];
+		
+		// 检查fid
+		$sql = "select count(*) as cnt from t_fid_plus where fid = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt != 1) {
+			return $this->bad("fid在表t_fid_plus中不存在");
+		}
+		
+		$len = strlen($caption);
+		if ($len <= 0) {
+			return $this->bad("没有输入标题");
+		} else if ($len > 20) {
+			return $this->bad("标题过长，不能大于20个字符");
+		}
+		
+		// 检查上级菜单id
+		$sql = "select count(*) as cnt from t_menu_item where id = '%s' and parent_id is null ";
+		$data = $db->query($sql, $parentMenuId);
+		$cnt = $data[0]["cnt"];
+		if ($cnt != 1) {
+			return $this->bad("上级菜单不存在");
+		}
+		
+		if ($isDemo) {
+			// 在演示环境中，菜单只能挂在基础数据下
+			if ($parentMenuId != "08") {
+				return $this->bad("在演示环境中，自定义菜单只能设置在[基础数据]菜单项下");
+			}
+		}
+		
+		// 检查该菜单项是否已经设置过了
+		$sql = "select count(*) as cnt from t_menu_item_plus where fid = '%s' ";
+		$data = $db->query($sql, $fid);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("fid为[{$fid}]的模块已经设置了主菜单了，不能重复设置");
+		}
+		
+		$id = $this->newId();
+		
+		$sql = "insert into t_menu_item_plus (id, caption, fid, parent_id, show_order)
+				values ('%s', '%s', '%s', '%s', %d)";
+		$rc = $db->execute($sql, $id, $caption, $fid, $parentMenuId, $showOrder);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		$params["id"] = $id;
+		return null;
+	}
 }

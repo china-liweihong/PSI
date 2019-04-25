@@ -62,8 +62,8 @@ Ext.define("PSI.MainMenu.MainForm", {
 				var modelName = "PSIMainMenu";
 				Ext.define(modelName, {
 							extend : "Ext.data.Model",
-							fields : ["id", "caption", "fid", "showOrder", "leaf",
-									"children"]
+							fields : ["id", "caption", "fid", "showOrder",
+									"leaf", "children"]
 						});
 
 				var store = Ext.create("Ext.data.TreeStore", {
@@ -134,5 +134,10 @@ Ext.define("PSI.MainMenu.MainForm", {
 			onDeleteMenu : function() {
 				var me = this;
 				me.showInfo("TODO");
+			},
+
+			refreshMainGrid : function() {
+				// 这里用reload，是为同时刷新主界面中的主菜单的偷懒的写法
+				window.location.reload();
 			}
 		});

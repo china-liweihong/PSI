@@ -45,7 +45,9 @@ Ext.define("PSI.MainMenu.MainForm", {
 						}, "-", {
 							text : "帮助",
 							handler : function() {
-								PSI.MsgBox.showInfo("TODO");
+								var url = me
+										.URL("/Home/Help/index?t=mainMenuMaintain")
+								window.open(url);
 							}
 						}, "-", {
 							text : "关闭",

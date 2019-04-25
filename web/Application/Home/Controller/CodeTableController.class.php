@@ -32,6 +32,33 @@ class CodeTableController extends PSIBaseController {
 	}
 
 	/**
+	 * 码表运行 - 主页面
+	 */
+	public function run() {
+		$fid = I("get.fid");
+		
+		$us = new UserService();
+		if ($us->hasPermission($fid)) {
+			$this->initVar();
+			
+			$service = new CodeTableService();
+			$md = $service->getMetaDataByFid($fid);
+			
+			if ($md) {
+				$this->assign("title", $md["title"]);
+				
+				$this->display();
+			} else {
+				
+				// 错误的fid，跳转到首页
+				$this->gotoLoginPage("/Home");
+			}
+		} else {
+			$this->gotoLoginPage("/Home");
+		}
+	}
+
+	/**
 	 * 码表分类列表
 	 */
 	public function categoryList() {

@@ -786,4 +786,24 @@ class CodeTableDAO extends PSIBaseExDAO {
 			return $this->emptyResult();
 		}
 	}
+
+	/**
+	 * 根据fid获得码表的元数据
+	 *
+	 * @param string $fid        	
+	 * @return array|NULL
+	 */
+	public function getMetaDataByFid($fid) {
+		$db = $this->db;
+		
+		$sql = "select caption from t_menu_item_plus where fid = '%s' ";
+		$data = $db->query($sql, $fid);
+		if ($data) {
+			$result = [];
+			$result["title"] = $data[0]["caption"];
+			return $result;
+		} else {
+			return null;
+		}
+	}
 }

@@ -227,4 +227,19 @@ class CodeTableService extends PSIBaseExService {
 		$dao = new CodeTableDAO($this->db());
 		return $dao->codeTableInfo($params);
 	}
+
+	/**
+	 * 根据fid获得码表的元数据
+	 * 
+	 * @param string $fid        	
+	 * @return array
+	 */
+	public function getMetaDataByFid($fid) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new CodeTableDAO($this->db());
+		return $dao->getMetaDataByFid($fid);
+	}
 }

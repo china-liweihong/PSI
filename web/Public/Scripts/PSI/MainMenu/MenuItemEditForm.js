@@ -280,6 +280,35 @@ Ext.define("PSI.MainMenu.MenuItemEditForm", {
 		Ext.get(window).on('beforeunload', me.onWindowBeforeUnload);
 
 		me.editFid.focus();
+
+		var entity = me.getEntity();
+		if (entity === null) {
+			return;
+		}
+
+		var el = me.getEl();
+		el && el.mask("数据加载中...");
+		var r = {
+			url : me.URL("/Home/MainMenu/menuItemInfo"),
+			method : "POST",
+			params : {
+				id : entity.get("id")
+			},
+			callback : function(options, success, response) {
+				el && el.unmask();
+				if (success) {
+					var data = Ext.JSON.decode(response.responseText);
+					me.editFid.setIdValue(data.fid);
+					me.editFid.setValue(data.fidName);
+					me.editCaption.setValue(data.caption);
+					me.editParentMenu.setIdValue(data.parentMenuId);
+					me.editParentMenu.setValue(data.parentMenuCaption);
+					me.editShowOrder.setValue(data.showOrder);
+				}
+			}
+		};
+
+		me.ajax(r);
 	},
 
 	// 自定义字段psi_fidfield回调本方法

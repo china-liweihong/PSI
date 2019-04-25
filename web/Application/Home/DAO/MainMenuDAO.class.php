@@ -260,4 +260,43 @@ class MainMenuDAO extends PSIBaseExDAO {
 		$params["caption"] = $caption;
 		return null;
 	}
+
+	/**
+	 * 某个菜单项的详情信息
+	 */
+	public function menuItemInfo($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		
+		$sql = "select fid, caption, parent_id, show_order
+				from t_menu_item_plus
+				where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if ($data) {
+			$v = $data[0];
+			$result = [
+					"fid" => $v["fid"],
+					"caption" => $v["caption"],
+					"parentMenuId" => $v["parent_id"],
+					"showOrder" => $v["show_order"]
+			];
+			
+			$sql = "select name from t_fid_plus where fid = '%s' ";
+			$data = $db->query($sql, $v["fid"]);
+			if ($data) {
+				$result["fidName"] = $data[0]["name"];
+			}
+			
+			$sql = "select caption from t_menu_item where id = '%s' ";
+			$data = $db->query($sql, $v["parent_id"]);
+			if ($data) {
+				$result["parentMenuCaption"] = $data[0]["caption"];
+			}
+			
+			return $result;
+		} else {
+			return $this->emptyResult();
+		}
+	}
 }

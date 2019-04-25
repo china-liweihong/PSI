@@ -201,4 +201,16 @@ class MainMenuService extends PSIBaseExService {
 		
 		return $this->ok();
 	}
+
+	/**
+	 * 某个菜单项的详情信息
+	 */
+	public function menuItemInfo($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new MainMenuDAO($this->db());
+		return $dao->menuItemInfo($params);
+	}
 }

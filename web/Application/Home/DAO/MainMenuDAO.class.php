@@ -218,4 +218,39 @@ class MainMenuDAO extends PSIBaseExDAO {
 		$params["id"] = $id;
 		return null;
 	}
+
+	/**
+	 * 删除菜单项
+	 */
+	public function deleteMenuItem(& $params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		
+		// 判断要删除的菜单项是不是系统菜单
+		$sql = "select count(*) as cnt from t_menu_item where id = '%s' ";
+		$data = $db->query($sql, $id);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("系统菜单不能删除");
+		}
+		
+		$sql = "select caption from t_menu_item_plus where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return $this->bad("要删除的菜单不存在");
+		}
+		
+		$caption = $data[0]["caption"];
+		
+		$sql = "delete from t_menu_item_plus where id = '%s' ";
+		$rc = $db->execute($sql, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		$params["caption"] = $caption;
+		return null;
+	}
 }

@@ -362,4 +362,18 @@ class MainMenuController extends PSIBaseController {
 			$this->ajaxReturn($service->editMenuItem($params));
 		}
 	}
+
+	/**
+	 * 删除菜单项
+	 */
+	public function deleteMenuItem() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id")
+			];
+			
+			$service = new MainMenuService();
+			$this->ajaxReturn($service->deleteMenuItem($params));
+		}
+	}
 }

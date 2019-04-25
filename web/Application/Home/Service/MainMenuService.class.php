@@ -171,4 +171,34 @@ class MainMenuService extends PSIBaseExService {
 		
 		return $this->ok($id);
 	}
+
+	/**
+	 * 删除菜单项
+	 */
+	public function deleteMenuItem($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$db = $this->db();
+		$db->startTrans();
+		
+		$dao = new MainMenuDAO($db);
+		$rc = $dao->deleteMenuItem($params);
+		if ($rc) {
+			$db->rollback();
+			return $rc;
+		}
+		
+		$caption = $params["caption"];
+		$log = "删除主菜单项：{$caption}";
+		
+		// 记录业务日志
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
+		return $this->ok();
+	}
 }

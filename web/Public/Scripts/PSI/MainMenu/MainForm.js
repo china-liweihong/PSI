@@ -133,7 +133,43 @@ Ext.define("PSI.MainMenu.MainForm", {
 
 			onDeleteMenu : function() {
 				var me = this;
-				me.showInfo("TODO");
+				var item = me.getMainGrid().getSelectionModel().getSelection();
+				if (item == null || item.length != 1) {
+					me.showInfo("请选择要删除的菜单项");
+					return;
+				}
+
+				var menuItem = item[0];
+				var info = "请确认是否删除菜单项: <span style='color:red'>"
+						+ menuItem.get("caption") + "</span>";
+
+				var confirmFunc = function() {
+					var el = Ext.getBody();
+					el.mask("正在删除中...");
+
+					var r = {
+						url : me.URL("/Home/MainMenu/deleteMenuItem"),
+						params : {
+							id : menuItem.get("id")
+						},
+						callback : function(options, success, response) {
+							el.unmask();
+
+							if (success) {
+								var data = me.decodeJSON(response.responseText);
+								if (data.success) {
+									me.tip("成功完成删除操作");
+									me.refreshMainGrid();
+								} else {
+									me.showInfo(data.msg);
+								}
+							}
+						}
+					};
+					me.ajax(r);
+				};
+
+				me.confirm(info, confirmFunc);
 			},
 
 			refreshMainGrid : function() {

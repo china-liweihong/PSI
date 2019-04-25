@@ -151,11 +151,11 @@ Ext.define("PSI.MainMenu.MenuItemEditForm", {
 								}, {
 									id : "PSI_MainMenu_MenuItemEditForm_editShowOrder",
 									xtype : "numberfield",
-									fieldLabel : "显示次序",
+									fieldLabel : "显示排序",
 									hideTrigger : true,
 									allowDecimals : false,
 									allowBlank : false,
-									blankText : "没有输入显示次序",
+									blankText : "没有输入显示排序",
 									beforeLabelTextTpl : PSI.Const.REQUIRED,
 									name : "showOrder",
 									listeners : {

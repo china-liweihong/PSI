@@ -34,10 +34,12 @@ Ext.define("PSI.MainMenu.MainForm", {
 							scope : me
 						}, {
 							text : "编辑菜单",
+							id : "buttonEdit",
 							handler : me.onEditMenu,
 							scope : me
 						}, {
 							text : "删除菜单",
+							id : "buttonDelete",
 							handler : me.onDeleteMenu,
 							scope : me
 						}, "-", {
@@ -123,10 +125,22 @@ Ext.define("PSI.MainMenu.MainForm", {
 												}
 											}
 										}]
+							},
+							listeners : {
+								select : {
+									fn : me.onMainGridSelect,
+									scope : me
+								}
 							}
 						});
 
 				return me.__mainGrid;
+			},
+
+			onMainGridSelect : function(rowModel, record) {
+				var sysItem = parseInt(record.get("sysItem")) == 1;
+				Ext.getCmp("buttonEdit").setDisabled(sysItem);
+				Ext.getCmp("buttonDelete").setDisabled(sysItem);
 			},
 
 			onAddMenu : function() {

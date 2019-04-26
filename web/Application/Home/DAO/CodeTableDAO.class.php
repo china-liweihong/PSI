@@ -806,4 +806,28 @@ class CodeTableDAO extends PSIBaseExDAO {
 			return null;
 		}
 	}
+
+	/**
+	 * 查询码表元数据 - 运行界面用
+	 */
+	public function getMetaDataForRuntime($params) {
+		$db = $this->db;
+		
+		$fid = $params["fid"];
+		
+		$sql = "select name
+				from t_code_table_md 
+				where fid = '%s' ";
+		$data = $db->query($sql, $fid);
+		if (! $data) {
+			return null;
+		}
+		$v = $data[0];
+		
+		$result = [
+				"name" => $v["name"]
+		];
+		
+		return $result;
+	}
 }

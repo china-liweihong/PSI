@@ -13,7 +13,10 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
 				var me = this;
 
 				Ext.apply(me, {
-							tbar : me.getToolbarCmp(),
+							tbar : {
+								id : "PSI_CodeTable_RuntimeMainForm_toolBar",
+								xtype : "toolbar"
+							},
 							layout : "border",
 							items : [{
 										region : "center",
@@ -25,21 +28,69 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
 
 				me.callParent(arguments);
 
+				me.__toolBar = Ext
+						.getCmp("PSI_CodeTable_RuntimeMainForm_toolBar");
+
+				me.fetchMeatData();
 			},
 
-			getToolbarCmp : function() {
+			getMetaData : function() {
+				return this.__md;
+			},
+
+			fetchMeatData : function() {
+				var me = this;
+				var el = me.getEl();
+				el && el.mask(PSI.Const.LOADING);
+				me.ajax({
+							url : me
+									.URL("Home/CodeTable/getMetaDataForRuntime"),
+							params : {
+								fid : me.getFid()
+							},
+							callback : function(options, success, response) {
+								if (success) {
+									var data = me
+											.decodeJSON(response.responseText);
+
+									me.__md = data;
+
+									me.initUI();
+								}
+
+								el && el.unmask();
+							}
+						});
+			},
+
+			initUI : function() {
 				var me = this;
 
-				return [{
-							text : "新增",
+				var md = me.getMetaData();
+				if (!md) {
+					return;
+				}
+
+				var name = md.name;
+				if (!name) {
+					return;
+				}
+
+				// 按钮
+				var toolBar = me.__toolBar;
+				toolBar.add([{
+							text : "新增" + name,
+							id : "buttonAddCodeTableRecord",
 							handler : me.onAddCodeTableRecord,
 							scope : me
 						}, {
-							text : "编辑",
+							text : "编辑" + name,
+							id : "buttonEditCodeTableRecord",
 							handler : me.onEditCodeTableRecord,
 							scope : me
 						}, {
-							text : "删除",
+							text : "删除" + name,
+							id : "buttonDeleteCodeTableRecord",
 							handler : me.onDeleteCodeTableRecord,
 							scope : me
 						}, "-", {
@@ -47,7 +98,7 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
 							handler : function() {
 								me.closeWindow();
 							}
-						}];
+						}]);
 			},
 
 			onAddCodeTableRecord : function() {

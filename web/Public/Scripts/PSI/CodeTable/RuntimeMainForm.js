@@ -117,7 +117,7 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
 						cols.push({
 									header : mdCol.caption,
 									dataIndex : mdCol.fieldName,
-									width : 100,
+									width : parseInt(mdCol.widthInView),
 									menuDisabled : true,
 									sortable : false
 								});
@@ -135,6 +135,7 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
 								enableTextSelection : true
 							},
 							columnLines : true,
+							border : 0,
 							columns : cols,
 							store : Ext.create("Ext.data.Store", {
 										model : modelName,

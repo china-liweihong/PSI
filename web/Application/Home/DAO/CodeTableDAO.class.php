@@ -293,7 +293,8 @@ class CodeTableDAO extends PSIBaseExDAO {
 				"mustInput" => 1,
 				"showOrder" => - 1000,
 				"sysCol" => 1,
-				"isVisible" => 2
+				"isVisible" => 2,
+				"widthInView" => 0
 		];
 		
 		// code
@@ -309,7 +310,8 @@ class CodeTableDAO extends PSIBaseExDAO {
 				"mustInput" => 1,
 				"showOrder" => 0,
 				"sysCol" => 1,
-				"isVisible" => 1
+				"isVisible" => 1,
+				"widthInView" => 120
 		];
 		
 		// name
@@ -325,7 +327,8 @@ class CodeTableDAO extends PSIBaseExDAO {
 				"mustInput" => 1,
 				"showOrder" => 1,
 				"sysCol" => 1,
-				"isVisible" => 1
+				"isVisible" => 1,
+				"widthInView" => 200
 		];
 		
 		// 拼音字头
@@ -341,7 +344,8 @@ class CodeTableDAO extends PSIBaseExDAO {
 				"mustInput" => 0,
 				"showOrder" => - 900,
 				"sysCol" => 1,
-				"isVisible" => 2
+				"isVisible" => 2,
+				"widthInView" => 0
 		];
 		
 		// 数据域data_org
@@ -357,7 +361,8 @@ class CodeTableDAO extends PSIBaseExDAO {
 				"mustInput" => 0,
 				"showOrder" => - 800,
 				"sysCol" => 1,
-				"isVisible" => 2
+				"isVisible" => 2,
+				"widthInView" => 0
 		];
 		
 		// company_id
@@ -373,7 +378,8 @@ class CodeTableDAO extends PSIBaseExDAO {
 				"mustInput" => 0,
 				"showOrder" => - 700,
 				"sysCol" => 1,
-				"isVisible" => 2
+				"isVisible" => 2,
+				"widthInView" => 0
 		];
 		
 		// 记录创建时间
@@ -389,7 +395,8 @@ class CodeTableDAO extends PSIBaseExDAO {
 				"mustInput" => 0,
 				"showOrder" => - 699,
 				"sysCol" => 1,
-				"isVisible" => 2
+				"isVisible" => 2,
+				"widthInView" => 0
 		];
 		
 		// 记录创建人id
@@ -405,7 +412,8 @@ class CodeTableDAO extends PSIBaseExDAO {
 				"mustInput" => 0,
 				"showOrder" => - 698,
 				"sysCol" => 1,
-				"isVisible" => 2
+				"isVisible" => 2,
+				"widthInView" => 0
 		];
 		
 		// 记录最后一次编辑时间
@@ -421,7 +429,8 @@ class CodeTableDAO extends PSIBaseExDAO {
 				"mustInput" => 0,
 				"showOrder" => - 697,
 				"sysCol" => 1,
-				"isVisible" => 2
+				"isVisible" => 2,
+				"widthInView" => 0
 		];
 		
 		// 记录最后一次编辑人id
@@ -437,7 +446,8 @@ class CodeTableDAO extends PSIBaseExDAO {
 				"mustInput" => 0,
 				"showOrder" => - 696,
 				"sysCol" => 1,
-				"isVisible" => 2
+				"isVisible" => 2,
+				"widthInView" => 0
 		];
 		
 		// 状态
@@ -453,7 +463,8 @@ class CodeTableDAO extends PSIBaseExDAO {
 				"mustInput" => 1,
 				"showOrder" => 2,
 				"sysCol" => 1,
-				"isVisible" => 1
+				"isVisible" => 1,
+				"widthInView" => 80
 		];
 		
 		return $result;
@@ -534,15 +545,15 @@ class CodeTableDAO extends PSIBaseExDAO {
 			$sql = "insert into t_code_table_cols_md (id, table_id,
 						caption, db_field_name, db_field_type, db_field_length,
 						db_field_decimal, show_order, value_from, value_from_table_name,
-						value_from_col_name, must_input, sys_col, is_visible)
+						value_from_col_name, must_input, sys_col, is_visible, width_in_view)
 					values ('%s', '%s',
 						'%s', '%s', '%s', %d,
 						%d, %d, %d, '%s',
-						'%s', %d, %d, %d)";
+						'%s', %d, %d, %d, %d)";
 			$rc = $db->execute($sql, $this->newId(), $id, $v["caption"], $v["fieldName"], 
 					$v["fieldType"], $v["fieldLength"], $v["fieldDecimal"], $v["showOrder"], 
 					$v["valueFrom"], $v["valueFromTableName"], $v["valueFromColName"], 
-					$v["mustInput"], $v["sysCol"], $v["isVisible"]);
+					$v["mustInput"], $v["sysCol"], $v["isVisible"], $v["widthInView"]);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
@@ -834,17 +845,19 @@ class CodeTableDAO extends PSIBaseExDAO {
 		// 列
 		$sql = "select caption, 
 					db_field_name, db_field_type, db_field_length, db_field_decimal,
-					sys_col, is_visible
+					sys_col, is_visible, width_in_view
 				from t_code_table_cols_md
 				where table_id = '%s' 
 				order by show_order";
 		$data = $db->query($sql, $id);
 		$cols = [];
 		foreach ( $data as $v ) {
+			$isVisible = $v["is_visible"] == 1;
 			$cols[] = [
 					"caption" => $v["caption"],
 					"fieldName" => $v["db_field_name"],
-					"isVisible" => $v["is_visible"] == 1
+					"isVisible" => $isVisible,
+					"widthInView" => $isVisible ? ($v["width_in_view"] ?? 100) : null
 			];
 		}
 		$result["cols"] = $cols;

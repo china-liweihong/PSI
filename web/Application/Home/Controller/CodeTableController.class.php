@@ -46,6 +46,7 @@ class CodeTableController extends PSIBaseController {
 			
 			if ($md) {
 				$this->assign("title", $md["title"]);
+				$this->assign("fid", $fid);
 				
 				$this->display();
 			} else {

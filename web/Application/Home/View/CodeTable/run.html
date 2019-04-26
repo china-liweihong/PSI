@@ -1,5 +1,11 @@
 <layout name="layout" />
 
+<script
+	src="{$uri}Public/Scripts/PSI/CodeTable/RuntimeMainForm.js?dt={$dtFlag}"
+	type="text/javascript"></script>
+
+
+
 <script>
 	Ext.onReady(function() {
 		PSI.Const.PROD_NAME = "{$productionName}";
@@ -11,5 +17,9 @@
 				title : "{$title}"
 			}
 		});
+
+		app.add(Ext.create("PSI.CodeTable.RuntimeMainForm", {
+			fid : "{$fid}"
+		}));
 	});
 </script>

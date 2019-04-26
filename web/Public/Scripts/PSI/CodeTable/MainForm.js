@@ -242,7 +242,8 @@ Ext.define("PSI.CodeTable.MainForm", {
 									"fieldType", "fieldLength", "fieldDecimal",
 									"valueFrom", "valueFromTableName",
 									"valueFromColName", "mustInput",
-									"showOrder", "sysCol", "isVisible"]
+									"showOrder", "sysCol", "isVisible",
+									"widthInView"]
 						});
 
 				me.__colsGrid = Ext.create("Ext.grid.Panel", {
@@ -261,13 +262,10 @@ Ext.define("PSI.CodeTable.MainForm", {
 									sortable : false
 								},
 								items : [{
-											header : "显示次序",
-											dataIndex : "showOrder",
-											width : 70
-										}, {
 											header : "列标题",
 											dataIndex : "caption",
-											width : 150
+											width : 150,
+											locked : true
 										}, {
 											header : "列数据库名",
 											dataIndex : "fieldName",
@@ -279,11 +277,13 @@ Ext.define("PSI.CodeTable.MainForm", {
 										}, {
 											header : "列数据长度",
 											dataIndex : "fieldLength",
-											width : 80
+											align : "right",
+											width : 90
 										}, {
 											header : "列小数位数",
 											dataIndex : "fieldDecimal",
-											width : 80
+											align : "right",
+											width : 90
 										}, {
 											header : "值来源",
 											dataIndex : "valueFrom",
@@ -307,6 +307,15 @@ Ext.define("PSI.CodeTable.MainForm", {
 										}, {
 											header : "必须录入",
 											dataIndex : "mustInput",
+											width : 70
+										}, {
+											header : "列视图宽度(px)",
+											dataIndex : "widthInView",
+											width : 120,
+											align : "right"
+										}, {
+											header : "显示次序",
+											dataIndex : "showOrder",
 											width : 70
 										}]
 							},

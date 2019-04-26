@@ -148,7 +148,13 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
 
 			onAddCodeTableRecord : function() {
 				var me = this;
-				me.showInfo("TODO");
+
+				var form = Ext.create("PSI.CodeTable.RuntimeEditForm", {
+							parentForm : me,
+							metaData : me.getMetaData()
+						});
+
+				form.show();
 			},
 
 			onEditCodeTableRecord : function() {

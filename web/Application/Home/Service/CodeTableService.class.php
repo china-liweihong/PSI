@@ -254,4 +254,15 @@ class CodeTableService extends PSIBaseExService {
 		$dao = new CodeTableDAO($this->db());
 		return $dao->getMetaDataForRuntime($params);
 	}
+
+	/**
+	 * 新增或编辑码表记录
+	 */
+	public function editCodeTableRecord($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		return $this->todo();
+	}
 }

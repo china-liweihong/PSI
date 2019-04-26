@@ -815,7 +815,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 		
 		$fid = $params["fid"];
 		
-		$sql = "select name
+		$sql = "select id, name, table_name
 				from t_code_table_md 
 				where fid = '%s' ";
 		$data = $db->query($sql, $fid);
@@ -824,9 +824,30 @@ class CodeTableDAO extends PSIBaseExDAO {
 		}
 		$v = $data[0];
 		
+		$id = $v["id"];
+		
 		$result = [
+				"tableName" => $v["table_name"],
 				"name" => $v["name"]
 		];
+		
+		// 列
+		$sql = "select caption, 
+					db_field_name, db_field_type, db_field_length, db_field_decimal,
+					sys_col, is_visible
+				from t_code_table_cols_md
+				where table_id = '%s' 
+				order by show_order";
+		$data = $db->query($sql, $id);
+		$cols = [];
+		foreach ( $data as $v ) {
+			$cols[] = [
+					"caption" => $v["caption"],
+					"fieldName" => $v["db_field_name"],
+					"isVisible" => $v["is_visible"] == 1
+			];
+		}
+		$result["cols"] = $cols;
 		
 		return $result;
 	}

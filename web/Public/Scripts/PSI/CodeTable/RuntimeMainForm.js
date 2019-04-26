@@ -20,6 +20,7 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
 							layout : "border",
 							items : [{
 										region : "center",
+										id : "PSI_CodeTable_RuntimeMainForm_panelMain",
 										layout : "fit",
 										border : 0,
 										items : []
@@ -30,6 +31,8 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
 
 				me.__toolBar = Ext
 						.getCmp("PSI_CodeTable_RuntimeMainForm_toolBar");
+				me.__panelMain = Ext
+						.getCmp("PSI_CodeTable_RuntimeMainForm_panelMain");
 
 				me.fetchMeatData();
 			},
@@ -99,6 +102,47 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
 								me.closeWindow();
 							}
 						}]);
+
+				// MainGrid
+				var modelName = "PSICodeTableRuntime_" + md.tableName;
+
+				var fields = [];
+				var cols = [];
+				var colsLength = md.cols.length;
+				for (var i = 0; i < colsLength; i++) {
+					var mdCol = md.cols[i];
+
+					fields.push(mdCol.fieldName);
+					if (mdCol.isVisible) {
+						cols.push({
+									header : mdCol.caption,
+									dataIndex : mdCol.fieldName,
+									width : 100,
+									menuDisabled : true,
+									sortable : false
+								});
+					}
+				}
+
+				Ext.define(modelName, {
+							extend : "Ext.data.Model",
+							fields : fields
+						});
+
+				me.__mainGrid = Ext.create("Ext.grid.Panel", {
+							cls : "PSI",
+							viewConfig : {
+								enableTextSelection : true
+							},
+							columnLines : true,
+							columns : cols,
+							store : Ext.create("Ext.data.Store", {
+										model : modelName,
+										autoLoad : false,
+										data : []
+									})
+						});
+				me.__panelMain.add(me.__mainGrid);
 			},
 
 			onAddCodeTableRecord : function() {

@@ -24,7 +24,12 @@ class BizlogDAO extends PSIBaseExDAO {
 		$start = $params["start"];
 		$limit = $params["limit"];
 		
-		$queryKey = $params["queryKey"] ?? "";
+		$loginName = $params["loginName"];
+		$userId = $params["userId"];
+		$ip = $params["ip"];
+		$fromDT = $params["fromDT"];
+		$toDT = $params["toDT"];
+		$logCategory = $params["logCategory"];
 		
 		$sql = "select b.id, u.login_name, u.name, b.ip, b.info, b.date_created,
 					b.log_category, b.ip_from
@@ -38,11 +43,29 @@ class BizlogDAO extends PSIBaseExDAO {
 			$queryParams = $rs[1];
 		}
 		
-		if ($queryKey) {
-			$sql .= " and (b.ip like '%s' or u.login_name like '%s' or u.name like '%s' ) ";
-			$queryParams[] = "{$queryKey}%";
-			$queryParams[] = "{$queryKey}%";
-			$queryParams[] = "{$queryKey}%";
+		if ($loginName) {
+			$sql .= " and (u.login_name like '%s') ";
+			$queryParams[] = "{$loginName}%";
+		}
+		if ($userId) {
+			$sql .= " and (u.id = '%s' ) ";
+			$queryParams[] = $userId;
+		}
+		if ($ip) {
+			$sql .= " and (b.ip like '%s') ";
+			$queryParams[] = "{$ip}%";
+		}
+		if ($fromDT) {
+			$sql .= " and (b.date_created >= '%s') ";
+			$queryParams[] = $fromDT;
+		}
+		if ($toDT) {
+			$sql .= " and (b.date_created <= '%s') ";
+			$queryParams[] = $toDT;
+		}
+		if ($logCategory) {
+			$sql .= " and (b.log_category = '%s') ";
+			$queryParams[] = $logCategory;
 		}
 		
 		$sql .= " order by b.date_created desc
@@ -77,11 +100,29 @@ class BizlogDAO extends PSIBaseExDAO {
 			$queryParams = $rs[1];
 		}
 		
-		if ($queryKey) {
-			$sql .= " and (b.ip like '%s' or u.login_name like '%s' or u.name like '%s' ) ";
-			$queryParams[] = "{$queryKey}%";
-			$queryParams[] = "{$queryKey}%";
-			$queryParams[] = "{$queryKey}%";
+		if ($loginName) {
+			$sql .= " and (u.login_name like '%s') ";
+			$queryParams[] = "{$loginName}%";
+		}
+		if ($userId) {
+			$sql .= " and (u.id = '%s' ) ";
+			$queryParams[] = $userId;
+		}
+		if ($ip) {
+			$sql .= " and (b.ip like '%s') ";
+			$queryParams[] = "{$ip}%";
+		}
+		if ($fromDT) {
+			$sql .= " and (b.date_created >= '%s') ";
+			$queryParams[] = $fromDT;
+		}
+		if ($toDT) {
+			$sql .= " and (b.date_created <= '%s') ";
+			$queryParams[] = $toDT;
+		}
+		if ($logCategory) {
+			$sql .= " and (b.log_category = '%s') ";
+			$queryParams[] = $logCategory;
 		}
 		
 		$data = $db->query($sql, $queryParams);
@@ -121,5 +162,31 @@ class BizlogDAO extends PSIBaseExDAO {
 		
 		// 操作成功
 		return null;
+	}
+
+	/**
+	 * 返回所有的日志分类
+	 */
+	public function getLogCategoryList($params) {
+		$db = $this->db;
+		
+		$result = [];
+		$result[] = [
+				"id" => "",
+				"name" => "[全部]"
+		];
+		
+		$sql = "select distinct log_category as lc from t_biz_log
+				order by lc";
+		$data = $db->query($sql);
+		
+		foreach ( $data as $v ) {
+			$result[] = [
+					"id" => $v["lc"],
+					"name" => $v["lc"]
+			];
+		}
+		
+		return $result;
 	}
 }

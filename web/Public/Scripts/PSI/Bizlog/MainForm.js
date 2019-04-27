@@ -4,35 +4,76 @@
  * @author 李静波
  */
 Ext.define("PSI.Bizlog.MainForm", {
-	extend : "PSI.AFX.BaseOneGridMainForm",
+	extend : "PSI.AFX.BaseMainExForm",
 
 	config : {
 		unitTest : "0"
 	},
 
-	/**
-	 * 重载父类方法
-	 */
-	afxGetToolbarCmp : function() {
+	initComponent : function() {
+		var me = this;
+
+		Ext.apply(me, {
+					tbar : me.getToolbarCmp(),
+					items : [{
+								id : "panelQueryCmp",
+								region : "north",
+								height : 65,
+								layout : "fit",
+								border : 0,
+								header : false,
+								collapsible : true,
+								collapseMode : "mini",
+								layout : {
+									type : "table",
+									columns : 4
+								},
+								items : me.getQueryCmp()
+							}, {
+								region : "center",
+								layout : "fit",
+								border : 0,
+								items : [me.getMainGrid()]
+							}]
+				});
+
+		me.callParent();
+
+		me.fetchLogCategory();
+
+		me.onRefresh();
+	},
+
+	fetchLogCategory : function() {
+		var me = this;
+
+		var r = {
+			url : me.URL("Home/Bizlog/getLogCategoryList"),
+			callback : function(options, success, response) {
+				var combo = Ext.getCmp("comboCategory");
+				var store = combo.getStore();
+
+				store.removeAll();
+
+				if (success) {
+					var data = Ext.JSON.decode(response.responseText);
+					store.add(data);
+
+					if (store.getCount() > 0) {
+						combo.setValue(store.getAt(0).get("id"))
+					}
+				}
+			}
+		};
+		me.ajax(r);
+	},
+
+	getToolbarCmp : function() {
 		var me = this;
 
 		var store = me.getMainGrid().getStore();
 
-		var buttons = ["登录名/姓名/IP", {
-					xtype : "textfield",
-					id : "editQueryKey",
-					cls : "PSI-toolbox",
-					width : 90
-				}, " ", {
-					text : "查询",
-					handler : me.onRefresh,
-					scope : me,
-					iconCls : "PSI-button-refresh"
-				}, "-", {
-					text : "清空查询条件",
-					handler : me.onClearQuery,
-					scope : me
-				}, "-", " ", {
+		var buttons = [{
 					cls : "PSI-toolbox",
 					id : "pagingToobar",
 					xtype : "pagingtoolbar",
@@ -96,10 +137,109 @@ Ext.define("PSI.Bizlog.MainForm", {
 		return buttons;
 	},
 
-	/**
-	 * 重载父类方法
-	 */
-	afxGetMainGrid : function() {
+	getQueryCmp : function() {
+		var me = this;
+
+		Ext.define("PSILogCategory", {
+					extend : "Ext.data.Model",
+					fields : ["id", "name"]
+				});
+
+		return [{
+					id : "editQueryLoginName",
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "登录名",
+					margin : "5, 0, 0, 0",
+					xtype : "textfield"
+				}, {
+					id : "editQueryUser",
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "姓名",
+					margin : "5, 0, 0, 0",
+					xtype : "psi_userfield",
+					showModal : true
+				}, {
+					id : "editQueryFromDT",
+					xtype : "datefield",
+					margin : "5, 0, 0, 0",
+					format : "Y-m-d",
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "日志日期（起）"
+				}, {
+					id : "editQueryToDT",
+					xtype : "datefield",
+					margin : "5, 0, 0, 0",
+					format : "Y-m-d",
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "日志日期（止）"
+				}, {
+					id : "editQueryIP",
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "IP",
+					margin : "5, 0, 0, 0",
+					xtype : "textfield"
+				}, {
+					xtype : "combobox",
+					id : "comboCategory",
+					queryMode : "local",
+					editable : false,
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "日志分类",
+					margin : "5, 0, 0, 0",
+					valueField : "id",
+					displayField : "name",
+					store : Ext.create("Ext.data.Store", {
+								model : "PSILogCategory",
+								autoLoad : false,
+								data : []
+							})
+				}, {
+					xtype : "container",
+					items : [{
+								xtype : "button",
+								text : "查询",
+								width : 100,
+								height : 26,
+								margin : "5 0 0 10",
+								handler : me.onRefresh,
+								scope : me
+							}, {
+								xtype : "button",
+								text : "清空查询条件",
+								width : 100,
+								height : 26,
+								margin : "5, 0, 0, 10",
+								handler : me.onClearQuery,
+								scope : me
+							}]
+				}, {
+					xtype : "container",
+					items : [{
+								xtype : "button",
+								iconCls : "PSI-button-hide",
+								text : "隐藏查询条件栏",
+								width : 130,
+								height : 26,
+								margin : "5 0 0 10",
+								handler : function() {
+									Ext.getCmp("panelQueryCmp").collapse();
+								},
+								scope : me
+							}]
+				}];
+	},
+
+	getMainGrid : function() {
 		var me = this;
 		if (me.__mainGrid) {
 			return me.__mainGrid;
@@ -138,7 +278,6 @@ Ext.define("PSI.Bizlog.MainForm", {
 				enableTextSelection : true
 			},
 			loadMask : true,
-			border : 0,
 			columnLines : true,
 			columns : {
 				defaults : {
@@ -198,13 +337,10 @@ Ext.define("PSI.Bizlog.MainForm", {
 	onCellDbclick : function(ths, td, cellIndex, record, tr, rowIndex, e, eOpts) {
 		var me = this;
 		if (cellIndex == 1) {
-			Ext.getCmp("editQueryKey").setValue(record.get("loginName"));
-			me.onRefresh();
-		} else if (cellIndex == 2) {
-			Ext.getCmp("editQueryKey").setValue(record.get("userName"));
+			Ext.getCmp("editQueryLoginName").setValue(record.get("loginName"));
 			me.onRefresh();
 		} else if (cellIndex == 3) {
-			Ext.getCmp("editQueryKey").setValue(record.get("ip"));
+			Ext.getCmp("editQueryIP").setValue(record.get("ip"));
 			me.onRefresh();
 		}
 	},
@@ -261,15 +397,39 @@ Ext.define("PSI.Bizlog.MainForm", {
 	},
 
 	getQueryParam : function() {
-		return {
-			queryKey : Ext.getCmp("editQueryKey").getValue()
+		var result = {
+			loginName : Ext.getCmp("editQueryLoginName").getValue(),
+			userId : Ext.getCmp("editQueryUser").getIdValue(),
+			ip : Ext.getCmp("editQueryIP").getValue(),
+			logCategory : Ext.getCmp("comboCategory").getValue()
 		};
+
+		var fromDT = Ext.getCmp("editQueryFromDT").getValue();
+		if (fromDT) {
+			result.fromDT = Ext.Date.format(fromDT, "Y-m-d");
+		}
+
+		var toDT = Ext.getCmp("editQueryToDT").getValue();
+		if (toDT) {
+			result.toDT = Ext.Date.format(toDT, "Y-m-d");
+		}
+
+		return result;
 	},
 
 	onClearQuery : function() {
 		var me = this;
 
-		Ext.getCmp("editQueryKey").setValue(null);
+		Ext.getCmp("editQueryLoginName").setValue(null);
+		Ext.getCmp("editQueryUser").clearIdValue();
+		Ext.getCmp("editQueryIP").setValue(null);
+		Ext.getCmp("editQueryFromDT").setValue(null);
+		Ext.getCmp("editQueryToDT").setValue(null);
+		var combo = Ext.getCmp("comboCategory");
+		var store = combo.getStore();
+		if (store.getCount() > 0) {
+			combo.setValue(store.getAt(0).get("id"))
+		}
 
 		me.getMainGrid().getStore().currentPage = 1;
 

@@ -77,6 +77,18 @@ class BizlogService extends PSIBaseExService {
 		return $dao->insertBizlog($params);
 	}
 
+	/**
+	 * 返回所有的日志分类
+	 */
+	public function getLogCategoryList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new BizlogDAO($this->db());
+		return $dao->getLogCategoryList($params);
+	}
+
 	private function getClientIP() {
 		return get_client_ip();
 	}

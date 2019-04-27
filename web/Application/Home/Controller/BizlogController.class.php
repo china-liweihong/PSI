@@ -40,14 +40,29 @@ class BizlogController extends PSIBaseController {
 	public function logList() {
 		if (IS_POST) {
 			$params = [
-					"queryKey" => I("post.queryKey"),
-					"page" => I("post.page"),
+					"loginName" => I("post.loginName"),
+					"userId" => I("post.userId"),
+					"ip" => I("post.ip"),
+					"fromDT" => I("post.fromDT"),
+					"toDT" => I("post.toDT"),
+					"logCategory" => I("post.logCategory"),
 					"start" => I("post.start"),
 					"limit" => I("post.limit")
 			];
 			
 			$bs = new BizlogService();
 			$this->ajaxReturn($bs->logList($params));
+		}
+	}
+
+	/**
+	 * 返回所有的日志分类
+	 */
+	public function getLogCategoryList() {
+		if (IS_POST) {
+			$params = [];
+			$service = new BizlogService();
+			$this->ajaxReturn($service->getLogCategoryList($params));
 		}
 	}
 

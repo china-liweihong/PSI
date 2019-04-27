@@ -3,6 +3,10 @@ Ext.define("PSI.User.UserField", {
 	extend : "Ext.form.field.Trigger",
 	alias : "widget.psi_userfield",
 
+	config : {
+		showModal : false
+	},
+
 	/**
 	 * 初始化组件
 	 */
@@ -75,6 +79,7 @@ Ext.define("PSI.User.UserField", {
 		var wnd = Ext.create("Ext.window.Window", {
 					title : "选择 - 人员",
 					header : false,
+					modal : me.getShowModal(),
 					border : 0,
 					width : 400,
 					height : 300,

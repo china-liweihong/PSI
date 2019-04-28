@@ -230,6 +230,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20190422_03();
 		$this->update_20190423_01();
 		$this->update_20190426_01();
+		$this->update_20190428_01();
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -250,6 +251,25 @@ class UpdateDBService extends PSIBaseService {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// ============================================
 	private function notForgot() {
+	}
+
+	private function update_20190428_01() {
+		// 本次更新：新增表t_sysdict_record_status
+		$db = $this->db;
+		$tableName = "t_sysdict_record_status";
+		if (! $this->tableExists($db, $tableName)) {
+			$sql = "CREATE TABLE IF NOT EXISTS `t_sysdict_record_status` (
+					  `id` varchar(255) NOT NULL,
+					  `code` varchar(255) NOT NULL,
+					  `codeInt` int(11) NOT NULL,
+					  `name` varchar(255) NOT NULL,
+					  `py` varchar(255) NOT NULL,
+					  `memo` varchar(255) NOT NULL,
+					  PRIMARY KEY (`id`)
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+			";
+			$db->execute($sql);
+		}
 	}
 
 	private function update_20190426_01() {

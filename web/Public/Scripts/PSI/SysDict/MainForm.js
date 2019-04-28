@@ -231,7 +231,8 @@ Ext.define("PSI.SysDict.MainForm", {
 								}, {
 									header : "编码(整数类型)",
 									dataIndex : "codeInt",
-									width : 150
+									width : 150,
+									align : "right"
 								}, {
 									header : "值",
 									dataIndex : "name",
@@ -294,23 +295,23 @@ Ext.define("PSI.SysDict.MainForm", {
 
 	refreshMainGrid : function(id) {
 		var me = this;
-		me.getColsGrid().getStore().removeAll();
+		me.getDictDataGrid().getStore().removeAll();
 
 		var item = me.getCategoryGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			me.getMainGrid().setTitle(me.formatGridHeaderTitle("码表"));
+			me.getMainGrid().setTitle(me.formatGridHeaderTitle("数据字典"));
 			return;
 		}
 
 		var category = item[0];
 
 		var grid = me.getMainGrid();
-		grid.setTitle(me.formatGridHeaderTitle("属于分类[" + category.get("name")
-				+ "]的码表"));
+		grid.setTitle(me.formatGridHeaderTitle("属于分类[ " + category.get("name")
+				+ " ]的数据字典"));
 		var el = grid.getEl() || Ext.getBody();
 		el.mask(PSI.Const.LOADING);
 		var r = {
-			url : me.URL("Home/CodeTable/codeTableList"),
+			url : me.URL("Home/SysDict/sysDictList"),
 			params : {
 				categoryId : category.get("id")
 			},
@@ -351,22 +352,22 @@ Ext.define("PSI.SysDict.MainForm", {
 		var me = this;
 		var item = me.getMainGrid().getSelectionModel().getSelection();
 		if (item == null || item.length != 1) {
-			me.getMainGrid().setTitle(me.formatGridHeaderTitle("码表"));
-			me.getColsGrid().setTitle(me.formatGridHeaderTitle("码表列"));
+			me.getMainGrid().setTitle(me.formatGridHeaderTitle("数据字典"));
+			me.getDictDataGrid().setTitle(me.formatGridHeaderTitle("数据"));
 			return;
 		}
 
-		var codeTable = item[0];
+		var sysDict = item[0];
 
-		var grid = me.getColsGrid();
-		grid.setTitle(me.formatGridHeaderTitle("属于码表[" + codeTable.get("name")
-				+ "]的列"));
+		var grid = me.getDictDataGrid();
+		grid.setTitle(me.formatGridHeaderTitle("[ " + sysDict.get("name")
+				+ " ]的数据"));
 		var el = grid.getEl() || Ext.getBody();
 		el.mask(PSI.Const.LOADING);
 		var r = {
-			url : me.URL("Home/CodeTable/codeTableColsList"),
+			url : me.URL("Home/SysDict/dictDataList"),
 			params : {
-				id : codeTable.get("id")
+				id : sysDict.get("id")
 			},
 			callback : function(options, success, response) {
 				var store = grid.getStore();

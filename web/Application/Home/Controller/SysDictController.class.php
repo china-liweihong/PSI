@@ -42,4 +42,32 @@ class SysDictController extends PSIBaseController {
 			$this->ajaxReturn($service->categoryList($params));
 		}
 	}
+
+	/**
+	 * 某个分类下的数据字典
+	 */
+	public function sysDictList() {
+		if (IS_POST) {
+			$params = [
+					"categoryId" => I("post.categoryId")
+			];
+			
+			$service = new SysDictService();
+			$this->ajaxReturn($service->sysDictList($params));
+		}
+	}
+
+	/**
+	 * 查询某个码表的数据
+	 */
+	public function dictDataList() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id")
+			];
+			
+			$service = new SysDictService();
+			$this->ajaxReturn($service->dictDataList($params));
+		}
+	}
 }

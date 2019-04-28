@@ -22,4 +22,28 @@ class SysDictService extends PSIBaseExService {
 		$dao = new SysDictDAO($this->db());
 		return $dao->categoryList($params);
 	}
+
+	/**
+	 * 某个分类下的数据字典
+	 */
+	public function sysDictList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new SysDictDAO($this->db());
+		return $dao->sysDictList($params);
+	}
+
+	/**
+	 * 查询某个码表的数据
+	 */
+	public function dictDataList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new SysDictDAO($this->db());
+		return $dao->dictDataList($params);
+	}
 }

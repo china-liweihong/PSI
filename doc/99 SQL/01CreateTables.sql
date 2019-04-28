@@ -1426,6 +1426,16 @@ CREATE TABLE IF NOT EXISTS `t_permission_plus` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `t_sysdict_record_status`;
+CREATE TABLE IF NOT EXISTS `t_sysdict_record_status` (
+  `id` varchar(255) NOT NULL,
+  `code` varchar(255) NOT NULL,
+  `codeInt` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `py` varchar(255) NOT NULL,
+  `memo` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

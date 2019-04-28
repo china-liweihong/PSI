@@ -193,7 +193,7 @@ Ext.define("PSI.CodeTable.MainForm", {
 										menuDisabled : true,
 										sortable : false
 									}, {
-										header : "数据库名",
+										header : "数据库表名",
 										dataIndex : "tableName",
 										width : 200,
 										menuDisabled : true,

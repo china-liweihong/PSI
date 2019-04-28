@@ -4,6 +4,7 @@ namespace Home\Controller;
 
 use Home\Common\FIdConst;
 use Home\Service\UserService;
+use Home\Service\SysDictService;
 
 /**
  * 系统数据字典Controller
@@ -27,6 +28,18 @@ class SysDictController extends PSIBaseController {
 			$this->display();
 		} else {
 			$this->gotoLoginPage("/Home/SysDict/index");
+		}
+	}
+
+	/**
+	 * 数据字典分类列表
+	 */
+	public function categoryList() {
+		if (IS_POST) {
+			$params = [];
+			
+			$service = new SysDictService();
+			$this->ajaxReturn($service->categoryList($params));
 		}
 	}
 }

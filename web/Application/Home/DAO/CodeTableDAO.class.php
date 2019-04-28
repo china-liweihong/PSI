@@ -847,7 +847,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 		// 列
 		$sql = "select caption, 
 					db_field_name, db_field_type, db_field_length, db_field_decimal,
-					sys_col, is_visible, width_in_view
+					sys_col, is_visible, width_in_view, must_input
 				from t_code_table_cols_md
 				where table_id = '%s' 
 				order by show_order";
@@ -859,7 +859,8 @@ class CodeTableDAO extends PSIBaseExDAO {
 					"caption" => $v["caption"],
 					"fieldName" => $v["db_field_name"],
 					"isVisible" => $isVisible,
-					"widthInView" => $isVisible ? ($v["width_in_view"] ?? 100) : null
+					"widthInView" => $isVisible ? ($v["width_in_view"] ?? 100) : null,
+					"mustInput" => $v["must_input"] == 1
 			];
 		}
 		$result["cols"] = $cols;

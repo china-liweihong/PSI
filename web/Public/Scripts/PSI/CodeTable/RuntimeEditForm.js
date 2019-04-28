@@ -107,12 +107,7 @@ Ext.define("PSI.CodeTable.RuntimeEditForm", {
 									width : 370,
 									margin : "5"
 								},
-								items : [{
-									xtype : "hidden",
-									name : "id",
-									value : entity == null ? null : entity
-											.get("id")
-								}],
+								items : me.getEditItems(),
 								buttons : buttons
 							}]
 				});
@@ -120,6 +115,48 @@ Ext.define("PSI.CodeTable.RuntimeEditForm", {
 		me.callParent(arguments);
 
 		me.editForm = Ext.getCmp("PSI_CodeTable_RuntimeEditForm_editForm");
+	},
+
+	getEditItems : function() {
+		var me = this;
+
+		var entity = me.getEntity();
+
+		var md = me.getMetaData();
+		if (!md) {
+			return [];
+		}
+
+		var result = [{
+					xtype : "hidden",
+					name : "id",
+					value : entity == null ? null : entity.get("id")
+				}];
+
+		var colsMd = md.cols;
+		var colsCount = colsMd.length;
+		for (var i = 0; i < colsCount; i++) {
+			var colMd = colsMd[i];
+
+			if (colMd.isVisible) {
+				var item = {
+					fieldLabel : colMd.caption,
+					xtype : "textfield"
+				};
+				if (colMd.mustInput) {
+					// 必录项
+					Ext.apply(item, {
+								allowBlank : false,
+								blankText : "没有输入" + colMd.caption,
+								beforeLabelTextTpl : PSI.Const.REQUIRED
+							});
+				}
+
+				result.push(item);
+			}
+		}
+
+		return result;
 	},
 
 	/**

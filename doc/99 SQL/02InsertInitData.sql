@@ -537,6 +537,18 @@ INSERT INTO `t_menu_item_h5` (`id`, `caption`, `fid`, `parent_id`, `show_order`)
 ('02', '客户关系', NULL, NULL, 2),
 ('0201', '客户资料', '1007', '02', 1);
 
+TRUNCATE TABLE `t_dict_table_category`;
+INSERT INTO `t_dict_table_category` (`id`, `code`, `name`, `parent_id`) VALUES
+('01', '01', '码表', NULL);
+
+TRUNCATE TABLE `t_dict_table_md`;
+INSERT INTO `t_dict_table_md` (`id`, `code`, `name`, `table_name`, `category_id`, `memo`, `py`) VALUES
+('01', '01', '码表记录状态', 't_sysdict_record_status', '01', '用于码表', 'MBJLZT');
+
+TRUNCATE TABLE `t_sysdict_record_status`;
+INSERT INTO `t_sysdict_record_status` (`id`, `code`, `codeInt`, `name`, `py`, `memo`) VALUES
+('9B90C56E-696E-11E9-B2BF-782BCBD7746B', '1', 1, '启用', 'QY', '记录处于启用状态'),
+('AC7F3FAB-696E-11E9-B2BF-782BCBD7746B', '2', 2, '停用', 'TY', '记录处于停用状态');
 
 TRUNCATE TABLE `t_psi_db_version`;
 INSERT INTO `t_psi_db_version` (`db_version`, `update_dt`) VALUES

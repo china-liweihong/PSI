@@ -37,11 +37,17 @@ class FIdConst {
 	
 	/**
 	 * 主菜单维护
-	 * 
+	 *
 	 * @var string
 	 */
 	const MAIN_MENU = "-7995";
 	
+	/**
+	 * 系统数据字典
+	 * 
+	 * @var string
+	 */
+	const SYS_DICT = "-7994";
 	/**
 	 * 首页
 	 */

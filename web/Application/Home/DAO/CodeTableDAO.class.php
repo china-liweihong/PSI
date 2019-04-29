@@ -930,13 +930,24 @@ class CodeTableDAO extends PSIBaseExDAO {
 		$recordStatus = $params["record_status"];
 		
 		$id = $this->newId();
-		$sqlParams = [];
 		
 		$tableName = $md["tableName"];
+		
+		// 检查编码是否重复
+		$sql = "select count(*) as cnt from %s where code = '%s' ";
+		$queryParams = [];
+		$queryParams[] = $tableName;
+		$queryParams[] = $code;
+		$data = $db->query($sql, $queryParams);
+		$cnt = $data[0]["cnt"];
+		if ($cnt > 0) {
+			return $this->bad("编码为[$code]的记录已经存在");
+		}
 		
 		$sql = "insert into %s (id, py, data_org, company_id, 
 					date_created, create_user_id, code, name, 
 					record_status";
+		$sqlParams = [];
 		$sqlParams[] = $tableName;
 		
 		foreach ( $md["cols"] as $colMd ) {

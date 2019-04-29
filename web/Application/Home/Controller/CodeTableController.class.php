@@ -225,6 +225,8 @@ class CodeTableController extends PSIBaseController {
 				}
 			}
 			
+			$params["code"] = strtoupper($params["code"]);
+			
 			$this->ajaxReturn($service->editCodeTableRecord($params));
 		}
 	}

@@ -883,7 +883,8 @@ class CodeTableDAO extends PSIBaseExDAO {
 					"mustInput" => $v["must_input"] == 1,
 					"valueFromExtData" => $valueFromExtData,
 					"valueFrom" => $v["value_from"],
-					"valueFromColName" => $v["value_from_col_name"]
+					"valueFromColName" => $v["value_from_col_name"],
+					"isSysCol" => $v["sys_col"] == 1
 			];
 		}
 		$result["cols"] = $cols;
@@ -893,11 +894,104 @@ class CodeTableDAO extends PSIBaseExDAO {
 
 	/**
 	 * 新增码表记录
-	 * 
+	 *
 	 * @param array $params        	
 	 * @return array|NULL
 	 */
-	public function addRecord(&$params) {
-		return $this->todo();
+	public function addRecord(&$params, $pyService) {
+		$db = $this->db;
+		
+		$dataOrg = $params["dataOrg"];
+		$loginUserId = $params["loginUserId"];
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->badParam("loginUserId");
+		}
+		if ($this->dataOrgNotExists($dataOrg)) {
+			return $this->badParam("dataOrg");
+		}
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->badParam("companyId");
+		}
+		
+		$fid = $params["fid"];
+		$md = $this->getMetaDataForRuntime([
+				"fid" => $fid
+		]);
+		
+		if (! $md) {
+			return $this->badParam("fid");
+		}
+		
+		$codeTableName = $md["name"];
+		
+		$code = $params["code"];
+		$name = $params["name"];
+		$recordStatus = $params["record_status"];
+		
+		$id = $this->newId();
+		$sqlParams = [];
+		
+		$tableName = $md["tableName"];
+		
+		$sql = "insert into %s (id, py, data_org, company_id, 
+					date_created, create_user_id, code, name, 
+					record_status";
+		$sqlParams[] = $tableName;
+		
+		foreach ( $md["cols"] as $colMd ) {
+			if ($colMd["isSysCol"]) {
+				continue;
+			}
+			
+			// 非系统字段
+			$fieldName = $colMd["fieldName"];
+			
+			$sql .= ", %s";
+			$sqlParams[] = $fieldName;
+		}
+		$sql .= ") values ('%s', '%s', '%s', '%s', 
+						now(), '%s', '%s', '%s', 
+						%d";
+		$sqlParams[] = $id;
+		$sqlParams[] = $pyService->toPY($name);
+		$sqlParams[] = $dataOrg;
+		$sqlParams[] = $companyId;
+		$sqlParams[] = $loginUserId;
+		$sqlParams[] = $code;
+		$sqlParams[] = $name;
+		$sqlParams[] = $recordStatus;
+		
+		foreach ( $md["cols"] as $colMd ) {
+			if ($colMd["isSysCol"]) {
+				continue;
+			}
+			
+			// 非系统字段
+			$fieldName = $colMd["fieldName"];
+			$fieldType = $colMd["fieldType"];
+			if ($fieldType == "int") {
+				$sql .= ", %d";
+			} else if ($fieldType == "decimal") {
+				$sql .= ", %f";
+			} else {
+				$sql .= ", '%s'";
+			}
+			$sqlParams[] = $params[$fieldName];
+		}
+		$sql .= ")";
+		
+		$rc = $db->execute($sql, $sqlParams);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		$code = $params["code"];
+		$name = $params["name"];
+		$params["id"] = $id;
+		$params["log"] = "新增{$tableName}记录:{$code}-{$name}";
+		$params["logCategory"] = $tableName;
+		return null;
 	}
 }

@@ -265,6 +265,8 @@ class CodeTableService extends PSIBaseExService {
 		
 		$id = $params["id"];
 		
+		$params["companyId"] = $this->getCompanyId();
+		$params["loginUserId"] = $this->getLoginUserId();
 		$params["dataOrg"] = $this->getLoginUserDataOrg();
 		
 		$db = $this->db();
@@ -280,7 +282,7 @@ class CodeTableService extends PSIBaseExService {
 			}
 		} else {
 			// 新增
-			$rc = $dao->addRecord($params);
+			$rc = $dao->addRecord($params, new PinyinService());
 			if ($rc) {
 				$db->rollback();
 				return $rc;

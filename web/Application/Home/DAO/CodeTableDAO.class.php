@@ -847,7 +847,8 @@ class CodeTableDAO extends PSIBaseExDAO {
 		// 列
 		$sql = "select caption, 
 					db_field_name, db_field_type, db_field_length, db_field_decimal,
-					sys_col, is_visible, width_in_view, must_input
+					sys_col, is_visible, width_in_view, must_input, value_from,
+					value_from_table_name, value_from_col_name
 				from t_code_table_cols_md
 				where table_id = '%s' 
 				order by show_order";
@@ -855,12 +856,33 @@ class CodeTableDAO extends PSIBaseExDAO {
 		$cols = [];
 		foreach ( $data as $v ) {
 			$isVisible = $v["is_visible"] == 1;
+			$valueFrom = $v["value_from"];
+			$valueFromTableName = $v["value_from_table_name"];
+			$valueFromColName = $v["value_from_col_name"];
+			$valueFromExtData = [];
+			if ($valueFrom == 2) {
+				// 引用系统数据字典
+				$sql = "select %s as col_1, name
+						from %s
+						order by %s";
+				$d = $db->query($sql, $valueFromColName, $valueFromTableName, $valueFromColName);
+				foreach ( $d as $item ) {
+					$valueFromExtData[] = [
+							"{$valueFromColName}" => $item["col_1"],
+							"name" => $item["name"]
+					];
+				}
+			}
+			
 			$cols[] = [
 					"caption" => $v["caption"],
 					"fieldName" => $v["db_field_name"],
 					"isVisible" => $isVisible,
 					"widthInView" => $isVisible ? ($v["width_in_view"] ?? 100) : null,
-					"mustInput" => $v["must_input"] == 1
+					"mustInput" => $v["must_input"] == 1,
+					"valueFromExtData" => $valueFromExtData,
+					"valueFrom" => $v["value_from"],
+					"valueFromColName" => $v["value_from_col_name"]
 			];
 		}
 		$result["cols"] = $cols;

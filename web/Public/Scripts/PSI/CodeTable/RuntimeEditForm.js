@@ -155,6 +155,26 @@ Ext.define("PSI.CodeTable.RuntimeEditForm", {
 					fieldLabel : colMd.caption,
 					xtype : "textfield"
 				};
+
+				if (parseInt(colMd.valueFrom) == 2) {
+					// 引用系统数据字典
+					// TODO 当前是用combo来展示数据，当字典数据量大的时候是不合适的，需要进一步优化
+					var store = Ext.create("Ext.data.ArrayStore", {
+								fields : [colMd.valueFromColName, "name"],
+								data : []
+							});
+					store.add(colMd.valueFromExtData);
+					Ext.apply(item, {
+								xtype : "combo",
+								queryMode : "local",
+								editable : false,
+								valueField : colMd.valueFromColName,
+								displayField : "name",
+								store : store,
+								value : store.getAt(0)
+							});
+				}
+
 				if (colMd.mustInput) {
 					// 必录项
 					Ext.apply(item, {

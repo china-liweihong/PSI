@@ -154,6 +154,7 @@ Ext.define("PSI.CodeTable.RuntimeEditForm", {
 				var item = {
 					fieldLabel : colMd.caption,
 					xtype : "textfield",
+					name : colMd.fieldName,
 					id : me.buildEditId(colMd.fieldName),
 					listeners : {
 						specialkey : {

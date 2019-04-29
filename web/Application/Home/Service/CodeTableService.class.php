@@ -263,6 +263,40 @@ class CodeTableService extends PSIBaseExService {
 			return $this->notOnlineError();
 		}
 		
-		return $this->todo();
+		$id = $params["id"];
+		
+		$params["dataOrg"] = $this->getLoginUserDataOrg();
+		
+		$db = $this->db();
+		$db->startTrans();
+		
+		$dao = new CodeTableDAO($db);
+		if ($id) {
+			// 编辑
+			$rc = $dao->updateRecord($params);
+			if ($rc) {
+				$db->rollback();
+				return $rc;
+			}
+		} else {
+			// 新增
+			$rc = $dao->addRecord($params);
+			if ($rc) {
+				$db->rollback();
+				return $rc;
+			}
+			
+			$id = $params["id"];
+		}
+		
+		// 记录业务日志
+		$log = $params["log"];
+		$logCategory = $params["logCategory"];
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $logCategory);
+		
+		$db->commit();
+		
+		return $this->ok($id);
 	}
 }

@@ -840,6 +840,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 		$id = $v["id"];
 		
 		$result = [
+				"fid" => $fid,
 				"tableName" => $v["table_name"],
 				"name" => $v["name"]
 		];
@@ -888,5 +889,15 @@ class CodeTableDAO extends PSIBaseExDAO {
 		$result["cols"] = $cols;
 		
 		return $result;
+	}
+
+	/**
+	 * 新增码表记录
+	 * 
+	 * @param array $params        	
+	 * @return array|NULL
+	 */
+	public function addRecord(&$params) {
+		return $this->todo();
 	}
 }

@@ -143,6 +143,10 @@ Ext.define("PSI.CodeTable.RuntimeEditForm", {
 					xtype : "hidden",
 					name : "id",
 					value : entity == null ? null : entity.get("id")
+				}, {
+					xtype : "hidden",
+					name : "fid",
+					value : me.getMetaData().fid
 				}];
 
 		var colsMd = md.cols;

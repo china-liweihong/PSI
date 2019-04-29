@@ -213,6 +213,18 @@ class CodeTableController extends PSIBaseController {
 			];
 			
 			$service = new CodeTableService();
+			
+			$md = $service->getMetaDataForRuntime($params);
+			
+			$params["id"] = I("post.id");
+			
+			foreach ( $md["cols"] as $colMd ) {
+				if ($colMd["isVisible"]) {
+					$fieldName = $colMd["fieldName"];
+					$params[$fieldName] = I("post.{$fieldName}");
+				}
+			}
+			
 			$this->ajaxReturn($service->editCodeTableRecord($params));
 		}
 	}

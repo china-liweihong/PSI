@@ -54,14 +54,14 @@ Ext.define("PSI.CodeTable.RuntimeEditForm", {
 		// 通过可见字段的个数计算出Form的高度
 		var cnt = 0;
 		var md = me.getMetaData();
-		for (i = 0; i < md.cols.length; i++) {
+		for (var i = 0; i < md.cols.length; i++) {
 			var colMd = md.cols[i];
 			if (colMd.isVisible) {
 				cnt++;
 			}
 		}
 		// TODO 这个算法没有处理字段过多的问题，需要优化
-		formHeight = 190 + cnt * 30;
+		var formHeight = 190 + cnt * 30;
 
 		var t = entity == null ? "新增" + md.name : "编辑" + md.name;
 		var f = entity == null
@@ -153,7 +153,8 @@ Ext.define("PSI.CodeTable.RuntimeEditForm", {
 			if (colMd.isVisible) {
 				var item = {
 					fieldLabel : colMd.caption,
-					xtype : "textfield"
+					xtype : "textfield",
+					id : "PSI_CodeTable_RuntimeEditForm_edit" + colMd.fieldName
 				};
 
 				if (parseInt(colMd.valueFrom) == 2) {
@@ -249,5 +250,21 @@ Ext.define("PSI.CodeTable.RuntimeEditForm", {
 		var me = this;
 
 		Ext.get(window).on('beforeunload', me.onWindowBeforeUnload);
+
+		var md = me.getMetaData();
+
+		// 把输入焦点设置为第一个可见的输入框
+		for (var i = 0; i < md.cols.length; i++) {
+			var colMd = md.cols[i];
+			if (colMd.isVisible) {
+				var id = "PSI_CodeTable_RuntimeEditForm_edit" + colMd.fieldName;
+				var edit = Ext.getCmp(id);
+				if (edit) {
+					edit.focus();
+				}
+
+				return;
+			}
+		}
 	}
 });

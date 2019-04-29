@@ -154,7 +154,13 @@ Ext.define("PSI.CodeTable.RuntimeEditForm", {
 				var item = {
 					fieldLabel : colMd.caption,
 					xtype : "textfield",
-					id : "PSI_CodeTable_RuntimeEditForm_edit" + colMd.fieldName
+					id : me.buildEditId(colMd.fieldName),
+					listeners : {
+						specialkey : {
+							fn : me.onEditSpecialKey,
+							scope : me
+						}
+					}
 				};
 
 				if (parseInt(colMd.valueFrom) == 2) {
@@ -220,6 +226,7 @@ Ext.define("PSI.CodeTable.RuntimeEditForm", {
 			failure : function(form, action) {
 				el.unmask();
 				PSI.MsgBox.showInfo(action.result.msg, function() {
+							me.focusOnFirstEdit();
 						});
 			}
 		};
@@ -251,19 +258,63 @@ Ext.define("PSI.CodeTable.RuntimeEditForm", {
 
 		Ext.get(window).on('beforeunload', me.onWindowBeforeUnload);
 
+		me.focusOnFirstEdit();
+	},
+
+	focusOnFirstEdit : function() {
+		var me = this;
 		var md = me.getMetaData();
 
 		// 把输入焦点设置为第一个可见的输入框
 		for (var i = 0; i < md.cols.length; i++) {
 			var colMd = md.cols[i];
 			if (colMd.isVisible) {
-				var id = "PSI_CodeTable_RuntimeEditForm_edit" + colMd.fieldName;
+				var id = me.buildEditId(colMd.fieldName);
 				var edit = Ext.getCmp(id);
 				if (edit) {
 					edit.focus();
 				}
 
 				return;
+			}
+		}
+	},
+
+	buildEditId : function(fieldName) {
+		return "PSI_CodeTable_RuntimeEditForm_edit" + fieldName;
+	},
+
+	onEditSpecialKey : function(field, e) {
+		var me = this;
+
+		if (e.getKey() === e.ENTER) {
+			var id = field.getId();
+
+			var md = me.getMetaData();
+			var currentEditIndex = -1;
+			for (var i = 0; i < md.cols.length; i++) {
+				var colMd = md.cols[i];
+				if (id == me.buildEditId(colMd.fieldName)) {
+					currentEditIndex = i;
+
+					if (currentEditIndex == md.cols.length - 1) {
+						// 是最后一个编辑框，这时候回车就提交Form
+						me.onOK(me.adding);
+						return;
+					} else {
+						continue;
+					}
+				}
+
+				if (currentEditIndex > -1) {
+					var nextEditId = me.buildEditId(colMd.fieldName);
+					var edit = Ext.getCmp(nextEditId);
+					if (edit) {
+						edit.focus();
+						edit.setValue(edit.getValue());
+						return;
+					}
+				}
 			}
 		}
 	}

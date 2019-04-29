@@ -301,4 +301,17 @@ class CodeTableService extends PSIBaseExService {
 		
 		return $this->ok($id);
 	}
+
+	/**
+	 * 码表记录列表
+	 */
+	public function codeTableRecordList($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$params["loginUserId"] = $this->getLoginUserId();
+		$dao = new CodeTableDAO($this->db());
+		return $dao->codeTableRecordList($params);
+	}
 }

@@ -240,6 +240,26 @@ Ext.define("PSI.CodeTable.RuntimeEditForm", {
 
 	clearEdit : function() {
 		var me = this;
+		var md = me.getMetaData();
+
+		for (var i = 0; i < md.cols.length; i++) {
+			var colMd = md.cols[i];
+			if (colMd.isVisible) {
+				var id = me.buildEditId(colMd.fieldName);
+				var edit = Ext.getCmp(id);
+				if (edit) {
+
+					if (parseInt(colMd.valueFrom) == 2) {
+						edit.setValue(edit.getStore().getAt(0));
+					} else {
+						edit.setValue(null);
+						edit.clearInvalid();
+					}
+				}
+			}
+		}
+
+		me.focusOnFirstEdit();
 	},
 
 	onWindowBeforeUnload : function(e) {

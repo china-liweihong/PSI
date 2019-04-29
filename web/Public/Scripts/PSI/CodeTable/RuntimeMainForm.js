@@ -144,6 +144,8 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
 									})
 						});
 				me.__panelMain.add(me.__mainGrid);
+
+				me.refreshMainGrid();
 			},
 
 			onAddCodeTableRecord : function() {
@@ -165,5 +167,48 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
 			onDeleteCodeTableRecord : function() {
 				var me = this;
 				me.showInfo("TODO");
+			},
+
+			getMainGrid : function() {
+				return this.__mainGrid;
+			},
+
+			refreshMainGrid : function(id) {
+				var me = this;
+
+				var grid = me.getMainGrid();
+				var el = grid.getEl() || Ext.getBody();
+				el.mask(PSI.Const.LOADING);
+				var r = {
+					url : me.URL("Home/CodeTable/codeTableRecordList"),
+					params : {
+						fid : me.getFid()
+					},
+					callback : function(options, success, response) {
+						var store = grid.getStore();
+
+						store.removeAll();
+
+						if (success) {
+							var data = me.decodeJSON(response.responseText);
+							store.add(data);
+
+							if (store.getCount() > 0) {
+								if (id) {
+									var r = store.findExact("id", id);
+									if (r != -1) {
+										grid.getSelectionModel().select(r);
+									}
+								} else {
+									grid.getSelectionModel().select(0);
+								}
+							}
+						}
+
+						el.unmask();
+					}
+				};
+
+				me.ajax(r);
 			}
 		});

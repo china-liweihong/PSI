@@ -994,4 +994,54 @@ class CodeTableDAO extends PSIBaseExDAO {
 		$params["logCategory"] = $tableName;
 		return null;
 	}
+
+	/**
+	 * 码表记录列表
+	 */
+	public function codeTableRecordList($params) {
+		$db = $this->db;
+		
+		$fid = $params["fid"];
+		$loginUserId = $params["loginUserId"];
+		if ($this->loginUserIdNotExists($loginUserId)) {
+			return $this->emptyResult();
+		}
+		
+		$md = $this->getMetaDataForRuntime($params);
+		if (! $md) {
+			return $this->emptyResult();
+		}
+		
+		$tableName = $md["tableName"];
+		
+		$sql .= "select cr.id, cr.code, cr.name, u.name as create_user_name, r.name as record_status";
+		
+		foreach ( $md["cols"] as $colMd ) {
+			if ($colMd["isSysCol"]) {
+				continue;
+			}
+			
+			if ($colMd["isVisible"]) {
+				$sql .= ", cr." . $colMd["fieldName"];
+			}
+		}
+		
+		$sql .= " from %s cr, t_user u, t_sysdict_record_status r ";
+		$queryParams[] = $tableName;
+		
+		$sql .= " where (cr.create_user_id = u.id) and (cr.record_status = r.codeInt)";
+		// 数据域
+		$ds = new DataOrgDAO($db);
+		$rs = $ds->buildSQL($fid, "cr", $loginUserId);
+		if ($rs) {
+			$sql .= " and " . $rs[0];
+			$queryParams = $queryParams + $rs[1];
+		}
+		
+		$sql .= " order by code";
+		
+		$data = $db->query($sql, $queryParams);
+		
+		return $data;
+	}
 }

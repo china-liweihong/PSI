@@ -230,4 +230,18 @@ class CodeTableController extends PSIBaseController {
 			$this->ajaxReturn($service->editCodeTableRecord($params));
 		}
 	}
+
+	/**
+	 * 码表记录列表
+	 */
+	public function codeTableRecordList() {
+		if (IS_POST) {
+			$params = [
+					"fid" => I("post.fid")
+			];
+			
+			$service = new CodeTableService();
+			$this->ajaxReturn($service->codeTableRecordList($params));
+		}
+	}
 }

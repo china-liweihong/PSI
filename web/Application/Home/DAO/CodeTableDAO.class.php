@@ -1035,7 +1035,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 		$rs = $ds->buildSQL($fid, "cr", $loginUserId);
 		if ($rs) {
 			$sql .= " and " . $rs[0];
-			$queryParams = $queryParams + $rs[1];
+			$queryParams = array_merge($queryParams, $rs[1]);
 		}
 		
 		$sql .= " order by code";

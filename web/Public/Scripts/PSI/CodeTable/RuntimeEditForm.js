@@ -51,6 +51,18 @@ Ext.define("PSI.CodeTable.RuntimeEditForm", {
 		};
 		buttons.push(btn);
 
+		// 通过可见字段的个数计算出Form的高度
+		var cnt = 0;
+		var md = me.getMetaData();
+		for (i = 0; i < md.cols.length; i++) {
+			var colMd = md.cols[i];
+			if (colMd.isVisible) {
+				cnt++;
+			}
+		}
+		// TODO 这个算法没有处理字段过多的问题，需要优化
+		formHeight = 190 + cnt * 30;
+
 		var t = entity == null ? "新增" + md.name : "编辑" + md.name;
 		var f = entity == null
 				? "edit-form-create.png"
@@ -70,7 +82,7 @@ Ext.define("PSI.CodeTable.RuntimeEditForm", {
 						height : 40
 					},
 					width : 400,
-					height : 270,
+					height : formHeight,
 					layout : "border",
 					listeners : {
 						show : {

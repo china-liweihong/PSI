@@ -282,6 +282,20 @@ class PurchaseController extends PSIBaseController {
 	}
 
 	/**
+	 * 采购订单 - 订单变更
+	 */
+	public function changePurchaseOrder() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id")
+			];
+			
+			$ps = new POBillService();
+			$this->ajaxReturn($ps->changePurchaseOrder($params));
+		}
+	}
+
+	/**
 	 * 采购订单生成PDF文件
 	 */
 	public function poBillPdf() {

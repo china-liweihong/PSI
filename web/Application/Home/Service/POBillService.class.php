@@ -391,4 +391,34 @@ class POBillService extends PSIBaseExService {
 		
 		return $dao->getPOBillDataForLodopPrint($params);
 	}
+
+	/**
+	 * 采购订单 - 订单变更
+	 */
+	public function changePurchaseOrder($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$db = $this->db();
+		$db->startTrans();
+		$dao = new POBillDAO($db);
+		$rc = $dao->changePurchaseOrder($params);
+		if ($rc) {
+			$db->rollback();
+			return $rc;
+		}
+		
+		$id = $params["id"];
+		$ref = $params["ref"];
+		
+		// 记录业务日志
+		$log = "采购订单[单号={$ref}]变更明细记录";
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
+		return $this->ok($id);
+	}
 }

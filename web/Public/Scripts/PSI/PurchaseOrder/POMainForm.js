@@ -527,96 +527,128 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 				});
 
 		me.__detailGrid = Ext.create("Ext.grid.Panel", {
-					cls : "PSI",
-					title : "采购订单明细",
-					viewConfig : {
-						enableTextSelection : true
-					},
-					columnLines : true,
-					columns : {
-						defaults : {
+			cls : "PSI",
+			title : "采购订单明细",
+			viewConfig : {
+				enableTextSelection : true
+			},
+			columnLines : true,
+			columns : {
+				defaults : {
+					menuDisabled : true,
+					sortable : false
+				},
+				items : [Ext.create("Ext.grid.RowNumberer", {
+									text : "序号",
+									width : 40
+								}), {
+							header : "",
+							id : "columnActionChangeOrder",
+							align : "center",
 							menuDisabled : true,
-							sortable : false
-						},
-						items : [Ext.create("Ext.grid.RowNumberer", {
-											text : "序号",
-											width : 40
-										}), {
-									header : "商品编码",
-									dataIndex : "goodsCode",
-									width : 120
-								}, {
-									header : "商品名称",
-									dataIndex : "goodsName",
-									width : 200
-								}, {
-									header : "规格型号",
-									dataIndex : "goodsSpec",
-									width : 200
-								}, {
-									header : "采购数量",
-									dataIndex : "goodsCount",
-									align : "right"
-								}, {
-									header : "入库数量",
-									dataIndex : "pwCount",
-									align : "right"
-								}, {
-									header : "未入库数量",
-									dataIndex : "leftCount",
-									align : "right",
-									renderer : function(value) {
-										if (value > 0) {
-											return "<span style='color:red'>"
-													+ value + "</span>";
-										} else {
-											return value;
-										}
-									}
-								}, {
-									header : "单位",
-									dataIndex : "unitName",
-									width : 60
-								}, {
-									header : "采购单价",
-									dataIndex : "goodsPrice",
-									align : "right",
-									xtype : "numbercolumn",
-									width : 150
-								}, {
-									header : "采购金额",
-									dataIndex : "goodsMoney",
-									align : "right",
-									xtype : "numbercolumn",
-									width : 150
-								}, {
-									header : "税率(%)",
-									dataIndex : "taxRate",
-									align : "right",
-									xtype : "numbercolumn",
-									format : "0"
-								}, {
-									header : "税金",
-									dataIndex : "tax",
-									align : "right",
-									xtype : "numbercolumn",
-									width : 150
-								}, {
-									header : "价税合计",
-									dataIndex : "moneyWithTax",
-									align : "right",
-									xtype : "numbercolumn",
-									width : 150
-								}, {
-									header : "备注",
-									dataIndex : "memo",
-									width : 120
-								}]
-					},
-					store : store
-				});
+							draggable : false,
+							hidden : true,
+							width : 40,
+							xtype : "actioncolumn",
+							items : [{
+										icon : me
+												.URL("Public/Images/icons/edit.png"),
+										tooltip : "订单变更",
+										handler : me.onChangeOrder,
+										scope : me
+									}]
+						}, {
+							header : "商品编码",
+							dataIndex : "goodsCode",
+							width : 120
+						}, {
+							header : "商品名称",
+							dataIndex : "goodsName",
+							width : 200
+						}, {
+							header : "规格型号",
+							dataIndex : "goodsSpec",
+							width : 200
+						}, {
+							header : "采购数量",
+							dataIndex : "goodsCount",
+							align : "right"
+						}, {
+							header : "入库数量",
+							dataIndex : "pwCount",
+							align : "right"
+						}, {
+							header : "未入库数量",
+							dataIndex : "leftCount",
+							align : "right",
+							renderer : function(value) {
+								if (value > 0) {
+									return "<span style='color:red'>" + value
+											+ "</span>";
+								} else {
+									return value;
+								}
+							}
+						}, {
+							header : "单位",
+							dataIndex : "unitName",
+							width : 60
+						}, {
+							header : "采购单价",
+							dataIndex : "goodsPrice",
+							align : "right",
+							xtype : "numbercolumn",
+							width : 150
+						}, {
+							header : "采购金额",
+							dataIndex : "goodsMoney",
+							align : "right",
+							xtype : "numbercolumn",
+							width : 150
+						}, {
+							header : "税率(%)",
+							dataIndex : "taxRate",
+							align : "right",
+							xtype : "numbercolumn",
+							format : "0"
+						}, {
+							header : "税金",
+							dataIndex : "tax",
+							align : "right",
+							xtype : "numbercolumn",
+							width : 150
+						}, {
+							header : "价税合计",
+							dataIndex : "moneyWithTax",
+							align : "right",
+							xtype : "numbercolumn",
+							width : 150
+						}, {
+							header : "备注",
+							dataIndex : "memo",
+							width : 120
+						}]
+			},
+			store : store
+		});
 
 		return me.__detailGrid;
+	},
+
+	onChangeOrder : function(grid, row) {
+		var me = this;
+
+		var entity = grid.getStore().getAt(row);
+		if (!entity) {
+			me.showInfo("请选择要变更的明细记录");
+			return;
+		}
+
+		var form = Ext.create("PSI.PurchaseOrder.ChangeOrderEditForm", {
+					entity : entity,
+					parentForm : me
+				});
+		form.show();
 	},
 
 	/**
@@ -752,8 +784,10 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 		buttonEdit.setDisabled(false);
 		if (commited) {
 			buttonEdit.setText("查看采购订单");
+			Ext.getCmp("columnActionChangeOrder").show();
 		} else {
 			buttonEdit.setText("编辑采购订单");
+			Ext.getCmp("columnActionChangeOrder").hide();
 		}
 
 		Ext.getCmp("buttonDelete").setDisabled(commited);

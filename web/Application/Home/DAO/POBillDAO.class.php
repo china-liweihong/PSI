@@ -1245,4 +1245,16 @@ class POBillDAO extends PSIBaseExDAO {
 		
 		return $result;
 	}
+
+	/**
+	 * 采购订单 - 订单变更
+	 */
+	public function changePurchaseOrder(&$params) {
+		$db = $this->db;
+		
+		// 采购订单明细记录id
+		$id = $params["id"];
+		
+		return $this->todo();
+	}
 }

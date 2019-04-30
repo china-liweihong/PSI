@@ -400,6 +400,8 @@ class POBillService extends PSIBaseExService {
 			return $this->emptyResult();
 		}
 		
+		$params["companyId"] = $this->getCompanyId();
+		
 		$db = $this->db();
 		$db->startTrans();
 		$dao = new POBillDAO($db);

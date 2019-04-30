@@ -287,7 +287,9 @@ class PurchaseController extends PSIBaseController {
 	public function changePurchaseOrder() {
 		if (IS_POST) {
 			$params = [
-					"id" => I("post.id")
+					"id" => I("post.id"),
+					"goodsCount" => I("post.goodsCount"),
+					"goodsPrice" => I("post.goodsPrice")
 			];
 			
 			$ps = new POBillService();

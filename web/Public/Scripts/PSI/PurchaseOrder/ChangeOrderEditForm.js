@@ -245,7 +245,7 @@ Ext.define("PSI.PurchaseOrder.ChangeOrderEditForm", {
 
 		if (me.__lastId) {
 			if (me.getParentForm()) {
-				me.getParentForm().refreshDetailGrid(me.__lastId);
+				me.getParentForm().refreshAterChangeOrder(me.__lastId);
 			}
 		}
 	},

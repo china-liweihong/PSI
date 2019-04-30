@@ -1423,5 +1423,33 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 				"");
 		lodop.ADD_PRINT_HTM("0mm", "0mm", "100%", "100%", data);
 		var result = lodop.PRINT();
+	},
+
+	// 订单变更后刷新Grid
+	refreshAterChangeOrder : function(detailId) {
+		var me = this;
+
+		me.refreshDetailGrid(detailId);
+
+		// 刷新主表中金额相关字段
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			return;
+		}
+		var bill = item[0];
+
+		var r = {
+			url : me.URL("Home/Purchase/getPOBillDataAterChangeOrder"),
+			params : {
+				id : bill.get("id")
+			},
+			callback : function(options, success, response) {
+
+				if (success) {
+					var data = me.decodeJSON(response.responseText);
+				}
+			}
+		};
+		me.ajax(r);
 	}
 });

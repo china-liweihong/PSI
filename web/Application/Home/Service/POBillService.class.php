@@ -423,4 +423,16 @@ class POBillService extends PSIBaseExService {
 		
 		return $this->ok($id);
 	}
+
+	/**
+	 * 查询主表金额相关数据 - 订单变更后刷新界面用
+	 */
+	public function getPOBillDataAterChangeOrder($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new POBillDAO($this->db());
+		return $dao->getPOBillDataAterChangeOrder($params);
+	}
 }

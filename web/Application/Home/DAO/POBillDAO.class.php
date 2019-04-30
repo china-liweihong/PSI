@@ -1338,4 +1338,28 @@ class POBillDAO extends PSIBaseExDAO {
 		$params["ref"] = $ref;
 		return null;
 	}
+
+	/**
+	 * 查询主表金额相关数据 - 订单变更后刷新界面用
+	 */
+	public function getPOBillDataAterChangeOrder($params) {
+		$db = $this->db;
+		
+		$id = $params["id"];
+		
+		$sql = "select goods_money, tax, money_with_tax
+				from t_po_bill
+				where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if ($data) {
+			$v = $data[0];
+			return [
+					"goodsMoney" => $v["goods_money"],
+					"tax" => $v["tax"],
+					"moneyWithTax" => $v["money_with_tax"]
+			];
+		} else {
+			return $this->emptyResult();
+		}
+	}
 }

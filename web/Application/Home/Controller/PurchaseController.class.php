@@ -298,6 +298,20 @@ class PurchaseController extends PSIBaseController {
 	}
 
 	/**
+	 * 查询主表金额相关数据 - 订单变更后刷新界面用
+	 */
+	public function getPOBillDataAterChangeOrder() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id")
+			];
+			
+			$ps = new POBillService();
+			$this->ajaxReturn($ps->getPOBillDataAterChangeOrder($params));
+		}
+	}
+
+	/**
 	 * 采购订单生成PDF文件
 	 */
 	public function poBillPdf() {

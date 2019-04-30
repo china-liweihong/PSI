@@ -1447,6 +1447,12 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 
 				if (success) {
 					var data = me.decodeJSON(response.responseText);
+					if (data.goodsMoney) {
+						bill.set("goodsMoney", data.goodsMoney);
+						bill.set("tax", data.tax);
+						bill.set("moneyWithTax", data.moneyWithTax);
+						me.getMainGrid().getStore().commitChanges();
+					}
 				}
 			}
 		};

@@ -125,6 +125,10 @@ Ext.define("PSI.PurchaseOrder.ChangeOrderEditForm", {
 										specialkey : {
 											fn : me.onEditGoodsCountSpecialKey,
 											scope : me
+										},
+										change : {
+											fn : me.onEditGoodsCountChange,
+											scope : me
 										}
 									}
 								}, {
@@ -150,6 +154,10 @@ Ext.define("PSI.PurchaseOrder.ChangeOrderEditForm", {
 									listeners : {
 										specialkey : {
 											fn : me.onEditGoodsPriceSpecialKey,
+											scope : me
+										},
+										change : {
+											fn : me.onEditGoodsPriceChange,
 											scope : me
 										}
 									}
@@ -184,6 +192,12 @@ Ext.define("PSI.PurchaseOrder.ChangeOrderEditForm", {
 				.getCmp("PSI_PurchaseOrder_ChangeOrderEditForm_editGoodsCount");
 		me.editGoodsPrice = Ext
 				.getCmp("PSI_PurchaseOrder_ChangeOrderEditForm_editGoodsPrice");
+		me.editGoodsMoney = Ext
+				.getCmp("PSI_PurchaseOrder_ChangeOrderEditForm_editGoodsMoney");
+		me.editPWCount = Ext
+				.getCmp("PSI_PurchaseOrder_ChangeOrderEditForm_editGoodsPWCount");
+		me.editLeftCount = Ext
+				.getCmp("PSI_PurchaseOrder_ChangeOrderEditForm_editGoodsLeftCount");
 	},
 
 	onOK : function(thenAdd) {
@@ -261,5 +275,24 @@ Ext.define("PSI.PurchaseOrder.ChangeOrderEditForm", {
 		if (e.getKey() == e.ENTER) {
 			me.onOK();
 		}
+	},
+
+	onEditGoodsCountChange : function() {
+		var me = this;
+
+		var cnt = me.editGoodsCount.getValue();
+		var price = me.editGoodsPrice.getValue();
+		me.editGoodsMoney.setValue(cnt * price);
+
+		var pwCount = me.editPWCount.getValue();
+		me.editLeftCount.setValue(cnt - pwCount);
+	},
+
+	onEditGoodsPriceChange : function() {
+		var me = this;
+
+		var cnt = me.editGoodsCount.getValue();
+		var price = me.editGoodsPrice.getValue();
+		me.editGoodsMoney.setValue(cnt * price);
 	}
 });

@@ -43,56 +43,103 @@ Ext.define("PSI.PurchaseOrder.ChangeOrderEditForm", {
 				+ "</h2>"
 				+ "<p style='color:#196d83'>标记 <span style='color:red;font-weight:bold'>*</span>的是必须录入数据的字段</p>";
 		Ext.apply(me, {
-					header : {
-						title : me.formatTitle(PSI.Const.PROD_NAME),
-						height : 40
-					},
-					width : 400,
-					height : 270,
-					layout : "border",
-					listeners : {
-						show : {
-							fn : me.onWndShow,
-							scope : me
+			header : {
+				title : me.formatTitle(PSI.Const.PROD_NAME),
+				height : 40
+			},
+			width : 400,
+			height : 380,
+			layout : "border",
+			listeners : {
+				show : {
+					fn : me.onWndShow,
+					scope : me
+				},
+				close : {
+					fn : me.onWndClose,
+					scope : me
+				}
+			},
+			items : [{
+						region : "north",
+						height : 90,
+						border : 0,
+						html : logoHtml
+					}, {
+						region : "center",
+						border : 0,
+						id : "PSI_PurchaseOrder_ChangeOrderEditForm_editForm",
+						xtype : "form",
+						layout : {
+							type : "table",
+							columns : 2
 						},
-						close : {
-							fn : me.onWndClose,
-							scope : me
-						}
-					},
-					items : [{
-								region : "north",
-								height : 90,
-								border : 0,
-								html : logoHtml
-							}, {
-								region : "center",
-								border : 0,
-								id : "PSI_PurchaseOrder_ChangeOrderEditForm_editForm",
-								xtype : "form",
-								layout : {
-									type : "table",
-									columns : 1
-								},
-								height : "100%",
-								bodyPadding : 5,
-								defaultType : 'textfield',
-								fieldDefaults : {
-									labelWidth : 60,
-									labelAlign : "right",
-									labelSeparator : "",
-									msgTarget : 'side',
-									width : 370,
-									margin : "5"
-								},
-								items : [{
-											xtype : "hidden",
-											name : "id",
-											value : entity.get("id")
-										}],
-								buttons : buttons
-							}]
-				});
+						height : "100%",
+						bodyPadding : 5,
+						defaultType : 'textfield',
+						fieldDefaults : {
+							labelWidth : 70,
+							labelAlign : "right",
+							labelSeparator : "",
+							msgTarget : 'side',
+							width : 370,
+							margin : "5"
+						},
+						items : [{
+									xtype : "hidden",
+									name : "id",
+									value : entity.get("id")
+								}, {
+									id : "PSI_PurchaseOrder_ChangeOrderEditForm_editGoodsCode",
+									fieldLabel : "商品编码",
+									readOnly : true,
+									colspan : 2
+								}, {
+									id : "PSI_PurchaseOrder_ChangeOrderEditForm_editGoodsName",
+									fieldLabel : "商品名称",
+									readOnly : true,
+									colspan : 2
+								}, {
+									id : "PSI_PurchaseOrder_ChangeOrderEditForm_editGoodsSpec",
+									fieldLabel : "规格型号",
+									readOnly : true,
+									colspan : 2
+								}, {
+									id : "PSI_PurchaseOrder_ChangeOrderEditForm_editGoodsCount",
+									fieldLabel : "采购数量",
+									xtype : "numberfield",
+									hideTrigger : true,
+									width : 180
+								}, {
+									id : "PSI_PurchaseOrder_ChangeOrderEditForm_editUnitName",
+									fieldLabel : "单位",
+									readOnly : true,
+									width : 180
+								}, {
+									id : "PSI_PurchaseOrder_ChangeOrderEditForm_editGoodsPrice",
+									fieldLabel : "采购单价",
+									hideTrigger : true,
+									xtype : "numberfield",
+									width : 180
+								}, {
+									id : "PSI_PurchaseOrder_ChangeOrderEditForm_editGoodsMoney",
+									fieldLabel : "采购金额",
+									readOnly : true,
+									width : 180
+								}, {
+									id : "PSI_PurchaseOrder_ChangeOrderEditForm_editGoodsPWCount",
+									fieldLabel : "已入库数量",
+									readOnly : true,
+									width : 180
+								}, {
+									id : "PSI_PurchaseOrder_ChangeOrderEditForm_editGoodsLeftCount",
+									fieldLabel : "未入库数量",
+									readOnly : true,
+									width : 180
+								}],
+						buttons : buttons
+					}]
+		});
 
 		me.callParent(arguments);
 

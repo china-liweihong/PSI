@@ -93,48 +93,71 @@ Ext.define("PSI.PurchaseOrder.ChangeOrderEditForm", {
 									id : "PSI_PurchaseOrder_ChangeOrderEditForm_editGoodsCode",
 									fieldLabel : "商品编码",
 									readOnly : true,
+									value : entity.get("goodsCode"),
 									colspan : 2
 								}, {
 									id : "PSI_PurchaseOrder_ChangeOrderEditForm_editGoodsName",
 									fieldLabel : "商品名称",
 									readOnly : true,
+									value : entity.get("goodsName"),
 									colspan : 2
 								}, {
 									id : "PSI_PurchaseOrder_ChangeOrderEditForm_editGoodsSpec",
 									fieldLabel : "规格型号",
 									readOnly : true,
+									value : entity.get("goodsSpec"),
 									colspan : 2
 								}, {
 									id : "PSI_PurchaseOrder_ChangeOrderEditForm_editGoodsCount",
 									fieldLabel : "采购数量",
 									xtype : "numberfield",
 									hideTrigger : true,
+									name : "goodsCount",
+									value : entity.get("goodsCount"),
+									allowDecimals : PSI.Const.GC_DEC_NUMBER > 0,
+									decimalPrecision : PSI.Const.GC_DEC_NUMBER,
+									minValue : 0,
+									allowBlank : false,
+									blankText : "没有输入采购数量",
+									beforeLabelTextTpl : PSI.Const.REQUIRED,
 									width : 180
 								}, {
 									id : "PSI_PurchaseOrder_ChangeOrderEditForm_editUnitName",
 									fieldLabel : "单位",
 									readOnly : true,
+									value : entity.get("unitName"),
 									width : 180
 								}, {
 									id : "PSI_PurchaseOrder_ChangeOrderEditForm_editGoodsPrice",
 									fieldLabel : "采购单价",
 									hideTrigger : true,
 									xtype : "numberfield",
+									name : "goodsPrice",
+									value : entity.get("goodsPrice"),
+									allowDecimals : true,
+									decimalPrecision : 2,
+									minValue : 0,
+									allowBlank : false,
+									blankText : "没有输入采购单价",
+									beforeLabelTextTpl : PSI.Const.REQUIRED,
 									width : 180
 								}, {
 									id : "PSI_PurchaseOrder_ChangeOrderEditForm_editGoodsMoney",
 									fieldLabel : "采购金额",
 									readOnly : true,
+									value : entity.get("goodsMoney"),
 									width : 180
 								}, {
 									id : "PSI_PurchaseOrder_ChangeOrderEditForm_editGoodsPWCount",
 									fieldLabel : "已入库数量",
 									readOnly : true,
+									value : entity.get("pwCount"),
 									width : 180
 								}, {
 									id : "PSI_PurchaseOrder_ChangeOrderEditForm_editGoodsLeftCount",
 									fieldLabel : "未入库数量",
 									readOnly : true,
+									value : entity.get("leftCount"),
 									width : 180
 								}],
 						buttons : buttons
@@ -145,6 +168,10 @@ Ext.define("PSI.PurchaseOrder.ChangeOrderEditForm", {
 
 		me.editForm = Ext
 				.getCmp("PSI_PurchaseOrder_ChangeOrderEditForm_editForm");
+		me.editGoodsCount = Ext
+				.getCmp("PSI_PurchaseOrder_ChangeOrderEditForm_editGoodsCount");
+		me.editGoodsPrice = Ext
+				.getCmp("PSI_PurchaseOrder_ChangeOrderEditForm_editGoodsPrice");
 	},
 
 	onOK : function(thenAdd) {
@@ -168,6 +195,9 @@ Ext.define("PSI.PurchaseOrder.ChangeOrderEditForm", {
 			failure : function(form, action) {
 				el.unmask();
 				PSI.MsgBox.showInfo(action.result.msg, function() {
+							me.editGoodsCount.focus();
+							me.editGoodsCount.setValue(me.editGoodsCount
+									.getValue());
 						});
 			}
 		};

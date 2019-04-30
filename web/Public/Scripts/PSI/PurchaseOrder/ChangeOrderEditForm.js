@@ -120,7 +120,13 @@ Ext.define("PSI.PurchaseOrder.ChangeOrderEditForm", {
 									allowBlank : false,
 									blankText : "没有输入采购数量",
 									beforeLabelTextTpl : PSI.Const.REQUIRED,
-									width : 180
+									width : 180,
+									listeners : {
+										specialkey : {
+											fn : me.onEditGoodsCountSpecialKey,
+											scope : me
+										}
+									}
 								}, {
 									id : "PSI_PurchaseOrder_ChangeOrderEditForm_editUnitName",
 									fieldLabel : "单位",
@@ -140,7 +146,13 @@ Ext.define("PSI.PurchaseOrder.ChangeOrderEditForm", {
 									allowBlank : false,
 									blankText : "没有输入采购单价",
 									beforeLabelTextTpl : PSI.Const.REQUIRED,
-									width : 180
+									width : 180,
+									listeners : {
+										specialkey : {
+											fn : me.onEditGoodsPriceSpecialKey,
+											scope : me
+										}
+									}
 								}, {
 									id : "PSI_PurchaseOrder_ChangeOrderEditForm_editGoodsMoney",
 									fieldLabel : "采购金额",
@@ -177,31 +189,35 @@ Ext.define("PSI.PurchaseOrder.ChangeOrderEditForm", {
 	onOK : function(thenAdd) {
 		var me = this;
 
-		var f = me.editForm;
-		var el = f.getEl();
-		el.mask(PSI.Const.SAVING);
-		var sf = {
-			url : me.URL("/Home/Purchase/changePurchaseOrder"),
-			method : "POST",
-			success : function(form, action) {
-				me.__lastId = action.result.id;
+		var confirmFunc = function() {
+			var f = me.editForm;
+			var el = f.getEl();
+			el.mask(PSI.Const.SAVING);
+			var sf = {
+				url : me.URL("/Home/Purchase/changePurchaseOrder"),
+				method : "POST",
+				success : function(form, action) {
+					me.__lastId = action.result.id;
 
-				el.unmask();
+					el.unmask();
 
-				PSI.MsgBox.tip("数据保存成功");
-				me.focus();
-				me.close();
-			},
-			failure : function(form, action) {
-				el.unmask();
-				PSI.MsgBox.showInfo(action.result.msg, function() {
-							me.editGoodsCount.focus();
-							me.editGoodsCount.setValue(me.editGoodsCount
-									.getValue());
-						});
-			}
+					PSI.MsgBox.tip("数据保存成功");
+					me.focus();
+					me.close();
+				},
+				failure : function(form, action) {
+					el.unmask();
+					PSI.MsgBox.showInfo(action.result.msg, function() {
+								me.editGoodsCount.focus();
+								me.editGoodsCount.setValue(me.editGoodsCount
+										.getValue());
+							});
+				}
+			};
+			f.submit(sf);
 		};
-		f.submit(sf);
+
+		me.confirm("请确认是否变更采购订单?", confirmFunc);
 	},
 
 	onWindowBeforeUnload : function(e) {
@@ -224,5 +240,26 @@ Ext.define("PSI.PurchaseOrder.ChangeOrderEditForm", {
 		var me = this;
 
 		Ext.get(window).on('beforeunload', me.onWindowBeforeUnload);
+
+		me.editGoodsCount.focus();
+		me.editGoodsCount.setValue(me.editGoodsCount.getValue());
+	},
+
+	onEditGoodsCountSpecialKey : function(field, e) {
+		var me = this;
+
+		if (e.getKey() == e.ENTER) {
+			var edit = me.editGoodsPrice;
+			edit.focus();
+			edit.setValue(edit.getValue());
+		}
+	},
+
+	onEditGoodsPriceSpecialKey : function(field, e) {
+		var me = this;
+
+		if (e.getKey() == e.ENTER) {
+			me.onOK();
+		}
 	}
 });

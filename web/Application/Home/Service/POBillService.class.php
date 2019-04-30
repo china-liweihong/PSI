@@ -3,6 +3,7 @@
 namespace Home\Service;
 
 use Home\DAO\POBillDAO;
+use Home\Common\FIdConst;
 
 /**
  * 采购订单Service
@@ -398,6 +399,11 @@ class POBillService extends PSIBaseExService {
 	public function changePurchaseOrder($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
+		}
+		
+		$us = new UserService();
+		if (! $us->hasPermission(FIdConst::PURCHASE_ORDER_CONFIRM)) {
+			return $this->bad("您没有订单变更的权限(拥有订单审核权限的用户才能做订单变更)");
 		}
 		
 		$params["companyId"] = $this->getCompanyId();

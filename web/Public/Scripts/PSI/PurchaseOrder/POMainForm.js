@@ -638,6 +638,11 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 	onChangeOrder : function(grid, row) {
 		var me = this;
 
+		if (me.getPermission().confirm == "0") {
+			me.showInfo("您没有订单变更的权限");
+			return;
+		}
+
 		var entity = grid.getStore().getAt(row);
 		if (!entity) {
 			me.showInfo("请选择要变更的明细记录");
@@ -787,6 +792,10 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 			Ext.getCmp("columnActionChangeOrder").show();
 		} else {
 			buttonEdit.setText("编辑采购订单");
+			Ext.getCmp("columnActionChangeOrder").hide();
+		}
+		if (me.getPermission().confirm == "0") {
+			// 没有审核权限就不能做订单变更
 			Ext.getCmp("columnActionChangeOrder").hide();
 		}
 

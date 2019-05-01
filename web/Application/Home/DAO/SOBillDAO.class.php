@@ -61,6 +61,7 @@ class SOBillDAO extends PSIBaseExDAO {
 		$toDT = $params["toDT"];
 		$customerId = $params["customerId"];
 		$receivingType = $params["receivingType"];
+		$goodsId = $params["goodsId"];
 		
 		$queryParams = array();
 		
@@ -104,6 +105,10 @@ class SOBillDAO extends PSIBaseExDAO {
 		if ($receivingType != - 1) {
 			$sql .= " and (s.receiving_type = %d) ";
 			$queryParams[] = $receivingType;
+		}
+		if ($goodsId) {
+			$sql .= " and (s.id in (select distinct sobill_id from t_so_bill_detail where goods_id = '%s'))";
+			$queryParams[] = $goodsId;
 		}
 		$sql .= " order by s.deal_date desc, s.ref desc
 				  limit %d , %d";
@@ -184,6 +189,10 @@ class SOBillDAO extends PSIBaseExDAO {
 		if ($receivingType != - 1) {
 			$sql .= " and (s.receiving_type = %d) ";
 			$queryParams[] = $receivingType;
+		}
+		if ($goodsId) {
+			$sql .= " and (s.id in (select distinct sobill_id from t_so_bill_detail where goods_id = '%s'))";
+			$queryParams[] = $goodsId;
 		}
 		$data = $db->query($sql, $queryParams);
 		$cnt = $data[0]["cnt"];

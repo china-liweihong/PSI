@@ -1014,7 +1014,91 @@ class SOBillDAO extends PSIBaseExDAO {
 	public function changeSaleOrder(&$params) {
 		$db = $this->db;
 		
-		return $this->todo();
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->badParam("companyId");
+		}
+		$bcDAO = new BizConfigDAO($db);
+		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+		$fmt = "decimal(19, " . $dataScale . ")";
+		
+		// 销售订单明细记录id
+		$detailId = $params["id"];
+		
+		$goodsCount = $params["goodsCount"];
+		$goodsPrice = $params["goodsPrice"];
+		
+		$sql = "select sobill_id, convert(ws_count, $fmt) as ws_count,
+					tax_rate
+				from t_so_bill_detail
+				where id = '%s' ";
+		$data = $db->query($sql, $detailId);
+		if (! $data) {
+			return $this->bad("要变更的明细记录不存在");
+		}
+		
+		// 采购订单主表id
+		$id = $data[0]["sobill_id"];
+		
+		$wsCount = $data[0]["ws_count"];
+		$taxRate = $data[0]["tax_rate"];
+		
+		$sql = "select ref, bill_status
+				from t_so_bill
+				where id = '%s' ";
+		$data = $db->query($sql, $id);
+		if (! $data) {
+			return $this->bad("要变更的销售订单不存在");
+		}
+		$ref = $data[0]["ref"];
+		$billStatus = $data[0]["bill_status"];
+		if ($billStatus == 2001 || $billStatus == 3001) {
+			return $this->bad("销售订单[单号={$ref}]已经关闭，不能再做订单变更");
+		}
+		
+		$goodsMoney = $goodsCount * $goodsPrice;
+		$leftCount = $goodsCount - $wsCount;
+		$tax = $goodsMoney * $taxRate / 100;
+		$moneyWithTax = $goodsMoney + $tax;
+		
+		$sql = "update t_so_bill_detail
+				set goods_count = convert(%f, $fmt), goods_price = %f,
+					goods_money = %f, left_count = convert(%f, $fmt),
+					tax = %f, money_with_tax = %f
+				where id = '%s' ";
+		$rc = $db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $leftCount, $tax, 
+				$moneyWithTax, $detailId);
+		
+		// 同步主表的金额合计字段
+		$sql = "select sum(goods_money) as sum_goods_money, sum(tax) as sum_tax,
+					sum(money_with_tax) as sum_money_with_tax
+				from t_so_bill_detail
+				where sobill_id = '%s' ";
+		$data = $db->query($sql, $id);
+		$sumGoodsMoney = $data[0]["sum_goods_money"];
+		if (! $sumGoodsMoney) {
+			$sumGoodsMoney = 0;
+		}
+		$sumTax = $data[0]["sum_tax"];
+		if (! $sumTax) {
+			$sumTax = 0;
+		}
+		$sumMoneyWithTax = $data[0]["sum_money_with_tax"];
+		if (! $sumMoneyWithTax) {
+			$sumMoneyWithTax = 0;
+		}
+		
+		$sql = "update t_so_bill
+				set goods_money = %f, tax = %f, money_with_tax = %f
+				where id = '%s' ";
+		$rc = $db->execute($sql, $sumGoodsMoney, $sumTax, $sumMoneyWithTax, $id);
+		if ($rc === false) {
+			return $this->sqlError(__METHOD__, __LINE__);
+		}
+		
+		// 操作成功
+		$params["ref"] = $ref;
+		return null;
 	}
 
 	/**

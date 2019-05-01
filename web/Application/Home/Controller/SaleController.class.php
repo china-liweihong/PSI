@@ -439,6 +439,22 @@ class SaleController extends PSIBaseController {
 	}
 
 	/**
+	 * 销售订单 - 订单变更
+	 */
+	public function changeSaleOrder() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id"),
+					"goodsCount" => I("post.goodsCount"),
+					"goodsPrice" => I("post.goodsPrice")
+			];
+			
+			$ps = new SOBillService();
+			$this->ajaxReturn($ps->changeSaleOrder($params));
+		}
+	}
+
+	/**
 	 * 销售订单生成pdf文件
 	 */
 	public function soBillPdf() {

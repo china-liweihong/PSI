@@ -1007,4 +1007,13 @@ class SOBillDAO extends PSIBaseExDAO {
 		
 		return $bill;
 	}
+
+	/**
+	 * 销售订单 - 订单变更
+	 */
+	public function changeSaleOrder(&$params) {
+		$db = $this->db;
+		
+		return $this->todo();
+	}
 }

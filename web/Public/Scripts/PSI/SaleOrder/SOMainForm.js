@@ -544,114 +544,130 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 				});
 
 		me.__detailGrid = Ext.create("Ext.grid.Panel", {
-					cls : "PSI",
-					title : "销售订单明细",
-					viewConfig : {
-						enableTextSelection : true
-					},
-					columnLines : true,
-					columns : [Ext.create("Ext.grid.RowNumberer", {
-										text : "序号",
-										width : 40
-									}), {
-								header : "商品编码",
-								dataIndex : "goodsCode",
-								menuDisabled : true,
-								sortable : false,
-								width : 120
-							}, {
-								header : "商品名称",
-								dataIndex : "goodsName",
-								menuDisabled : true,
-								sortable : false,
-								width : 200
-							}, {
-								header : "规格型号",
-								dataIndex : "goodsSpec",
-								menuDisabled : true,
-								sortable : false,
-								width : 200
-							}, {
-								header : "销售数量",
-								dataIndex : "goodsCount",
-								menuDisabled : true,
-								sortable : false,
-								align : "right"
-							}, {
-								header : "出库数量",
-								dataIndex : "wsCount",
-								menuDisabled : true,
-								sortable : false,
-								align : "right"
-							}, {
-								header : "未出库数量",
-								dataIndex : "leftCount",
-								menuDisabled : true,
-								sortable : false,
-								align : "right",
-								renderer : function(value) {
-									if (value > 0) {
-										return "<span style='color:red'>"
-												+ value + "</span>";
-									} else {
-										return value;
-									}
-								}
-							}, {
-								header : "单位",
-								dataIndex : "unitName",
-								menuDisabled : true,
-								sortable : false,
-								width : 60
-							}, {
-								header : "销售单价",
-								dataIndex : "goodsPrice",
-								menuDisabled : true,
-								sortable : false,
-								align : "right",
-								xtype : "numbercolumn",
-								width : 150
-							}, {
-								header : "销售金额",
-								dataIndex : "goodsMoney",
-								menuDisabled : true,
-								sortable : false,
-								align : "right",
-								xtype : "numbercolumn",
-								width : 150
-							}, {
-								header : "税率(%)",
-								dataIndex : "taxRate",
-								menuDisabled : true,
-								sortable : false,
-								xtype : "numbercolumn",
-								format : "0",
-								align : "right"
-							}, {
-								header : "税金",
-								dataIndex : "tax",
-								menuDisabled : true,
-								sortable : false,
-								align : "right",
-								xtype : "numbercolumn",
-								width : 150
-							}, {
-								header : "价税合计",
-								dataIndex : "moneyWithTax",
-								menuDisabled : true,
-								sortable : false,
-								align : "right",
-								xtype : "numbercolumn",
-								width : 150
-							}, {
-								header : "备注",
-								dataIndex : "memo",
-								menuDisabled : true,
-								sortable : false,
-								width : 120
-							}],
-					store : store
-				});
+			cls : "PSI",
+			title : "销售订单明细",
+			viewConfig : {
+				enableTextSelection : true
+			},
+			columnLines : true,
+			columns : [Ext.create("Ext.grid.RowNumberer", {
+								text : "序号",
+								width : 40
+							}), {
+						header : "",
+						id : "columnActionChangeOrder",
+						align : "center",
+						menuDisabled : true,
+						draggable : false,
+						hidden : true,
+						width : 40,
+						xtype : "actioncolumn",
+						items : [{
+									icon : me
+											.URL("Public/Images/icons/edit.png"),
+									tooltip : "订单变更",
+									handler : me.onChangeOrder,
+									scope : me
+								}]
+					}, {
+						header : "商品编码",
+						dataIndex : "goodsCode",
+						menuDisabled : true,
+						sortable : false,
+						width : 120
+					}, {
+						header : "商品名称",
+						dataIndex : "goodsName",
+						menuDisabled : true,
+						sortable : false,
+						width : 200
+					}, {
+						header : "规格型号",
+						dataIndex : "goodsSpec",
+						menuDisabled : true,
+						sortable : false,
+						width : 200
+					}, {
+						header : "销售数量",
+						dataIndex : "goodsCount",
+						menuDisabled : true,
+						sortable : false,
+						align : "right"
+					}, {
+						header : "出库数量",
+						dataIndex : "wsCount",
+						menuDisabled : true,
+						sortable : false,
+						align : "right"
+					}, {
+						header : "未出库数量",
+						dataIndex : "leftCount",
+						menuDisabled : true,
+						sortable : false,
+						align : "right",
+						renderer : function(value) {
+							if (value > 0) {
+								return "<span style='color:red'>" + value
+										+ "</span>";
+							} else {
+								return value;
+							}
+						}
+					}, {
+						header : "单位",
+						dataIndex : "unitName",
+						menuDisabled : true,
+						sortable : false,
+						width : 60
+					}, {
+						header : "销售单价",
+						dataIndex : "goodsPrice",
+						menuDisabled : true,
+						sortable : false,
+						align : "right",
+						xtype : "numbercolumn",
+						width : 150
+					}, {
+						header : "销售金额",
+						dataIndex : "goodsMoney",
+						menuDisabled : true,
+						sortable : false,
+						align : "right",
+						xtype : "numbercolumn",
+						width : 150
+					}, {
+						header : "税率(%)",
+						dataIndex : "taxRate",
+						menuDisabled : true,
+						sortable : false,
+						xtype : "numbercolumn",
+						format : "0",
+						align : "right"
+					}, {
+						header : "税金",
+						dataIndex : "tax",
+						menuDisabled : true,
+						sortable : false,
+						align : "right",
+						xtype : "numbercolumn",
+						width : 150
+					}, {
+						header : "价税合计",
+						dataIndex : "moneyWithTax",
+						menuDisabled : true,
+						sortable : false,
+						align : "right",
+						xtype : "numbercolumn",
+						width : 150
+					}, {
+						header : "备注",
+						dataIndex : "memo",
+						menuDisabled : true,
+						sortable : false,
+						width : 120
+					}],
+			store : store
+		});
 
 		return me.__detailGrid;
 	},
@@ -789,8 +805,14 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 		buttonEdit.setDisabled(false);
 		if (commited) {
 			buttonEdit.setText("查看销售订单");
+			Ext.getCmp("columnActionChangeOrder").show();
 		} else {
 			buttonEdit.setText("编辑销售订单");
+			Ext.getCmp("columnActionChangeOrder").hide();
+		}
+		if (me.getPermission().confirm == "0") {
+			// 没有审核权限就不能做订单变更
+			Ext.getCmp("columnActionChangeOrder").hide();
 		}
 
 		Ext.getCmp("buttonDelete").setDisabled(commited);
@@ -1364,5 +1386,26 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 				"");
 		lodop.ADD_PRINT_HTM("0mm", "0mm", "100%", "100%", data);
 		var result = lodop.PRINT();
+	},
+
+	onChangeOrder : function(grid, row) {
+		var me = this;
+
+		if (me.getPermission().confirm == "0") {
+			me.showInfo("您没有订单变更的权限");
+			return;
+		}
+
+		var entity = grid.getStore().getAt(row);
+		if (!entity) {
+			me.showInfo("请选择要变更的明细记录");
+			return;
+		}
+
+		var form = Ext.create("PSI.SaleOrder.ChangeOrderEditForm", {
+					entity : entity,
+					parentForm : me
+				});
+		form.show();
 	}
 });

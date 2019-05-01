@@ -3,6 +3,7 @@
 namespace Home\Service;
 
 use Home\DAO\SOBillDAO;
+use Home\Common\FIdConst;
 
 /**
  * 销售订单Service
@@ -329,5 +330,42 @@ class SOBillService extends PSIBaseExService {
 		
 		$dao = new SOBillDAO($this->db());
 		return $dao->getSOBillDataForLodopPrint($params);
+	}
+
+	/**
+	 * 销售订单 - 订单变更
+	 */
+	public function changeSaleOrder($params) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$us = new UserService();
+		if (! $us->hasPermission(FIdConst::SALE_ORDER_CONFIRM)) {
+			return $this->bad("您没有订单变更的权限(拥有订单审核权限的用户才能做订单变更)");
+		}
+		
+		$params["companyId"] = $this->getCompanyId();
+		
+		$db = $this->db();
+		$db->startTrans();
+		$dao = new SOBillDAO($db);
+		$rc = $dao->changeSaleOrder($params);
+		if ($rc) {
+			$db->rollback();
+			return $rc;
+		}
+		
+		$id = $params["id"];
+		$ref = $params["ref"];
+		
+		// 记录业务日志
+		$log = "销售订单[单号={$ref}]变更明细记录";
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
+		return $this->ok($id);
 	}
 }

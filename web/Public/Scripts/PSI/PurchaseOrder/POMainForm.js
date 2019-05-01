@@ -251,6 +251,14 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 					}),
 			value : -1
 		}, {
+			id : "editQueryGoods",
+			labelAlign : "right",
+			labelSeparator : "",
+			fieldLabel : "商品",
+			margin : "5, 0, 0, 0",
+			xtype : "psi_goodsfield",
+			showModal : true
+		}, {
 			xtype : "container",
 			items : [{
 						xtype : "button",
@@ -268,10 +276,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 						margin : "5, 0, 0, 10",
 						handler : me.onClearQuery,
 						scope : me
-					}]
-		}, {
-			xtype : "container",
-			items : [{
+					}, {
 						xtype : "button",
 						iconCls : "PSI-button-hide",
 						text : "隐藏查询条件栏",
@@ -1002,6 +1007,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 		Ext.getCmp("editQueryToDT").setValue(null);
 		Ext.getCmp("editQuerySupplier").clearIdValue();
 		Ext.getCmp("editQueryPaymentType").setValue(-1);
+		Ext.getCmp("editQueryGoods").clearIdValue();
 
 		me.onQuery();
 	},
@@ -1035,6 +1041,11 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
 
 		var paymentType = Ext.getCmp("editQueryPaymentType").getValue();
 		result.paymentType = paymentType;
+
+		var goodsId = Ext.getCmp("editQueryGoods").getIdValue();
+		if (goodsId) {
+			result.goodsId = goodsId;
+		}
 
 		return result;
 	},

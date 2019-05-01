@@ -56,6 +56,7 @@ class POBillDAO extends PSIBaseExDAO {
 		$toDT = $params["toDT"];
 		$supplierId = $params["supplierId"];
 		$paymentType = $params["paymentType"];
+		$goodsId = $params["goodsId"];
 		
 		$loginUserId = $params["loginUserId"];
 		if ($this->loginUserIdNotExists($loginUserId)) {
@@ -110,6 +111,11 @@ class POBillDAO extends PSIBaseExDAO {
 			$sql .= " and (p.payment_type = %d) ";
 			$queryParams[] = $paymentType;
 		}
+		if ($goodsId) {
+			$sql .= " and (p.id in (select distinct pobill_id from t_po_bill_detail where goods_id = '%s' ))";
+			$queryParams[] = $goodsId;
+		}
+		
 		$sql .= " order by p.deal_date desc, p.ref desc
 				  limit %d , %d";
 		$queryParams[] = $start;
@@ -192,6 +198,10 @@ class POBillDAO extends PSIBaseExDAO {
 		if ($paymentType != - 1) {
 			$sql .= " and (p.payment_type = %d) ";
 			$queryParams[] = $paymentType;
+		}
+		if ($goodsId) {
+			$sql .= " and (p.id in (select distinct pobill_id from t_po_bill_detail where goods_id = '%s' ))";
+			$queryParams[] = $goodsId;
 		}
 		$data = $db->query($sql, $queryParams);
 		$cnt = $data[0]["cnt"];

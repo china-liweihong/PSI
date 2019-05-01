@@ -7,7 +7,8 @@ Ext.define("PSI.Goods.GoodsField", {
 
 	config : {
 		parentCmp : null,
-		showAddButton : false
+		showAddButton : false,
+		showModal : false
 	},
 
 	/**
@@ -23,6 +24,7 @@ Ext.define("PSI.Goods.GoodsField", {
 		me.on("keydown", function(field, e) {
 					if (e.getKey() == e.BACKSPACE) {
 						field.setValue(null);
+						me.clearIdValue();
 						e.preventDefault();
 						return false;
 					}
@@ -110,6 +112,7 @@ Ext.define("PSI.Goods.GoodsField", {
 		var wnd = Ext.create("Ext.window.Window", {
 			title : "选择 - 商品",
 			header : false,
+			modal : me.getShowModal(),
 			border : 0,
 			width : 600,
 			height : 300,
@@ -253,10 +256,24 @@ Ext.define("PSI.Goods.GoodsField", {
 		me.focus();
 		me.setValue(data.code);
 		me.focus();
+		me.setIdValue(data.id);
 
 		if (me.getParentCmp() && me.getParentCmp().__setGoodsInfo) {
 			me.getParentCmp().__setGoodsInfo(data)
 		}
+	},
+
+	setIdValue : function(id) {
+		this.__idValue = id;
+	},
+
+	getIdValue : function() {
+		return this.__idValue;
+	},
+
+	clearIdValue : function() {
+		this.setValue(null);
+		this.__idValue = null;
 	},
 
 	onAddGoods : function() {

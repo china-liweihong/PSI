@@ -187,6 +187,7 @@ class PurchaseController extends PSIBaseController {
 					"toDT" => I("post.toDT"),
 					"supplierId" => I("post.supplierId"),
 					"paymentType" => I("post.paymentType"),
+					"goodsId" => I("post.goodsId"),
 					"start" => I("post.start"),
 					"limit" => I("post.limit")
 			);

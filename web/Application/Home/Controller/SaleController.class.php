@@ -455,6 +455,20 @@ class SaleController extends PSIBaseController {
 	}
 
 	/**
+	 * 查询主表金额相关数据 - 订单变更后刷新界面用
+	 */
+	public function getSOBillDataAterChangeOrder() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id")
+			];
+			
+			$ps = new SOBillService();
+			$this->ajaxReturn($ps->getSOBillDataAterChangeOrder($params));
+		}
+	}
+
+	/**
 	 * 销售订单生成pdf文件
 	 */
 	public function soBillPdf() {

@@ -1407,5 +1407,39 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 					parentForm : me
 				});
 		form.show();
+	},
+
+	// 订单变更后刷新Grid
+	refreshAterChangeOrder : function(detailId) {
+		var me = this;
+
+		me.refreshDetailGrid(detailId);
+
+		// 刷新主表中金额相关字段
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			return;
+		}
+		var bill = item[0];
+
+		var r = {
+			url : me.URL("Home/Sale/getSOBillDataAterChangeOrder"),
+			params : {
+				id : bill.get("id")
+			},
+			callback : function(options, success, response) {
+
+				if (success) {
+					var data = me.decodeJSON(response.responseText);
+					if (data.goodsMoney) {
+						bill.set("goodsMoney", data.goodsMoney);
+						bill.set("tax", data.tax);
+						bill.set("moneyWithTax", data.moneyWithTax);
+						me.getMainGrid().getStore().commitChanges();
+					}
+				}
+			}
+		};
+		me.ajax(r);
 	}
 });

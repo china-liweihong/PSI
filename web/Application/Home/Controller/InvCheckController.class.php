@@ -51,6 +51,7 @@ class InvCheckController extends PSIBaseController {
 					"fromDT" => I("post.fromDT"),
 					"toDT" => I("post.toDT"),
 					"warehouseId" => I("post.warehouseId"),
+					"goodsId" => I("post.goodsId"),
 					"page" => I("post.page"),
 					"start" => I("post.start"),
 					"limit" => I("post.limit")

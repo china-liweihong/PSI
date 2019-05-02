@@ -65,6 +65,7 @@ class SRBillDAO extends PSIBaseExDAO {
 		$customerId = $params["customerId"];
 		$sn = $params["sn"];
 		$paymentType = $params["paymentType"];
+		$goodsId = $params["goodsId"];
 		
 		$sql = "select w.id, w.ref, w.bizdt, c.name as customer_name, u.name as biz_user_name,
 				 	user.name as input_user_name, h.name as warehouse_name, w.rejection_sale_money,
@@ -115,6 +116,13 @@ class SRBillDAO extends PSIBaseExDAO {
 		if ($paymentType != - 1) {
 			$sql .= " and (w.payment_type = %d) ";
 			$queryParams[] = $paymentType;
+		}
+		if ($goodsId) {
+			$sql .= " and (w.id in (
+					  select d.srbill_id
+					  from t_sr_bill_detail d
+					  where d.goods_id = '%s')) ";
+			$queryParams[] = $goodsId;
 		}
 		
 		$sql .= " order by w.bizdt desc, w.ref desc
@@ -188,6 +196,13 @@ class SRBillDAO extends PSIBaseExDAO {
 		if ($paymentType != - 1) {
 			$sql .= " and (w.payment_type = %d) ";
 			$queryParams[] = $paymentType;
+		}
+		if ($goodsId) {
+			$sql .= " and (w.id in (
+					  select d.srbill_id
+					  from t_sr_bill_detail d
+					  where d.goods_id = '%s')) ";
+			$queryParams[] = $goodsId;
 		}
 		
 		$data = $db->query($sql, $queryParams);

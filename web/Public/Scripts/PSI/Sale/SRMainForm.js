@@ -16,7 +16,7 @@ Ext.define("PSI.Sale.SRMainForm", {
 					items : [{
 								id : "panelQueryCmp",
 								region : "north",
-								height : 65,
+								height : 95,
 								layout : "fit",
 								border : 0,
 								header : false,
@@ -24,7 +24,7 @@ Ext.define("PSI.Sale.SRMainForm", {
 								collapseMode : "mini",
 								layout : {
 									type : "table",
-									columns : 5
+									columns : 4
 								},
 								items : me.getQueryCmp()
 							}, {
@@ -197,7 +197,6 @@ Ext.define("PSI.Sale.SRMainForm", {
 					id : "editQuerySN",
 					labelAlign : "right",
 					labelSeparator : "",
-					labelWidth : 60,
 					fieldLabel : "序列号",
 					margin : "5, 0, 0, 0",
 					xtype : "textfield"
@@ -217,6 +216,15 @@ Ext.define("PSI.Sale.SRMainForm", {
 										[2, "退款转入预收款"]]
 							}),
 					value : -1
+				}, {
+					id : "editQueryGoods",
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "商品",
+					labelWidth : 60,
+					margin : "5, 0, 0, 0",
+					xtype : "psi_goodsfield",
+					showModal : true
 				}, {
 					xtype : "container",
 					items : [{
@@ -788,6 +796,7 @@ Ext.define("PSI.Sale.SRMainForm", {
 		Ext.getCmp("editQueryWarehouse").clearIdValue();
 		Ext.getCmp("editQuerySN").setValue(null);
 		Ext.getCmp("editQueryPaymentType").setValue(-1);
+		Ext.getCmp("editQueryGoods").clearIdValue();
 
 		me.onQuery();
 	},
@@ -831,6 +840,11 @@ Ext.define("PSI.Sale.SRMainForm", {
 
 		var paymentType = Ext.getCmp("editQueryPaymentType").getValue();
 		result.paymentType = paymentType;
+
+		var goodsId = Ext.getCmp("editQueryGoods").getIdValue();
+		if (goodsId) {
+			result.goodsId = goodsId;
+		}
 
 		return result;
 	},

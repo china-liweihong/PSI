@@ -115,6 +115,7 @@ class SaleController extends PSIBaseController {
 					"customerId" => I("post.customerId"),
 					"receivingType" => I("post.receivingType"),
 					"sn" => I("post.sn"),
+					"goodsId" => I("post.goodsId"),
 					"page" => I("post.page"),
 					"start" => I("post.start"),
 					"limit" => I("post.limit")

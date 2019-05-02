@@ -77,6 +77,7 @@ class WSBillDAO extends PSIBaseExDAO {
 		$customerId = $params["customerId"];
 		$sn = $params["sn"];
 		$receivingType = $params["receivingType"];
+		$goodsId = $params["goodsId"];
 		
 		$sql = "select w.id, w.ref, w.bizdt, c.name as customer_name, u.name as biz_user_name,
 					user.name as input_user_name, h.name as warehouse_name, w.sale_money,
@@ -127,6 +128,12 @@ class WSBillDAO extends PSIBaseExDAO {
 		if ($receivingType != - 1) {
 			$sql .= " and (w.receiving_type = %d) ";
 			$queryParams[] = $receivingType;
+		}
+		if ($goodsId) {
+			$sql .= " and (w.id in
+					(select d.wsbill_id from t_ws_bill_detail d
+					 where d.goods_id = '%s'))";
+			$queryParams[] = $goodsId;
 		}
 		
 		$sql .= " order by w.bizdt desc, w.ref desc
@@ -202,6 +209,12 @@ class WSBillDAO extends PSIBaseExDAO {
 		if ($receivingType != - 1) {
 			$sql .= " and (w.receiving_type = %d) ";
 			$queryParams[] = $receivingType;
+		}
+		if ($goodsId) {
+			$sql .= " and (w.id in
+					(select d.wsbill_id from t_ws_bill_detail d
+					 where d.goods_id = '%s'))";
+			$queryParams[] = $goodsId;
 		}
 		
 		$data = $db->query($sql, $queryParams);

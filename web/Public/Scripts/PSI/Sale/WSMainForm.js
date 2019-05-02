@@ -18,7 +18,7 @@ Ext.define("PSI.Sale.WSMainForm", {
 					items : [{
 								id : "panelQueryCmp",
 								region : "north",
-								height : 65,
+								height : 95,
 								layout : "fit",
 								border : 0,
 								header : false,
@@ -26,7 +26,7 @@ Ext.define("PSI.Sale.WSMainForm", {
 								collapseMode : "mini",
 								layout : {
 									type : "table",
-									columns : 5
+									columns : 4
 								},
 								items : me.getQueryCmp()
 							}, {
@@ -202,7 +202,6 @@ Ext.define("PSI.Sale.WSMainForm", {
 			labelSeparator : "",
 			fieldLabel : "序列号",
 			margin : "5, 0, 0, 0",
-			labelWidth : 60,
 			xtype : "textfield"
 		}, {
 			id : "editQueryReceivingType",
@@ -220,6 +219,15 @@ Ext.define("PSI.Sale.WSMainForm", {
 								[2, "用预收款支付"]]
 					}),
 			value : -1
+		}, {
+			id : "editQueryGoods",
+			labelAlign : "right",
+			labelSeparator : "",
+			fieldLabel : "商品",
+			labelWidth : 60,
+			margin : "5, 0, 0, 0",
+			xtype : "psi_goodsfield",
+			showModal : true
 		}, {
 			xtype : "container",
 			items : [{
@@ -875,6 +883,7 @@ Ext.define("PSI.Sale.WSMainForm", {
 		Ext.getCmp("editQueryWarehouse").clearIdValue();
 		Ext.getCmp("editQuerySN").setValue(null);
 		Ext.getCmp("editQueryReceivingType").setValue(-1);
+		Ext.getCmp("editQueryGoods").clearIdValue();
 
 		me.onQuery();
 	},
@@ -918,6 +927,11 @@ Ext.define("PSI.Sale.WSMainForm", {
 
 		var receivingType = Ext.getCmp("editQueryReceivingType").getValue();
 		result.receivingType = receivingType;
+
+		var goodsId = Ext.getCmp("editQueryGoods").getIdValue();
+		if (goodsId) {
+			result.goodsId = goodsId;
+		}
 
 		return result;
 	},

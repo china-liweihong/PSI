@@ -55,6 +55,7 @@ class InvTransferController extends PSIBaseController {
 					"toDT" => I("post.toDT"),
 					"fromWarehouseId" => I("post.fromWarehouseId"),
 					"toWarehouseId" => I("post.toWarehouseId"),
+					"goodsId" => I("post.goodsId"),
 					"page" => I("post.page"),
 					"start" => I("post.start"),
 					"limit" => I("post.limit")

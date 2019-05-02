@@ -63,6 +63,7 @@ class ITBillDAO extends PSIBaseExDAO {
 		$toDT = $params["toDT"];
 		$fromWarehouseId = $params["fromWarehouseId"];
 		$toWarehouseId = $params["toWarehouseId"];
+		$goodsId = $params["goodsId"];
 		
 		$sql = "select t.id, t.ref, t.bizdt, t.bill_status,
 					fw.name as from_warehouse_name,
@@ -108,6 +109,10 @@ class ITBillDAO extends PSIBaseExDAO {
 		if ($toWarehouseId) {
 			$sql .= " and (t.to_warehouse_id = '%s') ";
 			$queryParams[] = $toWarehouseId;
+		}
+		if ($goodsId) {
+			$sql .= " and (t.id in (select distinct itbill_id from t_it_bill_detail where goods_id = '%s')) ";
+			$queryParams[] = $goodsId;
 		}
 		
 		$sql .= " order by t.bizdt desc, t.ref desc
@@ -173,6 +178,11 @@ class ITBillDAO extends PSIBaseExDAO {
 			$sql .= " and (t.to_warehouse_id = '%s') ";
 			$queryParams[] = $toWarehouseId;
 		}
+		if ($goodsId) {
+			$sql .= " and (t.id in (select distinct itbill_id from t_it_bill_detail where goods_id = '%s')) ";
+			$queryParams[] = $goodsId;
+		}
+		
 		$data = $db->query($sql, $queryParams);
 		$cnt = $data[0]["cnt"];
 		

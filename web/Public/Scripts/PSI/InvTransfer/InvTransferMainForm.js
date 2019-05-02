@@ -194,6 +194,14 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
 					margin : "5, 0, 0, 0",
 					fieldLabel : "调入仓库"
 				}, {
+					id : "editQueryGoods",
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "商品",
+					margin : "5, 0, 0, 0",
+					xtype : "psi_goodsfield",
+					showModal : true
+				}, {
 					xtype : "container",
 					items : [{
 								xtype : "button",
@@ -211,10 +219,7 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
 								margin : "5, 0, 0, 10",
 								handler : me.onClearQuery,
 								scope : me
-							}]
-				}, {
-					xtype : "container",
-					items : [{
+							}, {
 								xtype : "button",
 								text : "隐藏查询条件栏",
 								width : 130,
@@ -711,6 +716,7 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
 		Ext.getCmp("editQueryToDT").setValue(null);
 		Ext.getCmp("editQueryFromWarehouse").clearIdValue();
 		Ext.getCmp("editQueryToWarehouse").clearIdValue();
+		Ext.getCmp("editQueryGoods").clearIdValue();
 
 		me.onQuery();
 	},
@@ -745,6 +751,11 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
 		var toDT = Ext.getCmp("editQueryToDT").getValue();
 		if (toDT) {
 			result.toDT = Ext.Date.format(toDT, "Y-m-d");
+		}
+
+		var goodsId = Ext.getCmp("editQueryGoods").getIdValue();
+		if (goodsId) {
+			result.goodsId = goodsId;
 		}
 
 		return result;

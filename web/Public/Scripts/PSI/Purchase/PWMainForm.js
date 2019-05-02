@@ -16,7 +16,7 @@ Ext.define("PSI.Purchase.PWMainForm", {
 					items : [{
 								id : "panelQueryCmp",
 								region : "north",
-								height : 65,
+								height : 95,
 								layout : "fit",
 								border : 0,
 								header : false,
@@ -242,6 +242,15 @@ Ext.define("PSI.Purchase.PWMainForm", {
 						},
 						scope : me
 					}]
+		}, {
+			id : "editQueryGoods",
+			labelAlign : "right",
+			labelSeparator : "",
+			labelWidth : 60,
+			fieldLabel : "商品",
+			margin : "5, 0, 0, 0",
+			xtype : "psi_goodsfield",
+			showModal : true
 		}];
 	},
 
@@ -843,6 +852,7 @@ Ext.define("PSI.Purchase.PWMainForm", {
 		Ext.getCmp("editQuerySupplier").clearIdValue();
 		Ext.getCmp("editQueryWarehouse").clearIdValue();
 		Ext.getCmp("editQueryPaymentType").setValue(-1);
+		Ext.getCmp("editQueryGoods").clearIdValue();
 
 		me.onQuery();
 	},
@@ -881,6 +891,11 @@ Ext.define("PSI.Purchase.PWMainForm", {
 
 		var paymentType = Ext.getCmp("editQueryPaymentType").getValue();
 		result.paymentType = paymentType;
+
+		var goodsId = Ext.getCmp("editQueryGoods").getIdValue();
+		if (goodsId) {
+			result.goodsId = goodsId;
+		}
 
 		return result;
 	},

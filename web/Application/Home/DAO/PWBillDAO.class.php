@@ -90,6 +90,8 @@ class PWBillDAO extends PSIBaseExDAO {
 		// 付款方式
 		$paymentType = $params["paymentType"];
 		
+		$goodsId = $params["goodsId"];
+		
 		$loginUserId = $params["loginUserId"];
 		if ($this->loginUserIdNotExists($loginUserId)) {
 			return $this->emptyResult();
@@ -142,6 +144,10 @@ class PWBillDAO extends PSIBaseExDAO {
 		if ($paymentType != - 1) {
 			$sql .= " and (p.payment_type = %d) ";
 			$queryParams[] = $paymentType;
+		}
+		if ($goodsId) {
+			$sql .= " and (p.id in (select distinct pwbill_id from t_pw_bill_detail where goods_id = '%s'))";
+			$queryParams[] = $goodsId;
 		}
 		
 		$sql .= " order by p.biz_dt desc, p.ref desc
@@ -220,6 +226,10 @@ class PWBillDAO extends PSIBaseExDAO {
 		if ($paymentType != - 1) {
 			$sql .= " and (p.payment_type = %d) ";
 			$queryParams[] = $paymentType;
+		}
+		if ($goodsId) {
+			$sql .= " and (p.id in (select distinct pwbill_id from t_pw_bill_detail where goods_id = '%s'))";
+			$queryParams[] = $goodsId;
 		}
 		
 		$data = $db->query($sql, $queryParams);

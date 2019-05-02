@@ -616,6 +616,8 @@ class DMWBillDAO extends PSIBaseExDAO {
 		// 工厂id
 		$factoryId = $params["factoryId"];
 		
+		$goodsId = $params["goodsId"];
+		
 		$loginUserId = $params["loginUserId"];
 		if ($this->loginUserIdNotExists($loginUserId)) {
 			return $this->emptyResult();
@@ -660,6 +662,10 @@ class DMWBillDAO extends PSIBaseExDAO {
 		if ($warehouseId) {
 			$sql .= " and (d.warehouse_id = '%s') ";
 			$queryParams[] = $warehouseId;
+		}
+		if ($goodsId) {
+			$sql .= " and (d.id in (select distinct dmwbill_id from t_dmw_bill_detail where goods_id = '%s')) ";
+			$queryParams[] = $goodsId;
 		}
 		
 		$sql .= " order by d.biz_dt desc, d.ref desc
@@ -722,6 +728,10 @@ class DMWBillDAO extends PSIBaseExDAO {
 		if ($warehouseId) {
 			$sql .= " and (d.warehouse_id = '%s') ";
 			$queryParams[] = $warehouseId;
+		}
+		if ($goodsId) {
+			$sql .= " and (d.id in (select distinct dmwbill_id from t_dmw_bill_detail where goods_id = '%s')) ";
+			$queryParams[] = $goodsId;
 		}
 		
 		$data = $db->query($sql, $queryParams);

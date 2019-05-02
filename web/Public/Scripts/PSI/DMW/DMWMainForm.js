@@ -197,6 +197,14 @@ Ext.define("PSI.DMW.DMWMainForm", {
 			margin : "5, 0, 0, 0",
 			fieldLabel : "仓库"
 		}, {
+			id : "editQueryGoods",
+			labelAlign : "right",
+			labelSeparator : "",
+			fieldLabel : "商品",
+			margin : "5, 0, 0, 0",
+			xtype : "psi_goodsfield",
+			showModal : true
+		}, {
 			xtype : "container",
 			items : [{
 						xtype : "button",
@@ -770,6 +778,7 @@ Ext.define("PSI.DMW.DMWMainForm", {
 		Ext.getCmp("editQueryToDT").setValue(null);
 		Ext.getCmp("editQueryFactory").clearIdValue();
 		Ext.getCmp("editQueryWarehouse").clearIdValue();
+		Ext.getCmp("editQueryGoods").clearIdValue();
 
 		me.onQuery();
 	},
@@ -804,6 +813,11 @@ Ext.define("PSI.DMW.DMWMainForm", {
 		var toDT = Ext.getCmp("editQueryToDT").getValue();
 		if (toDT) {
 			result.toDT = Ext.Date.format(toDT, "Y-m-d");
+		}
+
+		var goodsId = Ext.getCmp("editQueryGoods").getIdValue();
+		if (goodsId) {
+			result.goodsId = goodsId;
 		}
 
 		return result;

@@ -310,6 +310,7 @@ class DMController extends PSIBaseController {
 					"warehouseId" => I("post.warehouseId"),
 					"factoryId" => I("post.factoryId"),
 					"paymentType" => I("post.paymentType"),
+					"goodsId" => I("post.goodsId"),
 					"start" => I("post.start"),
 					"limit" => I("post.limit")
 			];

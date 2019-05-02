@@ -488,6 +488,7 @@ class DMOBillDAO extends PSIBaseExDAO {
 		$fromDT = $params["fromDT"];
 		$toDT = $params["toDT"];
 		$factoryId = $params["factoryId"];
+		$goodsId = $params["goodsId"];
 		
 		$loginUserId = $params["loginUserId"];
 		if ($this->loginUserIdNotExists($loginUserId)) {
@@ -537,6 +538,10 @@ class DMOBillDAO extends PSIBaseExDAO {
 		if ($factoryId) {
 			$sql .= " and (d.factory_id = '%s')";
 			$queryParams[] = $factoryId;
+		}
+		if ($goodsId) {
+			$sql .= " and (d.id in (select distinct dmobill_id from t_dmo_bill_detail where goods_id = '%s')) ";
+			$queryParams[] = $goodsId;
 		}
 		$sql .= " order by d.deal_date desc, d.ref desc
 				  limit %d , %d";
@@ -616,6 +621,10 @@ class DMOBillDAO extends PSIBaseExDAO {
 		if ($factoryId) {
 			$sql .= " and (d.factory_id = '%s')";
 			$queryParams[] = $factoryId;
+		}
+		if ($goodsId) {
+			$sql .= " and (d.id in (select distinct dmobill_id from t_dmo_bill_detail where goods_id = '%s')) ";
+			$queryParams[] = $goodsId;
 		}
 		$data = $db->query($sql, $queryParams);
 		$cnt = $data[0]["cnt"];

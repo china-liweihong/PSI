@@ -61,6 +61,7 @@ class SCBillDAO extends PSIBaseExDAO {
 		$fromDT = $params["fromDT"];
 		$toDT = $params["toDT"];
 		$customerId = $params["customerId"];
+		$goodsId = $params["goodsId"];
 		
 		$sql = "select s.id, s.ref, s.bill_status, c.name as customer_name,
 					u.name as input_user_name, g.full_name as org_name,
@@ -99,6 +100,10 @@ class SCBillDAO extends PSIBaseExDAO {
 		if ($customerId) {
 			$sql .= " and (s.customer_id = '%s')";
 			$queryParams[] = $customerId;
+		}
+		if ($goodsId) {
+			$sql .= " and (s.id in (select distinct scbill_id from t_sc_bill_detail where goods_id = '%s')) ";
+			$queryParams[] = $goodsId;
 		}
 		$sql .= " order by s.ref desc
 				  limit %d , %d";
@@ -173,6 +178,10 @@ class SCBillDAO extends PSIBaseExDAO {
 		if ($customerId) {
 			$sql .= " and (s.customer_id = '%s')";
 			$queryParams[] = $customerId;
+		}
+		if ($goodsId) {
+			$sql .= " and (s.id in (select distinct scbill_id from t_sc_bill_detail where goods_id = '%s')) ";
+			$queryParams[] = $goodsId;
 		}
 		
 		$data = $db->query($sql, $queryParams);

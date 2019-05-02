@@ -216,6 +216,15 @@ Ext.define("PSI.SaleContract.SCMainForm", {
 					margin : "5, 0, 0, 0",
 					fieldLabel : "客户"
 				}, {
+					id : "editQueryGoods",
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "商品",
+					labelWidth : 60,
+					margin : "5, 0, 0, 0",
+					xtype : "psi_goodsfield",
+					showModal : true
+				}, {
 					xtype : "container",
 					items : [{
 								xtype : "button",
@@ -964,6 +973,7 @@ Ext.define("PSI.SaleContract.SCMainForm", {
 		Ext.getCmp("editQueryFromDT").setValue(null);
 		Ext.getCmp("editQueryToDT").setValue(null);
 		Ext.getCmp("editQueryCustomer").clearIdValue();
+		Ext.getCmp("editQueryGoods").clearIdValue();
 
 		me.onQuery();
 	},
@@ -993,6 +1003,11 @@ Ext.define("PSI.SaleContract.SCMainForm", {
 		var toDT = Ext.getCmp("editQueryToDT").getValue();
 		if (toDT) {
 			result.toDT = Ext.Date.format(toDT, "Y-m-d");
+		}
+
+		var goodsId = Ext.getCmp("editQueryGoods").getIdValue();
+		if (goodsId) {
+			result.goodsId = goodsId;
 		}
 
 		return result;

@@ -52,6 +52,7 @@ class SaleContractController extends PSIBaseController {
 					"fromDT" => I("post.fromDT"),
 					"toDT" => I("post.toDT"),
 					"customerId" => I("post.customerId"),
+					"goodsId" => I("post.goodsId"),
 					"start" => I("post.start"),
 					"limit" => I("post.limit")
 			];

@@ -16,7 +16,7 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 					items : [{
 								id : "panelQueryCmp",
 								region : "north",
-								height : 65,
+								height : 95,
 								layout : "fit",
 								header : false,
 								border : 0,
@@ -238,6 +238,15 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 								},
 								scope : me
 							}]
+				}, {
+					id : "editQueryGoods",
+					labelAlign : "right",
+					labelSeparator : "",
+					labelWidth : 60,
+					fieldLabel : "商品",
+					margin : "5, 0, 0, 0",
+					xtype : "psi_goodsfield",
+					showModal : true
 				}];
 	},
 
@@ -780,6 +789,7 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 		Ext.getCmp("editQuerySupplier").clearIdValue();
 		Ext.getCmp("editQueryWarehouse").clearIdValue();
 		Ext.getCmp("editQueryReceivingType").setValue(-1);
+		Ext.getCmp("editQueryGoods").clearIdValue();
 
 		me.onQuery();
 	},
@@ -818,6 +828,11 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
 
 		var receivingType = Ext.getCmp("editQueryReceivingType").getValue();
 		result.receivingType = receivingType;
+
+		var goodsId = Ext.getCmp("editQueryGoods").getIdValue();
+		if (goodsId) {
+			result.goodsId = goodsId;
+		}
 
 		return result;
 	},

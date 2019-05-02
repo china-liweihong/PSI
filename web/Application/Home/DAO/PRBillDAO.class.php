@@ -553,6 +553,7 @@ class PRBillDAO extends PSIBaseExDAO {
 		$warehouseId = $params["warehouseId"];
 		$supplierId = $params["supplierId"];
 		$receivingType = $params["receivingType"];
+		$goodsId = $params["goodsId"];
 		
 		$loginUserId = $params["loginUserId"];
 		if ($this->loginUserIdNotExists($loginUserId)) {
@@ -604,6 +605,10 @@ class PRBillDAO extends PSIBaseExDAO {
 		if ($receivingType != - 1) {
 			$sql .= " and (p.receiving_type = %d) ";
 			$queryParams[] = $receivingType;
+		}
+		if ($goodsId) {
+			$sql .= " and (p.id in (select distinct prbill_id from t_pr_bill_detail where goods_id = '%s')) ";
+			$queryParams[] = $goodsId;
 		}
 		
 		$sql .= " order by p.bizdt desc, p.ref desc
@@ -669,6 +674,10 @@ class PRBillDAO extends PSIBaseExDAO {
 		if ($receivingType != - 1) {
 			$sql .= " and (p.receiving_type = %d) ";
 			$queryParams[] = $receivingType;
+		}
+		if ($goodsId) {
+			$sql .= " and (p.id in (select distinct prbill_id from t_pr_bill_detail where goods_id = '%s')) ";
+			$queryParams[] = $goodsId;
 		}
 		
 		$data = $db->query($sql, $queryParams);

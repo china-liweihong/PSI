@@ -57,6 +57,7 @@ class PurchaseRejController extends PSIBaseController {
 					"warehouseId" => I("post.warehouseId"),
 					"supplierId" => I("post.supplierId"),
 					"receivingType" => I("post.receivingType"),
+					"goodsId" => I("post.goodsId"),
 					"page" => I("post.page"),
 					"start" => I("post.start"),
 					"limit" => I("post.limit")

@@ -597,6 +597,7 @@ class WSPBillDAO extends PSIBaseExDAO {
 		$toDT = $params["toDT"];
 		$fromWarehouseId = $params["fromWarehouseId"];
 		$toWarehouseId = $params["toWarehouseId"];
+		$goodsId = $params["goodsId"];
 		
 		$sql = "select w.id, w.ref, w.bizdt, w.bill_status,
 					fw.name as from_warehouse_name,
@@ -642,6 +643,10 @@ class WSPBillDAO extends PSIBaseExDAO {
 		if ($toWarehouseId) {
 			$sql .= " and (w.to_warehouse_id = '%s') ";
 			$queryParams[] = $toWarehouseId;
+		}
+		if ($goodsId) {
+			$sql .= " and (w.id in (select distinct wspbill_id from t_wsp_bill_detail where goods_id = '%s')) ";
+			$queryParams[] = $goodsId;
 		}
 		
 		$sql .= " order by w.bizdt desc, w.ref desc
@@ -706,6 +711,10 @@ class WSPBillDAO extends PSIBaseExDAO {
 		if ($toWarehouseId) {
 			$sql .= " and (w.to_warehouse_id = '%s') ";
 			$queryParams[] = $toWarehouseId;
+		}
+		if ($goodsId) {
+			$sql .= " and (w.id in (select distinct wspbill_id from t_wsp_bill_detail where goods_id = '%s')) ";
+			$queryParams[] = $goodsId;
 		}
 		$data = $db->query($sql, $queryParams);
 		$cnt = $data[0]["cnt"];

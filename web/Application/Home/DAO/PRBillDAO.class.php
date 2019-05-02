@@ -607,7 +607,7 @@ class PRBillDAO extends PSIBaseExDAO {
 			$queryParams[] = $receivingType;
 		}
 		if ($goodsId) {
-			$sql .= " and (p.id in (select distinct prbill_id from t_pr_bill_detail where goods_id = '%s')) ";
+			$sql .= " and (p.id in (select distinct prbill_id from t_pr_bill_detail where goods_id = '%s' and rejection_goods_count > 0)) ";
 			$queryParams[] = $goodsId;
 		}
 		
@@ -676,7 +676,7 @@ class PRBillDAO extends PSIBaseExDAO {
 			$queryParams[] = $receivingType;
 		}
 		if ($goodsId) {
-			$sql .= " and (p.id in (select distinct prbill_id from t_pr_bill_detail where goods_id = '%s')) ";
+			$sql .= " and (p.id in (select distinct prbill_id from t_pr_bill_detail where goods_id = '%s' and rejection_goods_count > 0)) ";
 			$queryParams[] = $goodsId;
 		}
 		

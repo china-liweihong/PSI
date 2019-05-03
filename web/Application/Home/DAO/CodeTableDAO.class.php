@@ -643,7 +643,8 @@ class CodeTableDAO extends PSIBaseExDAO {
 		
 		$sql = "update t_code_table_md
 				set code = '%s', name = '%s',
-					category_id = '%s', memo = '%s'
+					category_id = '%s', memo = '%s',
+					md_version = md_version + 1
 				where id = '%s' ";
 		$rc = $db->execute($sql, $code, $name, $categoryId, $memo, $id);
 		if ($rc === false) {
@@ -711,13 +712,14 @@ class CodeTableDAO extends PSIBaseExDAO {
 	public function getCodeTableById($id) {
 		$db = $this->db;
 		
-		$sql = "select code, name, fid from t_code_table_md where id = '%s' ";
+		$sql = "select code, name, fid, is_fixed from t_code_table_md where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if ($data) {
 			return [
 					"code" => $data[0]["code"],
 					"name" => $data[0]["name"],
-					"fid" => $data[0]["fid"]
+					"fid" => $data[0]["fid"],
+					"isFixed" => $data[0]["is_fixed"]
 			];
 		} else {
 			return null;
@@ -739,6 +741,10 @@ class CodeTableDAO extends PSIBaseExDAO {
 		}
 		$name = $codeTable["name"];
 		$fid = $codeTable["fid"];
+		$isFixed = $codeTable["isFixed"];
+		if ($isFixed == 1) {
+			return $this->bad("码表[$name]是系统固有码表，不能删除");
+		}
 		
 		// 列
 		$sql = "delete from t_code_table_cols_md where table_id = '%s' ";

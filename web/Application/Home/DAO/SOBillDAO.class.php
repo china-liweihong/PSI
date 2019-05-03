@@ -1061,7 +1061,7 @@ class SOBillDAO extends PSIBaseExDAO {
 		}
 		$ref = $data[0]["ref"];
 		$billStatus = $data[0]["bill_status"];
-		if ($billStatus == 2001 || $billStatus == 3001) {
+		if ($billStatus >= 4000) {
 			return $this->bad("销售订单[单号={$ref}]已经关闭，不能再做订单变更");
 		}
 		

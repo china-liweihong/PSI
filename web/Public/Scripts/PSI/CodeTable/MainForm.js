@@ -167,7 +167,7 @@ Ext.define("PSI.CodeTable.MainForm", {
 				Ext.define(modelName, {
 							extend : "Ext.data.Model",
 							fields : ["id", "code", "name", "tableName",
-									"memo", "fid"]
+									"memo", "fid", "mdVersion", "isFixed"]
 						});
 
 				me.__mainGrid = Ext.create("Ext.grid.Panel", {
@@ -210,6 +210,21 @@ Ext.define("PSI.CodeTable.MainForm", {
 										width : 300,
 										menuDisabled : true,
 										sortable : false
+									}, {
+										header : "版本",
+										dataIndex : "mdVersion",
+										width : 90,
+										menuDisabled : true,
+										sortable : false
+									}, {
+										header : "系统固有",
+										dataIndex : "isFixed",
+										width : 80,
+										menuDisabled : true,
+										sortable : false,
+										renderer : function(value) {
+											return value == 1 ? "是" : "否";
+										}
 									}],
 							store : Ext.create("Ext.data.Store", {
 										model : modelName,

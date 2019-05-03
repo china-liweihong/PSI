@@ -83,7 +83,12 @@ class SOBillDAO extends PSIBaseExDAO {
 		}
 		
 		if ($billStatus != - 1) {
-			$sql .= " and (s.bill_status = %d) ";
+			if ($billStatus < 4000) {
+				$sql .= " and (s.bill_status = %d) ";
+			} else {
+				// 订单关闭 - 有多种状态
+				$sql .= " and (s.bill_status >= %d) ";
+			}
 			$queryParams[] = $billStatus;
 		}
 		if ($ref) {
@@ -167,7 +172,12 @@ class SOBillDAO extends PSIBaseExDAO {
 			$queryParams = $rs[1];
 		}
 		if ($billStatus != - 1) {
-			$sql .= " and (s.bill_status = %d) ";
+			if ($billStatus < 4000) {
+				$sql .= " and (s.bill_status = %d) ";
+			} else {
+				// 订单关闭 - 有多种状态
+				$sql .= " and (s.bill_status >= %d) ";
+			}
 			$queryParams[] = $billStatus;
 		}
 		if ($ref) {

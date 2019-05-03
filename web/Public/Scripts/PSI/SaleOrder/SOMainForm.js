@@ -201,7 +201,7 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 			store : Ext.create("Ext.data.ArrayStore", {
 						fields : ["id", "text"],
 						data : [[-1, "全部"], [0, "待审核"], [1000, "已审核"],
-								[2000, "部分出库"], [3000, "全部出库"]]
+								[2000, "部分出库"], [3000, "全部出库"], [4000, "订单关闭"]]
 					}),
 			value : -1
 		}, {
@@ -364,6 +364,12 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 										return "<span style='color:green'>部分出库</span>";
 									} else if (value == 3000) {
 										return "全部出库";
+									} else if (value == 4000) {
+										return "关闭(未出库)";
+									} else if (value == 4001) {
+										return "关闭(部分出库)";
+									} else if (value == 4002) {
+										return "关闭(全部出库)";
 									} else {
 										return "";
 									}

@@ -13,8 +13,7 @@
 <script
 	src="{$uri}Public/Scripts/PSI/Goods/GoodsWithSalePriceField.js?dt={$dtFlag}"
 	type="text/javascript"></script>
-<script
-	src="{$uri}Public/Scripts/PSI/Goods/GoodsField.js?dt={$dtFlag}"
+<script src="{$uri}Public/Scripts/PSI/Goods/GoodsField.js?dt={$dtFlag}"
 	type="text/javascript"></script>
 
 <script
@@ -73,7 +72,8 @@
 			confirm : "{$pConfirm}",
 			genWSBill : "{$pGenWSBill}",
 			genPOBill : "{$pGenPOBill}",
-			print : "{$pPrint}"
+			print : "{$pPrint}",
+			closeBill : "{$pCloseBill}"
 		};
 
 		app.add(Ext.create("PSI.SaleOrder.SOMainForm", {

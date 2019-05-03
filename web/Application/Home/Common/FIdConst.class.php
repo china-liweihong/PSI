@@ -44,7 +44,7 @@ class FIdConst {
 	
 	/**
 	 * 系统数据字典
-	 * 
+	 *
 	 * @var string
 	 */
 	const SYS_DICT = "-7994";
@@ -752,6 +752,11 @@ class FIdConst {
 	 * 销售订单 - 生成采购订单
 	 */
 	const SALE_ORDER_GEN_POBILL = "2028-08";
+	
+	/**
+	 * 销售订单 - 关闭订单/取消关闭订单
+	 */
+	const SALE_ORDER_CLOSE_BILL = "2028-09";
 	
 	/**
 	 * 基础数据 - 商品品牌

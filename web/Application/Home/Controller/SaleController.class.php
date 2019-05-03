@@ -38,6 +38,8 @@ class SaleController extends PSIBaseController {
 			$this->assign("pDelete", $us->hasPermission(FIdConst::SALE_ORDER_DELETE) ? "1" : "0");
 			$this->assign("pGenPDF", $us->hasPermission(FIdConst::SALE_ORDER_PDF) ? "1" : "0");
 			$this->assign("pPrint", $us->hasPermission(FIdConst::SALE_ORDER_PRINT) ? "1" : "0");
+			$this->assign("pCloseBill", 
+					$us->hasPermission(FIdConst::SALE_ORDER_CLOSE_BILL) ? "1" : "0");
 			
 			$this->display();
 		} else {

@@ -524,6 +524,20 @@ class SaleController extends PSIBaseController {
 	}
 
 	/**
+	 * 取消订单关闭状态
+	 */
+	public function cancelClosedSOBill() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id")
+			];
+			
+			$service = new SOBillService();
+			$this->ajaxReturn($service->cancelClosedSOBill($params));
+		}
+	}
+
+	/**
 	 * 销售出库单明细信息列表
 	 * 销售退货入库 - 选择销售出库单
 	 */

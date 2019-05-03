@@ -1514,5 +1514,49 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 			me.ajax(r);
 		};
 		me.confirm(info, funcConfirm);
+	},
+
+	// 取消关闭订单
+	onCancelClosedSO : function() {
+		var me = this;
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("没有选择要取消关闭状态的销售订单");
+			return;
+		}
+		var bill = item[0];
+
+		var info = "请确认是否取消单号为: <span style='color:red'>" + bill.get("ref")
+				+ "</span> 销售订单的关闭状态?";
+		var id = bill.get("id");
+
+		var funcConfirm = function() {
+			var el = Ext.getBody();
+			el.mask("正在提交中...");
+			var r = {
+				url : me.URL("Home/Sale/cancelClosedSOBill"),
+				params : {
+					id : id
+				},
+				callback : function(options, success, response) {
+					el.unmask();
+
+					if (success) {
+						var data = me.decodeJSON(response.responseText);
+						if (data.success) {
+							me.showInfo("成功取消销售订单关闭状态", function() {
+										me.refreshMainGrid(id);
+									});
+						} else {
+							me.showInfo(data.msg);
+						}
+					} else {
+						me.showInfo("网络错误");
+					}
+				}
+			};
+			me.ajax(r);
+		};
+		me.confirm(info, funcConfirm);
 	}
 });

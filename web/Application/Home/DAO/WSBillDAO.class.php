@@ -1108,7 +1108,11 @@ class WSBillDAO extends PSIBaseExDAO {
 			$goodsCode = $data[0]["code"];
 			$goodsName = $data[0]["name"];
 			if ($goodsCount <= 0) {
-				return $this->bad("商品[{$goodsCode} {$goodsName}]的出库数量需要是正数");
+				// 忽略非正数
+				// 一个原因：由销售订单生产销售出库单的时候，如果是部分发货，就有一些商品的数量是0
+				// 当然了，数量字段出现负数基本上是其他bug导致的，这里就简单地一并忽略了
+				continue;
+				// return $this->bad("商品[{$goodsCode} {$goodsName}]的出库数量需要是正数");
 			}
 			
 			$soBillDetailId = $v["sobilldetail_id"];

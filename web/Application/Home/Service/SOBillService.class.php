@@ -380,4 +380,35 @@ class SOBillService extends PSIBaseExService {
 		$dao = new SOBillDAO($this->db());
 		return $dao->getSOBillDataAterChangeOrder($params);
 	}
+
+	/**
+	 * 关闭销售订单
+	 */
+	public function closeSOBill($params) {
+		if ($this->isNotOnline()) {
+			return $this->notOnlineError();
+		}
+		
+		$id = $params["id"];
+		
+		$db = $this->db();
+		$db->startTrans();
+		$dao = new SOBillDAO($this->db());
+		$rc = $dao->closeSOBill($params);
+		if ($rc) {
+			$db->rollback();
+			return $rc;
+		}
+		
+		$ref = $params["ref"];
+		
+		// 记录业务日志
+		$log = "关闭销售订单，单号：{$ref}";
+		$bs = new BizlogService($db);
+		$bs->insertBizlog($log, $this->LOG_CATEGORY);
+		
+		$db->commit();
+		
+		return $this->ok($id);
+	}
 }

@@ -122,6 +122,24 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 					hidden : me.getPermission().genWSBill == "0",
 					xtype : "tbseparator"
 				}, {
+					text : "关闭订单",
+					hidden : me.getPermission().closeBill == "0",
+					id : "buttonCloseBill",
+					menu : [{
+								text : "关闭销售订单",
+								iconCls : "PSI-button-commit",
+								scope : me,
+								handler : me.onCloseSO
+							}, "-", {
+								text : "取消销售订单关闭状态",
+								iconCls : "PSI-button-cancelconfirm",
+								scope : me,
+								handler : me.onCancelClosedSO
+							}]
+				}, {
+					hidden : me.getPermission().closeBill == "0",
+					xtype : "tbseparator"
+				}, {
 					text : "导出",
 					hidden : me.getPermission().genPDF == "0",
 					menu : [{
@@ -1452,5 +1470,49 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 			}
 		};
 		me.ajax(r);
+	},
+
+	// 关闭订单
+	onCloseSO : function() {
+		var me = this;
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("没有选择要关闭的销售订单");
+			return;
+		}
+		var bill = item[0];
+
+		var info = "请确认是否关闭单号为: <span style='color:red'>" + bill.get("ref")
+				+ "</span> 的销售订单?";
+		var id = bill.get("id");
+
+		var funcConfirm = function() {
+			var el = Ext.getBody();
+			el.mask("正在提交中...");
+			var r = {
+				url : me.URL("Home/Sale/closeSOBill"),
+				params : {
+					id : id
+				},
+				callback : function(options, success, response) {
+					el.unmask();
+
+					if (success) {
+						var data = me.decodeJSON(response.responseText);
+						if (data.success) {
+							me.showInfo("成功关闭销售订单", function() {
+										me.refreshMainGrid(id);
+									});
+						} else {
+							me.showInfo(data.msg);
+						}
+					} else {
+						me.showInfo("网络错误");
+					}
+				}
+			};
+			me.ajax(r);
+		};
+		me.confirm(info, funcConfirm);
 	}
 });

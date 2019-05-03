@@ -1133,4 +1133,11 @@ class SOBillDAO extends PSIBaseExDAO {
 			return $this->emptyResult();
 		}
 	}
+
+	/**
+	 * 关闭销售订单
+	 */
+	public function closeSOBill(&$params) {
+		return $this->todo();
+	}
 }

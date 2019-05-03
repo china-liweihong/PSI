@@ -1375,6 +1375,8 @@ CREATE TABLE IF NOT EXISTS `t_code_table_md` (
   `memo` varchar(1000) DEFAULT NULL,
   `py` varchar(255) DEFAULT NULL,
   `fid` varchar(255) DEFAULT NULL,
+  `md_version` int(11) NOT NULL DEFAULT 1,
+  `is_fixed` int(11) NOT NULL DEFAULT 2,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

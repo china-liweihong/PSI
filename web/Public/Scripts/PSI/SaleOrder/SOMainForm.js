@@ -354,7 +354,7 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 								dataIndex : "billStatus",
 								menuDisabled : true,
 								sortable : false,
-								width : 80,
+								width : 100,
 								renderer : function(value) {
 									if (value == 0) {
 										return "<span style='color:red'>待审核</span>";

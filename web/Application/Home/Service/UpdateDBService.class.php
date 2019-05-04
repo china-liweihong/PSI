@@ -235,6 +235,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20190428_03();
 		$this->update_20190503_01();
 		$this->update_20190503_02();
+		$this->update_20190504_01();
 		
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -255,6 +256,34 @@ class UpdateDBService extends PSIBaseService {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// ============================================
 	private function notForgot() {
+	}
+
+	private function update_20190504_01() {
+		// 本次更新：t_sysdict_record_status的字段codeInt改为code_int
+		$db = $this->db;
+		$tableName = "t_sysdict_record_status";
+		$columnName = "codeInt";
+		if ($this->columnExists($db, $tableName, $columnName)) {
+			$sql = "DROP TABLE IF EXISTS `t_sysdict_record_status`;
+					CREATE TABLE IF NOT EXISTS `t_sysdict_record_status` (
+					  `id` varchar(255) NOT NULL,
+					  `code` varchar(255) NOT NULL,
+					  `code_int` int(11) NOT NULL,
+					  `name` varchar(255) NOT NULL,
+					  `py` varchar(255) NOT NULL,
+					  `memo` varchar(255) NOT NULL,
+					  PRIMARY KEY (`id`)
+					) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+			";
+			$db->execute($sql);
+			
+			$sql = "TRUNCATE TABLE `t_sysdict_record_status`;
+					INSERT INTO `t_sysdict_record_status` (`id`, `code`, `code_int`, `name`, `py`, `memo`) VALUES
+					('9B90C56E-696E-11E9-B2BF-782BCBD7746B', '1', 1, '启用', 'QY', '记录处于启用状态'),
+					('AC7F3FAB-696E-11E9-B2BF-782BCBD7746B', '2', 2, '停用', 'TY', '记录处于停用状态');
+			";
+			$db->execute($sql);
+		}
 	}
 
 	private function update_20190503_02() {

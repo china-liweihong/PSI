@@ -461,7 +461,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 				"fieldDecimal" => 0,
 				"valueFrom" => 2,
 				"valueFromTableName" => "t_sysdict_record_status",
-				"valueFromColName" => "codeInt",
+				"valueFromColName" => "code_int",
 				"mustInput" => 1,
 				"showOrder" => 2,
 				"sysCol" => 1,
@@ -1048,7 +1048,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 		$sql .= " from %s cr, t_user u, t_sysdict_record_status r ";
 		$queryParams[] = $tableName;
 		
-		$sql .= " where (cr.create_user_id = u.id) and (cr.record_status = r.codeInt)";
+		$sql .= " where (cr.create_user_id = u.id) and (cr.record_status = r.code_int)";
 		// 数据域
 		$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL($fid, "cr", $loginUserId);

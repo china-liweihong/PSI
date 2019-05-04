@@ -1640,7 +1640,7 @@ class InstallService extends PSIBaseExService {
 		$sql = "CREATE TABLE IF NOT EXISTS `t_sysdict_record_status` (
 				  `id` varchar(255) NOT NULL,
 				  `code` varchar(255) NOT NULL,
-				  `codeInt` int(11) NOT NULL,
+				  `code_int` int(11) NOT NULL,
 				  `name` varchar(255) NOT NULL,
 				  `py` varchar(255) NOT NULL,
 				  `memo` varchar(255) NOT NULL,
@@ -2229,7 +2229,7 @@ class InstallService extends PSIBaseExService {
 		$db->execute($sql);
 		
 		// t_sysdict_record_status
-		$sql = "INSERT INTO `t_sysdict_record_status` (`id`, `code`, `codeInt`, `name`, `py`, `memo`) VALUES
+		$sql = "INSERT INTO `t_sysdict_record_status` (`id`, `code`, `code_int`, `name`, `py`, `memo`) VALUES
 				('9B90C56E-696E-11E9-B2BF-782BCBD7746B', '1', 1, '启用', 'QY', '记录处于启用状态'),
 				('AC7F3FAB-696E-11E9-B2BF-782BCBD7746B', '2', 2, '停用', 'TY', '记录处于停用状态');
 		";

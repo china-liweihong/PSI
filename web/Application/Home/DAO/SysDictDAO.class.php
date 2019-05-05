@@ -78,7 +78,7 @@ class SysDictDAO extends PSIBaseExDAO {
 		
 		$tableName = $data[0]["table_name"];
 		
-		$sql = "select id, code, codeInt as code_int, name, memo
+		$sql = "select id, code, code_int, name, memo
 				from %s 
 				order by code";
 		

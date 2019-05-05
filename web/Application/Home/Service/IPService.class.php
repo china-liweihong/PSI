@@ -18,7 +18,7 @@ class IPService {
 	 * @return string
 	 */
 	public function toRegion($ip) {
-		$r = new \Ip2Region(null);
+		$r = new \Ip2Region();
 		$data = $r->btreeSearch($ip);
 		return $data["region"];
 	}

@@ -40,9 +40,9 @@ class Ip2Region {
 	 * @param
 	 *        	ip2regionFile
 	 */
-	public function __construct($ip2regionFile) {
+	public function __construct($ip2regionFile = null) {
 		if (! $ip2regionFile) {
-			$ip2regionFile = __DIR__ . "\\ip2region.db";
+			$ip2regionFile = __DIR__ . DIRECTORY_SEPARATOR . "ip2region.db";
 		}
 		$this->dbFile = $ip2regionFile;
 	}

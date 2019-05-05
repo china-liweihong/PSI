@@ -20,6 +20,31 @@ class IPService {
 	public function toRegion($ip) {
 		$r = new \Ip2Region();
 		$data = $r->btreeSearch($ip);
-		return $data["region"];
+		$region = $data["region"];
+		if (! $region) {
+			return "";
+		}
+		
+		$regionArray = explode("|", $region);
+		
+		if (! $regionArray) {
+			// 出现莫名错误了
+			return $region;
+		}
+		
+		$result = "";
+		foreach ( $regionArray as $i => $v ) {
+			if ($v == "0") {
+				continue;
+			}
+			if ($i == count($regionArray) - 1) {
+				// 最后一个是运营商
+				$result .= " $v";
+			} else {
+				$result .= $v;
+			}
+		}
+		
+		return $result;
 	}
 }

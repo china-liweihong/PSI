@@ -6,6 +6,7 @@ use Home\Common\FIdConst;
 use Home\Service\InstallService;
 use Home\Service\UserService;
 use Home\Service\BizConfigService;
+use Home\Service\IPService;
 
 /**
  * 用户管理Controller
@@ -125,7 +126,7 @@ class UserController extends PSIBaseController {
 	public function loginPOST() {
 		if (IS_POST) {
 			$ip = I("post.ip");
-			$ipFrom = I("post.ipFrom");
+			$ipFrom = (new IPService())->toRegion($ip);
 			
 			session("PSI_login_user_ip", $ip);
 			session("PSI_login_user_ip_from", $ipFrom);

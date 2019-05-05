@@ -3,6 +3,7 @@
 namespace API\Service;
 
 use API\DAO\BizlogApiDAO;
+use Home\Service\IPService;
 
 /**
  * 业务日志API Service
@@ -28,11 +29,14 @@ class BizlogApiService extends PSIApiBaseService {
 			return;
 		}
 		
+		$ip = $this->getClientIP();
+		
 		$params = array(
 				"loginUserId" => $this->getUserIdFromTokenId($tokenId),
 				"log" => $log,
 				"category" => $category,
-				"ip" => $this->getClientIP(),
+				"ip" => $ip,
+				"ipFrom" => (new IPService())->toRegion($ip),
 				"dataOrg" => $this->getDataOrgFromTokenId($tokenId),
 				"companyId" => $this->getCompanyIdFromTokenId($tokenId)
 		);

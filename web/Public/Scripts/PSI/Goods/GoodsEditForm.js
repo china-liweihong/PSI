@@ -407,7 +407,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
 								if (brandId) {
 									var editBrand = me.editBrand;
 									editBrand.setIdValue(brandId);
-									editBrand.setValue(data.brandFullName);
+									editBrand.setValue(me.htmlDecode(data.brandFullName));
 								}
 								me.editRecordStatus
 										.setValue(parseInt(data.recordStatus));

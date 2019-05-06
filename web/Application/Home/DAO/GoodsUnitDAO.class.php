@@ -17,9 +17,9 @@ class GoodsUnitDAO extends PSIBaseExDAO {
 	public function allUnits() {
 		$db = $this->db;
 		
-		$sql = "select id, name
+		$sql = "select id, name, code, record_status
 				from t_goods_unit
-				order by convert(name USING gbk) collate gbk_chinese_ci";
+				order by record_status, code";
 		
 		$data = $db->query($sql);
 		
@@ -40,10 +40,12 @@ class GoodsUnitDAO extends PSIBaseExDAO {
 			
 			$result[] = [
 					"id" => $v["id"],
+					"code" => $v["code"],
 					"name" => $v["name"],
 					"goodsCount" => $goodsCount,
 					"goodsEnabledCount" => $goodsEnabledCount,
-					"goodsDisabledCount" => $goodsCount - $goodsEnabledCount
+					"goodsDisabledCount" => $goodsCount - $goodsEnabledCount,
+					"recordStatus" => $v["record_status"]
 			];
 		}
 		

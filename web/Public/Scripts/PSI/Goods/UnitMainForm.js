@@ -47,66 +47,87 @@ Ext.define("PSI.Goods.UnitMainForm", {
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
 					fields : ["id", "name", "goodsCount", "goodsEnabledCount",
-							"goodsDisabledCount"]
+							"goodsDisabledCount", "code", "recordStatus"]
 				});
 
 		me.__mainGrid = Ext.create("Ext.grid.Panel", {
-					cls : "PSI",
-					columnLines : true,
-					columns : {
-						defaults : {
-							menuDisabled : true,
-							sortable : false
-						},
-						items : [{
-									xtype : "rownumberer",
-									width : 40
-								}, {
-									header : "商品计量单位",
-									dataIndex : "name",
-									width : 200
-								}, {
-									header : "使用该计量单位的商品数",
-									// dataIndex : "goodsCount",
-									align : "right",
-									width : 180,
-									columns : [{
-												header : "启用状态商品数",
-												dataIndex : "goodsEnabledCount",
-												align : "right",
-												menuDisabled : true,
-												sortable : false,
-												width : 120
+			cls : "PSI",
+			columnLines : true,
+			columns : {
+				defaults : {
+					menuDisabled : true,
+					sortable : false
+				},
+				items : [{
+							xtype : "rownumberer",
+							width : 40
+						}, {
+							header : "编码",
+							dataIndex : "code"
+						}, {
+							header : "商品计量单位",
+							dataIndex : "name",
+							width : 200,
+							renderer : function(value, metaData, record) {
+								if (parseInt(record.get("recordStatus")) == 1) {
+									return value;
+								} else {
+									return "<span style='color:gray;text-decoration:line-through;'>"
+											+ value + "</span>";
+								}
+							}
+						}, {
+							header : "状态",
+							dataIndex : "recordStatus",
+							renderer : function(value, metaData, record) {
+								if (parseInt(record.get("recordStatus")) == 1) {
+									return "启用";
+								} else {
+									return "<span style='color:red;'>停用</span>";
+								}
+							}
+						}, {
+							header : "使用该计量单位的商品数",
+							// dataIndex : "goodsCount",
+							align : "right",
+							width : 180,
+							columns : [{
+										header : "启用状态商品数",
+										dataIndex : "goodsEnabledCount",
+										align : "right",
+										menuDisabled : true,
+										sortable : false,
+										width : 120
 
-											}, {
-												header : "停用状态商品数",
-												dataIndex : "goodsDisabledCount",
-												align : "right",
-												menuDisabled : true,
-												sortable : false,
-												width : 120
+									}, {
+										header : "停用状态商品数",
+										dataIndex : "goodsDisabledCount",
+										align : "right",
+										menuDisabled : true,
+										sortable : false,
+										width : 120
 
-											}, {
-												header : "总商品数",
-												dataIndex : "goodsCount",
-												align : "right",
-												menuDisabled : true,
-												sortable : false
-											}]
-								}]
-					},
-					store : Ext.create("Ext.data.Store", {
-								model : modelName,
-								autoLoad : false,
-								data : []
-							}),
-					listeners : {
-						itemdblclick : {
-							fn : me.onEditUnit,
-							scope : me
-						}
-					}
-				});
+									}, {
+										header : "总商品数",
+										dataIndex : "goodsCount",
+										align : "right",
+										menuDisabled : true,
+										sortable : false
+									}]
+						}]
+			},
+			store : Ext.create("Ext.data.Store", {
+						model : modelName,
+						autoLoad : false,
+						data : []
+					}),
+			listeners : {
+				itemdblclick : {
+					fn : me.onEditUnit,
+					scope : me
+				}
+			}
+		});
 
 		return me.__mainGrid;
 	},

@@ -521,7 +521,8 @@ class GoodsController extends PSIBaseController {
 			$params = array(
 					"id" => I("post.id"),
 					"name" => I("post.name"),
-					"parentId" => I("post.parentId")
+					"parentId" => I("post.parentId"),
+					"recordStatus" => I("post.recordStatus")
 			);
 			
 			$gs = new GoodsService();

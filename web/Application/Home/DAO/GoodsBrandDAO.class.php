@@ -120,6 +120,7 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 		$name = $params["name"];
 		$py = $params["py"];
 		$parentId = $params["parentId"];
+		$recordStatus = $params["recordStatus"];
 		
 		$dataOrg = $params["dataOrg"];
 		$companyId = $params["companyId"];
@@ -153,16 +154,18 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 		
 		$id = $this->newId();
 		if ($parentId) {
-			$sql = "insert into t_goods_brand(id, name, full_name, parent_id, data_org, company_id, py)
-					values ('%s', '%s', '%s', '%s', '%s', '%s', '%s')";
-			$rc = $db->execute($sql, $id, $name, $fullName, $parentId, $dataOrg, $companyId, $py);
+			$sql = "insert into t_goods_brand(id, name, full_name, parent_id, data_org, company_id, py, record_status)
+					values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', %d)";
+			$rc = $db->execute($sql, $id, $name, $fullName, $parentId, $dataOrg, $companyId, $py, 
+					$recordStatus);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
 		} else {
-			$sql = "insert into t_goods_brand(id, name, full_name, parent_id, data_org, company_id, py)
-					values ('%s', '%s', '%s', null, '%s', '%s', '%s')";
-			$rc = $db->execute($sql, $id, $name, $fullName, $dataOrg, $companyId, $py);
+			$sql = "insert into t_goods_brand(id, name, full_name, parent_id, data_org, company_id, py, record_status)
+					values ('%s', '%s', '%s', null, '%s', '%s', '%s', %d)";
+			$rc = $db->execute($sql, $id, $name, $fullName, $dataOrg, $companyId, $py, 
+					$recordStatus);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
@@ -218,6 +221,7 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 		$name = $params["name"];
 		$py = $params["py"];
 		$parentId = $params["parentId"];
+		$recordStatus = $params["recordStatus"];
 		
 		// 检查品牌是否存在
 		$brand = $this->getBrandById($id);
@@ -273,17 +277,17 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 		if ($parentId) {
 			$fullName = $parentFullName . "\\" . $name;
 			$sql = "update t_goods_brand
-					set name = '%s', parent_id = '%s', full_name = '%s', py = '%s'
+					set name = '%s', parent_id = '%s', full_name = '%s', py = '%s', record_status = %d
 					where id = '%s' ";
-			$rc = $db->execute($sql, $name, $parentId, $fullName, $py, $id);
+			$rc = $db->execute($sql, $name, $parentId, $fullName, $py, $recordStatus, $id);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
 		} else {
 			$sql = "update t_goods_brand
-					set name = '%s', parent_id = null, full_name = '%s', py = '%s'
+					set name = '%s', parent_id = null, full_name = '%s', py = '%s', record_status = %d
 					where id = '%s' ";
-			$rc = $db->execute($sql, $name, $name, $py, $id);
+			$rc = $db->execute($sql, $name, $name, $py, $recordStatus, $id);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}

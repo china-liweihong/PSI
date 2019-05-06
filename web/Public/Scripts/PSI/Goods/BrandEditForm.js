@@ -31,7 +31,7 @@ Ext.define("PSI.Goods.BrandEditForm", {
 				height : 40
 			},
 			width : 400,
-			height : 240,
+			height : 270,
 			layout : "border",
 			items : [{
 						region : "north",
@@ -97,6 +97,25 @@ Ext.define("PSI.Goods.BrandEditForm", {
 									name : "parentId",
 									value : entity === null ? null : entity
 											.get("parentId")
+								}, {
+									xtype : "combo",
+									queryMode : "local",
+									editable : false,
+									valueField : "id",
+									fieldLabel : "状态",
+									allowBlank : false,
+									blankText : "没有输入状态",
+									beforeLabelTextTpl : PSI.Const.REQUIRED,
+									name : "recordStatus",
+									store : Ext.create("Ext.data.ArrayStore", {
+												fields : ["id", "text"],
+												data : [[1, "启用"], [2, "停用"]]
+											}),
+									value : entity == null
+											? 1
+											: parseInt(entity
+													.get("recordStatus")),
+									width : 370
 								}],
 						buttons : [{
 									text : "确定",

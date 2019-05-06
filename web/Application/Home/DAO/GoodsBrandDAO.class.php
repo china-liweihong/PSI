@@ -429,7 +429,7 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 		$result = [];
 		$sql = "select id, full_name
 				from t_goods_brand b
-				where (b.name like '%s' or b.py like '%s')
+				where (b.record_status = 1) and (b.name like '%s' or b.py like '%s')
 				";
 		$queryParams = [];
 		$queryParams[] = $key;

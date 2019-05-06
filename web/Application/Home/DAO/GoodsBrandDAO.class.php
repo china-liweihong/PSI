@@ -16,7 +16,7 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 	 */
 	private function allBrandsInternal($db, $parentId, $rs) {
 		$result = [];
-		$sql = "select id, name, full_name
+		$sql = "select id, name, full_name, record_status
 				from t_goods_brand b
 				where (parent_id = '%s')
 				";
@@ -27,7 +27,7 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 			$queryParam = array_merge($queryParam, $rs[1]);
 		}
 		
-		$sql .= " order by name";
+		$sql .= " order by record_status, name";
 		$data = $db->query($sql, $queryParam);
 		foreach ( $data as $v ) {
 			$id = $v["id"];
@@ -42,6 +42,7 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 					"id" => $id,
 					"text" => $v["name"],
 					"fullName" => $fullName,
+					"recordStatus" => $v["record_status"],
 					"children" => $children,
 					"leaf" => count($children) == 0,
 					"expanded" => true,
@@ -67,7 +68,7 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 		}
 		
 		$result = [];
-		$sql = "select id, name, full_name
+		$sql = "select id, name, full_name, record_status
 				from t_goods_brand b
 				where (parent_id is null)
 				";
@@ -79,7 +80,7 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 			$queryParam = array_merge($queryParam, $rs[1]);
 		}
 		
-		$sql .= " order by name";
+		$sql .= " order by record_status, name";
 		
 		$data = $db->query($sql, $queryParam);
 		$result = [];
@@ -99,7 +100,8 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 					"children" => $children,
 					"leaf" => count($children) == 0,
 					"expanded" => true,
-					"iconCls" => "PSI-GoodsBrand"
+					"iconCls" => "PSI-GoodsBrand",
+					"recordStatus" => $v["record_status"]
 			];
 		}
 		

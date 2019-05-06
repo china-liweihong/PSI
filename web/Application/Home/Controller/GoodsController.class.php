@@ -109,7 +109,9 @@ class GoodsController extends PSIBaseController {
 		if (IS_POST) {
 			$params = array(
 					"id" => I("post.id"),
-					"name" => I("post.name")
+					"name" => I("post.name"),
+					"code" => I("post.code"),
+					"recordStatus" => I("post.recordStatus")
 			);
 			$gs = new GoodsService();
 			$this->ajaxReturn($gs->editUnit($params));

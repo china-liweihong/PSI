@@ -82,6 +82,8 @@ class GoodsUnitDAO extends PSIBaseExDAO {
 		$db = $this->db;
 		
 		$name = trim($params["name"]);
+		$code = $params["code"];
+		$recordStatus = $params["recordStatus"];
 		
 		$result = $this->checkParams($params);
 		if ($result) {
@@ -108,9 +110,9 @@ class GoodsUnitDAO extends PSIBaseExDAO {
 		$id = $this->newId();
 		$params["id"] = $id;
 		
-		$sql = "insert into t_goods_unit(id, name, data_org, company_id)
-					values ('%s', '%s', '%s', '%s') ";
-		$rc = $db->execute($sql, $id, $name, $dataOrg, $companyId);
+		$sql = "insert into t_goods_unit(id, name, data_org, company_id, code, record_status)
+					values ('%s', '%s', '%s', '%s', '%s', %d) ";
+		$rc = $db->execute($sql, $id, $name, $dataOrg, $companyId, $code, $recordStatus);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -130,6 +132,8 @@ class GoodsUnitDAO extends PSIBaseExDAO {
 		
 		$id = $params["id"];
 		$name = trim($params["name"]);
+		$code = $params["code"];
+		$recordStatus = intval($params["recordStatus"]);
 		
 		$result = $this->checkParams($params);
 		if ($result) {
@@ -144,8 +148,24 @@ class GoodsUnitDAO extends PSIBaseExDAO {
 			return $this->bad("计量单位 [$name] 已经存在");
 		}
 		
-		$sql = "update t_goods_unit set name = '%s' where id = '%s' ";
-		$rc = $db->execute($sql, $name, $id);
+		if ($recordStatus == 2) {
+			// 停用计量单位的时候，需要检查是否有没有停用的商品使用该计量单位
+			$sql = "select count(*) as cnt
+					from t_goods
+					where unit_id = '%s' and record_status = 1000";
+			$data = $db->query($sql, $id);
+			$cnt = $data[0]["cnt"];
+			if ($cnt > 0) {
+				return $this->bad("仍有商品在使用计量单位[{$name}]，不能把计量单位修改为停用状态");
+			}
+		} else {
+			$recordStatus = 1;
+		}
+		
+		$sql = "update t_goods_unit 
+				set name = '%s', code = '%s', record_status = %d 
+				where id = '%s' ";
+		$rc = $db->execute($sql, $name, $code, $recordStatus, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}

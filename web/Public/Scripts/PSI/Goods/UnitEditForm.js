@@ -55,39 +55,39 @@ Ext.define("PSI.Goods.UnitEditForm", {
 				+ "<p style='color:#196d83'>标记 <span style='color:red;font-weight:bold'>*</span>的是必须录入数据的字段</p>";;
 
 		Ext.apply(me, {
-					header : {
-						title : me.formatTitle(PSI.Const.PROD_NAME),
-						height : 40
-					},
-					width : 400,
-					height : 210,
-					layout : "border",
-					items : [{
-								region : "north",
-								border : 0,
-								height : 90,
-								html : logoHtml
-							}, {
-								region : "center",
-								border : 0,
-								id : "PSI_Goods_UnitEditForm_editForm",
-								xtype : "form",
-								layout : {
-									type : "table",
-									columns : 1
-								},
-								height : "100%",
-								bodyPadding : 5,
-								defaultType : 'textfield',
-								fieldDefaults : {
-									labelWidth : 60,
-									labelAlign : "right",
-									labelSeparator : "",
-									msgTarget : 'side',
-									width : 370,
-									margin : "5"
-								},
-								items : [{
+			header : {
+				title : me.formatTitle(PSI.Const.PROD_NAME),
+				height : 40
+			},
+			width : 400,
+			height : 280,
+			layout : "border",
+			items : [{
+						region : "north",
+						border : 0,
+						height : 90,
+						html : logoHtml
+					}, {
+						region : "center",
+						border : 0,
+						id : "PSI_Goods_UnitEditForm_editForm",
+						xtype : "form",
+						layout : {
+							type : "table",
+							columns : 1
+						},
+						height : "100%",
+						bodyPadding : 5,
+						defaultType : 'textfield',
+						fieldDefaults : {
+							labelWidth : 60,
+							labelAlign : "right",
+							labelSeparator : "",
+							msgTarget : 'side',
+							width : 370,
+							margin : "5"
+						},
+						items : [{
 									xtype : "hidden",
 									name : "id",
 									value : entity == null ? null : entity
@@ -107,25 +107,57 @@ Ext.define("PSI.Goods.UnitEditForm", {
 											scope : me
 										}
 									}
+								}, {
+									id : "PSI_Goods_UnitEditForm_editCode",
+									fieldLabel : "编码",
+									name : "code",
+									value : entity == null ? null : entity
+											.get("code"),
+									listeners : {
+										specialkey : {
+											fn : me.onEditCodeSpecialKey,
+											scope : me
+										}
+									}
+								}, {
+									id : "PSI_Goods_GoodsEditForm_editRecordStatus",
+									xtype : "combo",
+									queryMode : "local",
+									editable : false,
+									valueField : "id",
+									fieldLabel : "状态",
+									allowBlank : false,
+									blankText : "没有输入计量单位",
+									beforeLabelTextTpl : PSI.Const.REQUIRED,
+									name : "recordStatus",
+									store : Ext.create("Ext.data.ArrayStore", {
+												fields : ["id", "text"],
+												data : [[1, "启用"], [2, "停用"]]
+											}),
+									value : entity == null
+											? 1
+											: parseInt(entity
+													.get("recordStatus"))
 								}],
-								buttons : buttons
-							}],
-					listeners : {
-						show : {
-							fn : me.onWndShow,
-							scope : me
-						},
-						close : {
-							fn : me.onWndClose,
-							scope : me
-						}
-					}
-				});
+						buttons : buttons
+					}],
+			listeners : {
+				show : {
+					fn : me.onWndShow,
+					scope : me
+				},
+				close : {
+					fn : me.onWndClose,
+					scope : me
+				}
+			}
+		});
 
 		me.callParent(arguments);
 
 		me.editForm = Ext.getCmp("PSI_Goods_UnitEditForm_editForm");
 		me.editName = Ext.getCmp("PSI_Goods_UnitEditForm_editName");
+		me.editCode = Ext.getCmp("PSI_Goods_UnitEditForm_editCode");
 	},
 
 	onOK : function(thenAdd) {
@@ -142,12 +174,8 @@ Ext.define("PSI.Goods.UnitEditForm", {
 						PSI.MsgBox.tip("数据保存成功");
 						me.focus();
 						if (thenAdd) {
+							me.clearEditor();
 							me.refreshParentFormMainGrid();
-
-							var editName = me.editName;
-							editName.focus();
-							editName.setValue(null);
-							editName.clearInvalid();
 						} else {
 							me.close();
 						}
@@ -161,7 +189,27 @@ Ext.define("PSI.Goods.UnitEditForm", {
 				});
 	},
 
+	clearEditor : function() {
+		var me = this;
+
+		var editName = me.editName;
+		editName.focus();
+		editName.setValue(null);
+		editName.clearInvalid();
+
+		me.editCode.setValue(null);
+	},
+
 	onEditNameSpecialKey : function(field, e) {
+		var me = this;
+
+		if (e.getKey() == e.ENTER) {
+			me.editCode.focus();
+			me.editCode.setValue(me.editCode.getValue());
+		}
+	},
+
+	onEditCodeSpecialKey : function(field, e) {
 		var me = this;
 
 		if (e.getKey() == e.ENTER) {

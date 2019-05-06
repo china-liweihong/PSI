@@ -201,6 +201,10 @@ class GoodsDAO extends PSIBaseExDAO {
 		if (! $unit) {
 			return $this->bad("计量单位不存在");
 		}
+		$unitRecordStatus = $unit["recordStatus"];
+		if ($unitRecordStatus != 1) {
+			return $this->bad("计量单位已经被停用");
+		}
 		
 		$goodsCategoryDAO = new GoodsCategoryDAO($db);
 		$category = $goodsCategoryDAO->getGoodsCategoryById($categoryId);
@@ -312,6 +316,14 @@ class GoodsDAO extends PSIBaseExDAO {
 		$unit = $goodsUnitDAO->getGoodsUnitById($unitId);
 		if (! $unit) {
 			return $this->bad("计量单位不存在");
+		}
+		$unitRecordStatus = $unit["recordStatus"];
+		if ($unitRecordStatus == 2) {
+			// 商品计量单位被停用的时候，商品的状态不能是启用
+			if (intval($recordStatus) == 1000) {
+				$unitName = $unit["name"];
+				return $this->bad("计量单位[{$unitName}]被停用的时候，商品的状态不能是启用");
+			}
 		}
 		
 		$goodsCategoryDAO = new GoodsCategoryDAO($db);

@@ -225,13 +225,14 @@ class GoodsUnitDAO extends PSIBaseExDAO {
 	public function getGoodsUnitById($id) {
 		$db = $this->db;
 		
-		$sql = "select name from t_goods_unit where id = '%s' ";
+		$sql = "select name, record_status from t_goods_unit where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if (! $data) {
 			return null;
 		} else {
 			return array(
-					"name" => $data[0]["name"]
+					"name" => $data[0]["name"],
+					"recordStatus" => $data[0]["record_status"]
 			);
 		}
 	}

@@ -53,6 +53,48 @@ class GoodsUnitDAO extends PSIBaseExDAO {
 	}
 
 	/**
+	 * 所有的启用的商品计量单位
+	 *
+	 * @param string $goodsId        	
+	 */
+	public function allEnabledUnits($goodsId) {
+		$db = $this->db;
+		
+		$sql = "select id, name
+				from t_goods_unit
+				where record_status = 1
+				order by code, name";
+		$data = $db->query($sql, $goodsId);
+		$result = [];
+		
+		foreach ( $data as $v ) {
+			$result[] = [
+					"id" => $v["id"],
+					"name" => $v["name"]
+			];
+		}
+		
+		if ($goodsId) {
+			// 如果商品的计量单位被停用了，在指定$goodsId的情况下
+			// 把它的计量单位也插入到结果中
+			// 这个场景用于编辑商品资料界面中，计量单位的数据来源
+			$sql = "select u.id, u.name
+					from t_goods g, t_goods_unit u
+					where g.id = '%s' and g.unit_id = u.id and u.record_status = 2";
+			$data = $db->query($sql, $goodsId);
+			if ($data) {
+				$v = $data[0];
+				$result[] = [
+						"id" => $v["id"],
+						"name" => $v["name"]
+				];
+			}
+		}
+		
+		return $result;
+	}
+
+	/**
 	 * 检查参数
 	 *
 	 * @param array $params        	

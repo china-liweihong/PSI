@@ -36,6 +36,20 @@ class GoodsService extends PSIBaseExService {
 	}
 
 	/**
+	 * 所有的启用的商品计量单位
+	 *
+	 * @param string $goodsId        	
+	 */
+	public function allEnabledUnits($goodsId) {
+		if ($this->isNotOnline()) {
+			return $this->emptyResult();
+		}
+		
+		$dao = new GoodsUnitDAO($this->db());
+		return $dao->allEnabledUnits($goodsId);
+	}
+
+	/**
 	 * 新建或者编辑 商品计量单位
 	 */
 	public function editUnit($params) {

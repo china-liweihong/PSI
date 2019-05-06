@@ -349,7 +349,7 @@ class GoodsController extends PSIBaseController {
 			$categoryId = I("post.categoryId");
 			$gs = new GoodsService();
 			$data = $gs->getGoodsInfo($id, $categoryId);
-			$data["units"] = $gs->allUnits();
+			$data["units"] = $gs->allEnabledUnits($id);
 			$this->ajaxReturn($data);
 		}
 	}

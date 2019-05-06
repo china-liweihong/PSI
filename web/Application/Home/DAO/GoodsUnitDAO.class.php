@@ -32,10 +32,18 @@ class GoodsUnitDAO extends PSIBaseExDAO {
 			$d = $db->query($sql, $v["id"]);
 			$goodsCount = $d[0]["cnt"];
 			
+			$sql = "select count(*) as cnt
+					from t_goods
+					where unit_id = '%s' and record_status = 1000";
+			$d = $db->query($sql, $v["id"]);
+			$goodsEnabledCount = $d[0]["cnt"];
+			
 			$result[] = [
 					"id" => $v["id"],
 					"name" => $v["name"],
-					"goodsCount" => $goodsCount
+					"goodsCount" => $goodsCount,
+					"goodsEnabledCount" => $goodsEnabledCount,
+					"goodsDisabledCount" => $goodsCount - $goodsEnabledCount
 			];
 		}
 		

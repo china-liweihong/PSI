@@ -933,6 +933,7 @@ CREATE TABLE IF NOT EXISTS `t_goods_brand` (
   `data_org` varchar(255) DEFAULT NULL,
   `company_id` varchar(255) DEFAULT NULL,
   `py` varchar(255) DEFAULT NULL,
+  `record_status` int(11) DEFAULT 1,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

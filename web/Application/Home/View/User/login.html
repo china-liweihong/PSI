@@ -56,10 +56,6 @@
 <link href="{$uri}Public/Content/foundation/app.css" rel="stylesheet"
 	type="text/css" />
 
-
-<script type="text/javascript"
-	src="https://pv.sohu.com/cityjson?ie=utf-8" charset="gb2312"></script>
-
 <div class="top-bar">
 	<div class="top-bar-left">
 		<ul class="menu">
@@ -135,17 +131,7 @@
 
 <script type="text/javascript">
 	Ext.onReady(function() {
-		var ip = "";
-		var cname = "";
-		if (window.returnCitySN) {
-			ip = returnCitySN.cip;
-			cname = returnCitySN.cname;
-		}
-
 		PSI.Const.BASE_URL = "{$uri}";
-		if (Ext.isIE7m) {
-			Ext.BLANK_IMAGE_URL = "{$uri}Public/Images/s.gif";
-		}
 
 		if ("{$demoInfo}" == "") {
 			Ext.get("divDemoWarning").remove();
@@ -168,18 +154,18 @@
 		};
 		editPassword.onkeydown = function(e) {
 			if (e.keyCode == 13) {
-				doLogin(editLoginName.value, editPassword.value, ip, cname);
+				doLogin(editLoginName.value, editPassword.value);
 			}
 		}
 		document.getElementById("buttonOK").onclick = function() {
-			doLogin(editLoginName.value, editPassword.value, ip, cname);
+			doLogin(editLoginName.value, editPassword.value);
 		}
 
 		Ext.get("loading").remove();
 		Ext.get("loading-mask").remove();
 	});
 
-	function doLogin(loginName, password, ip, ipFrom) {
+	function doLogin(loginName, password) {
 		if (!loginName) {
 			showInfo("没有输入登录名");
 			setInputFocus();
@@ -196,12 +182,9 @@
 			method : "POST",
 			params : {
 				loginName : loginName,
-				password : password,
-				ip : ip,
-				ipFrom : ipFrom
+				password : password
 			},
 			callback : function(options, success, response) {
-
 				if (success) {
 					var data = Ext.JSON.decode(response.responseText);
 					if (data.success) {

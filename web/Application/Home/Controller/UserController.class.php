@@ -125,7 +125,7 @@ class UserController extends PSIBaseController {
 	 */
 	public function loginPOST() {
 		if (IS_POST) {
-			$ip = I("post.ip");
+			$ip = get_client_ip();
 			$ipFrom = (new IPService())->toRegion($ip);
 			
 			session("PSI_login_user_ip", $ip);

@@ -20,9 +20,9 @@ class BizConfigService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$dao = new BizConfigDAO($this->db());
-		
+
 		return $dao->allConfigs($params);
 	}
 
@@ -33,12 +33,12 @@ class BizConfigService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$us = new UserService();
 		$params["loginUserId"] = $us->getLoginUserId();
-		
+
 		$dao = new BizConfigDAO($this->db());
-		
+
 		return $dao->allConfigsWithExtData($params);
 	}
 
@@ -49,22 +49,22 @@ class BizConfigService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
-		
+
 		$db = $this->db();
-		
+
 		$db->startTrans();
-		
+
 		$params["isDemo"] = $this->isDemo();
-		
+
 		$dao = new BizConfigDAO($db);
 		$rc = $dao->edit($params);
 		if ($rc) {
 			$db->rollback();
 			return $rc;
 		}
-		
+
 		$db->commit();
-		
+
 		return $this->ok();
 	}
 
@@ -73,7 +73,7 @@ class BizConfigService extends PSIBaseExService {
 	 */
 	public function getTaxRate() {
 		$us = new UserService();
-		
+
 		$dao = new BizConfigDAO($this->db());
 		return $dao->getTaxRate($us->getCompanyId());
 	}
@@ -86,9 +86,9 @@ class BizConfigService extends PSIBaseExService {
 		$params = array(
 				"companyId" => $us->getCompanyId()
 		);
-		
+
 		$dao = new BizConfigDAO($this->db());
-		
+
 		return $dao->getProductionName($params);
 	}
 
@@ -100,13 +100,13 @@ class BizConfigService extends PSIBaseExService {
 	public function getModuleOpenType(): string {
 		$us = new UserService();
 		$companyId = $us->getCompanyId();
-		
+
 		if ($companyId == null) {
 			return "0";
 		}
-		
+
 		$dao = new BizConfigDAO($this->db());
-		
+
 		return $dao->getModuleOpenType($companyId);
 	}
 
@@ -118,7 +118,7 @@ class BizConfigService extends PSIBaseExService {
 	public function getInventoryMethod() {
 		// 2015-11-19 为发布稳定版本，临时取消先进先出法
 		$result = 0;
-		
+
 		return $result;
 	}
 
@@ -127,22 +127,22 @@ class BizConfigService extends PSIBaseExService {
 	 */
 	public function getPOBillRefPre() {
 		$result = "PO";
-		
+
 		$db = $this->db();
 		$companyId = $this->getCompanyId();
-		
+
 		$id = "9003-01";
 		$sql = "select value from t_config 
 				where id = '%s' and company_id = '%s' ";
 		$data = $db->query($sql, $id, $companyId);
 		if ($data) {
 			$result = $data[0]["value"];
-			
+
 			if ($result == null || $result == "") {
 				$result = "PO";
 			}
 		}
-		
+
 		return $result;
 	}
 
@@ -151,22 +151,22 @@ class BizConfigService extends PSIBaseExService {
 	 */
 	public function getPWBillRefPre() {
 		$result = "PW";
-		
+
 		$db = $this->db();
 		$companyId = $this->getCompanyId();
-		
+
 		$id = "9003-02";
 		$sql = "select value from t_config 
 				where id = '%s' and company_id = '%s' ";
 		$data = $db->query($sql, $id, $companyId);
 		if ($data) {
 			$result = $data[0]["value"];
-			
+
 			if ($result == null || $result == "") {
 				$result = "PW";
 			}
 		}
-		
+
 		return $result;
 	}
 
@@ -175,22 +175,22 @@ class BizConfigService extends PSIBaseExService {
 	 */
 	public function getPRBillRefPre() {
 		$result = "PR";
-		
+
 		$db = $this->db();
 		$companyId = $this->getCompanyId();
-		
+
 		$id = "9003-03";
 		$sql = "select value from t_config 
 				where id = '%s' and company_id = '%s' ";
 		$data = $db->query($sql, $id, $companyId);
 		if ($data) {
 			$result = $data[0]["value"];
-			
+
 			if ($result == null || $result == "") {
 				$result = "PR";
 			}
 		}
-		
+
 		return $result;
 	}
 
@@ -199,22 +199,22 @@ class BizConfigService extends PSIBaseExService {
 	 */
 	public function getWSBillRefPre() {
 		$result = "WS";
-		
+
 		$db = $this->db();
 		$companyId = $this->getCompanyId();
-		
+
 		$id = "9003-04";
 		$sql = "select value from t_config 
 				where id = '%s' and company_id = '%s' ";
 		$data = $db->query($sql, $id, $companyId);
 		if ($data) {
 			$result = $data[0]["value"];
-			
+
 			if ($result == null || $result == "") {
 				$result = "WS";
 			}
 		}
-		
+
 		return $result;
 	}
 
@@ -223,22 +223,22 @@ class BizConfigService extends PSIBaseExService {
 	 */
 	public function getSRBillRefPre() {
 		$result = "SR";
-		
+
 		$db = $this->db();
 		$companyId = $this->getCompanyId();
-		
+
 		$id = "9003-05";
 		$sql = "select value from t_config 
 				where id = '%s' and company_id = '%s' ";
 		$data = $db->query($sql, $id, $companyId);
 		if ($data) {
 			$result = $data[0]["value"];
-			
+
 			if ($result == null || $result == "") {
 				$result = "SR";
 			}
 		}
-		
+
 		return $result;
 	}
 
@@ -247,22 +247,22 @@ class BizConfigService extends PSIBaseExService {
 	 */
 	public function getITBillRefPre() {
 		$result = "IT";
-		
+
 		$db = $this->db();
 		$companyId = $this->getCompanyId();
-		
+
 		$id = "9003-06";
 		$sql = "select value from t_config 
 				where id = '%s' and company_id = '%s' ";
 		$data = $db->query($sql, $id, $companyId);
 		if ($data) {
 			$result = $data[0]["value"];
-			
+
 			if ($result == null || $result == "") {
 				$result = "IT";
 			}
 		}
-		
+
 		return $result;
 	}
 
@@ -271,22 +271,22 @@ class BizConfigService extends PSIBaseExService {
 	 */
 	public function getICBillRefPre() {
 		$result = "IC";
-		
+
 		$db = $this->db();
 		$companyId = $this->getCompanyId();
-		
+
 		$id = "9003-07";
 		$sql = "select value from t_config 
 				where id = '%s' and company_id = '%s' ";
 		$data = $db->query($sql, $id, $companyId);
 		if ($data) {
 			$result = $data[0]["value"];
-			
+
 			if ($result == null || $result == "") {
 				$result = "IC";
 			}
 		}
-		
+
 		return $result;
 	}
 
@@ -297,33 +297,31 @@ class BizConfigService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$db = $this->db();
 		$result = array();
-		
-		$companyId = $this->getCompanyId();
-		
+
 		$sql = "select id, name
 				from t_org
 				where (parent_id is null) ";
 		$queryParams = array();
-		
+
 		$ds = new DataOrgService();
 		$rs = $ds->buildSQL(FIdConst::BIZ_CONFIG, "t_org");
-		
+
 		if ($rs) {
 			$sql .= " and " . $rs[0];
 			$queryParams = array_merge($queryParams, $rs[1]);
 		}
-		
+
 		$sql .= " order by org_code ";
-		
+
 		$data = $db->query($sql, $queryParams);
 		foreach ( $data as $i => $v ) {
 			$result[$i]["id"] = $v["id"];
 			$result[$i]["name"] = $v["name"];
 		}
-		
+
 		return $result;
 	}
 
@@ -332,22 +330,22 @@ class BizConfigService extends PSIBaseExService {
 	 */
 	public function getSOBillRefPre() {
 		$result = "PO";
-		
+
 		$db = $this->db();
 		$companyId = $this->getCompanyId();
-		
+
 		$id = "9003-08";
 		$sql = "select value from t_config
 				where id = '%s' and company_id = '%s' ";
 		$data = $db->query($sql, $id, $companyId);
 		if ($data) {
 			$result = $data[0]["value"];
-			
+
 			if ($result == null || $result == "") {
 				$result = "SO";
 			}
 		}
-		
+
 		return $result;
 	}
 
@@ -356,22 +354,22 @@ class BizConfigService extends PSIBaseExService {
 	 */
 	public function getPOBillDefaultPayment() {
 		$result = "0";
-		
+
 		$db = $this->db();
 		$companyId = $this->getCompanyId();
-		
+
 		$id = "2001-02";
 		$sql = "select value from t_config
 				where id = '%s' and company_id = '%s' ";
 		$data = $db->query($sql, $id, $companyId);
 		if ($data) {
 			$result = $data[0]["value"];
-			
+
 			if ($result == null || $result == "") {
 				$result = "0";
 			}
 		}
-		
+
 		return $result;
 	}
 
@@ -380,22 +378,22 @@ class BizConfigService extends PSIBaseExService {
 	 */
 	public function getPWBillDefaultPayment() {
 		$result = "0";
-		
+
 		$db = $this->db();
 		$companyId = $this->getCompanyId();
-		
+
 		$id = "2001-03";
 		$sql = "select value from t_config
 				where id = '%s' and company_id = '%s' ";
 		$data = $db->query($sql, $id, $companyId);
 		if ($data) {
 			$result = $data[0]["value"];
-			
+
 			if ($result == null || $result == "") {
 				$result = "0";
 			}
 		}
-		
+
 		return $result;
 	}
 
@@ -404,23 +402,23 @@ class BizConfigService extends PSIBaseExService {
 	 */
 	public function getWSBillDefaultReceving() {
 		$result = "0";
-		
+
 		$db = M();
 		$us = new UserService();
 		$companyId = $us->getCompanyId();
-		
+
 		$id = "2002-03";
 		$sql = "select value from t_config
 				where id = '%s' and company_id = '%s' ";
 		$data = $db->query($sql, $id, $companyId);
 		if ($data) {
 			$result = $data[0]["value"];
-			
+
 			if ($result == null || $result == "") {
 				$result = "0";
 			}
 		}
-		
+
 		return $result;
 	}
 
@@ -429,23 +427,23 @@ class BizConfigService extends PSIBaseExService {
 	 */
 	public function getSOBillDefaultReceving() {
 		$result = "0";
-		
+
 		$db = M();
 		$us = new UserService();
 		$companyId = $us->getCompanyId();
-		
+
 		$id = "2002-04";
 		$sql = "select value from t_config
 				where id = '%s' and company_id = '%s' ";
 		$data = $db->query($sql, $id, $companyId);
 		if ($data) {
 			$result = $data[0]["value"];
-			
+
 			if ($result == null || $result == "") {
 				$result = "0";
 			}
 		}
-		
+
 		return $result;
 	}
 
@@ -457,13 +455,13 @@ class BizConfigService extends PSIBaseExService {
 	public function getGoodsCountDecNumber(): int {
 		$us = new UserService();
 		$companyId = $us->getCompanyId();
-		
+
 		if (! $companyId) {
 			return 0;
 		}
-		
+
 		$dao = new BizConfigDAO($this->db());
-		
+
 		return $dao->getGoodsCountDecNumber($companyId);
 	}
 }

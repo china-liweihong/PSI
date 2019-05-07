@@ -391,7 +391,8 @@ class GoodsService extends PSIBaseExService {
 		$params = array(
 				"queryKey" => $queryKey,
 				"customerId" => $customerId,
-				"loginUserId" => $this->getLoginUserId()
+				"loginUserId" => $this->getLoginUserId(),
+				"companyId" => $this->getCompanyId()
 		);
 		
 		$dao = new GoodsDAO($this->db());

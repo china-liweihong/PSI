@@ -654,6 +654,10 @@ class GoodsDAO extends PSIBaseExDAO {
 		if ($this->loginUserIdNotExists($loginUserId)) {
 			return $this->emptyResult();
 		}
+		$companyId = $params["companyId"];
+		if ($this->companyIdNotExists($companyId)) {
+			return $this->emptyResult();
+		}
 		
 		$customerId = $params["customerId"];
 		$psId = $this->getPsIdForCustomer($customerId);

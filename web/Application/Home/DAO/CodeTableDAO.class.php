@@ -14,12 +14,12 @@ class CodeTableDAO extends PSIBaseExDAO {
 	 */
 	public function categoryList($params) {
 		$db = $this->db;
-		
+
 		$sql = "select id, code, name
 				from t_code_table_category
 				order by code";
 		$data = $db->query($sql);
-		
+
 		$result = [];
 		foreach ( $data as $v ) {
 			$result[] = [
@@ -28,23 +28,23 @@ class CodeTableDAO extends PSIBaseExDAO {
 					"name" => $v["name"]
 			];
 		}
-		
+
 		return $result;
 	}
 
 	/**
 	 * 新增码表分类
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return null|array
 	 */
 	public function addCodeTableCategory(& $params) {
 		$db = $this->db;
-		
+
 		$code = $params["code"] ?? "";
 		$code = strtoupper($code);
 		$name = $params["name"];
-		
+
 		// 检查编码是否存在
 		if ($code) {
 			$sql = "select count(*) as cnt from t_code_table_category where code = '%s' ";
@@ -56,7 +56,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 		} else {
 			$code = "";
 		}
-		
+
 		// 检查分类名称是否存在
 		$sql = "select count(*) as cnt from t_code_table_category where name = '%s' ";
 		$data = $db->query($sql, $name);
@@ -64,16 +64,16 @@ class CodeTableDAO extends PSIBaseExDAO {
 		if ($cnt) {
 			return $this->bad("码表分类[{$name}]已经存在");
 		}
-		
+
 		$id = $this->newId();
 		$sql = "insert into t_code_table_category (id, code, name, parent_id)
 				values ('%s', '%s', '%s', null)";
-		
+
 		$rc = $db->execute($sql, $id, $code, $name);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 操作成功
 		$params["id"] = $id;
 		return null;
@@ -82,21 +82,21 @@ class CodeTableDAO extends PSIBaseExDAO {
 	/**
 	 * 编辑码表分类
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 */
 	public function updateCodeTableCategory($params) {
 		$db = $this->db;
-		
+
 		$id = $params["id"];
 		$code = $params["code"] ?? "";
 		$code = strtoupper($code);
 		$name = $params["name"];
-		
+
 		$category = $this->getCodeTableCategoryById($id);
 		if (! $category) {
 			return $this->bad("要编辑的码表分类不存在");
 		}
-		
+
 		// 检查编码是否存在
 		if ($code) {
 			$sql = "select count(*) as cnt from t_code_table_category 
@@ -109,7 +109,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 		} else {
 			$code = "";
 		}
-		
+
 		// 检查分类名称是否存在
 		$sql = "select count(*) as cnt from t_code_table_category 
 				where name = '%s' and id <> '%s' ";
@@ -118,23 +118,23 @@ class CodeTableDAO extends PSIBaseExDAO {
 		if ($cnt) {
 			return $this->bad("码表分类[{$name}]已经存在");
 		}
-		
+
 		$sql = "update t_code_table_category
 				set code = '%s', name = '%s'
 				where id = '%s' ";
-		
+
 		$rc = $db->execute($sql, $code, $name, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 操作成功
 		return null;
 	}
 
 	public function getCodeTableCategoryById($id) {
 		$db = $this->db;
-		
+
 		$sql = "select code, name from t_code_table_category where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if ($data) {
@@ -152,15 +152,15 @@ class CodeTableDAO extends PSIBaseExDAO {
 	 */
 	public function deleteCodeTableCategory(& $params) {
 		$db = $this->db;
-		
+
 		$id = $params["id"];
-		
+
 		$category = $this->getCodeTableCategoryById($id);
 		if (! $category) {
 			return $this->bad("要删除的码表分类不存在");
 		}
 		$name = $category["name"];
-		
+
 		// 查询该分类是否被使用了
 		$sql = "select count(*) as cnt from t_code_table_md
 				where category_id = '%s' ";
@@ -169,13 +169,13 @@ class CodeTableDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("码表分类[$name]下还有码表，不能删除");
 		}
-		
+
 		$sql = "delete from t_code_table_category where id = '%s' ";
 		$rc = $db->execute($sql, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 操作成功
 		$params["name"] = $name;
 		return null;
@@ -186,15 +186,15 @@ class CodeTableDAO extends PSIBaseExDAO {
 	 */
 	public function codeTableList($params) {
 		$db = $this->db;
-		
+
 		$categoryId = $params["categoryId"];
-		
+
 		$sql = "select id, code, name, table_name, memo, fid, md_version, is_fixed
 				from t_code_table_md
 				where category_id = '%s' 
 				order by code, table_name";
 		$data = $db->query($sql, $categoryId);
-		
+
 		$result = [];
 		foreach ( $data as $v ) {
 			$result[] = [
@@ -216,18 +216,18 @@ class CodeTableDAO extends PSIBaseExDAO {
 	 */
 	public function queryDataForCategory($params) {
 		$db = $this->db;
-		
+
 		$queryKey = $params["queryKey"] ?? "";
-		
+
 		$sql = "select id, code, name
 				from t_code_table_category
 				where code like '%s' or name like '%s' ";
 		$queryParams = [];
 		$queryParams[] = "%{$queryKey}%";
 		$queryParams[] = "%{$queryKey}%";
-		
+
 		$data = $db->query($sql, $queryParams);
-		
+
 		$result = [];
 		foreach ( $data as $v ) {
 			$result[] = [
@@ -236,24 +236,24 @@ class CodeTableDAO extends PSIBaseExDAO {
 					"name" => $v["name"]
 			];
 		}
-		
+
 		return $result;
 	}
 
 	private function checkTableName($tableName) {
 		$tableName = strtolower($tableName);
-		
+
 		$len = strlen($tableName);
 		if ($len < 5) {
 			return $this->bad("数据库表名长度不能小于5");
 		}
-		
+
 		$c = ord($tableName{0});
 		$isABC = ord('a') <= $c && ord('z') >= $c;
 		if (! $isABC) {
 			return $this->bad("数据库表名需要以字符开头");
 		}
-		
+
 		for($i = 1; $i < $len; $i ++) {
 			$c = ord($tableName{$i});
 			$isABC = ord('a') <= $c && ord('z') >= $c;
@@ -264,12 +264,12 @@ class CodeTableDAO extends PSIBaseExDAO {
 				return $this->bad("数据库表名的第{$index}个字符非法");
 			}
 		}
-		
+
 		// 码表需要以t_ct开头
 		if (! (substr($tableName, 0, 4) == "t_ct")) {
 			return $this->bad("数据库表名需要以 <span style='color:red'>t_ct</span> 开头");
 		}
-		
+
 		// 表名正确
 		return null;
 	}
@@ -281,7 +281,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 	 */
 	private function getCodeTableSysCols() {
 		$result = [];
-		
+
 		// id
 		$result[] = [
 				"caption" => "id",
@@ -298,7 +298,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 				"isVisible" => 2,
 				"widthInView" => 0
 		];
-		
+
 		// code
 		$result[] = [
 				"caption" => "编码",
@@ -315,7 +315,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 				"isVisible" => 1,
 				"widthInView" => 120
 		];
-		
+
 		// name
 		$result[] = [
 				"caption" => "名称",
@@ -332,7 +332,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 				"isVisible" => 1,
 				"widthInView" => 200
 		];
-		
+
 		// 拼音字头
 		$result[] = [
 				"caption" => "拼音字头",
@@ -349,7 +349,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 				"isVisible" => 2,
 				"widthInView" => 0
 		];
-		
+
 		// 数据域data_org
 		$result[] = [
 				"caption" => "数据域",
@@ -366,7 +366,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 				"isVisible" => 2,
 				"widthInView" => 0
 		];
-		
+
 		// company_id
 		$result[] = [
 				"caption" => "公司Id",
@@ -383,7 +383,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 				"isVisible" => 2,
 				"widthInView" => 0
 		];
-		
+
 		// 记录创建时间
 		$result[] = [
 				"caption" => "记录创建时间",
@@ -400,7 +400,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 				"isVisible" => 2,
 				"widthInView" => 0
 		];
-		
+
 		// 记录创建人id
 		$result[] = [
 				"caption" => "记录创建人Id",
@@ -417,7 +417,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 				"isVisible" => 2,
 				"widthInView" => 0
 		];
-		
+
 		// 记录最后一次编辑时间
 		$result[] = [
 				"caption" => "最后一次编辑时间",
@@ -434,7 +434,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 				"isVisible" => 2,
 				"widthInView" => 0
 		];
-		
+
 		// 记录最后一次编辑人id
 		$result[] = [
 				"caption" => "最后一次编辑人id",
@@ -451,7 +451,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 				"isVisible" => 2,
 				"widthInView" => 0
 		];
-		
+
 		// 状态
 		$result[] = [
 				"caption" => "状态",
@@ -468,30 +468,30 @@ class CodeTableDAO extends PSIBaseExDAO {
 				"isVisible" => 1,
 				"widthInView" => 80
 		];
-		
+
 		return $result;
 	}
 
 	/**
 	 * 新增码表
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return array|null
 	 */
 	public function addCodeTable(&$params) {
 		$db = $this->db;
-		
+
 		$categoryId = $params["categoryId"];
 		if (! $this->getCodeTableCategoryById($categoryId)) {
 			return $this->bad("码表分类不存在");
 		}
-		
+
 		$code = strtoupper($params["code"] ?? "");
 		$name = $params["name"];
 		$memo = $params["memo"] ?? "";
 		$py = $params["py"];
 		$tableName = strtolower($params["tableName"]);
-		
+
 		// 检查编码是否已经存在
 		if ($code) {
 			$sql = "select count(*) as cnt from t_code_table_md
@@ -502,7 +502,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 				return $this->bad("编码为[{$code}]的码表已经存在");
 			}
 		}
-		
+
 		// 检查名称是否已经存在
 		$sql = "select count(*) as cnt from t_code_table_md
 					where name = '%s' ";
@@ -511,7 +511,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("名称为[{$name}]的码表已经存在");
 		}
-		
+
 		// 检查表名是否正确
 		$rc = $this->checkTableName($tableName);
 		if ($rc) {
@@ -530,17 +530,17 @@ class CodeTableDAO extends PSIBaseExDAO {
 		if ($dbUtilDAO->tableExists($tableName)) {
 			return $this->bad("表[{$tableName}]已经在数据库中存在了");
 		}
-		
+
 		$id = $this->newId();
 		$fid = "ct" . date("YmdHis");
-		
+
 		$sql = "insert into t_code_table_md (id, category_id, code, name, table_name, py, memo, fid)
 				values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')";
 		$rc = $db->execute($sql, $id, $categoryId, $code, $name, $tableName, $py, $memo, $fid);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 码表标准列
 		$cols = $this->getCodeTableSysCols();
 		foreach ( $cols as $v ) {
@@ -552,22 +552,22 @@ class CodeTableDAO extends PSIBaseExDAO {
 						'%s', '%s', '%s', %d,
 						%d, %d, %d, '%s',
 						'%s', %d, %d, %d, %d)";
-			$rc = $db->execute($sql, $this->newId(), $id, $v["caption"], $v["fieldName"], 
-					$v["fieldType"], $v["fieldLength"], $v["fieldDecimal"], $v["showOrder"], 
-					$v["valueFrom"], $v["valueFromTableName"], $v["valueFromColName"], 
+			$rc = $db->execute($sql, $this->newId(), $id, $v["caption"], $v["fieldName"],
+					$v["fieldType"], $v["fieldLength"], $v["fieldDecimal"], $v["showOrder"],
+					$v["valueFrom"], $v["valueFromTableName"], $v["valueFromColName"],
 					$v["mustInput"], $v["sysCol"], $v["isVisible"], $v["widthInView"]);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
 		}
-		
+
 		// fid: t_fid_plus
 		$sql = "insert into t_fid_plus (fid, name) values ('%s', '%s')";
 		$rc = $db->execute($sql, $fid, $name);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 权限: t_permission_plus
 		$sql = "insert into t_permission_plus (id, fid, name, note, category, py, show_order)
 				values ('%s', '%s', '%s', '%s', '%s','%s', %d)";
@@ -575,9 +575,9 @@ class CodeTableDAO extends PSIBaseExDAO {
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// TODO 权限细化到按钮
-		
+
 		// 创建数据库表
 		$sql = "CREATE TABLE IF NOT EXISTS `{$tableName}` (";
 		foreach ( $cols as $v ) {
@@ -586,9 +586,9 @@ class CodeTableDAO extends PSIBaseExDAO {
 			$fieldLength = $v["fieldLength"];
 			$fieldDecimal = $v["fieldDecimal"];
 			$mustInput = $v["mustInput"];
-			
+
 			$type = $fieldType;
-			
+
 			if ($fieldType == "varchar") {
 				$type .= "({$fieldLength})";
 			} else if ($fieldType == "decimal") {
@@ -596,7 +596,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 			} else if ($fieldType == "int") {
 				$type .= "(11)";
 			}
-			
+
 			$sql .= "`{$fieldName}` {$type} ";
 			if ($mustInput == 1) {
 				$sql .= " NOT NULL";
@@ -611,7 +611,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 操作成功
 		$params["id"] = $id;
 		return null;
@@ -620,27 +620,27 @@ class CodeTableDAO extends PSIBaseExDAO {
 	/**
 	 * 编辑码表主表元数据
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 */
 	public function updateCodeTable(& $params) {
 		$db = $this->db;
-		
+
 		// 码表id
 		$id = $params["id"];
 		$code = strtoupper($params["code"]) ?? "";
 		$name = $params["name"];
 		$categoryId = $params["categoryId"];
 		$memo = $params["memo"] ?? "";
-		
+
 		if (! $this->getCodeTableCategoryById($categoryId)) {
 			return $this->bad("码表分类不存在");
 		}
-		
+
 		$codeTable = $this->getCodeTableById($id);
 		if (! $codeTable) {
 			return $this->bad("要编辑的码表不存在");
 		}
-		
+
 		$sql = "update t_code_table_md
 				set code = '%s', name = '%s',
 					category_id = '%s', memo = '%s',
@@ -650,7 +650,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 操作成功
 		return null;
 	}
@@ -673,10 +673,10 @@ class CodeTableDAO extends PSIBaseExDAO {
 	 */
 	public function codeTableColsList($params) {
 		$db = $this->db;
-		
+
 		// 码表id
 		$id = $params["id"];
-		
+
 		$sql = "select id, caption, db_field_name, db_field_type, db_field_length,
 						db_field_decimal, show_order, value_from, value_from_table_name,
 						value_from_col_name, must_input, sys_col, is_visible, width_in_view
@@ -684,7 +684,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 				where table_id = '%s' 
 				order by show_order";
 		$data = $db->query($sql, $id);
-		
+
 		$result = [];
 		foreach ( $data as $v ) {
 			$isVisible = $v["is_visible"] == 1;
@@ -705,13 +705,13 @@ class CodeTableDAO extends PSIBaseExDAO {
 					"widthInView" => $isVisible ? ($v["width_in_view"] ?? 100) : null
 			];
 		}
-		
+
 		return $result;
 	}
 
 	public function getCodeTableById($id) {
 		$db = $this->db;
-		
+
 		$sql = "select code, name, fid, is_fixed from t_code_table_md where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if ($data) {
@@ -731,10 +731,10 @@ class CodeTableDAO extends PSIBaseExDAO {
 	 */
 	public function deleteCodeTable(& $params) {
 		$db = $this->db;
-		
+
 		// 码表id
 		$id = $params["id"];
-		
+
 		$codeTable = $this->getCodeTableById($id);
 		if (! $codeTable) {
 			return $this->bad("要删除的码表不存在");
@@ -745,28 +745,28 @@ class CodeTableDAO extends PSIBaseExDAO {
 		if ($isFixed == 1) {
 			return $this->bad("码表[$name]是系统固有码表，不能删除");
 		}
-		
+
 		// 列
 		$sql = "delete from t_code_table_cols_md where table_id = '%s' ";
 		$rc = $db->execute($sql, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 主表
 		$sql = "delete from t_code_table_md where id = '%s' ";
 		$rc = $db->execute($sql, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// fid
 		$sql = "delete from t_fid_plus where fid = '%s' ";
 		$rc = $db->execute($sql, $fid);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 权限
 		// 用like是为了处理按钮权限
 		$sql = "delete from t_permission_plus where fid like '%s' ";
@@ -774,7 +774,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 操作成功
 		$params["name"] = $name;
 		return null;
@@ -785,9 +785,9 @@ class CodeTableDAO extends PSIBaseExDAO {
 	 */
 	public function codeTableInfo($params) {
 		$db = $this->db;
-		
+
 		$id = $params["id"];
-		
+
 		$sql = "select c.name as category_name, d.code, d.name,
 					d.table_name, d.category_id, d.memo
 				from t_code_table_md d, t_code_table_category c
@@ -811,12 +811,12 @@ class CodeTableDAO extends PSIBaseExDAO {
 	/**
 	 * 根据fid获得码表的元数据
 	 *
-	 * @param string $fid        	
+	 * @param string $fid
 	 * @return array|NULL
 	 */
 	public function getMetaDataByFid($fid) {
 		$db = $this->db;
-		
+
 		$sql = "select caption from t_menu_item_plus where fid = '%s' ";
 		$data = $db->query($sql, $fid);
 		if ($data) {
@@ -833,9 +833,9 @@ class CodeTableDAO extends PSIBaseExDAO {
 	 */
 	public function getMetaDataForRuntime($params) {
 		$db = $this->db;
-		
+
 		$fid = $params["fid"];
-		
+
 		$sql = "select id, name, table_name
 				from t_code_table_md 
 				where fid = '%s' ";
@@ -844,15 +844,15 @@ class CodeTableDAO extends PSIBaseExDAO {
 			return null;
 		}
 		$v = $data[0];
-		
+
 		$id = $v["id"];
-		
+
 		$result = [
 				"fid" => $fid,
 				"tableName" => $v["table_name"],
 				"name" => $v["name"]
 		];
-		
+
 		// 列
 		$sql = "select caption, 
 					db_field_name, db_field_type, db_field_length, db_field_decimal,
@@ -882,7 +882,7 @@ class CodeTableDAO extends PSIBaseExDAO {
 					];
 				}
 			}
-			
+
 			$cols[] = [
 					"caption" => $v["caption"],
 					"fieldName" => $v["db_field_name"],
@@ -896,19 +896,19 @@ class CodeTableDAO extends PSIBaseExDAO {
 			];
 		}
 		$result["cols"] = $cols;
-		
+
 		return $result;
 	}
 
 	/**
 	 * 新增码表记录
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return array|NULL
 	 */
 	public function addRecord(&$params, $pyService) {
 		$db = $this->db;
-		
+
 		$dataOrg = $params["dataOrg"];
 		$loginUserId = $params["loginUserId"];
 		if ($this->loginUserIdNotExists($loginUserId)) {
@@ -921,26 +921,26 @@ class CodeTableDAO extends PSIBaseExDAO {
 		if ($this->companyIdNotExists($companyId)) {
 			return $this->badParam("companyId");
 		}
-		
+
 		$fid = $params["fid"];
 		$md = $this->getMetaDataForRuntime([
 				"fid" => $fid
 		]);
-		
+
 		if (! $md) {
 			return $this->badParam("fid");
 		}
-		
+
 		$codeTableName = $md["name"];
-		
+
 		$code = $params["code"];
 		$name = $params["name"];
 		$recordStatus = $params["record_status"];
-		
+
 		$id = $this->newId();
-		
+
 		$tableName = $md["tableName"];
-		
+
 		// 检查编码是否重复
 		$sql = "select count(*) as cnt from %s where code = '%s' ";
 		$queryParams = [];
@@ -951,21 +951,21 @@ class CodeTableDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("编码为[$code]的记录已经存在");
 		}
-		
+
 		$sql = "insert into %s (id, py, data_org, company_id, 
 					date_created, create_user_id, code, name, 
 					record_status";
 		$sqlParams = [];
 		$sqlParams[] = $tableName;
-		
+
 		foreach ( $md["cols"] as $colMd ) {
 			if ($colMd["isSysCol"]) {
 				continue;
 			}
-			
+
 			// 非系统字段
 			$fieldName = $colMd["fieldName"];
-			
+
 			$sql .= ", %s";
 			$sqlParams[] = $fieldName;
 		}
@@ -980,12 +980,12 @@ class CodeTableDAO extends PSIBaseExDAO {
 		$sqlParams[] = $code;
 		$sqlParams[] = $name;
 		$sqlParams[] = $recordStatus;
-		
+
 		foreach ( $md["cols"] as $colMd ) {
 			if ($colMd["isSysCol"]) {
 				continue;
 			}
-			
+
 			// 非系统字段
 			$fieldName = $colMd["fieldName"];
 			$fieldType = $colMd["fieldType"];
@@ -999,12 +999,12 @@ class CodeTableDAO extends PSIBaseExDAO {
 			$sqlParams[] = $params[$fieldName];
 		}
 		$sql .= ")";
-		
+
 		$rc = $db->execute($sql, $sqlParams);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 操作成功
 		$code = $params["code"];
 		$name = $params["name"];
@@ -1019,35 +1019,36 @@ class CodeTableDAO extends PSIBaseExDAO {
 	 */
 	public function codeTableRecordList($params) {
 		$db = $this->db;
-		
+
 		$fid = $params["fid"];
 		$loginUserId = $params["loginUserId"];
 		if ($this->loginUserIdNotExists($loginUserId)) {
 			return $this->emptyResult();
 		}
-		
+
 		$md = $this->getMetaDataForRuntime($params);
 		if (! $md) {
 			return $this->emptyResult();
 		}
-		
+
 		$tableName = $md["tableName"];
-		
+
 		$sql .= "select cr.id, cr.code, cr.name, u.name as create_user_name, r.name as record_status";
-		
+
 		foreach ( $md["cols"] as $colMd ) {
 			if ($colMd["isSysCol"]) {
 				continue;
 			}
-			
+
 			if ($colMd["isVisible"]) {
 				$sql .= ", cr." . $colMd["fieldName"];
 			}
 		}
-		
+
 		$sql .= " from %s cr, t_user u, t_sysdict_record_status r ";
+		$queryParams = [];
 		$queryParams[] = $tableName;
-		
+
 		$sql .= " where (cr.create_user_id = u.id) and (cr.record_status = r.code_int)";
 		// 数据域
 		$ds = new DataOrgDAO($db);
@@ -1056,11 +1057,11 @@ class CodeTableDAO extends PSIBaseExDAO {
 			$sql .= " and " . $rs[0];
 			$queryParams = array_merge($queryParams, $rs[1]);
 		}
-		
+
 		$sql .= " order by code";
-		
+
 		$data = $db->query($sql, $queryParams);
-		
+
 		return $data;
 	}
 }

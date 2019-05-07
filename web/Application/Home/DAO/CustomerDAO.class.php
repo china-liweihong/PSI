@@ -14,12 +14,12 @@ class CustomerDAO extends PSIBaseExDAO {
 	/**
 	 * 客户分类列表
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return array
 	 */
 	public function categoryList($params) {
 		$db = $this->db;
-		
+
 		$code = $params["code"];
 		$name = $params["name"];
 		$address = $params["address"];
@@ -27,20 +27,20 @@ class CustomerDAO extends PSIBaseExDAO {
 		$mobile = $params["mobile"];
 		$tel = $params["tel"];
 		$qq = $params["qq"];
-		
+
 		$inQuery = false;
 		if ($code || $name || $address || $contact || $mobile || $tel || $qq) {
 			$inQuery = true;
 		}
-		
+
 		$loginUserId = $params["loginUserId"];
 		if ($this->loginUserIdNotExists($loginUserId)) {
 			return $this->emptyResult();
 		}
-		
+
 		$ds = new DataOrgDAO($db);
 		$queryParam = [];
-		
+
 		$sql = "select c.id, c.code, c.name, c.ps_id
 				from t_customer_category c ";
 		$rs = $ds->buildSQL(FIdConst::CUSTOMER_CATEGORY, "c", $loginUserId);
@@ -49,9 +49,9 @@ class CustomerDAO extends PSIBaseExDAO {
 			$queryParam = array_merge($queryParam, $rs[1]);
 		}
 		$sql .= " order by c.code ";
-		
+
 		$data = $db->query($sql, $queryParam);
-		
+
 		$result = [];
 		foreach ( $data as $v ) {
 			// 分类中的客户数量
@@ -102,12 +102,12 @@ class CustomerDAO extends PSIBaseExDAO {
 			}
 			$d = $db->query($sql, $queryParam);
 			$customerCount = $d[0]["cnt"];
-			
+
 			if ($inQuery && $customerCount == 0) {
 				// 当前是带查询条件 而且该分类下没有符合的客户资料，则不返回该分类
 				continue;
 			}
-			
+
 			// 价格体系
 			$psId = $v["ps_id"];
 			$priceSystem = null;
@@ -132,41 +132,41 @@ class CustomerDAO extends PSIBaseExDAO {
 	/**
 	 * 新增客户分类
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return NULL|array
 	 */
 	public function addCustomerCategory(& $params) {
 		$db = $this->db;
-		
+
 		$code = trim($params["code"]);
 		$name = trim($params["name"]);
-		
+
 		$psId = $params["psId"];
-		
+
 		$dataOrg = $params["dataOrg"];
 		$companyId = $params["companyId"];
-		
+
 		if ($this->dataOrgNotExists($dataOrg)) {
 			return $this->bad("参数dataOrg不正确");
 		}
 		if ($this->companyIdNotExists($companyId)) {
 			return $this->bad("参数companyId不正确");
 		}
-		
+
 		if ($this->isEmptyStringAfterTrim($code)) {
 			return $this->bad("分类编码不能为空");
 		}
 		if ($this->isEmptyStringAfterTrim($name)) {
 			return $this->bad("分类名称不能为空");
 		}
-		
+
 		if ($this->stringBeyondLimit($code, 20)) {
 			return $this->bad("分类编码长度不能超过20位");
 		}
 		if ($this->stringBeyondLimit($name, 40)) {
 			return $this->bad("分类名称长度不能超过40位");
 		}
-		
+
 		// 检查分类编码是否已经存在
 		$sql = "select count(*) as cnt from t_customer_category where code = '%s' ";
 		$data = $db->query($sql, $code);
@@ -174,17 +174,17 @@ class CustomerDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("编码为 [{$code}] 的客户分类已经存在");
 		}
-		
+
 		$id = $this->newId();
 		$params["id"] = $id;
-		
+
 		$sql = "insert into t_customer_category (id, code, name, data_org, company_id, ps_id)
 				values ('%s', '%s', '%s', '%s', '%s', '%s') ";
 		$rc = $db->execute($sql, $id, $code, $name, $dataOrg, $companyId, $psId);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 操作成功
 		return null;
 	}
@@ -192,31 +192,31 @@ class CustomerDAO extends PSIBaseExDAO {
 	/**
 	 * 编辑客户分类
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return NULL|array
 	 */
 	public function updateCustomerCategory(& $params) {
 		$db = $this->db;
-		
+
 		$id = $params["id"];
 		$code = trim($params["code"]);
 		$name = trim($params["name"]);
 		$psId = $params["psId"];
-		
+
 		if ($this->isEmptyStringAfterTrim($code)) {
 			return $this->bad("分类编码不能为空");
 		}
 		if ($this->isEmptyStringAfterTrim($name)) {
 			return $this->bad("分类名称不能为空");
 		}
-		
+
 		if ($this->stringBeyondLimit($code, 20)) {
 			return $this->bad("分类编码长度不能超过20位");
 		}
 		if ($this->stringBeyondLimit($name, 40)) {
 			return $this->bad("分类名称长度不能超过40位");
 		}
-		
+
 		// 检查分类编码是否已经存在
 		$sql = "select count(*) as cnt from t_customer_category where code = '%s' and id <> '%s' ";
 		$data = $db->query($sql, $code, $id);
@@ -224,7 +224,7 @@ class CustomerDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("编码为 [{$code}] 的分类已经存在");
 		}
-		
+
 		$sql = "update t_customer_category
 				set code = '%s', name = '%s', ps_id = '%s'
 				where id = '%s' ";
@@ -232,7 +232,7 @@ class CustomerDAO extends PSIBaseExDAO {
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 操作成功
 		return null;
 	}
@@ -246,7 +246,7 @@ class CustomerDAO extends PSIBaseExDAO {
 	 */
 	public function getCustomerCategoryById($id) {
 		$db = $this->db;
-		
+
 		$sql = "select code, name from t_customer_category where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if ($data) {
@@ -262,15 +262,15 @@ class CustomerDAO extends PSIBaseExDAO {
 	/**
 	 * 删除客户分类
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return NULL|array
 	 */
 	public function deleteCustomerCategory(& $params) {
 		$db = $this->db;
-		
+
 		// 客户分类id
 		$id = $params["id"];
-		
+
 		$category = $this->getCustomerCategoryById($id);
 		if (! $category) {
 			return $this->bad("要删除的分类不存在");
@@ -278,20 +278,20 @@ class CustomerDAO extends PSIBaseExDAO {
 		$params["code"] = $category["code"];
 		$params["name"] = $category["name"];
 		$name = $params["name"];
-		
+
 		$sql = "select count(*) as cnt from t_customer where category_id = '%s' ";
 		$query = $db->query($sql, $id);
 		$cnt = $query[0]["cnt"];
 		if ($cnt > 0) {
 			return $this->bad("当前分类 [{$name}] 下还有客户资料，不能删除");
 		}
-		
+
 		$sql = "delete from t_customer_category where id = '%s' ";
 		$rc = $db->execute($sql, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 操作成功
 		return null;
 	}
@@ -299,12 +299,12 @@ class CustomerDAO extends PSIBaseExDAO {
 	/**
 	 * 新增客户资料
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return NULL|array
 	 */
 	public function addCustomer(& $params) {
 		$db = $this->db;
-		
+
 		$code = $params["code"];
 		$name = $params["name"];
 		$address = $params["address"];
@@ -322,7 +322,7 @@ class CustomerDAO extends PSIBaseExDAO {
 		$tax = $params["tax"];
 		$fax = $params["fax"];
 		$note = $params["note"];
-		
+
 		// 销售出库仓库
 		$warehouseId = $params["warehouseId"];
 		$warehouseDAO = new WarehouseDAO($db);
@@ -331,10 +331,10 @@ class CustomerDAO extends PSIBaseExDAO {
 			// 没有选择销售出库仓库
 			$warehouseId = "";
 		}
-		
+
 		$py = $params["py"];
 		$categoryId = $params["categoryId"];
-		
+
 		$dataOrg = $params["dataOrg"];
 		$companyId = $params["companyId"];
 		if ($this->dataOrgNotExists($dataOrg)) {
@@ -343,9 +343,9 @@ class CustomerDAO extends PSIBaseExDAO {
 		if ($this->companyIdNotExists($companyId)) {
 			return $this->badParam("companyId");
 		}
-		
+
 		$recordStatus = $params["recordStatus"];
-		
+
 		// 检查编码是否已经存在
 		$sql = "select count(*) as cnt from t_customer where code = '%s' ";
 		$data = $db->query($sql, $code);
@@ -353,10 +353,10 @@ class CustomerDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("编码为 [{$code}] 的客户已经存在");
 		}
-		
+
 		$id = $this->newId();
 		$params["id"] = $id;
-		
+
 		$sql = "insert into t_customer (id, category_id, code, name, py, contact01,
 					qq01, tel01, mobile01, contact02, qq02, tel02, mobile02, address, address_receipt,
 					bank_name, bank_account, tax_number, fax, note, data_org, company_id, sales_warehouse_id,
@@ -365,14 +365,14 @@ class CustomerDAO extends PSIBaseExDAO {
 						'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
 						'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
 						%d)  ";
-		$rc = $db->execute($sql, $id, $categoryId, $code, $name, $py, $contact01, $qq01, $tel01, 
-				$mobile01, $contact02, $qq02, $tel02, $mobile02, $address, $addressReceipt, 
-				$bankName, $bankAccount, $tax, $fax, $note, $dataOrg, $companyId, $warehouseId, 
+		$rc = $db->execute($sql, $id, $categoryId, $code, $name, $py, $contact01, $qq01, $tel01,
+				$mobile01, $contact02, $qq02, $tel02, $mobile02, $address, $addressReceipt,
+				$bankName, $bankAccount, $tax, $fax, $note, $dataOrg, $companyId, $warehouseId,
 				$recordStatus);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 操作成功
 		return null;
 	}
@@ -380,19 +380,19 @@ class CustomerDAO extends PSIBaseExDAO {
 	/**
 	 * 初始化应收账款
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return NULL|array
 	 */
 	public function initReceivables(& $params) {
 		$db = $this->db;
-		
+
 		$id = $params["id"];
 		$initReceivables = $params["initReceivables"];
 		$initReceivablesDT = $params["initReceivablesDT"];
-		
+
 		$dataOrg = $params["dataOrg"];
 		$companyId = $params["companyId"];
-		
+
 		$initReceivables = floatval($initReceivables);
 		if ($initReceivables && $initReceivablesDT) {
 			$sql = "select count(*) as cnt
@@ -405,7 +405,7 @@ class CustomerDAO extends PSIBaseExDAO {
 				// 已经有应收业务发生，就不再更改期初数据
 				return null;
 			}
-			
+
 			$sql = "update t_customer
 					set init_receivables = %f, init_receivables_dt = '%s'
 					where id = '%s' ";
@@ -413,7 +413,7 @@ class CustomerDAO extends PSIBaseExDAO {
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
-			
+
 			// 应收明细账
 			$sql = "select id from t_receivables_detail
 					where ca_id = '%s' and ca_type = 'customer' and ref_type = '应收账款期初建账'
@@ -424,7 +424,7 @@ class CustomerDAO extends PSIBaseExDAO {
 				$sql = "update t_receivables_detail
 						set rv_money = %f, act_money = 0, balance_money = %f, biz_date ='%s', date_created = now()
 						where id = '%s' ";
-				$rc = $db->execute($sql, $initReceivables, $initReceivables, $initReceivablesDT, 
+				$rc = $db->execute($sql, $initReceivables, $initReceivables, $initReceivablesDT,
 						$rvId);
 				if ($rc === false) {
 					return $this->sqlError(__METHOD__, __LINE__);
@@ -434,13 +434,13 @@ class CustomerDAO extends PSIBaseExDAO {
 				$sql = "insert into t_receivables_detail (id, rv_money, act_money, balance_money,
 						biz_date, date_created, ca_id, ca_type, ref_number, ref_type, data_org, company_id)
 						values ('%s', %f, 0, %f, '%s', now(), '%s', 'customer', '%s', '应收账款期初建账', '%s', '%s') ";
-				$rc = $db->execute($sql, $rvId, $initReceivables, $initReceivables, 
+				$rc = $db->execute($sql, $rvId, $initReceivables, $initReceivables,
 						$initReceivablesDT, $id, $id, $dataOrg, $companyId);
 				if ($rc === false) {
 					return $this->sqlError(__METHOD__, __LINE__);
 				}
 			}
-			
+
 			// 应收总账
 			$sql = "select id from t_receivables
 					where ca_id = '%s' and ca_type = 'customer'
@@ -460,7 +460,7 @@ class CustomerDAO extends PSIBaseExDAO {
 				$sql = "insert into t_receivables (id, rv_money, act_money, balance_money,
 							ca_id, ca_type, data_org, company_id)
 						values ('%s', %f, 0, %f, '%s', 'customer', '%s', '%s')";
-				$rc = $db->execute($sql, $rvId, $initReceivables, $initReceivables, $id, $dataOrg, 
+				$rc = $db->execute($sql, $rvId, $initReceivables, $initReceivables, $id, $dataOrg,
 						$companyId);
 				if ($rc === false) {
 					return $this->sqlError(__METHOD__, __LINE__);
@@ -474,7 +474,7 @@ class CustomerDAO extends PSIBaseExDAO {
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
-			
+
 			// 应收明细账
 			$sql = "delete from t_receivables_detail
 					where ca_id = '%s' and ca_type = 'customer' and ref_type = '应收账款期初建账'
@@ -492,7 +492,7 @@ class CustomerDAO extends PSIBaseExDAO {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
 		}
-		
+
 		// 操作成功
 		return null;
 	}
@@ -500,12 +500,12 @@ class CustomerDAO extends PSIBaseExDAO {
 	/**
 	 * 编辑客户资料
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return NULL|array
 	 */
 	public function updateCustomer(& $params) {
 		$db = $this->db;
-		
+
 		$id = $params["id"];
 		$code = $params["code"];
 		$name = $params["name"];
@@ -524,7 +524,7 @@ class CustomerDAO extends PSIBaseExDAO {
 		$tax = $params["tax"];
 		$fax = $params["fax"];
 		$note = $params["note"];
-		
+
 		// 销售出库仓库
 		$warehouseId = $params["warehouseId"];
 		$warehouseDAO = new WarehouseDAO($db);
@@ -533,12 +533,12 @@ class CustomerDAO extends PSIBaseExDAO {
 			// 没有选择销售出库仓库
 			$warehouseId = "";
 		}
-		
+
 		$py = $params["py"];
 		$categoryId = $params["categoryId"];
-		
+
 		$recordStatus = $params["recordStatus"];
-		
+
 		// 检查编码是否已经存在
 		$sql = "select count(*) as cnt from t_customer where code = '%s'  and id <> '%s' ";
 		$data = $db->query($sql, $code, $id);
@@ -546,7 +546,7 @@ class CustomerDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("编码为 [{$code}] 的客户已经存在");
 		}
-		
+
 		$sql = "update t_customer
 					set code = '%s', name = '%s', category_id = '%s', py = '%s',
 					contact01 = '%s', qq01 = '%s', tel01 = '%s', mobile01 = '%s',
@@ -556,14 +556,14 @@ class CustomerDAO extends PSIBaseExDAO {
 					fax = '%s', note = '%s', sales_warehouse_id = '%s',
 					record_status = %d
 				where id = '%s'  ";
-		
-		$rc = $db->execute($sql, $code, $name, $categoryId, $py, $contact01, $qq01, $tel01, 
-				$mobile01, $contact02, $qq02, $tel02, $mobile02, $address, $addressReceipt, 
+
+		$rc = $db->execute($sql, $code, $name, $categoryId, $py, $contact01, $qq01, $tel01,
+				$mobile01, $contact02, $qq02, $tel02, $mobile02, $address, $addressReceipt,
 				$bankName, $bankAccount, $tax, $fax, $note, $warehouseId, $recordStatus, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 操作成功
 		return null;
 	}
@@ -571,16 +571,16 @@ class CustomerDAO extends PSIBaseExDAO {
 	/**
 	 * 删除客户资料
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return NULL|array
 	 */
 	public function deleteCustomer(& $params) {
 		$db = $this->db;
-		
+
 		$id = $params["id"];
-		
+
 		$customer = $this->getCustomerById($id);
-		
+
 		if (! $customer) {
 			return $this->bad("要删除的客户资料不存在");
 		}
@@ -588,7 +588,7 @@ class CustomerDAO extends PSIBaseExDAO {
 		$name = $customer["name"];
 		$params["code"] = $code;
 		$params["name"] = $name;
-		
+
 		// 判断是否能删除客户资料
 		$sql = "select count(*) as cnt from t_ws_bill where customer_id = '%s' ";
 		$data = $db->query($sql, $id);
@@ -596,7 +596,7 @@ class CustomerDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("客户资料 [{$code} {$name}] 已经在销售出库单中使用了，不能删除");
 		}
-		
+
 		$sql = "select count(*) as cnt
 				from t_receivables_detail r, t_receiving v
 				where r.ref_number = v.ref_number and r.ref_type = v.ref_type
@@ -606,7 +606,7 @@ class CustomerDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("客户资料 [{$code} {$name}] 已经有收款记录，不能删除");
 		}
-		
+
 		// 判断在销售退货入库单中是否使用了客户资料
 		$sql = "select count(*) as cnt from t_sr_bill where customer_id = '%s' ";
 		$data = $db->query($sql, $id);
@@ -614,26 +614,26 @@ class CustomerDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("客户资料 [{$code} {$name}]已经在销售退货入库单中使用了，不能删除");
 		}
-		
+
 		$sql = "delete from t_customer where id = '%s' ";
 		$rc = $db->execute($sql, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 删除客户应收总账和明细账
 		$sql = "delete from t_receivables where ca_id = '%s' and ca_type = 'customer' ";
 		$rc = $db->execute($sql, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		$sql = "delete from t_receivables_detail where ca_id = '%s' and ca_type = 'customer' ";
 		$rc = $db->execute($sql, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 操作成功
 		return null;
 	}
@@ -641,12 +641,12 @@ class CustomerDAO extends PSIBaseExDAO {
 	/**
 	 * 通过客户id查询客户资料
 	 *
-	 * @param string $id        	
+	 * @param string $id
 	 * @return array|NULL
 	 */
 	public function getCustomerById($id) {
 		$db = $this->db;
-		
+
 		$sql = "select code, name from t_customer where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if ($data) {
@@ -662,17 +662,16 @@ class CustomerDAO extends PSIBaseExDAO {
 	/**
 	 * 获得某个分类的客户列表
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return array
 	 */
 	public function customerList($params) {
 		$db = $this->db;
-		
+
 		$categoryId = $params["categoryId"];
-		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
-		
+
 		$code = $params["code"];
 		$name = $params["name"];
 		$address = $params["address"];
@@ -680,12 +679,12 @@ class CustomerDAO extends PSIBaseExDAO {
 		$mobile = $params["mobile"];
 		$tel = $params["tel"];
 		$qq = $params["qq"];
-		
+
 		$loginUserId = $params["loginUserId"];
 		if ($this->loginUserIdNotExists($loginUserId)) {
 			return $this->emptyResult();
 		}
-		
+
 		$sql = "select id, category_id, code, name, address, contact01, qq01, tel01, mobile01,
 				 	contact02, qq02, tel02, mobile02, init_receivables, init_receivables_dt,
 					address_receipt, bank_name, bank_account, tax_number, fax, note, data_org,
@@ -727,14 +726,14 @@ class CustomerDAO extends PSIBaseExDAO {
 			$queryParam[] = "%{$qq}%";
 			$queryParam[] = "%{$qq}";
 		}
-		
+
 		$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::CUSTOMER, "t_customer", $loginUserId);
 		if ($rs) {
 			$sql .= " and " . $rs[0];
 			$queryParam = array_merge($queryParam, $rs[1]);
 		}
-		
+
 		$sql .= " order by code limit %d, %d";
 		$queryParam[] = $start;
 		$queryParam[] = $limit;
@@ -743,14 +742,14 @@ class CustomerDAO extends PSIBaseExDAO {
 		$warehouseDAO = new WarehouseDAO($db);
 		foreach ( $data as $v ) {
 			$initDT = $v["init_receivables_dt"] ? $this->toYMD($v["init_receivables_dt"]) : null;
-			
+
 			$warehouseId = $v["sales_warehouse_id"];
 			$warehouseName = "";
 			if ($warehouseId) {
 				$warehouse = $warehouseDAO->getWarehouseById($warehouseId);
 				$warehouseName = $warehouse["name"];
 			}
-			
+
 			$result[] = [
 					"id" => $v["id"],
 					"categoryId" => $v["category_id"],
@@ -778,7 +777,7 @@ class CustomerDAO extends PSIBaseExDAO {
 					"recordStatus" => $v["record_status"]
 			];
 		}
-		
+
 		$sql = "select count(*) as cnt from t_customer where (category_id  = '%s') ";
 		$queryParam = [];
 		$queryParam[] = $categoryId;
@@ -816,16 +815,16 @@ class CustomerDAO extends PSIBaseExDAO {
 			$queryParam[] = "%{$qq}%";
 			$queryParam[] = "%{$qq}";
 		}
-		
+
 		$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::CUSTOMER, "t_customer", $loginUserId);
 		if ($rs) {
 			$sql .= " and " . $rs[0];
 			$queryParam = array_merge($queryParam, $rs[1]);
 		}
-		
+
 		$data = $db->query($sql, $queryParam);
-		
+
 		return [
 				"customerList" => $result,
 				"totalCount" => $data[0]["cnt"]
@@ -835,22 +834,22 @@ class CustomerDAO extends PSIBaseExDAO {
 	/**
 	 * 客户字段，查询数据
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return array
 	 */
 	public function queryData($params) {
 		$db = $this->db;
-		
+
 		$loginUserId = $params["loginUserId"];
 		if ($this->loginUserIdNotExists($loginUserId)) {
 			return $this->emptyResult();
 		}
-		
+
 		$queryKey = $params["queryKey"];
 		if ($queryKey == null) {
 			$queryKey = "";
 		}
-		
+
 		$sql = "select id, code, name, mobile01, tel01, fax, address_receipt, contact01,
 					sales_warehouse_id
 				from t_customer
@@ -864,22 +863,22 @@ class CustomerDAO extends PSIBaseExDAO {
 		$queryParams[] = $key;
 		$queryParams[] = $key;
 		$queryParams[] = $key;
-		
+
 		$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::CUSTOMER_BILL, "t_customer", $loginUserId);
 		if ($rs) {
 			$sql .= " and " . $rs[0];
 			$queryParams = array_merge($queryParams, $rs[1]);
 		}
-		
+
 		$sql .= " order by code limit 20";
-		
+
 		$data = $db->query($sql, $queryParams);
-		
+
 		$result = [];
-		
+
 		$warehouseDAO = new WarehouseDAO($db);
-		
+
 		foreach ( $data as $v ) {
 			$warehouseId = $v["sales_warehouse_id"];
 			$warehouseName = null;
@@ -902,7 +901,7 @@ class CustomerDAO extends PSIBaseExDAO {
 					"warehouseName" => $warehouseName
 			];
 		}
-		
+
 		return $result;
 	}
 
@@ -915,9 +914,9 @@ class CustomerDAO extends PSIBaseExDAO {
 	 */
 	public function customerInfo($id) {
 		$db = $this->db;
-		
+
 		$result = [];
-		
+
 		$sql = "select category_id, code, name, contact01, qq01, mobile01, tel01,
 					contact02, qq02, mobile02, tel02, address, address_receipt,
 					init_receivables, init_receivables_dt,
@@ -951,7 +950,7 @@ class CustomerDAO extends PSIBaseExDAO {
 			$result["fax"] = $data[0]["fax"];
 			$result["note"] = $data[0]["note"];
 			$result["recordStatus"] = $data[0]["record_status"];
-			
+
 			$result["warehouseId"] = null;
 			$result["warehouseName"] = null;
 			$warehouseId = $data[0]["sales_warehouse_id"];
@@ -964,7 +963,7 @@ class CustomerDAO extends PSIBaseExDAO {
 				}
 			}
 		}
-		
+
 		return $result;
 	}
 
@@ -973,15 +972,15 @@ class CustomerDAO extends PSIBaseExDAO {
 	 */
 	public function priceSystemList($params) {
 		$db = $this->db;
-		
+
 		// id: 客户分类id
 		$id = $params["id"];
-		
+
 		$sql = "select id, name 
 				from t_price_system
 				order by name";
 		$data = $db->query($sql);
-		
+
 		$result = [
 				[
 						"id" => "-1",
@@ -994,7 +993,7 @@ class CustomerDAO extends PSIBaseExDAO {
 					"name" => $v["name"]
 			];
 		}
-		
+
 		$psId = null;
 		if ($id) {
 			$sql = "select ps_id from t_customer_category where id = '%s' ";
@@ -1003,7 +1002,7 @@ class CustomerDAO extends PSIBaseExDAO {
 				$psId = $data[0]["ps_id"];
 			}
 		}
-		
+
 		return [
 				"psId" => $psId,
 				"priceList" => $result
@@ -1019,15 +1018,15 @@ class CustomerDAO extends PSIBaseExDAO {
 	 */
 	public function getSalesWarehouse(string $id) {
 		$db = $this->db;
-		
+
 		$sql = "select sales_warehouse_id from t_customer where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if (! $data) {
 			return null;
 		}
-		
+
 		$warehouseId = $data[0]["sales_warehouse_id"];
-		
+
 		$sql = "select id, name from t_warehouse where id = '%s' ";
 		$data = $db->query($sql, $warehouseId);
 		if (! $data) {

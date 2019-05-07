@@ -14,29 +14,29 @@ class FactoryDAO extends PSIBaseExDAO {
 	/**
 	 * 供应商分类列表
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return array
 	 */
 	public function categoryList($params) {
 		$db = $this->db;
-		
+
 		$code = $params["code"];
 		$name = $params["name"];
 		$address = $params["address"];
 		$contact = $params["contact"];
 		$mobile = $params["mobile"];
 		$tel = $params["tel"];
-		
+
 		$inQuery = false;
 		if ($code || $name || $address || $contact || $mobile || $tel) {
 			$inQuery = true;
 		}
-		
+
 		$loginUserId = $params["loginUserId"];
 		if ($this->loginUserIdNotExists($loginUserId)) {
 			return $this->emptyResult();
 		}
-		
+
 		$sql = "select c.id, c.code, c.name
 				from t_factory_category c ";
 		$queryParam = [];
@@ -47,13 +47,13 @@ class FactoryDAO extends PSIBaseExDAO {
 			$queryParam = array_merge($queryParam, $rs[1]);
 		}
 		$sql .= " order by c.code";
-		
+
 		$data = $db->query($sql, $queryParam);
-		
+
 		$result = [];
 		foreach ( $data as $v ) {
 			$id = $v["id"];
-			
+
 			$queryParam = [];
 			$sql = "select count(s.id) as cnt
 					from t_factory s
@@ -93,15 +93,15 @@ class FactoryDAO extends PSIBaseExDAO {
 				$sql .= " and " . $rs[0];
 				$queryParam = array_merge($queryParam, $rs[1]);
 			}
-			
+
 			$d = $db->query($sql, $queryParam);
 			$factoryCount = $d[0]["cnt"];
-			
+
 			if ($inQuery && $factoryCount == 0) {
 				// 当前是查询，而且当前分类下没有符合查询条件的工厂，就不返回该工厂分类
 				continue;
 			}
-			
+
 			$result[] = [
 					"id" => $id,
 					"code" => $v["code"],
@@ -109,22 +109,22 @@ class FactoryDAO extends PSIBaseExDAO {
 					"cnt" => $factoryCount
 			];
 		}
-		
+
 		return $result;
 	}
 
 	/**
 	 * 新增工厂分类
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return array|null
 	 */
 	public function addFactoryCategory(& $params) {
 		$db = $this->db;
-		
+
 		$code = trim($params["code"]);
 		$name = trim($params["name"]);
-		
+
 		$dataOrg = $params["dataOrg"];
 		$companyId = $params["companyId"];
 		if ($this->dataOrgNotExists($dataOrg)) {
@@ -133,14 +133,14 @@ class FactoryDAO extends PSIBaseExDAO {
 		if ($this->companyIdNotExists($companyId)) {
 			return $this->badParam("companyId");
 		}
-		
+
 		if ($this->isEmptyStringAfterTrim($code)) {
 			return $this->bad("分类编码不能为空");
 		}
 		if ($this->isEmptyStringAfterTrim($name)) {
 			return $this->bad("分类名称不能为空");
 		}
-		
+
 		// 检查分类编码是否已经存在
 		$sql = "select count(*) as cnt from t_factory_category where code = '%s' ";
 		$data = $db->query($sql, $code);
@@ -148,16 +148,16 @@ class FactoryDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("编码为 [$code] 的分类已经存在");
 		}
-		
+
 		$id = $this->newId();
-		
+
 		$sql = "insert into t_factory_category (id, code, name, data_org, company_id)
 					values ('%s', '%s', '%s', '%s', '%s') ";
 		$rc = $db->execute($sql, $id, $code, $name, $dataOrg, $companyId);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 操作成功
 		$params["id"] = $id;
 		return null;
@@ -166,23 +166,23 @@ class FactoryDAO extends PSIBaseExDAO {
 	/**
 	 * 编辑工厂分类
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return array|null
 	 */
 	public function updateFactoryCategory(& $params) {
 		$db = $this->db;
-		
+
 		$id = $params["id"];
 		$code = trim($params["code"]);
 		$name = trim($params["name"]);
-		
+
 		if ($this->isEmptyStringAfterTrim($code)) {
 			return $this->bad("分类编码不能为空");
 		}
 		if ($this->isEmptyStringAfterTrim($name)) {
 			return $this->bad("分类名称不能为空");
 		}
-		
+
 		// 检查分类编码是否已经存在
 		$sql = "select count(*) as cnt from t_factory_category where code = '%s' and id <> '%s' ";
 		$data = $db->query($sql, $code, $id);
@@ -190,7 +190,7 @@ class FactoryDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("编码为 [$code] 的分类已经存在");
 		}
-		
+
 		$sql = "update t_factory_category
 				set code = '%s', name = '%s'
 				where id = '%s' ";
@@ -198,7 +198,7 @@ class FactoryDAO extends PSIBaseExDAO {
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 操作成功
 		return null;
 	}
@@ -206,12 +206,12 @@ class FactoryDAO extends PSIBaseExDAO {
 	/**
 	 * 根据工厂分类id查询工厂分类
 	 *
-	 * @param string $id        	
+	 * @param string $id
 	 * @return array|NULL
 	 */
 	public function getFactoryCategoryById($id) {
 		$db = $this->db;
-		
+
 		$sql = "select code, name from t_factory_category where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if ($data) {
@@ -227,23 +227,23 @@ class FactoryDAO extends PSIBaseExDAO {
 	/**
 	 * 删除工厂分类
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return NULL|array
 	 */
 	public function deleteFactoryCategory(& $params) {
 		$db = $this->db;
-		
+
 		$id = $params["id"];
-		
+
 		$category = $this->getFactoryCategoryById($id);
 		if (! $category) {
 			return $this->bad("要删除的分类不存在");
 		}
-		
+
 		$params["code"] = $category["code"];
 		$params["name"] = $category["name"];
 		$name = $params["name"];
-		
+
 		$sql = "select count(*) as cnt
 				from t_factory
 				where category_id = '%s' ";
@@ -253,13 +253,13 @@ class FactoryDAO extends PSIBaseExDAO {
 			$db->rollback();
 			return $this->bad("当前分类 [{$name}] 下还有工厂，不能删除");
 		}
-		
+
 		$sql = "delete from t_factory_category where id = '%s' ";
 		$rc = $db->execute($sql, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 操作成功
 		return null;
 	}
@@ -267,29 +267,28 @@ class FactoryDAO extends PSIBaseExDAO {
 	/**
 	 * 某个分类下的工厂列表
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return array
 	 */
 	public function factoryList($params) {
 		$db = $this->db;
-		
+
 		$categoryId = $params["categoryId"];
-		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
-		
+
 		$code = $params["code"];
 		$name = $params["name"];
 		$address = $params["address"];
 		$contact = $params["contact"];
 		$mobile = $params["mobile"];
 		$tel = $params["tel"];
-		
+
 		$loginUserId = $params["loginUserId"];
 		if ($this->loginUserIdNotExists($loginUserId)) {
 			return $this->emptyResult();
 		}
-		
+
 		$sql = "select id, category_id, code, name, contact01, tel01, mobile01,
 					contact02, tel02, mobile02, init_payables, init_payables_dt,
 					address, bank_name, bank_account, tax_number, fax, note, 
@@ -327,14 +326,14 @@ class FactoryDAO extends PSIBaseExDAO {
 			$queryParam[] = "%{$tel}%";
 			$queryParam[] = "%{$tel}";
 		}
-		
+
 		$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::FACTORY, "t_factory", $loginUserId);
 		if ($rs) {
 			$sql .= " and " . $rs[0];
 			$queryParam = array_merge($queryParam, $rs[1]);
 		}
-		
+
 		$queryParam[] = $start;
 		$queryParam[] = $limit;
 		$sql .= " order by code
@@ -343,7 +342,7 @@ class FactoryDAO extends PSIBaseExDAO {
 		$data = $db->query($sql, $queryParam);
 		foreach ( $data as $v ) {
 			$initDT = $v["init_payables_dt"] ? $this->toYMD($v["init_payables_dt"]) : null;
-			
+
 			$result[] = [
 					"id" => $v["id"],
 					"categoryId" => $v["category_id"],
@@ -367,7 +366,7 @@ class FactoryDAO extends PSIBaseExDAO {
 					"recordStatus" => $v["record_status"]
 			];
 		}
-		
+
 		$sql = "select count(*) as cnt from t_factory where (category_id  = '%s') ";
 		$queryParam = [];
 		$queryParam[] = $categoryId;
@@ -407,7 +406,7 @@ class FactoryDAO extends PSIBaseExDAO {
 		}
 		$data = $db->query($sql, $queryParam);
 		$cnt = $data[0]["cnt"];
-		
+
 		return [
 				"dataList" => $result,
 				"totalCount" => $cnt
@@ -416,7 +415,7 @@ class FactoryDAO extends PSIBaseExDAO {
 
 	public function getFactoryById($id) {
 		$db = $this->db;
-		
+
 		$sql = "select code, name from t_factory where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if ($data) {
@@ -433,12 +432,12 @@ class FactoryDAO extends PSIBaseExDAO {
 	/**
 	 * 新建工厂
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return NULL|array
 	 */
 	public function addFactory(& $params) {
 		$db = $this->db;
-		
+
 		$code = $params["code"];
 		$name = $params["name"];
 		$address = $params["address"];
@@ -454,7 +453,7 @@ class FactoryDAO extends PSIBaseExDAO {
 		$fax = $params["fax"];
 		$note = $params["note"];
 		$recordStatus = $params["recordStatus"];
-		
+
 		$dataOrg = $params["dataOrg"];
 		$companyId = $params["companyId"];
 		if ($this->dataOrgNotExists($dataOrg)) {
@@ -463,10 +462,10 @@ class FactoryDAO extends PSIBaseExDAO {
 		if ($this->companyIdNotExists($companyId)) {
 			return $this->badParam("companyId");
 		}
-		
+
 		$categoryId = $params["categoryId"];
 		$py = $params["py"];
-		
+
 		// 检查编码是否已经存在
 		$sql = "select count(*) as cnt from t_factory where code = '%s' ";
 		$data = $db->query($sql, $code);
@@ -474,10 +473,10 @@ class FactoryDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("编码为 [$code] 的工厂已经存在");
 		}
-		
+
 		$id = $this->newId();
 		$params["id"] = $id;
-		
+
 		$sql = "insert into t_factory (id, category_id, code, name, py, 
 					contact01, tel01, mobile01, contact02, tel02, mobile02, 
 					address, bank_name, bank_account, tax_number, fax, note, 
@@ -486,13 +485,13 @@ class FactoryDAO extends PSIBaseExDAO {
 						'%s', '%s', '%s', '%s', '%s', '%s',
 						'%s', '%s', '%s', '%s', '%s', '%s', 
 						'%s', '%s', %d)  ";
-		$rc = $db->execute($sql, $id, $categoryId, $code, $name, $py, $contact01, $tel01, $mobile01, 
-				$contact02, $tel02, $mobile02, $address, $bankName, $bankAccount, $tax, $fax, $note, 
+		$rc = $db->execute($sql, $id, $categoryId, $code, $name, $py, $contact01, $tel01, $mobile01,
+				$contact02, $tel02, $mobile02, $address, $bankName, $bankAccount, $tax, $fax, $note,
 				$dataOrg, $companyId, $recordStatus);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 操作成功
 		return null;
 	}
@@ -500,12 +499,12 @@ class FactoryDAO extends PSIBaseExDAO {
 	/**
 	 * 编辑工厂
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return NULL|array
 	 */
 	public function updateFactory(& $params) {
 		$db = $this->db;
-		
+
 		$id = $params["id"];
 		$code = $params["code"];
 		$name = $params["name"];
@@ -522,10 +521,10 @@ class FactoryDAO extends PSIBaseExDAO {
 		$fax = $params["fax"];
 		$note = $params["note"];
 		$recordStatus = $params["recordStatus"];
-		
+
 		$categoryId = $params["categoryId"];
 		$py = $params["py"];
-		
+
 		// 检查编码是否已经存在
 		$sql = "select count(*) as cnt from t_factory where code = '%s'  and id <> '%s' ";
 		$data = $db->query($sql, $code, $id);
@@ -533,7 +532,7 @@ class FactoryDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("编码为 [$code] 的工厂已经存在");
 		}
-		
+
 		$sql = "update t_factory
 				set code = '%s', name = '%s', category_id = '%s', py = '%s',
 					contact01 = '%s', tel01 = '%s', mobile01 = '%s',
@@ -542,14 +541,14 @@ class FactoryDAO extends PSIBaseExDAO {
 					bank_name = '%s', bank_account = '%s', tax_number = '%s',
 					fax = '%s', note = '%s', record_status = %d
 				where id = '%s'  ";
-		
-		$rc = $db->execute($sql, $code, $name, $categoryId, $py, $contact01, $tel01, $mobile01, 
-				$contact02, $tel02, $mobile02, $address, $bankName, $bankAccount, $tax, $fax, $note, 
+
+		$rc = $db->execute($sql, $code, $name, $categoryId, $py, $contact01, $tel01, $mobile01,
+				$contact02, $tel02, $mobile02, $address, $bankName, $bankAccount, $tax, $fax, $note,
 				$recordStatus, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 操作成功
 		return null;
 	}
@@ -557,16 +556,16 @@ class FactoryDAO extends PSIBaseExDAO {
 	/**
 	 * 初始化应付账款
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return NULL|array
 	 */
 	public function initPayables(& $params) {
 		$db = $this->db;
-		
+
 		$id = $params["id"];
 		$initPayables = $params["initPayables"];
 		$initPayablesDT = $params["initPayablesDT"];
-		
+
 		$dataOrg = $params["dataOrg"];
 		$companyId = $params["companyId"];
 		if ($this->dataOrgNotExists($dataOrg)) {
@@ -575,7 +574,7 @@ class FactoryDAO extends PSIBaseExDAO {
 		if ($this->companyIdNotExists($companyId)) {
 			return $this->badParam("companyId");
 		}
-		
+
 		$sql = "select count(*) as cnt
 				from t_payables_detail
 				where ca_id = '%s' and ca_type = 'factory' and ref_type <> '应付账款期初建账'
@@ -586,7 +585,7 @@ class FactoryDAO extends PSIBaseExDAO {
 			// 已经有往来业务发生，就不能修改应付账了
 			return null;
 		}
-		
+
 		$initPayables = floatval($initPayables);
 		if ($initPayables && $initPayablesDT) {
 			$sql = "update t_factory
@@ -596,7 +595,7 @@ class FactoryDAO extends PSIBaseExDAO {
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
-			
+
 			// 应付明细账
 			$sql = "select id from t_payables_detail
 					where ca_id = '%s' and ca_type = 'factory' and ref_type = '应付账款期初建账'
@@ -616,13 +615,13 @@ class FactoryDAO extends PSIBaseExDAO {
 				$sql = "insert into t_payables_detail (id, pay_money, act_money, balance_money, ca_id,
 							ca_type, ref_type, ref_number, biz_date, date_created, data_org, company_id)
 						values ('%s', %f, 0, %f, '%s', 'factory', '应付账款期初建账', '%s', '%s', now(), '%s', '%s') ";
-				$rc = $db->execute($sql, $payId, $initPayables, $initPayables, $id, $id, 
+				$rc = $db->execute($sql, $payId, $initPayables, $initPayables, $id, $id,
 						$initPayablesDT, $dataOrg, $companyId);
 				if ($rc === false) {
 					return $this->sqlError(__METHOD__, __LINE__);
 				}
 			}
-			
+
 			// 应付总账
 			$sql = "select id from t_payables
 					where ca_id = '%s' and ca_type = 'factory'
@@ -642,7 +641,7 @@ class FactoryDAO extends PSIBaseExDAO {
 				$sql = "insert into t_payables (id, pay_money, act_money, balance_money, ca_id,
 							ca_type, data_org, company_id)
 						values ('%s', %f, 0, %f, '%s', 'factory', '%s', '%s') ";
-				$rc = $db->execute($sql, $pId, $initPayables, $initPayables, $id, $dataOrg, 
+				$rc = $db->execute($sql, $pId, $initPayables, $initPayables, $id, $dataOrg,
 						$companyId);
 				if ($rc === false) {
 					return $this->sqlError(__METHOD__, __LINE__);
@@ -657,7 +656,7 @@ class FactoryDAO extends PSIBaseExDAO {
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
-			
+
 			// 明细账
 			$sql = "delete from t_payables_detail
 					where ca_id = '%s' and ca_type = 'factory' and ref_type = '应付账款期初建账'
@@ -666,7 +665,7 @@ class FactoryDAO extends PSIBaseExDAO {
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
-			
+
 			// 总账
 			$sql = "delete from t_payables
 					where ca_id = '%s' and ca_type = 'factory'
@@ -676,7 +675,7 @@ class FactoryDAO extends PSIBaseExDAO {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
 		}
-		
+
 		// 操作成功
 		return null;
 	}
@@ -684,16 +683,16 @@ class FactoryDAO extends PSIBaseExDAO {
 	/**
 	 * 获得某个工厂的详情
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return array
 	 */
 	public function factoryInfo($params) {
 		$db = $this->db;
-		
+
 		$id = $params["id"];
-		
+
 		$result = [];
-		
+
 		$sql = "select category_id, code, name, contact01, mobile01, tel01,
 					contact02, mobile02, tel02, address,
 					init_payables, init_payables_dt,
@@ -725,29 +724,29 @@ class FactoryDAO extends PSIBaseExDAO {
 			$result["note"] = $data[0]["note"];
 			$result["recordStatus"] = $data[0]["record_status"];
 		}
-		
+
 		return $result;
 	}
 
 	/**
 	 * 删除工厂
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 */
 	public function deleteFactory(& $params) {
 		$db = $this->db;
-		
+
 		// 工厂id
 		$id = $params["id"];
-		
+
 		$factory = $this->getFactoryById($id);
 		if (! $factory) {
 			return $this->bad("要删除的工厂不存在");
 		}
-		
+
 		$code = $factory["code"];
 		$name = $factory["name"];
-		
+
 		// 检查工厂在成品委托生产订单中是否使用过
 		$sql = "select count(*) as cnt from t_dmo_bill where factory_id = '%s' ";
 		$data = $db->query($sql, $id);
@@ -755,7 +754,7 @@ class FactoryDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("工厂[{$name}]已经在成品委托生产订单中使用了，不能再删除");
 		}
-		
+
 		// 检查工厂在成品委托生产入库单中是否使用过
 		$sql = "select count(*) as cnt from t_dmw_bill where factory_id = '%s' ";
 		$data = $db->query($sql, $id);
@@ -763,28 +762,28 @@ class FactoryDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("工厂[{$name}]已经在成品委托生产入库单中使用了，不能再删除");
 		}
-		
+
 		// 删除
 		$sql = "delete from t_factory where id = '%s' ";
 		$rc = $db->execute($sql, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 删除应付总账
 		$sql = "delete from t_payables where ca_id = '%s' and ca_type = 'factory' ";
 		$rc = $db->execute($sql, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 删除应付明细账
 		$sql = "delete from t_payables_detail where ca_id = '%s' and ca_type = 'factory' ";
 		$rc = $db->execute($sql, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 操作成功
 		$params["code"] = $code;
 		$params["name"] = $name;
@@ -794,23 +793,23 @@ class FactoryDAO extends PSIBaseExDAO {
 	/**
 	 * 工厂自定义字段， 查询数据
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return array
 	 */
 	public function queryData($params) {
 		$db = $this->db;
-		
+
 		$queryKey = $params["queryKey"];
 		$loginUserId = $params["loginUserId"];
-		
+
 		if ($this->loginUserIdNotExists($loginUserId)) {
 			return $this->emptyResult();
 		}
-		
+
 		if ($queryKey == null) {
 			$queryKey = "";
 		}
-		
+
 		$sql = "select id, code, name, tel01, fax, contact01
 				from t_factory
 				where (record_status = 1000)
@@ -820,20 +819,20 @@ class FactoryDAO extends PSIBaseExDAO {
 		$queryParams[] = $key;
 		$queryParams[] = $key;
 		$queryParams[] = $key;
-		
+
 		$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::FACTORY_BILL, "t_factory", $loginUserId);
 		if ($rs) {
 			$sql .= " and " . $rs[0];
 			$queryParams = array_merge($queryParams, $rs[1]);
 		}
-		
+
 		$sql .= " order by code
 				limit 20";
 		$data = $db->query($sql, $queryParams);
-		
+
 		$result = [];
-		
+
 		foreach ( $data as $v ) {
 			$result[] = [
 					"id" => $v["id"],
@@ -844,7 +843,7 @@ class FactoryDAO extends PSIBaseExDAO {
 					"contact01" => $v["contact01"]
 			];
 		}
-		
+
 		return $result;
 	}
 }

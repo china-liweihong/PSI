@@ -2,6 +2,8 @@
 
 namespace Home\DAO\Common;
 
+use Home\DAO\PSIBaseExDAO;
+
 /**
  * 通用库存 DAO
  *
@@ -12,7 +14,7 @@ class InventoryDAO extends PSIBaseExDAO {
 	/**
 	 * 入库操作 - 修改库存账
 	 *
-	 * @param array $item        	
+	 * @param array $item
 	 */
 	public function inAction($item) {
 		$warehouseId = $item["warehouseId"];
@@ -23,7 +25,7 @@ class InventoryDAO extends PSIBaseExDAO {
 		if (! $goodsId) {
 			return $this->badParam("goodsId");
 		}
-		
+
 		// TODO
 		return $this->todo();
 	}
@@ -31,7 +33,7 @@ class InventoryDAO extends PSIBaseExDAO {
 	/**
 	 * 出库操作 - 修改库存账
 	 *
-	 * @param array $item        	
+	 * @param array $item
 	 */
 	public function outAction($item) {
 		// TODO

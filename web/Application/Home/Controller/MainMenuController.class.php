@@ -2,12 +2,11 @@
 
 namespace Home\Controller;
 
-use Think\Controller;
-use Home\Service\FIdService;
-use Home\Service\BizlogService;
-use Home\Service\UserService;
 use Home\Common\FIdConst;
+use Home\Service\BizlogService;
+use Home\Service\FIdService;
 use Home\Service\MainMenuService;
+use Home\Service\UserService;
 
 /**
  * 主菜单Controller
@@ -22,20 +21,20 @@ class MainMenuController extends PSIBaseController {
 	 */
 	public function navigateTo() {
 		$this->assign("uri", __ROOT__ . "/");
-		
+
 		$fid = I("get.fid");
-		
+
 		// $t == 1的时候，是从常用功能链接点击而来的
 		$t = I("get.t");
-		
+
 		$fidService = new FIdService();
 		$fidService->insertRecentFid($fid);
 		$fidName = $fidService->getFIdName($fid);
 		if ($fidName) {
 			// 记录业务日志
-			
+
 			$bizLogService = new BizlogService();
-			
+
 			if ($t == "1") {
 				$bizLogService->insertBizlog("通过常用功能进入模块：" . $fidName, "常用功能");
 			} else {
@@ -45,7 +44,7 @@ class MainMenuController extends PSIBaseController {
 		if (! $fid) {
 			redirect(__ROOT__ . "/Home");
 		}
-		
+
 		if (substr($fid, 0, 2) == "ct") {
 			// 码表
 			redirect(__ROOT__ . "/Home/CodeTable/run?fid={$fid}");
@@ -283,7 +282,7 @@ class MainMenuController extends PSIBaseController {
 	public function mainMenuItems() {
 		if (IS_POST) {
 			$ms = new MainMenuService();
-			
+
 			$this->ajaxReturn($ms->mainMenuItems());
 		}
 	}
@@ -295,7 +294,7 @@ class MainMenuController extends PSIBaseController {
 		if (IS_POST) {
 			$fidService = new FIdService();
 			$data = $fidService->recentFid();
-			
+
 			$this->ajaxReturn($data);
 		}
 	}
@@ -305,12 +304,12 @@ class MainMenuController extends PSIBaseController {
 	 */
 	public function maintainIndex() {
 		$us = new UserService();
-		
+
 		if ($us->hasPermission(FIdConst::MAIN_MENU)) {
 			$this->initVar();
-			
+
 			$this->assign("title", "主菜单维护");
-			
+
 			$this->display();
 		} else {
 			$this->gotoLoginPage("/Home/MainMenu/maintainIndex");
@@ -335,7 +334,7 @@ class MainMenuController extends PSIBaseController {
 			$params = [
 					"queryKey" => I("post.queryKey")
 			];
-			
+
 			$service = new MainMenuService();
 			$this->ajaxReturn($service->queryDataForFid($params));
 		}
@@ -349,7 +348,7 @@ class MainMenuController extends PSIBaseController {
 			$params = [
 					"queryKey" => I("post.queryKey")
 			];
-			
+
 			$service = new MainMenuService();
 			$this->ajaxReturn($service->queryDataForMenuItem($params));
 		}
@@ -367,7 +366,7 @@ class MainMenuController extends PSIBaseController {
 					"parentMenuId" => I("post.parentMenuId"),
 					"showOrder" => I("post.showOrder")
 			];
-			
+
 			$service = new MainMenuService();
 			$this->ajaxReturn($service->editMenuItem($params));
 		}
@@ -381,7 +380,7 @@ class MainMenuController extends PSIBaseController {
 			$params = [
 					"id" => I("post.id")
 			];
-			
+
 			$service = new MainMenuService();
 			$this->ajaxReturn($service->deleteMenuItem($params));
 		}
@@ -395,7 +394,7 @@ class MainMenuController extends PSIBaseController {
 			$params = [
 					"id" => I("post.id")
 			];
-			
+
 			$service = new MainMenuService();
 			$this->ajaxReturn($service->menuItemInfo($params));
 		}

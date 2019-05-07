@@ -12,11 +12,6 @@ use Home\Common\FIdConst;
 class GoodsCategoryDAO extends PSIBaseExDAO {
 
 	private function allCategoriesInternal($db, $parentId, $rs, $params) {
-		$code = $params["code"];
-		$name = $params["name"];
-		$spec = $params["spec"];
-		$barCode = $params["barCode"];
-		
 		$result = array();
 		$sql = "select id, code, name, full_name, tax_rate
 				from t_goods_category c
@@ -28,7 +23,7 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 			$sql .= " and " . $rs[0];
 			$queryParam = array_merge($queryParam, $rs[1]);
 		}
-		
+
 		$sql .= " order by code";
 		$data = $db->query($sql, $queryParam);
 		foreach ( $data as $i => $v ) {
@@ -42,17 +37,17 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 			}
 			$result[$i]["fullName"] = $fullName;
 			$result[$i]["taxRate"] = $this->toTaxRate($v["tax_rate"]);
-			
+
 			$children = $this->allCategoriesInternal($db, $id, $rs, $params); // 自身递归调用
-			
+
 			$result[$i]["children"] = $children;
 			$result[$i]["leaf"] = count($children) == 0;
 			$result[$i]["expanded"] = true;
 			$result[$i]["iconCls"] = "PSI-GoodsCategory";
-			
+
 			$result[$i]["cnt"] = $this->getGoodsCountWithAllSub($db, $id, $params, $rs);
 		}
-		
+
 		return $result;
 	}
 
@@ -65,7 +60,7 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 		$spec = $params["spec"];
 		$barCode = $params["barCode"];
 		$brandId = $params["brandId"];
-		
+
 		$sql = "select count(*) as cnt 
 					from t_goods c
 					where c.category_id = '%s' ";
@@ -96,10 +91,10 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 			$sql .= " and (c.brand_id = '%s') ";
 			$queryParam[] = $brandId;
 		}
-		
+
 		$data = $db->query($sql, $queryParam);
 		$result = $data[0]["cnt"];
-		
+
 		// 子分类
 		$sql = "select id
 				from t_goods_category c
@@ -111,7 +106,7 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 			$sql .= " and " . $rs[0];
 			$queryParam = array_merge($queryParam, $rs[1]);
 		}
-		
+
 		$data = $db->query($sql, $queryParam);
 		foreach ( $data as $v ) {
 			// 递归调用自身
@@ -124,7 +119,7 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 		if (! $taxRate) {
 			return null;
 		}
-		
+
 		$r = intval($taxRate);
 		if ($r >= 0 && $r <= 17) {
 			return "{$r}%";
@@ -136,28 +131,28 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 	/**
 	 * 返回所有的商品分类
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return array
 	 */
 	public function allCategories($params) {
 		$db = $this->db;
-		
+
 		$code = $params["code"];
 		$name = $params["name"];
 		$spec = $params["spec"];
 		$barCode = $params["barCode"];
 		$brandId = $params["brandId"];
-		
+
 		$inQuery = false;
 		if ($code || $name || $spec || $barCode || $brandId) {
 			$inQuery = true;
 		}
-		
+
 		$loginUserId = $params["loginUserId"];
 		if ($this->loginUserIdNotExists($loginUserId)) {
 			return $this->emptyResult();
 		}
-		
+
 		$sql = "select id, code, name, full_name, tax_rate
 				from t_goods_category c
 				where (parent_id is null)
@@ -169,9 +164,9 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 			$sql .= " and " . $rs[0];
 			$queryParam = array_merge($queryParam, $rs[1]);
 		}
-		
+
 		$sql .= " order by code";
-		
+
 		$data = $db->query($sql, $queryParam);
 		$result = array();
 		foreach ( $data as $i => $v ) {
@@ -185,28 +180,28 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 			}
 			$result[$i]["fullName"] = $fullName;
 			$result[$i]["taxRate"] = $this->toTaxRate($v["tax_rate"]);
-			
+
 			$children = $this->allCategoriesInternal($db, $id, $rs, $params);
-			
+
 			$result[$i]["children"] = $children;
 			$result[$i]["leaf"] = count($children) == 0;
 			$result[$i]["expanded"] = true;
 			$result[$i]["iconCls"] = "PSI-GoodsCategory";
-			
+
 			$result[$i]["cnt"] = $this->getGoodsCountWithAllSub($db, $id, $params, $rs);
 		}
-		
+
 		if ($inQuery) {
 			$result = $this->filterCategory($result);
 		}
-		
+
 		return $result;
 	}
 
 	/**
 	 * 把分类中商品数量是0的分类过滤掉
 	 *
-	 * @param array $data        	
+	 * @param array $data
 	 * @return array
 	 */
 	private function filterCategory($data) {
@@ -215,10 +210,10 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 			if ($v["cnt"] == 0) {
 				continue;
 			}
-			
+
 			$result[] = $v;
 		}
-		
+
 		return $result;
 	}
 
@@ -231,7 +226,7 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 	 */
 	public function getGoodsCategoryById($id) {
 		$db = $this->db;
-		
+
 		$sql = "select code, name from t_goods_category where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if ($data) {
@@ -247,16 +242,16 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 	/**
 	 * 新增商品分类
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return NULL|array
 	 */
 	public function addGoodsCategory(& $params) {
 		$db = $this->db;
-		
+
 		$code = trim($params["code"]);
 		$name = trim($params["name"]);
 		$parentId = $params["parentId"];
-		
+
 		$dataOrg = $params["dataOrg"];
 		$companyId = $params["companyId"];
 		if ($this->dataOrgNotExists($dataOrg)) {
@@ -265,15 +260,15 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 		if ($this->companyIdNotExists($companyId)) {
 			return $this->badParam("companyId");
 		}
-		
+
 		if ($this->isEmptyStringAfterTrim($code)) {
 			return $this->bad("分类编码不能为空");
 		}
-		
+
 		if ($this->isEmptyStringAfterTrim($name)) {
 			return $this->bad("分类名称不能为空");
 		}
-		
+
 		if ($parentId) {
 			// 检查parentId是否存在
 			$parentCategory = $this->getGoodsCategoryById($parentId);
@@ -281,7 +276,7 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 				return $this->bad("上级分类不存在");
 			}
 		}
-		
+
 		// 检查同编码的分类是否存在
 		$sql = "select count(*) as cnt from t_goods_category where code = '%s' ";
 		$data = $db->query($sql, $code);
@@ -289,11 +284,11 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("编码为 [{$code}] 的分类已经存在");
 		}
-		
+
 		$taxRate = $params["taxRate"];
-		
+
 		$id = $this->newId();
-		
+
 		if ($parentId) {
 			$sql = "select full_name from t_goods_category where id = '%s' ";
 			$data = $db->query($sql, $parentId);
@@ -302,7 +297,7 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 				$fullName = $data[0]["full_name"];
 				$fullName .= "\\" . $name;
 			}
-			
+
 			$sql = "insert into t_goods_category (id, code, name, data_org, parent_id,
 							full_name, company_id)
 						values ('%s', '%s', '%s', '%s', '%s', '%s', '%s')";
@@ -318,7 +313,7 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
 		}
-		
+
 		if ($taxRate == - 1) {
 			$sql = "update t_goods_category set tax_rate = null where id = '%s' ";
 			$rc = $db->execute($sql, $id);
@@ -339,9 +334,9 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
 		}
-		
+
 		$params["id"] = $id;
-		
+
 		// 操作成功
 		return null;
 	}
@@ -355,14 +350,14 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 		if (! $data) {
 			return true;
 		}
-		
+
 		$fullName = $data[0]["full_name"];
 		$sql = "select id, name from t_goods_category where parent_id = '%s' ";
 		$data = $db->query($sql, $id);
 		foreach ( $data as $v ) {
 			$subId = $v["id"];
 			$name = $v["name"];
-			
+
 			$subFullName = $fullName . "\\" . $name;
 			$sql = "update t_goods_category
 					set full_name = '%s'
@@ -371,44 +366,44 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 			if ($rc === false) {
 				return false;
 			}
-			
+
 			$rc = $this->updateSubCategoryFullName($db, $subId); // 递归调用自身
 			if ($rc === false) {
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
 
 	/**
 	 * 编辑商品分类
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return NULL|array
 	 */
 	public function updateGoodsCategory(& $params) {
 		$db = $this->db;
-		
+
 		$id = $params["id"];
 		$code = trim($params["code"]);
 		$name = trim($params["name"]);
 		$parentId = $params["parentId"];
 		$taxRate = $params["taxRate"];
-		
+
 		if ($this->isEmptyStringAfterTrim($code)) {
 			return $this->bad("分类编码不能为空");
 		}
-		
+
 		if ($this->isEmptyStringAfterTrim($name)) {
 			return $this->bad("分类名称不能为空");
 		}
-		
+
 		$category = $this->getGoodsCategoryById($id);
 		if (! $category) {
 			return $this->bad("要编辑的商品分类不存在");
 		}
-		
+
 		if ($parentId) {
 			// 检查parentId是否存在
 			$parentCategory = $this->getGoodsCategoryById($parentId);
@@ -416,7 +411,7 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 				return $this->bad("上级分类不存在");
 			}
 		}
-		
+
 		// 检查同编码的分类是否存在
 		$sql = "select count(*) as cnt from t_goods_category where code = '%s' and id <> '%s' ";
 		$data = $db->query($sql, $code, $id);
@@ -424,19 +419,19 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("编码为 [{$code}] 的分类已经存在");
 		}
-		
+
 		if ($parentId) {
 			if ($parentId == $id) {
 				return $this->bad("上级分类不能是自身");
 			}
-			
+
 			$tempParentId = $parentId;
 			while ( $tempParentId != null ) {
 				$sql = "select parent_id from t_goods_category where id = '%s' ";
 				$d = $db->query($sql, $tempParentId);
 				if ($d) {
 					$tempParentId = $d[0]["parent_id"];
-					
+
 					if ($tempParentId == $id) {
 						return $this->bad("不能选择下级分类作为上级分类");
 					}
@@ -444,14 +439,14 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 					$tempParentId = null;
 				}
 			}
-			
+
 			$sql = "select full_name from t_goods_category where id = '%s' ";
 			$data = $db->query($sql, $parentId);
 			$fullName = $name;
 			if ($data) {
 				$fullName = $data[0]["full_name"] . "\\" . $name;
 			}
-			
+
 			$sql = "update t_goods_category
 					set code = '%s', name = '%s', parent_id = '%s', full_name = '%s'
 					where id = '%s' ";
@@ -468,13 +463,13 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
 		}
-		
+
 		// 同步子分类的full_name字段
 		$rc = $this->updateSubCategoryFullName($db, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 税率
 		if ($taxRate == - 1) {
 			$sql = "update t_goods_category set tax_rate = null where id = '%s' ";
@@ -496,7 +491,7 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
 		}
-		
+
 		// 操作成功
 		return null;
 	}
@@ -504,29 +499,29 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 	/**
 	 * 删除商品分类
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return NULL|array
 	 */
 	public function deleteCategory(& $params) {
 		$db = $this->db;
-		
+
 		$id = $params["id"];
-		
+
 		$category = $this->getGoodsCategoryById($id);
-		
+
 		if (! $category) {
 			return $this->bad("要删除的商品分类不存在");
 		}
 		$code = $category["code"];
 		$name = $category["name"];
-		
+
 		$sql = "select count(*) as cnt from t_goods where category_id = '%s' ";
 		$data = $db->query($sql, $id);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
 			return $this->bad("还有属于商品分类 [{$name}] 的商品，不能删除该分类");
 		}
-		
+
 		// 判断是否还有子分类
 		$sql = "select count(*) as cnt from t_goods_category
 				where parent_id = '%s' ";
@@ -535,16 +530,16 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("分类[{$name}]还有子分类，不能删除");
 		}
-		
+
 		$sql = "delete from t_goods_category where id = '%s' ";
 		$rc = $db->execute($sql, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		$params["code"] = $code;
 		$params["name"] = $name;
-		
+
 		// 操作成功
 		return null;
 	}
@@ -552,16 +547,16 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 	/**
 	 * 获得某个商品分类的详情
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return array
 	 */
 	public function getCategoryInfo($params) {
 		$db = $this->db;
-		
+
 		$id = $params["id"];
-		
+
 		$result = array();
-		
+
 		$sql = "select code, name, parent_id, tax_rate from t_goods_category
 				where id = '%s' ";
 		$data = $db->query($sql, $id);
@@ -580,7 +575,7 @@ class GoodsCategoryDAO extends PSIBaseExDAO {
 				$result["parentName"] = null;
 			}
 		}
-		
+
 		return $result;
 	}
 }

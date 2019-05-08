@@ -1061,18 +1061,8 @@ class DMWBillDAO extends PSIBaseExDAO {
 			return $this->bad("成品委托生产入库单没有明细记录，不能入库");
 		}
 
-		// 成品委托生产入库单对应的成品委托生产订单id
-		$dmoId = null;
-		$sql = "select dmo_id
-				from t_dmo_dmw
-				where dmw_id = '%s' ";
-		$data = $db->query($sql, $id);
-		if ($data) {
-			$dmoId = $data[0]["dmo_id"];
-		}
-
 		// 检查入库数量、单价、金额不能为负数
-		foreach ( $items as $i => $v ) {
+		foreach ( $items as $v ) {
 			$goodsCount = $v["goods_count"];
 			if ($goodsCount < 0) {
 				return $this->bad("数量不能小于0");
@@ -1096,8 +1086,6 @@ class DMWBillDAO extends PSIBaseExDAO {
 
 		// 遍历明细，更改库存账记录
 		foreach ( $items as $v ) {
-			$dmwbilldetailId = $v["id"];
-
 			$dmobillDetailId = $v["dmobilldetail_id"];
 
 			$goodsCount = $v["goods_count"];
@@ -1222,7 +1210,7 @@ class DMWBillDAO extends PSIBaseExDAO {
 
 			$sql = "select count(*) as cnt from t_dmo_bill_detail
 					where dmobill_id = '%s' and convert(left_count, $fmt) > 0 ";
-			$data = $db->query($sql, $poBillId);
+			$data = $db->query($sql, $dmoBillId);
 			$cnt = $data[0]["cnt"];
 			$billStatus = 1000;
 			if ($cnt > 0) {

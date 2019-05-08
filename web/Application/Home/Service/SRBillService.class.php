@@ -19,9 +19,9 @@ class SRBillService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$params["loginUserId"] = $this->getLoginUserId();
-		
+
 		$dao = new SRBillDAO($this->db());
 		return $dao->srbillList($params);
 	}
@@ -33,9 +33,9 @@ class SRBillService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$params["companyId"] = $this->getCompanyId();
-		
+
 		$dao = new SRBillDAO($this->db());
 		return $dao->srBillDetailList($params);
 	}
@@ -47,11 +47,11 @@ class SRBillService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$params["loginUserId"] = $this->getLoginUserId();
 		$params["loginUserName"] = $this->getLoginUserName();
 		$params["companyId"] = $this->getCompanyId();
-		
+
 		$dao = new SRBillDAO($this->db());
 		return $dao->srBillInfo($params);
 	}
@@ -63,9 +63,9 @@ class SRBillService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$params["loginUserId"] = $this->getLoginUserId();
-		
+
 		$dao = new SRBillDAO($this->db());
 		return $dao->selectWSBillList($params);
 	}
@@ -77,61 +77,61 @@ class SRBillService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
-		
+
 		$json = $params["jsonStr"];
 		$bill = json_decode(html_entity_decode($json), true);
 		if ($bill == null) {
 			return $this->bad("传入的参数错误，不是正确的JSON格式");
 		}
-		
+
 		$db = $this->db();
 		$db->startTrans();
-		
+
 		$dao = new SRBillDAO($db);
-		
+
 		$id = $bill["id"];
-		
+
 		$log = null;
-		
+
 		$bill["companyId"] = $this->getCompanyId();
-		
+
 		if ($id) {
 			// 编辑
-			
+
 			$bill["loginUserId"] = $this->getLoginUserId();
-			
+
 			$rc = $dao->updateSRBill($bill);
 			if ($rc) {
 				$db->rollback();
 				return $rc;
 			}
-			
+
 			$ref = $bill["ref"];
 			$log = "编辑销售退货入库单，单号：{$ref}";
 		} else {
 			// 新增
-			
+
 			$bill["dataOrg"] = $this->getLoginUserDataOrg();
 			$bill["loginUserId"] = $this->getLoginUserId();
-			
+
 			$rc = $dao->addSRBill($bill);
 			if ($rc) {
 				$db->rollback();
 				return $rc;
 			}
-			
+
 			$id = $bill["id"];
 			$ref = $bill["ref"];
-			
+
 			$log = "新建销售退货入库单，单号：{$ref}";
 		}
-		
+
 		// 记录业务日志
 		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
-		
+
 		$db->commit();
-		
+
 		return $this->ok($id);
 	}
 
@@ -142,9 +142,9 @@ class SRBillService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$params["companyId"] = $this->getCompanyId();
-		
+
 		$dao = new SRBillDAO($this->db());
 		return $dao->getWSBillInfoForSRBill($params);
 	}
@@ -156,26 +156,24 @@ class SRBillService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
-		
-		$id = $params["id"];
-		
+
 		$db = $this->db();
 		$db->startTrans();
-		
+
 		$dao = new SRBillDAO($db);
 		$rc = $dao->deleteSRBill($params);
 		if ($rc) {
 			$db->rollback();
 			return $rc;
 		}
-		
+
 		$ref = $params["ref"];
 		$bs = new BizlogService($db);
 		$log = "删除销售退货入库单，单号：{$ref}";
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
-		
+
 		$db->commit();
-		
+
 		return $this->ok();
 	}
 
@@ -186,29 +184,29 @@ class SRBillService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
-		
+
 		$id = $params["id"];
-		
+
 		$db = $this->db();
 		$db->startTrans();
-		
+
 		$params["loginUserId"] = $this->getLoginUserId();
-		
+
 		$dao = new SRBillDAO($db);
 		$rc = $dao->commitSRBill($params);
 		if ($rc) {
 			$db->rollback();
 			return $rc;
 		}
-		
+
 		// 记录业务日志
 		$ref = $params["ref"];
 		$log = "提交销售退货入库单，单号：{$ref}";
 		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
-		
+
 		$db->commit();
-		
+
 		return $this->ok($id);
 	}
 
@@ -219,47 +217,47 @@ class SRBillService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return;
 		}
-		
+
 		$bs = new BizConfigService();
 		$productionName = $bs->getProductionName();
-		
+
 		$ref = $params["ref"];
-		
+
 		$dao = new SRBillDAO($this->db());
-		
+
 		$bill = $dao->getDataForPDF($params);
 		if (! $bill) {
 			return;
 		}
-		
+
 		// 记录业务日志
 		$log = "销售退货入库单(单号：$ref)生成PDF文件";
 		$bls = new BizlogService($this->db());
 		$bls->insertBizlog($log, $this->LOG_CATEGORY);
-		
+
 		ob_start();
-		
+
 		$ps = new PDFService();
 		$pdf = $ps->getInstance();
 		$pdf->SetTitle("销售退货入库，单号：{$ref}");
-		
+
 		$pdf->setHeaderFont(Array(
 				"stsongstdlight",
 				"",
 				16
 		));
-		
+
 		$pdf->setFooterFont(Array(
 				"stsongstdlight",
 				"",
 				14
 		));
-		
+
 		$pdf->SetHeaderData("", 0, $productionName, "销售退货入库单");
-		
+
 		$pdf->SetFont("stsongstdlight", "", 10);
 		$pdf->AddPage();
-		
+
 		/**
 		 * 注意：
 		 * TCPDF中，用来拼接HTML的字符串需要用单引号，否则HTML中元素的属性就不会被解析
@@ -274,7 +272,7 @@ class SRBillService extends PSIBaseExService {
 				</table>
 				';
 		$pdf->writeHTML($html);
-		
+
 		$html = '<table border="1" cellpadding="1">
 					<tr><td>商品编号</td><td>商品名称</td><td>规格型号</td><td>数量</td><td>单位</td>
 						<td>单价</td><td>退货金额</td><td>序列号</td>
@@ -292,27 +290,27 @@ class SRBillService extends PSIBaseExService {
 			$html .= '<td>' . $v["sn"] . '</td>';
 			$html .= '</tr>';
 		}
-		
+
 		$html .= "";
-		
+
 		$html .= '</table>';
 		$pdf->writeHTML($html, true, false, true, false, '');
-		
+
 		ob_end_clean();
-		
+
 		$pdf->Output("$ref.pdf", "I");
 	}
 
 	/**
 	 * 获得打印销售退货入库单的数据
-	 * 
-	 * @param array $params        	
+	 *
+	 * @param array $params
 	 */
 	public function getSRBillDataForLodopPrint($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$dao = new SRBillDAO($this->db());
 		return $dao->getSRBillDataForLodopPrint($params);
 	}

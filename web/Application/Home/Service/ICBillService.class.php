@@ -19,13 +19,13 @@ class ICBillService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$params["loginUserId"] = $this->getLoginUserId();
 		$params["loginUserName"] = $this->getLoginUserName();
 		$params["companyId"] = $this->getCompanyId();
-		
+
 		$dao = new ICBillDAO($this->db());
-		
+
 		return $dao->icBillInfo($params);
 	}
 
@@ -36,58 +36,58 @@ class ICBillService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
-		
+
 		$json = $params["jsonStr"];
 		$bill = json_decode(html_entity_decode($json), true);
 		if ($bill == null) {
 			return $this->bad("传入的参数错误，不是正确的JSON格式");
 		}
-		
+
 		$db = $this->db();
 		$db->startTrans();
-		
+
 		$dao = new ICBillDAO($db);
-		
+
 		$id = $bill["id"];
-		
+
 		$log = null;
-		
+
 		$bill["companyId"] = $this->getCompanyId();
-		
+
 		if ($id) {
 			// 编辑单据
-			
+
 			$bill["loginUserId"] = $this->getLoginUserId();
 			$rc = $dao->updateICBill($bill);
 			if ($rc) {
 				$db->rollback();
 				return $rc;
 			}
-			
+
 			$ref = $bill["ref"];
 			$log = "编辑盘点单，单号：$ref";
 		} else {
 			// 新建单据
-			
+
 			$bill["dataOrg"] = $this->getLoginUserDataOrg();
 			$bill["loginUserId"] = $this->getLoginUserId();
-			
+
 			$rc = $dao->addICBill($bill);
 			if ($rc) {
 				$db->rollback();
 				return $rc;
 			}
-			
+
 			$ref = $bill["ref"];
 			$log = "新建盘点单，单号：$ref";
 		}
-		
+
 		// 记录业务日志
 		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
-		
+
 		$db->commit();
-		
+
 		return $this->ok($id);
 	}
 
@@ -98,9 +98,9 @@ class ICBillService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$params["loginUserId"] = $this->getLoginUserId();
-		
+
 		$dao = new ICBillDAO($this->db());
 		return $dao->icbillList($params);
 	}
@@ -112,9 +112,9 @@ class ICBillService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$params["companyId"] = $this->getCompanyId();
-		
+
 		$dao = new ICBillDAO($this->db());
 		return $dao->icBillDetailList($params);
 	}
@@ -126,27 +126,25 @@ class ICBillService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
-		
-		$id = $params["id"];
-		
+
 		$db = $this->db();
 		$db->startTrans();
-		
+
 		$dao = new ICBillDAO($db);
 		$rc = $dao->deleteICBill($params);
 		if ($rc) {
 			$db->rollback();
 			return $rc;
 		}
-		
+
 		$bs = new BizlogService($db);
-		
+
 		$ref = $params["ref"];
 		$log = "删除盘点单，单号：$ref";
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
-		
+
 		$db->commit();
-		
+
 		return $this->ok();
 	}
 
@@ -157,27 +155,27 @@ class ICBillService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
-		
+
 		$db = $this->db();
 		$db->startTrans();
-		
+
 		$params["companyId"] = $this->getCompanyId();
-		
+
 		$dao = new ICBillDAO($db);
 		$rc = $dao->commitICBill($params);
 		if ($rc) {
 			$db->rollback();
 			return $rc;
 		}
-		
+
 		// 记录业务日志
 		$bs = new BizlogService($db);
 		$ref = $params["ref"];
 		$log = "提交盘点单，单号：$ref";
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
-		
+
 		$db->commit();
-		
+
 		$id = $params["id"];
 		return $this->ok($id);
 	}
@@ -189,47 +187,47 @@ class ICBillService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return;
 		}
-		
+
 		$bs = new BizConfigService();
 		$productionName = $bs->getProductionName();
-		
+
 		$ref = $params["ref"];
-		
+
 		$dao = new ICBillDAO($this->db());
-		
+
 		$bill = $dao->getDataForPDF($params);
 		if (! $bill) {
 			return;
 		}
-		
+
 		// 记录业务日志
 		$log = "盘点单(单号：$ref)生成PDF文件";
 		$bls = new BizlogService($this->db());
 		$bls->insertBizlog($log, $this->LOG_CATEGORY);
-		
+
 		ob_start();
-		
+
 		$ps = new PDFService();
 		$pdf = $ps->getInstance();
 		$pdf->SetTitle("盘点单，单号：{$ref}");
-		
+
 		$pdf->setHeaderFont(Array(
 				"stsongstdlight",
 				"",
 				16
 		));
-		
+
 		$pdf->setFooterFont(Array(
 				"stsongstdlight",
 				"",
 				14
 		));
-		
+
 		$pdf->SetHeaderData("", 0, $productionName, "盘点单");
-		
+
 		$pdf->SetFont("stsongstdlight", "", 10);
 		$pdf->AddPage();
-		
+
 		/**
 		 * 注意：
 		 * TCPDF中，用来拼接HTML的字符串需要用单引号，否则HTML中元素的属性就不会被解析
@@ -243,7 +241,7 @@ class ICBillService extends PSIBaseExService {
 				</table>
 				';
 		$pdf->writeHTML($html);
-		
+
 		$html = '<table border="1" cellpadding="1">
 					<tr><td>商品编号</td><td>商品名称</td><td>规格型号</td><td>盘点后库存数量</td><td>单位</td>
 						<td>盘点后库存金额</td><td>备注</td>
@@ -260,29 +258,29 @@ class ICBillService extends PSIBaseExService {
 			$html .= '<td>' . $v["memo"] . '</td>';
 			$html .= '</tr>';
 		}
-		
+
 		$html .= "";
-		
+
 		$html .= '</table>';
 		$pdf->writeHTML($html, true, false, true, false, '');
-		
+
 		ob_end_clean();
-		
+
 		$pdf->Output("$ref.pdf", "I");
 	}
 
 	/**
 	 * 生成打印盘点单的数据
-	 * 
-	 * @param array $params        	
+	 *
+	 * @param array $params
 	 */
 	public function getICBillDataForLodopPrint($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$params["companyId"] = $this->getCompanyId();
-		
+
 		$dao = new ICBillDAO($this->db());
 		return $dao->getICBillDataForLodopPrint($params);
 	}

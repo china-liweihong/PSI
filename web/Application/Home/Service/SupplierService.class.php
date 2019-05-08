@@ -2,9 +2,8 @@
 
 namespace Home\Service;
 
-use Home\DAO\SupplierDAO;
-use Home\Service\BizlogService;
 use Home\DAO\SubjectDAO;
+use Home\DAO\SupplierDAO;
 
 /**
  * 供应商档案Service
@@ -21,9 +20,9 @@ class SupplierService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
-		
+
 		$params["loginUserId"] = $this->getLoginUserId();
-		
+
 		$dao = new SupplierDAO($this->db());
 		return $dao->categoryList($params);
 	}
@@ -35,9 +34,9 @@ class SupplierService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$params["loginUserId"] = $this->getLoginUserId();
-		
+
 		$dao = new SupplierDAO($this->db());
 		return $dao->supplierList($params);
 	}
@@ -49,18 +48,18 @@ class SupplierService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
-		
+
 		$id = $params["id"];
 		$code = $params["code"];
 		$name = $params["name"];
-		
+
 		$db = $this->db();
 		$db->startTrans();
-		
+
 		$dao = new SupplierDAO($db);
-		
+
 		$log = null;
-		
+
 		if ($id) {
 			// 编辑
 			$rc = $dao->updateSupplierCategory($params);
@@ -68,31 +67,31 @@ class SupplierService extends PSIBaseExService {
 				$db->rollback();
 				return $rc;
 			}
-			
+
 			$log = "编辑供应商分类: 编码 = $code, 分类名 = $name";
 		} else {
 			// 新增
-			
+
 			$params["dataOrg"] = $this->getLoginUserDataOrg();
 			$params["companyId"] = $this->getCompanyId();
-			
+
 			$rc = $dao->addSupplierCategory($params);
 			if ($rc) {
 				$db->rollback();
 				return $rc;
 			}
-			
+
 			$id = $params["id"];
-			
+
 			$log = "新增供应商分类：编码 = $code, 分类名 = $name";
 		}
-		
+
 		// 记录业务日志
 		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
-		
+
 		$db->commit();
-		
+
 		return $this->ok($id);
 	}
 
@@ -103,25 +102,23 @@ class SupplierService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
-		
-		$id = $params["id"];
-		
+
 		$db = $this->db();
 		$db->startTrans();
 		$dao = new SupplierDAO($db);
-		
+
 		$rc = $dao->deleteSupplierCategory($params);
 		if ($rc) {
 			$db->rollback();
 			return $rc;
 		}
-		
+
 		$log = "删除供应商分类： 编码 = {$params['code']}, 分类名称 = {$params['name']}";
 		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
-		
+
 		$db->commit();
-		
+
 		return $this->ok();
 	}
 
@@ -132,33 +129,33 @@ class SupplierService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
-		
+
 		$id = $params["id"];
 		$code = $params["code"];
 		$name = $params["name"];
-		
+
 		$ps = new PinyinService();
 		$py = $ps->toPY($name);
 		$params["py"] = $py;
-		
+
 		$params["dataOrg"] = $this->getLoginUserDataOrg();
 		$params["companyId"] = $this->getCompanyId();
-		
+
 		$categoryId = $params["categoryId"];
-		
+
 		$db = $this->db();
 		$db->startTrans();
-		
+
 		$dao = new SupplierDAO($db);
-		
+
 		$category = $dao->getSupplierCategoryById($categoryId);
 		if (! $category) {
 			$db->rollback();
 			return $this->bad("供应商分类不存在");
 		}
-		
+
 		$log = null;
-		
+
 		if ($id) {
 			// 编辑
 			$rc = $dao->updateSupplier($params);
@@ -166,7 +163,7 @@ class SupplierService extends PSIBaseExService {
 				$db->rollback();
 				return $rc;
 			}
-			
+
 			$log = "编辑供应商：编码 = $code, 名称 = $name";
 		} else {
 			// 新增
@@ -175,25 +172,25 @@ class SupplierService extends PSIBaseExService {
 				$db->rollback();
 				return $rc;
 			}
-			
+
 			$id = $params["id"];
-			
+
 			$log = "新增供应商：编码 = {$code}, 名称 = {$name}";
 		}
-		
+
 		// 处理应付期初余额
 		$rc = $dao->initPayables($params);
 		if ($rc) {
 			$db->rollback();
 			return $rc;
 		}
-		
+
 		// 记录业务日志
 		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
-		
+
 		$db->commit();
-		
+
 		return $this->ok($id);
 	}
 
@@ -204,28 +201,26 @@ class SupplierService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
-		
-		$id = $params["id"];
-		
+
 		$db = $this->db();
 		$db->startTrans();
-		
+
 		$dao = new SupplierDAO($db);
-		
+
 		$rc = $dao->deleteSupplier($params);
 		if ($rc) {
 			$db->rollback();
 			return $rc;
 		}
-		
+
 		$code = $params["code"];
 		$name = $params["name"];
 		$log = "删除供应商档案：编码 = {$code},  名称 = {$name}";
 		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
-		
+
 		$db->commit();
-		
+
 		return $this->ok();
 	}
 
@@ -236,12 +231,12 @@ class SupplierService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$params = array(
 				"queryKey" => $queryKey,
 				"loginUserId" => $this->getLoginUserId()
 		);
-		
+
 		$dao = new SupplierDAO($this->db());
 		return $dao->queryData($params);
 	}
@@ -253,7 +248,7 @@ class SupplierService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$dao = new SupplierDAO($this->db());
 		return $dao->supplierInfo($params);
 	}
@@ -263,7 +258,7 @@ class SupplierService extends PSIBaseExService {
 	 */
 	public function supplierExists($supplierId, $db) {
 		$dao = new SupplierDAO($db);
-		
+
 		$supplier = $dao->getSupplierById($supplierId);
 		return $supplier != null;
 	}
@@ -273,7 +268,7 @@ class SupplierService extends PSIBaseExService {
 	 */
 	public function getSupplierNameById($supplierId, $db) {
 		$dao = new SupplierDAO($db);
-		
+
 		$supplier = $dao->getSupplierById($supplierId);
 		if ($supplier) {
 			return $supplier["name"];
@@ -289,18 +284,18 @@ class SupplierService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
-		
+
 		$db = $this->db();
 		$db->startTrans();
-		
+
 		$dao = new SupplierDAO($db);
-		
+
 		$rc = $dao->addGRCategory($params);
 		if ($rc) {
 			$db->rollback();
 			return $rc;
 		}
-		
+
 		$code = $params["code"];
 		$name = $params["name"];
 		$categoryCode = $params["categoryCode"];
@@ -308,9 +303,9 @@ class SupplierService extends PSIBaseExService {
 		$log = "给供应商(编码 = {$code},  名称 = {$name})设置关联商品分类(编码={$categoryCode} 分类={$categoryName})";
 		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
-		
+
 		$db->commit();
-		
+
 		return $this->ok();
 	}
 
@@ -321,7 +316,7 @@ class SupplierService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$dao = new SubjectDAO($this->db());
 		return $dao->grCategoryList($params);
 	}
@@ -333,26 +328,26 @@ class SupplierService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
-		
+
 		$db = $this->db();
 		$db->startTrans();
-		
+
 		$dao = new SupplierDAO($db);
-		
+
 		$rc = $dao->deleteGRCategory($params);
 		if ($rc) {
 			$db->rollback();
 			return $rc;
 		}
-		
+
 		$code = $params["code"];
 		$name = $params["name"];
 		$log = "给供应商(编码 = {$code},  名称 = {$name})移除关联商品分类";
 		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
-		
+
 		$db->commit();
-		
+
 		return $this->ok();
 	}
 
@@ -363,7 +358,7 @@ class SupplierService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$dao = new SupplierDAO($this->db());
 		return $dao->grGoodsList($params);
 	}
@@ -375,27 +370,27 @@ class SupplierService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
-		
+
 		$db = $this->db();
 		$db->startTrans();
-		
+
 		$dao = new SupplierDAO($db);
-		
+
 		$rc = $dao->addGRGoods($params);
 		if ($rc) {
 			$db->rollback();
 			return $rc;
 		}
-		
+
 		$code = $params["code"];
 		$name = $params["name"];
 		$goodsName = $params["goodsName"];
 		$log = "给供应商(编码 = {$code},  名称 = {$name})设置关联个别商品({$goodsName})";
 		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
-		
+
 		$db->commit();
-		
+
 		return $this->ok();
 	}
 
@@ -406,26 +401,26 @@ class SupplierService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
-		
+
 		$db = $this->db();
 		$db->startTrans();
-		
+
 		$dao = new SupplierDAO($db);
-		
+
 		$rc = $dao->deleteGRGoods($params);
 		if ($rc) {
 			$db->rollback();
 			return $rc;
 		}
-		
+
 		$code = $params["code"];
 		$name = $params["name"];
 		$log = "给供应商(编码 = {$code},  名称 = {$name})移除关联商品";
 		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
-		
+
 		$db->commit();
-		
+
 		return $this->ok();
 	}
 }

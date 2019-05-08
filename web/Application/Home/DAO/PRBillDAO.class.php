@@ -239,9 +239,6 @@ class PRBillDAO extends PSIBaseExDAO {
 			return $this->bad("选择采购入库单不存在，无法保存");
 		}
 
-		// 供应商id
-		$supplierId = $data[0]["supplier_id"];
-
 		// 收款方式
 		$receivingType = $bill["receivingType"];
 
@@ -948,7 +945,6 @@ class PRBillDAO extends PSIBaseExDAO {
 		foreach ( $items as $i => $v ) {
 			$goodsId = $v["goods_id"];
 			$rejCount = $v["rej_count"];
-			$rejMoney = $v["rej_money"];
 			$goodsCount = $v["goods_count"];
 			$goodsPricePurchase = $v["goods_price"];
 

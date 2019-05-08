@@ -14,21 +14,21 @@ class PayablesDAO extends PSIBaseExDAO {
 	/**
 	 * 往来单位分类
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return array
 	 */
 	public function payCategoryList($params) {
 		$db = $this->db;
-		
+
 		$loginUserId = $params["loginUserId"];
 		if ($this->loginUserIdNotExists($loginUserId)) {
 			return $this->emptyResult();
 		}
-		
+
 		$result = array();
 		$result[0]["id"] = "";
 		$result[0]["name"] = "[全部]";
-		
+
 		$id = $params["id"];
 		if ($id == "supplier") {
 			$sql = "select id, name from t_supplier_category ";
@@ -76,33 +76,32 @@ class PayablesDAO extends PSIBaseExDAO {
 				$result[$i + 1]["name"] = $v["name"];
 			}
 		}
-		
+
 		return $result;
 	}
 
 	/**
 	 * 应付账款列表
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return array
 	 */
 	public function payList($params) {
 		$db = $this->db;
-		
+
 		$loginUserId = $params["loginUserId"];
 		if ($this->loginUserIdNotExists($loginUserId)) {
 			return $this->emptyResult();
 		}
-		
+
 		$caType = $params["caType"];
 		$categoryId = $params["categoryId"];
 		$customerId = $params["customerId"];
 		$supplierId = $params["supplierId"];
 		$factoryId = $params["factoryId"];
-		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
-		
+
 		if ($caType == "supplier") {
 			$queryParams = array();
 			$sql = "select p.id, p.pay_money, p.act_money, p.balance_money, s.id as ca_id, s.code, s.name
@@ -136,7 +135,7 @@ class PayablesDAO extends PSIBaseExDAO {
 				$result[$i]["actMoney"] = $v["act_money"];
 				$result[$i]["balanceMoney"] = $v["balance_money"];
 			}
-			
+
 			$queryParams[] = array();
 			$sql = "select count(*) as cnt from t_payables p, t_supplier s
 					where p.ca_id = s.id and p.ca_type = 'supplier' ";
@@ -155,7 +154,7 @@ class PayablesDAO extends PSIBaseExDAO {
 			}
 			$data = $db->query($sql, $queryParams);
 			$cnt = $data[0]["cnt"];
-			
+
 			return array(
 					"dataList" => $result,
 					"totalCount" => $cnt
@@ -193,7 +192,7 @@ class PayablesDAO extends PSIBaseExDAO {
 				$result[$i]["actMoney"] = $v["act_money"];
 				$result[$i]["balanceMoney"] = $v["balance_money"];
 			}
-			
+
 			$queryParams[] = array();
 			$sql = "select count(*) as cnt from t_payables p, t_supplier s
 					where p.ca_id = s.id and p.ca_type = 'factory' ";
@@ -212,7 +211,7 @@ class PayablesDAO extends PSIBaseExDAO {
 			}
 			$data = $db->query($sql, $queryParams);
 			$cnt = $data[0]["cnt"];
-			
+
 			return array(
 					"dataList" => $result,
 					"totalCount" => $cnt
@@ -251,7 +250,7 @@ class PayablesDAO extends PSIBaseExDAO {
 				$result[$i]["actMoney"] = $v["act_money"];
 				$result[$i]["balanceMoney"] = $v["balance_money"];
 			}
-			
+
 			$queryParams = array();
 			$sql = "select count(*) as cnt from t_payables p, t_customer s
 					where p.ca_id = s.id and p.ca_type = 'customer' ";
@@ -270,7 +269,7 @@ class PayablesDAO extends PSIBaseExDAO {
 			}
 			$data = $db->query($sql, $queryParams);
 			$cnt = $data[0]["cnt"];
-			
+
 			return array(
 					"dataList" => $result,
 					"totalCount" => $cnt
@@ -281,18 +280,17 @@ class PayablesDAO extends PSIBaseExDAO {
 	/**
 	 * 每笔应付账款的明细记录
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return array
 	 */
 	public function payDetailList($params) {
 		$db = $this->db;
-		
+
 		$caType = $params["caType"];
 		$caId = $params["caId"];
-		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
-		
+
 		$sql = "select id, ref_type, ref_number, pay_money, act_money, balance_money, date_created, biz_date
 				from t_payables_detail
 				where ca_type = '%s' and ca_id = '%s'
@@ -310,12 +308,12 @@ class PayablesDAO extends PSIBaseExDAO {
 			$result[$i]["actMoney"] = $v["act_money"];
 			$result[$i]["balanceMoney"] = $v["balance_money"];
 		}
-		
+
 		$sql = "select count(*) as cnt from t_payables_detail
 				where ca_type = '%s' and ca_id = '%s' ";
 		$data = $db->query($sql, $caType, $caId);
 		$cnt = $data[0]["cnt"];
-		
+
 		return array(
 				"dataList" => $result,
 				"totalCount" => $cnt
@@ -325,18 +323,17 @@ class PayablesDAO extends PSIBaseExDAO {
 	/**
 	 * 应付账款的付款记录
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return array
 	 */
 	public function payRecordList($params) {
 		$db = $this->db;
-		
+
 		$refType = $params["refType"];
 		$refNumber = $params["refNumber"];
-		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
-		
+
 		$sql = "select u.name as biz_user_name, bu.name as input_user_name, p.id,
 				p.act_money, p.biz_date, p.date_created, p.remark
 				from t_payment p, t_user u, t_user bu
@@ -355,27 +352,27 @@ class PayablesDAO extends PSIBaseExDAO {
 			$result[$i]["inputUserName"] = $v["input_user_name"];
 			$result[$i]["remark"] = $v["remark"];
 		}
-		
+
 		$sql = "select count(*) as cnt from t_payment
 				where ref_type = '%s' and ref_number = '%s' ";
 		$data = $db->query($sql, $refType, $refNumber);
 		$cnt = $data[0]["cnt"];
-		
+
 		return array(
 				"dataList" => $result,
-				"totalCount" => 0
+				"totalCount" => $cnt
 		);
 	}
 
 	/**
 	 * 新增付款记录
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return NULL|array
 	 */
 	public function addPayment($params) {
 		$db = $this->db;
-		
+
 		$companyId = $params["companyId"];
 		$dataOrg = $params["dataOrg"];
 		$loginUserId = $params["loginUserId"];
@@ -388,7 +385,7 @@ class PayablesDAO extends PSIBaseExDAO {
 		if ($this->loginUserIdNotExists($loginUserId)) {
 			return $this->badParam("loginUserId");
 		}
-		
+
 		$refType = $params["refType"];
 		$refNumber = $params["refNumber"];
 		$bizDT = $params["bizDT"];
@@ -398,7 +395,7 @@ class PayablesDAO extends PSIBaseExDAO {
 		if (! $remark) {
 			$remark = "";
 		}
-		
+
 		$billId = "";
 		if ($refType == "采购入库") {
 			$sql = "select id from t_pw_bill where ref = '%s' ";
@@ -408,29 +405,29 @@ class PayablesDAO extends PSIBaseExDAO {
 			}
 			$billId = $data[0]["id"];
 		}
-		
+
 		// 检查付款人是否存在
 		$userDAO = new UserDAO($db);
 		$user = $userDAO->getUserById($bizUserId);
 		if (! $user) {
 			return $this->bad("付款人不存在，无法付款");
 		}
-		
+
 		// 检查付款日期是否正确
 		if (! $this->dateIsValid($bizDT)) {
 			return $this->bad("付款日期不正确");
 		}
-		
+
 		$sql = "insert into t_payment (id, act_money, biz_date, date_created, input_user_id,
 				pay_user_id,  bill_id,  ref_type, ref_number, remark, data_org, company_id)
 				values ('%s', %f, '%s', now(), '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')";
-		
-		$rc = $db->execute($sql, $this->newId(), $actMoney, $bizDT, $loginUserId, $bizUserId, 
+
+		$rc = $db->execute($sql, $this->newId(), $actMoney, $bizDT, $loginUserId, $bizUserId,
 				$billId, $refType, $refNumber, $remark, $dataOrg, $companyId);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 应付明细账
 		$sql = "select balance_money, act_money, ca_type, ca_id, company_id
 				from t_payables_detail
@@ -454,7 +451,7 @@ class PayablesDAO extends PSIBaseExDAO {
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 应付总账
 		$sql = "select sum(pay_money) as sum_pay_money, sum(act_money) as sum_act_money
 				from t_payables_detail
@@ -472,7 +469,7 @@ class PayablesDAO extends PSIBaseExDAO {
 			$sumActMoney = 0;
 		}
 		$sumBalanceMoney = $sumPayMoney - $sumActMoney;
-		
+
 		$sql = "update t_payables
 				set act_money = %f, balance_money = %f
 				where ca_type = '%s' and ca_id = '%s' and company_id = '%s' ";
@@ -480,7 +477,7 @@ class PayablesDAO extends PSIBaseExDAO {
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 操作成功
 		return null;
 	}
@@ -488,12 +485,12 @@ class PayablesDAO extends PSIBaseExDAO {
 	/**
 	 * 刷新付款信息 - 总账
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return array
 	 */
 	public function refreshPayInfo($params) {
 		$db = $this->db;
-		
+
 		$id = $params["id"];
 		$data = $db->query("select act_money, balance_money from t_payables  where id = '%s' ", $id);
 		return array(
@@ -505,12 +502,12 @@ class PayablesDAO extends PSIBaseExDAO {
 	/**
 	 * 刷新付款信息 - 明细账
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return array
 	 */
 	public function refreshPayDetailInfo($params) {
 		$db = $this->db;
-		
+
 		$id = $params["id"];
 		$data = $db->query(
 				"select act_money, balance_money from t_payables_detail  where id = '%s' ", $id);

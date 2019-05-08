@@ -65,7 +65,6 @@ class WSBillDAO extends PSIBaseExDAO {
 			return $this->emptyResult();
 		}
 
-		$page = $params["page"];
 		$start = $params["start"];
 		$limit = $params["limit"];
 
@@ -700,7 +699,6 @@ class WSBillDAO extends PSIBaseExDAO {
 			$result["bizUserId"] = $loginUserId;
 			$result["bizUserName"] = $params["loginUserName"];
 
-			$ts = new BizConfigDAO($db);
 			$sql = "select value from t_config 
 					where id = '2002-02' and company_id = '%s' ";
 			$data = $db->query($sql, $companyId);
@@ -1097,7 +1095,6 @@ class WSBillDAO extends PSIBaseExDAO {
 			$itemId = $v["id"];
 			$goodsId = $v["goods_id"];
 			$goodsCount = $v["goods_count"];
-			$goodsPrice = floatval($v["goods_price"]);
 
 			$sql = "select code, name from t_goods where id = '%s' ";
 			$data = $db->query($sql, $goodsId);

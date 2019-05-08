@@ -12,12 +12,12 @@ class PrePaymentDAO extends PSIBaseExDAO {
 	/**
 	 * 向供应商付预付款
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return NULL|array
 	 */
 	public function addPrePayment(& $params) {
 		$db = $this->db;
-		
+
 		$companyId = $params["companyId"];
 		$loginUserId = $params["loginUserId"];
 		if ($this->companyIdNotExists($companyId)) {
@@ -26,36 +26,36 @@ class PrePaymentDAO extends PSIBaseExDAO {
 		if ($this->loginUserIdNotExists($loginUserId)) {
 			return $this->badParam("loginUserId");
 		}
-		
+
 		$supplierId = $params["supplierId"];
 		$bizUserId = $params["bizUserId"];
 		$bizDT = $params["bizDT"];
 		$inMoney = $params["inMoney"];
-		
+
 		// 检查供应商
 		$supplierDAO = new SupplierDAO($db);
 		$supplier = $supplierDAO->getSupplierById($supplierId);
 		if (! $supplier) {
 			return $this->bad("供应商不存在，无法付预付款");
 		}
-		
+
 		// 检查业务日期
 		if (! $this->dateIsValid($bizDT)) {
 			return $this->bad("业务日期不正确");
 		}
-		
+
 		// 检查收款人是否存在
 		$userDAO = new UserDAO($db);
 		$user = $userDAO->getUserById($bizUserId);
 		if (! $user) {
 			return $this->bad("收款人不存在");
 		}
-		
+
 		$inMoney = floatval($inMoney);
 		if ($inMoney <= 0) {
 			return $this->bad("付款金额需要是正数");
 		}
-		
+
 		$sql = "select in_money, balance_money from t_pre_payment
 				where supplier_id = '%s' and company_id = '%s' ";
 		$data = $db->query($sql, $supplierId, $companyId);
@@ -67,12 +67,12 @@ class PrePaymentDAO extends PSIBaseExDAO {
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
-			
+
 			// 明细账
 			$sql = "insert into t_pre_payment_detail(id, supplier_id, in_money, balance_money, date_created,
 						ref_number, ref_type, biz_user_id, input_user_id, biz_date, company_id)
 					values('%s', '%s', %f, %f, now(), '', '预付供应商采购货款', '%s', '%s', '%s', '%s')";
-			$rc = $db->execute($sql, $this->newId(), $supplierId, $inMoney, $inMoney, $bizUserId, 
+			$rc = $db->execute($sql, $this->newId(), $supplierId, $inMoney, $inMoney, $bizUserId,
 					$loginUserId, $bizDT, $companyId);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
@@ -86,7 +86,7 @@ class PrePaymentDAO extends PSIBaseExDAO {
 			if (! $totalBalanceMoney) {
 				$totalBalanceMoney = 0;
 			}
-			
+
 			$totalInMoney += $inMoney;
 			$totalBalanceMoney += $inMoney;
 			// 总账
@@ -97,20 +97,20 @@ class PrePaymentDAO extends PSIBaseExDAO {
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
-			
+
 			// 明细账
 			$sql = "insert into t_pre_payment_detail(id, supplier_id, in_money, balance_money, date_created,
 						ref_number, ref_type, biz_user_id, input_user_id, biz_date, company_id)
 					values('%s', '%s', %f, %f, now(), '', '预付供应商采购货款', '%s', '%s', '%s', '%s')";
-			$rc = $db->execute($sql, $this->newId(), $supplierId, $inMoney, $totalBalanceMoney, 
+			$rc = $db->execute($sql, $this->newId(), $supplierId, $inMoney, $totalBalanceMoney,
 					$bizUserId, $loginUserId, $bizDT, $companyId);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
 		}
-		
+
 		$params["supplierName"] = $supplier["name"];
-		
+
 		// 操作成功
 		return null;
 	}
@@ -118,12 +118,12 @@ class PrePaymentDAO extends PSIBaseExDAO {
 	/**
 	 * 供应商退回预收款
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return NULL|array
 	 */
 	public function returnPrePayment(& $params) {
 		$db = $this->db;
-		
+
 		$companyId = $params["companyId"];
 		$loginUserId = $params["loginUserId"];
 		if ($this->companyIdNotExists($companyId)) {
@@ -132,38 +132,38 @@ class PrePaymentDAO extends PSIBaseExDAO {
 		if ($this->loginUserIdNotExists($loginUserId)) {
 			return $this->badParam("loginUserId");
 		}
-		
+
 		$supplierId = $params["supplierId"];
 		$bizUserId = $params["bizUserId"];
 		$bizDT = $params["bizDT"];
 		$inMoney = $params["inMoney"];
-		
+
 		// 检查供应商
 		$supplierDAO = new SupplierDAO($db);
 		$supplier = $supplierDAO->getSupplierById($supplierId);
 		if (! $supplier) {
 			return $this->bad("供应商不存在，无法收款");
 		}
-		
+
 		// 检查业务日期
 		if (! $this->dateIsValid($bizDT)) {
 			return $this->bad("业务日期不正确");
 		}
-		
+
 		// 检查收款人是否存在
 		$userDAO = new UserDAO($db);
 		$user = $userDAO->getUserById($bizUserId);
 		if (! $user) {
 			return $this->bad("收款人不存在");
 		}
-		
+
 		$inMoney = floatval($inMoney);
 		if ($inMoney <= 0) {
 			return $this->bad("收款金额需要是正数");
 		}
-		
+
 		$supplierName = $supplier["name"];
-		
+
 		$sql = "select balance_money, in_money from t_pre_payment
 				where supplier_id = '%s' and company_id = '%s' ";
 		$data = $db->query($sql, $supplierId, $companyId);
@@ -171,7 +171,7 @@ class PrePaymentDAO extends PSIBaseExDAO {
 		if (! $balanceMoney) {
 			$balanceMoney = 0;
 		}
-		
+
 		if ($balanceMoney < $inMoney) {
 			$info = "退款金额{$inMoney}元超过余额。<br /><br />供应商[{$supplierName}]的预付款余额是{$balanceMoney}元";
 			return $this->bad($info);
@@ -180,7 +180,7 @@ class PrePaymentDAO extends PSIBaseExDAO {
 		if (! $totalInMoney) {
 			$totalInMoney = 0;
 		}
-		
+
 		// 总账
 		$sql = "update t_pre_payment
 				set in_money = %f, balance_money = %f
@@ -191,43 +191,42 @@ class PrePaymentDAO extends PSIBaseExDAO {
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 明细账
 		$sql = "insert into t_pre_payment_detail(id, supplier_id, in_money, balance_money,
 					biz_date, date_created, ref_number, ref_type, biz_user_id, input_user_id,
 					company_id)
 				values ('%s', '%s', %f, %f, '%s', now(), '', '供应商退回采购预付款', '%s', '%s', '%s')";
-		$rc = $db->execute($sql, $this->newId(), $supplierId, - $inMoney, $balanceMoney, $bizDT, 
+		$rc = $db->execute($sql, $this->newId(), $supplierId, - $inMoney, $balanceMoney, $bizDT,
 				$bizUserId, $loginUserId, $companyId);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		$params["supplierName"] = $supplierName;
-		
+
 		return null;
 	}
 
 	/**
 	 * 预付款列表
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return array
 	 */
 	public function prepaymentList($params) {
 		$db = $this->db;
-		
-		$page = $params["page"];
+
 		$start = $params["start"];
 		$limit = $params["limit"];
-		
+
 		$categoryId = $params["categoryId"];
 		$supplierId = $params["supplierId"];
 		$companyId = $params["companyId"];
 		if ($this->companyIdNotExists($companyId)) {
 			return $this->emptyResult();
 		}
-		
+
 		$queryParams = [];
 		$sql = "select r.id, c.id as supplier_id, c.code, c.name,
 					r.in_money, r.out_money, r.balance_money
@@ -247,7 +246,7 @@ class PrePaymentDAO extends PSIBaseExDAO {
 		$queryParams[] = $start;
 		$queryParams[] = $limit;
 		$data = $db->query($sql, $queryParams);
-		
+
 		$result = array();
 		foreach ( $data as $i => $v ) {
 			$result[$i]["id"] = $v["id"];
@@ -258,7 +257,7 @@ class PrePaymentDAO extends PSIBaseExDAO {
 			$result[$i]["outMoney"] = $v["out_money"];
 			$result[$i]["balanceMoney"] = $v["balance_money"];
 		}
-		
+
 		$queryParams = [];
 		$sql = "select count(*) as cnt
 				from t_pre_payment r, t_supplier c
@@ -275,7 +274,7 @@ class PrePaymentDAO extends PSIBaseExDAO {
 		}
 		$data = $db->query($sql, $queryParams);
 		$cnt = $data[0]["cnt"];
-		
+
 		return array(
 				"dataList" => $result,
 				"totalCount" => $cnt
@@ -285,24 +284,24 @@ class PrePaymentDAO extends PSIBaseExDAO {
 	/**
 	 * 预付款详情列表
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return array
 	 */
 	public function prepaymentDetailList($params) {
 		$db = $this->db;
-		
+
 		$companyId = $params["companyId"];
 		if ($this->companyIdNotExists($companyId)) {
 			return $this->emptyResult();
 		}
-		
+
 		$start = $params["start"];
 		$limit = $params["limit"];
-		
+
 		$supplerId = $params["supplierId"];
 		$dtFrom = $params["dtFrom"];
 		$dtTo = $params["dtTo"];
-		
+
 		$sql = "select d.id, d.ref_type, d.ref_number, d.in_money, d.out_money, d.balance_money,
 					d.biz_date, d.date_created,
 					u1.name as biz_user_name, u2.name as input_user_name
@@ -327,17 +326,17 @@ class PrePaymentDAO extends PSIBaseExDAO {
 			$result[$i]["bizUserName"] = $v["biz_user_name"];
 			$result[$i]["inputUserName"] = $v["input_user_name"];
 		}
-		
+
 		$sql = "select count(*) as cnt
 				from t_pre_payment_detail d, t_user u1, t_user u2
 				where d.supplier_id = '%s' and d.biz_user_id = u1.id and d.input_user_id = u2.id
 					and (d.biz_date between '%s' and '%s')
 					and d.company_id = '%s'
 				";
-		
+
 		$data = $db->query($sql, $supplerId, $companyId, $dtFrom, $dtTo);
 		$cnt = $data[0]["cnt"];
-		
+
 		return array(
 				"dataList" => $result,
 				"totalCount" => $cnt

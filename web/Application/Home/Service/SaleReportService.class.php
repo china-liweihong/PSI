@@ -179,9 +179,6 @@ class SaleReportService extends PSIBaseExService {
 
 		$bizDT = $params["dt"];
 
-		$bs = new BizConfigService();
-		$productionName = $bs->getProductionName();
-
 		$dao = new SaleReportDAO($this->db());
 
 		$data = $dao->saleDayByGoodsQueryData($params);
@@ -518,9 +515,6 @@ class SaleReportService extends PSIBaseExService {
 
 		$bizDT = $params["dt"];
 
-		$bs = new BizConfigService();
-		$productionName = $bs->getProductionName();
-
 		$dao = new SaleReportDAO($this->db());
 
 		$data = $dao->saleDayByCustomerQueryData($params);
@@ -773,9 +767,6 @@ class SaleReportService extends PSIBaseExService {
 
 		$bizDT = $params["dt"];
 
-		$bs = new BizConfigService();
-		$productionName = $bs->getProductionName();
-
 		$dao = new SaleReportDAO($this->db());
 
 		$data = $dao->saleDayByWarehouseQueryData($params);
@@ -1027,9 +1018,6 @@ class SaleReportService extends PSIBaseExService {
 		$params["companyId"] = $this->getCompanyId();
 
 		$bizDT = $params["dt"];
-
-		$bs = new BizConfigService();
-		$productionName = $bs->getProductionName();
 
 		$dao = new SaleReportDAO($this->db());
 
@@ -1372,9 +1360,6 @@ class SaleReportService extends PSIBaseExService {
 			$bizDT = "$year-$month";
 		}
 
-		$bs = new BizConfigService();
-		$productionName = $bs->getProductionName();
-
 		$dao = new SaleReportDAO($this->db());
 
 		$data = $dao->saleMonthByGoodsQueryData($params);
@@ -1673,9 +1658,6 @@ class SaleReportService extends PSIBaseExService {
 			$bizDT = "$year-$month";
 		}
 
-		$bs = new BizConfigService();
-		$productionName = $bs->getProductionName();
-
 		$dao = new SaleReportDAO($this->db());
 
 		$data = $dao->saleMonthByCustomerQueryData($params);
@@ -1954,9 +1936,6 @@ class SaleReportService extends PSIBaseExService {
 			$bizDT = "$year-$month";
 		}
 
-		$bs = new BizConfigService();
-		$productionName = $bs->getProductionName();
-
 		$dao = new SaleReportDAO($this->db());
 
 		$data = $dao->saleMonthByWarehouseQueryData($params);
@@ -2234,9 +2213,6 @@ class SaleReportService extends PSIBaseExService {
 		} else {
 			$bizDT = "$year-$month";
 		}
-
-		$bs = new BizConfigService();
-		$productionName = $bs->getProductionName();
 
 		$dao = new SaleReportDAO($this->db());
 

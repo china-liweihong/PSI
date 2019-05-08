@@ -21,7 +21,7 @@ class UserDAO extends PSIBaseExDAO {
 	 */
 	public function isDisabled($userId) {
 		$db = $this->db;
-		
+
 		$sql = "select enabled from t_user where id = '%s' ";
 		$data = $db->query($sql, $userId);
 		if ($data) {
@@ -35,19 +35,19 @@ class UserDAO extends PSIBaseExDAO {
 	/**
 	 * 判断是否可以登录
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return string|NULL 可以登录返回用户id，否则返回null
 	 */
 	public function doLogin($params) {
 		$loginName = $params["loginName"];
 		$password = $params["password"];
-		
+
 		$db = $this->db;
-		
+
 		$sql = "select id from t_user where login_name = '%s' and password = '%s' and enabled = 1";
-		
+
 		$data = $db->query($sql, $loginName, md5($password));
-		
+
 		if ($data) {
 			return $data[0]["id"];
 		} else {
@@ -72,7 +72,7 @@ class UserDAO extends PSIBaseExDAO {
 				where ru.user_id = '%s' and ru.role_id = rp.role_id
 				      and rp.permission_id = p.id and p.fid = '%s' ";
 		$data = $db->query($sql, $userId, $fid);
-		
+
 		return $data[0]["cnt"] > 0;
 	}
 
@@ -86,11 +86,11 @@ class UserDAO extends PSIBaseExDAO {
 	 */
 	public function getLoginUserName($userId) {
 		$db = $this->db;
-		
+
 		$sql = "select name from t_user where id = '%s' ";
-		
+
 		$data = $db->query($sql, $userId);
-		
+
 		if ($data) {
 			return $data[0]["name"];
 		} else {
@@ -107,12 +107,12 @@ class UserDAO extends PSIBaseExDAO {
 	 */
 	public function getLoignUserNameWithOrgFullName($userId) {
 		$db = $this->db;
-		
+
 		$userName = $this->getLoginUserName($userId);
 		if ($userName == "") {
 			return $userName;
 		}
-		
+
 		$sql = "select o.full_name
 				from t_org o, t_user u
 				where o.id = u.org_id and u.id = '%s' ";
@@ -121,23 +121,23 @@ class UserDAO extends PSIBaseExDAO {
 		if ($data) {
 			$orgFullName = $data[0]["full_name"];
 		}
-		
+
 		return addslashes($orgFullName . "\\" . $userName);
 	}
 
 	/**
 	 * 获得用户的登录名
 	 *
-	 * @param string $userId        	
+	 * @param string $userId
 	 * @return string
 	 */
 	public function getLoginName($userId) {
 		$db = $this->db;
-		
+
 		$sql = "select login_name from t_user where id = '%s' ";
-		
+
 		$data = $db->query($sql, $userId);
-		
+
 		if ($data) {
 			return $data[0]["login_name"];
 		} else {
@@ -150,21 +150,21 @@ class UserDAO extends PSIBaseExDAO {
 	 */
 	public function users($params) {
 		$db = $this->db;
-		
+
 		$orgId = $params["orgId"];
 		$start = $params["start"];
 		$limit = $params["limit"];
-		
+
 		$loginName = $params["loginName"];
 		$name = $params["name"];
-		
+
 		$sql = "select id, login_name,  name, enabled, org_code, gender, birthday, id_card_number, tel,
 				    tel02, address, data_org
 				from t_user
 				where (org_id = '%s') ";
 		$queryParam = [];
 		$queryParam[] = $orgId;
-		
+
 		if ($loginName) {
 			$sql .= " and (login_name like '%s') ";
 			$queryParam[] = "%$loginName%";
@@ -174,15 +174,15 @@ class UserDAO extends PSIBaseExDAO {
 			$queryParam[] = "%$name%";
 			$queryParam[] = "%$name%";
 		}
-		
+
 		$sql .= " order by org_code
 				limit %d , %d ";
 		$queryParam[] = $start;
 		$queryParam[] = $limit;
 		$data = $db->query($sql, $queryParam);
-		
+
 		$result = [];
-		
+
 		foreach ( $data as $v ) {
 			// 查询用户的权限角色
 			$userId = $v["id"];
@@ -198,7 +198,7 @@ class UserDAO extends PSIBaseExDAO {
 				}
 				$roleName .= $r["name"];
 			}
-			
+
 			$item = [
 					"id" => $v["id"],
 					"loginName" => $v["login_name"],
@@ -216,14 +216,14 @@ class UserDAO extends PSIBaseExDAO {
 			];
 			$result[] = $item;
 		}
-		
+
 		$sql = "select count(*) as cnt
 				from t_user
 				where org_id = '%s' ";
-		
+
 		$data = $db->query($sql, $orgId);
 		$cnt = $data[0]["cnt"];
-		
+
 		return [
 				"dataList" => $result,
 				"totalCount" => $cnt
@@ -236,29 +236,25 @@ class UserDAO extends PSIBaseExDAO {
 	private function incDataOrgForUser($dataOrg) {
 		$pre = substr($dataOrg, 0, strlen($dataOrg) - 4);
 		$seed = intval(substr($dataOrg, - 4)) + 1;
-		
+
 		return $pre . str_pad($seed, 4, "0", STR_PAD_LEFT);
 	}
 
 	/**
 	 * 检查数据是否正确
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return NULL|array 没有错误返回null
 	 */
 	private function checkParams($params) {
 		$loginName = trim($params["loginName"]);
 		$name = trim($params["name"]);
 		$orgCode = trim($params["orgCode"]);
-		$orgId = $params["orgId"];
-		$enabled = $params["enabled"];
-		$gender = $params["gender"];
-		$birthday = $params["birthday"];
 		$idCardNumber = trim($params["idCardNumber"]);
 		$tel = trim($params["tel"]);
 		$tel02 = trim($params["tel02"]);
 		$address = trim($params["address"]);
-		
+
 		if ($this->isEmptyStringAfterTrim($loginName)) {
 			return $this->bad("登录名不能为空");
 		}
@@ -268,7 +264,7 @@ class UserDAO extends PSIBaseExDAO {
 		if ($this->isEmptyStringAfterTrim($orgCode)) {
 			return $this->bad("编码不能为空");
 		}
-		
+
 		if ($this->stringBeyondLimit($loginName, 20)) {
 			return $this->bad("登录名长度不能超过20位");
 		}
@@ -287,7 +283,7 @@ class UserDAO extends PSIBaseExDAO {
 		if ($this->stringBeyondLimit($address, 100)) {
 			return $this->bad("家庭住址长度不能超过100位");
 		}
-		
+
 		return null;
 	}
 
@@ -296,7 +292,7 @@ class UserDAO extends PSIBaseExDAO {
 	 */
 	public function addUser(& $params) {
 		$db = $this->db;
-		
+
 		$id = $this->newId();
 		$loginName = trim($params["loginName"]);
 		$name = trim($params["name"]);
@@ -309,14 +305,14 @@ class UserDAO extends PSIBaseExDAO {
 		$tel = trim($params["tel"]);
 		$tel02 = trim($params["tel02"]);
 		$address = trim($params["address"]);
-		
+
 		$py = $params["py"];
-		
+
 		$result = $this->checkParams($params);
 		if ($result) {
 			return $result;
 		}
-		
+
 		// 检查登录名是否被使用
 		$sql = "select count(*) as cnt from t_user where login_name = '%s' ";
 		$data = $db->query($sql, $loginName);
@@ -324,7 +320,7 @@ class UserDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("登录名 [$loginName] 已经存在");
 		}
-		
+
 		// 检查组织机构是否存在
 		$sql = "select count(*) as cnt from t_org where id = '%s' ";
 		$data = $db->query($sql, $orgId);
@@ -332,7 +328,7 @@ class UserDAO extends PSIBaseExDAO {
 		if ($cnt != 1) {
 			return $this->bad("组织机构不存在");
 		}
-		
+
 		// 检查编码是否存在
 		$sql = "select count(*) as cnt from t_user where org_code = '%s' ";
 		$data = $db->query($sql, $orgCode);
@@ -340,10 +336,10 @@ class UserDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("编码[$orgCode]已经被其他用户使用");
 		}
-		
+
 		// 新增用户的默认密码
 		$password = md5("123456");
-		
+
 		// 生成数据域
 		$dataOrg = "";
 		$sql = "select data_org
@@ -362,19 +358,19 @@ class UserDAO extends PSIBaseExDAO {
 				return $this->bad("组织机构不存在");
 			}
 		}
-		
+
 		$sql = "insert into t_user (id, login_name, name, org_code, org_id, enabled, password, py,
 					gender, birthday, id_card_number, tel, tel02, address, data_org)
 					values ('%s', '%s', '%s', '%s', '%s', %d, '%s', '%s',
 					'%s', '%s', '%s', '%s', '%s', '%s', '%s') ";
-		$rc = $db->execute($sql, $id, $loginName, $name, $orgCode, $orgId, $enabled, $password, $py, 
+		$rc = $db->execute($sql, $id, $loginName, $name, $orgCode, $orgId, $enabled, $password, $py,
 				$gender, $birthday, $idCardNumber, $tel, $tel02, $address, $dataOrg);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		$params["id"] = $id;
-		
+
 		// 操作成功
 		return null;
 	}
@@ -385,7 +381,7 @@ class UserDAO extends PSIBaseExDAO {
 	private function incDataOrg($dataOrg) {
 		$pre = substr($dataOrg, 0, strlen($dataOrg) - 2);
 		$seed = intval(substr($dataOrg, - 2)) + 1;
-		
+
 		return $pre . str_pad($seed, 2, "0", STR_PAD_LEFT);
 	}
 
@@ -394,7 +390,7 @@ class UserDAO extends PSIBaseExDAO {
 	 */
 	public function updateUser($params) {
 		$db = $this->db;
-		
+
 		$id = $params["id"];
 		$loginName = trim($params["loginName"]);
 		$name = trim($params["name"]);
@@ -407,14 +403,14 @@ class UserDAO extends PSIBaseExDAO {
 		$tel = trim($params["tel"]);
 		$tel02 = trim($params["tel02"]);
 		$address = trim($params["address"]);
-		
+
 		$py = $params["py"];
-		
+
 		$result = $this->checkParams($params);
 		if ($result) {
 			return $result;
 		}
-		
+
 		// 检查登录名是否被使用
 		$sql = "select count(*) as cnt from t_user where login_name = '%s' and id <> '%s' ";
 		$data = $db->query($sql, $loginName, $id);
@@ -422,7 +418,7 @@ class UserDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("登录名 [$loginName] 已经存在");
 		}
-		
+
 		// 检查组织机构是否存在
 		$sql = "select count(*) as cnt from t_org where id = '%s' ";
 		$data = $db->query($sql, $orgId);
@@ -430,7 +426,7 @@ class UserDAO extends PSIBaseExDAO {
 		if ($cnt != 1) {
 			return $this->bad("组织机构不存在");
 		}
-		
+
 		// 检查编码是否存在
 		$sql = "select count(*) as cnt from t_user
 					where org_code = '%s' and id <> '%s' ";
@@ -439,7 +435,7 @@ class UserDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("编码[$orgCode]已经被其他用户使用");
 		}
-		
+
 		$sql = "select org_id, data_org from t_user where id = '%s'";
 		$data = $db->query($sql, $id);
 		$oldOrgId = $data[0]["org_id"];
@@ -463,7 +459,7 @@ class UserDAO extends PSIBaseExDAO {
 					    gender = '%s', birthday = '%s', id_card_number = '%s',
 					    tel = '%s', tel02 = '%s', address = '%s', data_org = '%s'
 					where id = '%s' ";
-			$rc = $db->execute($sql, $loginName, $name, $orgCode, $orgId, $enabled, $py, $gender, 
+			$rc = $db->execute($sql, $loginName, $name, $orgCode, $orgId, $enabled, $py, $gender,
 					$birthday, $idCardNumber, $tel, $tel02, $address, $dataOrg, $id);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
@@ -475,13 +471,13 @@ class UserDAO extends PSIBaseExDAO {
 					    gender = '%s', birthday = '%s', id_card_number = '%s',
 					    tel = '%s', tel02 = '%s', address = '%s'
 					where id = '%s' ";
-			$rc = $db->execute($sql, $loginName, $name, $orgCode, $orgId, $enabled, $py, $gender, 
+			$rc = $db->execute($sql, $loginName, $name, $orgCode, $orgId, $enabled, $py, $gender,
 					$birthday, $idCardNumber, $tel, $tel02, $address, $id);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
 		}
-		
+
 		// 操作成功
 		return null;
 	}
@@ -489,7 +485,7 @@ class UserDAO extends PSIBaseExDAO {
 	/**
 	 * 根据用户id查询用户
 	 *
-	 * @param string $id        	
+	 * @param string $id
 	 * @return array|NULL
 	 */
 	public function getUserById($id) {
@@ -499,7 +495,7 @@ class UserDAO extends PSIBaseExDAO {
 		if (! $data) {
 			return null;
 		}
-		
+
 		return array(
 				"loginName" => $data[0]["login_name"],
 				"name" => $data[0]["name"]
@@ -509,16 +505,16 @@ class UserDAO extends PSIBaseExDAO {
 	/**
 	 * 删除用户
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return NULL|array
 	 */
 	public function deleteUser($params) {
 		$db = $this->db;
-		
+
 		$id = $params["id"];
-		
+
 		$userName = $params["name"];
-		
+
 		// 判断在采购入库单中是否使用了该用户
 		$sql = "select count(*) as cnt from t_pw_bill where biz_user_id = '%s' or input_user_id = '%s' ";
 		$data = $db->query($sql, $id, $id);
@@ -526,7 +522,7 @@ class UserDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("用户[{$userName}]已经在采购入库单中使用了，不能删除");
 		}
-		
+
 		// 判断在销售出库单中是否使用了该用户
 		$sql = "select count(*) as cnt from t_ws_bill where biz_user_id = '%s' or input_user_id = '%s' ";
 		$data = $db->query($sql, $id, $id);
@@ -534,7 +530,7 @@ class UserDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("用户[{$userName}]已经在销售出库单中使用了，不能删除");
 		}
-		
+
 		// 判断在销售退货入库单中是否使用了该用户
 		$sql = "select count(*) as cnt from t_sr_bill where biz_user_id = '%s' or input_user_id = '%s' ";
 		$data = $db->query($sql, $id, $id);
@@ -542,7 +538,7 @@ class UserDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("用户[{$userName}]已经在销售退货入库单中使用了，不能删除");
 		}
-		
+
 		// 判断在采购退货出库单中是否使用了该用户
 		$sql = "select count(*) as cnt from t_pr_bill where biz_user_id = '%s' or input_user_id = '%s' ";
 		$data = $db->query($sql, $id, $id);
@@ -550,7 +546,7 @@ class UserDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("用户[{$userName}]已经在采购退货出库单中使用了，不能删除");
 		}
-		
+
 		// 判断在调拨单中是否使用了该用户
 		$sql = "select count(*) as cnt from t_it_bill where biz_user_id = '%s' or input_user_id = '%s' ";
 		$data = $db->query($sql, $id, $id);
@@ -558,7 +554,7 @@ class UserDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("用户[{$userName}]已经在调拨单中使用了，不能删除");
 		}
-		
+
 		// 判断在盘点单中是否使用了该用户
 		$sql = "select count(*) as cnt from t_ic_bill where biz_user_id = '%s' or input_user_id = '%s' ";
 		$data = $db->query($sql, $id, $id);
@@ -566,7 +562,7 @@ class UserDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("用户[{$userName}]已经在盘点单中使用了，不能删除");
 		}
-		
+
 		// 判断在收款记录中是否使用了该用户
 		$sql = "select count(*) as cnt from t_receiving where rv_user_id = '%s' or input_user_id = '%s' ";
 		$data = $db->query($sql, $id, $id);
@@ -574,7 +570,7 @@ class UserDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("用户[{$userName}]已经在收款记录中使用了，不能删除");
 		}
-		
+
 		// 判断在付款记录中是否使用了该用户
 		$sql = "select count(*) as cnt from t_payment where pay_user_id = '%s' or input_user_id = '%s' ";
 		$data = $db->query($sql, $id, $id);
@@ -582,7 +578,7 @@ class UserDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("用户[{$userName}]已经在盘点单中使用了，不能删除");
 		}
-		
+
 		// 判断在采购订单中是否使用了该用户
 		$sql = "select count(*) as cnt from t_po_bill where biz_user_id = '%s' or input_user_id = '%s' ";
 		$data = $db->query($sql, $id, $id);
@@ -590,21 +586,21 @@ class UserDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("用户[{$userName}]已经在采购订单中使用了，不能删除");
 		}
-		
+
 		// TODO 如果增加了其他单据，同样需要做出判断是否使用了该用户
-		
+
 		$sql = "delete from t_role_user where user_id = '%s' ";
 		$rc = $db->execute($sql, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		$sql = "delete from t_user where id = '%s' ";
 		$rc = $db->execute($sql, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 操作成功
 		return null;
 	}
@@ -612,19 +608,19 @@ class UserDAO extends PSIBaseExDAO {
 	/**
 	 * 修改用户登录密码
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return NULL|array
 	 */
 	public function changePassword($params) {
 		$db = $this->db;
-		
+
 		$id = $params["id"];
-		
+
 		$password = $params["password"];
 		if (strlen($password) < 5) {
 			return $this->bad("密码长度不能小于5位");
 		}
-		
+
 		$sql = "update t_user
 				set password = '%s'
 				where id = '%s' ";
@@ -632,7 +628,7 @@ class UserDAO extends PSIBaseExDAO {
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 操作成功
 		return null;
 	}
@@ -640,16 +636,16 @@ class UserDAO extends PSIBaseExDAO {
 	/**
 	 * 修改我的密码
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return array|NULL
 	 */
 	public function changeMyPassword($params) {
 		$db = $this->db;
-		
+
 		$userId = $params["userId"];
 		$oldPassword = $params["oldPassword"];
 		$newPassword = $params["newPassword"];
-		
+
 		// 检验旧密码
 		$sql = "select count(*) as cnt from t_user where id = '%s' and password = '%s' ";
 		$data = $db->query($sql, $userId, md5($oldPassword));
@@ -657,17 +653,17 @@ class UserDAO extends PSIBaseExDAO {
 		if ($cnt != 1) {
 			return $this->bad("旧密码不正确");
 		}
-		
+
 		if (strlen($newPassword) < 5) {
 			return $this->bad("密码长度不能小于5位");
 		}
-		
+
 		$sql = "update t_user set password = '%s' where id = '%s' ";
 		$rc = $db->execute($sql, md5($newPassword), $userId);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 操作成功
 		return null;
 	}
@@ -675,19 +671,19 @@ class UserDAO extends PSIBaseExDAO {
 	/**
 	 * 查询数据，用于用户自定义字段
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return array
 	 */
 	public function queryData($params) {
 		$db = $this->db;
-		
+
 		$queryKey = $params["queryKey"];
 		$loginUserId = $params["loginUserId"];
-		
+
 		if ($queryKey == null) {
 			$queryKey = "";
 		}
-		
+
 		$sql = "select id, login_name, name from t_user
 				where (login_name like '%s' or name like '%s' or py like '%s') ";
 		$key = "%{$queryKey}%";
@@ -695,14 +691,14 @@ class UserDAO extends PSIBaseExDAO {
 		$queryParams[] = $key;
 		$queryParams[] = $key;
 		$queryParams[] = $key;
-		
+
 		$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL("-8999-02", "t_user", $loginUserId);
 		if ($rs) {
 			$sql .= " and " . $rs[0];
 			$queryParams = array_merge($queryParams, $rs[1]);
 		}
-		
+
 		$sql .= " order by login_name
 				limit 20";
 		$data = $db->query($sql, $queryParams);
@@ -714,26 +710,26 @@ class UserDAO extends PSIBaseExDAO {
 					"name" => $v["name"]
 			);
 		}
-		
+
 		return $result;
 	}
 
 	/**
 	 * 查询用户数据域列表
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return array
 	 */
 	public function queryUserDataOrg($params) {
 		$db = $this->db;
-		
+
 		$queryKey = $params["queryKey"];
 		$loginUserId = $params["loginUserId"];
-		
+
 		if ($queryKey == null) {
 			$queryKey = "";
 		}
-		
+
 		$sql = "select id, data_org, name from t_user
 				where (login_name like '%s' or name like '%s' or py like '%s' or data_org like '%s') ";
 		$key = "%{$queryKey}%";
@@ -742,14 +738,14 @@ class UserDAO extends PSIBaseExDAO {
 		$queryParams[] = $key;
 		$queryParams[] = $key;
 		$queryParams[] = $key;
-		
+
 		$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::WAREHOUSE_EDIT_DATAORG, "t_user", $loginUserId);
 		if ($rs) {
 			$sql .= " and " . $rs[0];
 			$queryParams = array_merge($queryParams, $rs[1]);
 		}
-		
+
 		$sql .= " order by data_org
 				limit 20";
 		$data = $db->query($sql, $queryParams);
@@ -768,23 +764,23 @@ class UserDAO extends PSIBaseExDAO {
 	/**
 	 * 获得当前登录用户所属公司的Id
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return string|null
 	 */
 	public function getCompanyId($params) {
 		$db = $this->db;
-		
+
 		$userId = $params["loginUserId"];
-		
+
 		$result = null;
-		
+
 		if (! $userId) {
 			return $result;
 		}
-		
+
 		// 获得当前登录用户所属公司的算法：
 		// 从最底层的组织机构向上找，直到parent_id为null的那个组织机构就是所属公司
-		
+
 		$sql = "select org_id from t_user where id = '%s' ";
 		$data = $db->query($sql, $userId);
 		if (! $data) {
@@ -798,30 +794,30 @@ class UserDAO extends PSIBaseExDAO {
 			if (! $data) {
 				return $result;
 			}
-			
+
 			$orgId = $data[0]["parent_id"];
-			
+
 			$result = $data[0]["id"];
 			$found = $orgId == null;
 		}
-		
+
 		return $result;
 	}
 
 	/**
 	 * 获得登录用户的数据域
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return string|NULL
 	 */
 	public function getLoginUserDataOrg($params) {
 		$loginUserId = $params["loginUserId"];
-		
+
 		$db = $this->db;
-		
+
 		$sql = "select data_org from t_user where id = '%s' ";
 		$data = $db->query($sql, $loginUserId);
-		
+
 		if ($data) {
 			return $data[0]["data_org"];
 		} else {
@@ -832,23 +828,23 @@ class UserDAO extends PSIBaseExDAO {
 	/**
 	 * 获得当前登录用户的某个功能的数据域
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return string
 	 */
 	public function getDataOrgForFId($params) {
 		$fid = $params["fid"];
-		
+
 		$result = array();
 		$loginUserId = $params["loginUserId"];
-		
+
 		if ($loginUserId == DemoConst::ADMIN_USER_ID) {
 			// admin 是超级管理员
 			$result[] = "*";
 			return $result;
 		}
-		
+
 		$db = $this->db;
-		
+
 		$sql = "select distinct rpd.data_org
 				from t_role_permission rp, t_role_permission_dataorg rpd,
 					t_role_user ru
@@ -856,19 +852,19 @@ class UserDAO extends PSIBaseExDAO {
 					and rp.role_id = rpd.role_id and rp.permission_id = rpd.permission_id
 					and rpd.permission_id = '%s' ";
 		$data = $db->query($sql, $loginUserId, $fid);
-		
+
 		foreach ( $data as $v ) {
 			$result[] = $v["data_org"];
 		}
-		
+
 		return $result;
 	}
 
 	public function userInfo($params) {
 		$db = $this->db;
-		
+
 		$id = $params["id"];
-		
+
 		$sql = "select login_name, name, org_code, org_id,
 					birthday, id_card_number, tel, tel02,
 					address, gender, enabled 
@@ -879,7 +875,7 @@ class UserDAO extends PSIBaseExDAO {
 			return $this->emptyResult();
 		} else {
 			$v = $data[0];
-			
+
 			$sql = "select full_name 
 					from t_org
 					where id = '%s' ";

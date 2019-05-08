@@ -53,7 +53,8 @@ Ext.define("PSI.Goods.BrandMainForm", {
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
 					fields : ["id", "text", "fullName", "recordStatus", "leaf",
-							"children"]
+							"children", "goodsCount", "goodsEnabledCount",
+							"goodsDisabledCount"]
 				});
 
 		var store = Ext.create("Ext.data.TreeStore", {
@@ -110,6 +111,33 @@ Ext.define("PSI.Goods.BrandMainForm", {
 									return "<span style='color:red;'>停用</span>";
 								}
 							}
+						}, {
+							header : "使用该品牌的商品数",
+							align : "right",
+							width : 180,
+							columns : [{
+										header : "启用状态商品数",
+										dataIndex : "goodsEnabledCount",
+										align : "right",
+										menuDisabled : true,
+										sortable : false,
+										width : 120
+
+									}, {
+										header : "停用状态商品数",
+										dataIndex : "goodsDisabledCount",
+										align : "right",
+										menuDisabled : true,
+										sortable : false,
+										width : 120
+
+									}, {
+										header : "总商品数",
+										dataIndex : "goodsCount",
+										align : "right",
+										menuDisabled : true,
+										sortable : false
+									}]
 						}]
 			},
 			listeners : {

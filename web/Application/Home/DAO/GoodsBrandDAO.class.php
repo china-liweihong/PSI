@@ -36,6 +36,8 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 				$fullName = $v["name"];
 			}
 
+			$useCount = $this->getGoodsBrandUseCount($id);
+
 			$children = $this->allBrandsInternal($db, $id, $rs); // 自身递归调用
 
 			$result[] = [
@@ -46,11 +48,38 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 					"children" => $children,
 					"leaf" => count($children) == 0,
 					"expanded" => true,
-					"iconCls" => "PSI-GoodsBrand"
+					"iconCls" => "PSI-GoodsBrand",
+					"goodsCount" => $useCount["totalCount"],
+					"goodsEnabledCount" => $useCount["enabledCount"],
+					"goodsDisabledCount" => $useCount["disabledCount"]
 			];
 		}
 
 		return $result;
+	}
+
+	/**
+	 * 查询某个品牌在商品中使用数量
+	 *
+	 * @param string $brandId
+	 * @return array
+	 */
+	private function getGoodsBrandUseCount($brandId) {
+		$db = $this->db;
+
+		$sql = "select count(*) as cnt from t_goods where brand_id = '%s' ";
+		$data = $db->query($sql, $brandId);
+		$totalCount = $data[0]["cnt"];
+
+		$sql = "select count(*) as cnt from t_goods where brand_id = '%s' and record_status = 1000";
+		$data = $db->query($sql, $brandId);
+		$enabledCount = $data[0]["cnt"];
+
+		return [
+				"totalCount" => $totalCount,
+				"enabledCount" => $enabledCount,
+				"disabledCount" => $totalCount - $enabledCount
+		];
 	}
 
 	/**
@@ -91,6 +120,8 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 				$fullName = $v["name"];
 			}
 
+			$useCount = $this->getGoodsBrandUseCount($id);
+
 			$children = $this->allBrandsInternal($db, $id, $rs);
 
 			$result[] = [
@@ -101,7 +132,10 @@ class GoodsBrandDAO extends PSIBaseExDAO {
 					"leaf" => count($children) == 0,
 					"expanded" => true,
 					"iconCls" => "PSI-GoodsBrand",
-					"recordStatus" => $v["record_status"]
+					"recordStatus" => $v["record_status"],
+					"goodsCount" => $useCount["totalCount"],
+					"goodsEnabledCount" => $useCount["enabledCount"],
+					"goodsDisabledCount" => $useCount["disabledCount"]
 			];
 		}
 

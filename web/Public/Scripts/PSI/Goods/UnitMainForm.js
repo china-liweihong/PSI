@@ -88,7 +88,6 @@ Ext.define("PSI.Goods.UnitMainForm", {
 							}
 						}, {
 							header : "使用该计量单位的商品数",
-							// dataIndex : "goodsCount",
 							align : "right",
 							width : 180,
 							columns : [{

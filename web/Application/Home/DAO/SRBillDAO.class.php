@@ -14,18 +14,18 @@ class SRBillDAO extends PSIBaseExDAO {
 	/**
 	 * 生成新的销售退货入库单单号
 	 *
-	 * @param string $companyId        	
+	 * @param string $companyId
 	 *
 	 * @return string
 	 */
 	private function genNewBillRef($companyId) {
 		$db = $this->db;
-		
+
 		$bs = new BizConfigDAO($db);
 		$pre = $bs->getSRBillRefPre($companyId);
-		
+
 		$mid = date("Ymd");
-		
+
 		$sql = "select ref from t_sr_bill where ref like '%s' order by ref desc limit 1";
 		$data = M()->query($sql, $pre . $mid . "%");
 		$sufLength = 3;
@@ -35,28 +35,27 @@ class SRBillDAO extends PSIBaseExDAO {
 			$nextNumber = intval(substr($ref, strlen($pre . $mid))) + 1;
 			$suf = str_pad($nextNumber, $sufLength, "0", STR_PAD_LEFT);
 		}
-		
+
 		return $pre . $mid . $suf;
 	}
 
 	/**
 	 * 销售退货入库单主表信息列表
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return array
 	 */
 	public function srbillList($params) {
 		$db = $this->db;
-		
+
 		$loginUserId = $params["loginUserId"];
 		if ($this->loginUserIdNotExists($loginUserId)) {
 			return $this->emptyResult();
 		}
-		
-		$page = $params["page"];
+
 		$start = $params["start"];
 		$limit = $params["limit"];
-		
+
 		$billStatus = $params["billStatus"];
 		$ref = $params["ref"];
 		$fromDT = $params["fromDT"];
@@ -66,7 +65,7 @@ class SRBillDAO extends PSIBaseExDAO {
 		$sn = $params["sn"];
 		$paymentType = $params["paymentType"];
 		$goodsId = $params["goodsId"];
-		
+
 		$sql = "select w.id, w.ref, w.bizdt, c.name as customer_name, u.name as biz_user_name,
 				 	user.name as input_user_name, h.name as warehouse_name, w.rejection_sale_money,
 				 	w.bill_status, w.date_created, w.payment_type, w.bill_memo
@@ -74,14 +73,14 @@ class SRBillDAO extends PSIBaseExDAO {
 				 where (w.customer_id = c.id) and (w.biz_user_id = u.id)
 				 and (w.input_user_id = user.id) and (w.warehouse_id = h.id) ";
 		$queryParams = [];
-		
+
 		$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::SALE_REJECTION, "w", $loginUserId);
 		if ($rs) {
 			$sql .= " and " . $rs[0];
 			$queryParams = $rs[1];
 		}
-		
+
 		if ($billStatus != - 1) {
 			$sql .= " and (w.bill_status = %d) ";
 			$queryParams[] = $billStatus;
@@ -124,14 +123,14 @@ class SRBillDAO extends PSIBaseExDAO {
 					  where d.goods_id = '%s')) ";
 			$queryParams[] = $goodsId;
 		}
-		
+
 		$sql .= " order by w.bizdt desc, w.ref desc
 				 limit %d, %d";
 		$queryParams[] = $start;
 		$queryParams[] = $limit;
 		$data = $db->query($sql, $queryParams);
 		$result = [];
-		
+
 		foreach ( $data as $v ) {
 			$result[] = [
 					"id" => $v["id"],
@@ -148,20 +147,20 @@ class SRBillDAO extends PSIBaseExDAO {
 					"billMemo" => $v["bill_memo"]
 			];
 		}
-		
+
 		$sql = "select count(*) as cnt
 				 from t_sr_bill w, t_customer c, t_user u, t_user user, t_warehouse h
 				 where (w.customer_id = c.id) and (w.biz_user_id = u.id)
 				 and (w.input_user_id = user.id) and (w.warehouse_id = h.id) ";
 		$queryParams = [];
-		
+
 		$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::SALE_REJECTION, "w", $loginUserId);
 		if ($rs) {
 			$sql .= " and " . $rs[0];
 			$queryParams = $rs[1];
 		}
-		
+
 		if ($billStatus != - 1) {
 			$sql .= " and (w.bill_status = %d) ";
 			$queryParams[] = $billStatus;
@@ -204,10 +203,10 @@ class SRBillDAO extends PSIBaseExDAO {
 					  where d.goods_id = '%s')) ";
 			$queryParams[] = $goodsId;
 		}
-		
+
 		$data = $db->query($sql, $queryParams);
 		$cnt = $data[0]["cnt"];
-		
+
 		return [
 				"dataList" => $result,
 				"totalCount" => $cnt
@@ -217,24 +216,24 @@ class SRBillDAO extends PSIBaseExDAO {
 	/**
 	 * 销售退货入库单明细信息列表
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return array
 	 */
 	public function srBillDetailList($params) {
 		$db = $this->db;
-		
+
 		$companyId = $params["companyId"];
 		if ($this->companyIdNotExists($companyId)) {
 			return $this->emptyResult();
 		}
-		
+
 		$bcDAO = new BizConfigDAO($db);
 		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
 		$fmt = "decimal(19, " . $dataScale . ")";
-		
+
 		// id: 销售退货入库单id
 		$id = $params["id"];
-		
+
 		$sql = "select s.id, g.code, g.name, g.spec, u.name as unit_name,
 					convert(s.rejection_goods_count, $fmt) as rejection_goods_count, 
 					s.rejection_goods_price, s.rejection_sale_money,
@@ -244,9 +243,9 @@ class SRBillDAO extends PSIBaseExDAO {
 					and s.rejection_goods_count > 0
 				order by s.show_order";
 		$data = $db->query($sql, $id);
-		
+
 		$result = [];
-		
+
 		foreach ( $data as $v ) {
 			$result[] = [
 					"id" => $v["id"],
@@ -267,28 +266,27 @@ class SRBillDAO extends PSIBaseExDAO {
 	/**
 	 * 列出要选择的可以做退货入库的销售出库单
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return array
 	 */
 	public function selectWSBillList($params) {
 		$db = $this->db;
-		
+
 		$loginUserId = $params["loginUserId"];
 		if ($this->loginUserIdNotExists($loginUserId)) {
 			return $this->emptyResult();
 		}
-		
-		$page = $params["page"];
+
 		$start = $params["start"];
 		$limit = $params["limit"];
-		
+
 		$ref = $params["ref"];
 		$customerId = $params["customerId"];
 		$warehouseId = $params["warehouseId"];
 		$fromDT = $params["fromDT"];
 		$toDT = $params["toDT"];
 		$sn = $params["sn"];
-		
+
 		$sql = "select w.id, w.ref, w.bizdt, c.name as customer_name, u.name as biz_user_name,
 				 user.name as input_user_name, h.name as warehouse_name, w.sale_money
 				 from t_ws_bill w, t_customer c, t_user u, t_user user, t_warehouse h
@@ -296,14 +294,14 @@ class SRBillDAO extends PSIBaseExDAO {
 				 and (w.input_user_id = user.id) and (w.warehouse_id = h.id)
 				 and (w.bill_status = 1000) ";
 		$queryParamas = [];
-		
+
 		$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::SALE_REJECTION, "w", $loginUserId);
 		if ($rs) {
 			$sql .= " and " . $rs[0];
 			$queryParamas = $rs[1];
 		}
-		
+
 		if ($ref) {
 			$sql .= " and (w.ref like '%s') ";
 			$queryParamas[] = "%$ref%";
@@ -338,7 +336,7 @@ class SRBillDAO extends PSIBaseExDAO {
 		$queryParamas[] = $limit;
 		$data = $db->query($sql, $queryParamas);
 		$result = [];
-		
+
 		foreach ( $data as $v ) {
 			$result[] = [
 					"id" => $v["id"],
@@ -351,7 +349,7 @@ class SRBillDAO extends PSIBaseExDAO {
 					"amount" => $v["sale_money"]
 			];
 		}
-		
+
 		$sql = "select count(*) as cnt
 				 from t_ws_bill w, t_customer c, t_user u, t_user user, t_warehouse h
 				 where (w.customer_id = c.id) and (w.biz_user_id = u.id)
@@ -364,7 +362,7 @@ class SRBillDAO extends PSIBaseExDAO {
 			$sql .= " and " . $rs[0];
 			$queryParamas = $rs[1];
 		}
-		
+
 		if ($ref) {
 			$sql .= " and (w.ref like '%s') ";
 			$queryParamas[] = "%$ref%";
@@ -393,10 +391,10 @@ class SRBillDAO extends PSIBaseExDAO {
 					))";
 			$queryParamas[] = "%$sn%";
 		}
-		
+
 		$data = $db->query($sql, $queryParamas);
 		$cnt = $data[0]["cnt"];
-		
+
 		return [
 				"dataList" => $result,
 				"totalCount" => $cnt
@@ -406,25 +404,25 @@ class SRBillDAO extends PSIBaseExDAO {
 	/**
 	 * 获得销售出库单的信息
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return array
 	 */
 	public function getWSBillInfoForSRBill($params) {
 		$db = $this->db;
-		
+
 		$companyId = $params["companyId"];
 		if ($this->companyIdNotExists($companyId)) {
 			return $this->emptyResult();
 		}
-		
+
 		$bcDAO = new BizConfigDAO($db);
 		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
 		$fmt = "decimal(19, " . $dataScale . ")";
-		
+
 		$result = [];
-		
+
 		$id = $params["id"];
-		
+
 		$sql = "select c.name as customer_name, w.ref, h.id as warehouse_id,
 					h.name as warehouse_name, c.id as customer_id
 				from t_ws_bill w, t_customer c, t_warehouse h
@@ -433,13 +431,13 @@ class SRBillDAO extends PSIBaseExDAO {
 		if (! $data) {
 			return $result;
 		}
-		
+
 		$result["ref"] = $data[0]["ref"];
 		$result["customerName"] = $data[0]["customer_name"];
 		$result["warehouseId"] = $data[0]["warehouse_id"];
 		$result["warehouseName"] = $data[0]["warehouse_name"];
 		$result["customerId"] = $data[0]["customer_id"];
-		
+
 		$sql = "select d.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, 
 					convert(d.goods_count, $fmt) as goods_count,
 					d.goods_price, d.goods_money, d.sn_note
@@ -448,7 +446,7 @@ class SRBillDAO extends PSIBaseExDAO {
 				order by d.show_order";
 		$data = $db->query($sql, $id);
 		$items = [];
-		
+
 		foreach ( $data as $v ) {
 			$items[] = [
 					"id" => $v["id"],
@@ -464,21 +462,21 @@ class SRBillDAO extends PSIBaseExDAO {
 					"sn" => $v["sn_note"]
 			];
 		}
-		
+
 		$result["items"] = $items;
-		
+
 		return $result;
 	}
 
 	/**
 	 * 新建销售退货入库单
 	 *
-	 * @param array $bill        	
+	 * @param array $bill
 	 * @return NULL|array
 	 */
 	public function addSRBill(& $bill) {
 		$db = $this->db;
-		
+
 		$bizDT = $bill["bizDT"];
 		$customerId = $bill["customerId"];
 		$warehouseId = $bill["warehouseId"];
@@ -487,36 +485,36 @@ class SRBillDAO extends PSIBaseExDAO {
 		$wsBillId = $bill["wsBillId"];
 		$paymentType = $bill["paymentType"];
 		$billMemo = $bill["billMemo"];
-		
+
 		$wsBillDAO = new WSBillDAO($db);
 		$wsBill = $wsBillDAO->getWSBillById($wsBillId);
 		if (! $wsBill) {
 			return $this->bad("选择的销售出库单不存在");
 		}
-		
+
 		$customerDAO = new CustomerDAO($db);
 		$customer = $customerDAO->getCustomerById($customerId);
 		if (! $customer) {
 			return $this->bad("选择的客户不存在");
 		}
-		
+
 		$warehouseDAO = new WarehouseDAO($db);
 		$warehouse = $warehouseDAO->getWarehouseById($warehouseId);
 		if (! $warehouse) {
 			return $this->bad("选择的仓库不存在");
 		}
-		
+
 		$userDAO = new UserDAO($db);
 		$user = $userDAO->getUserById($bizUserId);
 		if (! $user) {
 			return $this->bad("选择的业务员不存在");
 		}
-		
+
 		// 检查业务日期
 		if (! $this->dateIsValid($bizDT)) {
 			return $this->bad("业务日期不正确");
 		}
-		
+
 		$dataOrg = $bill["dataOrg"];
 		$companyId = $bill["companyId"];
 		$loginUserId = $bill["loginUserId"];
@@ -529,11 +527,11 @@ class SRBillDAO extends PSIBaseExDAO {
 		if ($this->loginUserIdNotExists($loginUserId)) {
 			return $this->badParam("loginUserId");
 		}
-		
+
 		$bcDAO = new BizConfigDAO($db);
 		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
 		$fmt = "decimal(19, " . $dataScale . ")";
-		
+
 		$id = $this->newId();
 		$ref = $this->genNewBillRef($companyId);
 		$sql = "insert into t_sr_bill(id, bill_status, bizdt, biz_user_id, customer_id,
@@ -541,13 +539,13 @@ class SRBillDAO extends PSIBaseExDAO {
 					data_org, company_id, bill_memo)
 				values ('%s', 0, '%s', '%s', '%s',
 					  now(), '%s', '%s', '%s', '%s', %d, '%s', '%s', '%s')";
-		
-		$rc = $db->execute($sql, $id, $bizDT, $bizUserId, $customerId, $loginUserId, $ref, 
+
+		$rc = $db->execute($sql, $id, $bizDT, $bizUserId, $customerId, $loginUserId, $ref,
 				$warehouseId, $wsBillId, $paymentType, $dataOrg, $companyId, $billMemo);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		foreach ( $items as $i => $v ) {
 			$wsBillDetailId = $v["id"];
 			$sql = "select inventory_price, convert(goods_count, $fmt) as goods_count, goods_price, goods_money
@@ -571,21 +569,21 @@ class SRBillDAO extends PSIBaseExDAO {
 			$goodsId = $v["goodsId"];
 			$sn = $v["sn"];
 			$memo = $v["memo"];
-			
+
 			$sql = "insert into t_sr_bill_detail(id, date_created, goods_id, goods_count, goods_money,
 					goods_price, inventory_money, inventory_price, rejection_goods_count,
 					rejection_goods_price, rejection_sale_money, show_order, srbill_id, wsbilldetail_id,
 						sn_note, data_org, company_id, memo)
 					values('%s', now(), '%s', convert(%f, $fmt), %f, %f, %f, %f, convert(%f, $fmt),
 					%f, %f, %d, '%s', '%s', '%s', '%s', '%s', '%s') ";
-			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsMoney, 
-					$goodsPrice, $inventoryMoney, $inventoryPrice, $rejCount, $rejPrice, 
-					$rejSaleMoney, $i, $id, $wsBillDetailId, $sn, $dataOrg, $companyId, $memo);
+			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsMoney, $goodsPrice,
+					$inventoryMoney, $inventoryPrice, $rejCount, $rejPrice, $rejSaleMoney, $i, $id,
+					$wsBillDetailId, $sn, $dataOrg, $companyId, $memo);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
 		}
-		
+
 		// 更新主表的汇总信息
 		$sql = "select sum(rejection_sale_money) as rej_money,
 				sum(inventory_money) as inv_money
@@ -602,10 +600,10 @@ class SRBillDAO extends PSIBaseExDAO {
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		$bill["id"] = $id;
 		$bill["ref"] = $ref;
-		
+
 		// 操作成功
 		return null;
 	}
@@ -613,7 +611,7 @@ class SRBillDAO extends PSIBaseExDAO {
 	/**
 	 * 根据销售退货入库单id查询销售退货入库单
 	 *
-	 * @param string $id        	
+	 * @param string $id
 	 * @return array|NULL
 	 */
 	public function getSRBillById($id) {
@@ -635,14 +633,14 @@ class SRBillDAO extends PSIBaseExDAO {
 	/**
 	 * 编辑销售退货入库单
 	 *
-	 * @param array $bill        	
+	 * @param array $bill
 	 * @return NULL|array
 	 */
 	public function updateSRBill(& $bill) {
 		$db = $this->db;
-		
+
 		$id = $bill["id"];
-		
+
 		$oldBill = $this->getSRBillById($id);
 		if (! $oldBill) {
 			return $this->bad("要编辑的销售退货入库单不存在");
@@ -654,7 +652,7 @@ class SRBillDAO extends PSIBaseExDAO {
 		$ref = $oldBill["ref"];
 		$dataOrg = $oldBill["dataOrg"];
 		$companyId = $oldBill["companyId"];
-		
+
 		$bizDT = $bill["bizDT"];
 		$customerId = $bill["customerId"];
 		$warehouseId = $bill["warehouseId"];
@@ -662,55 +660,55 @@ class SRBillDAO extends PSIBaseExDAO {
 		$items = $bill["items"];
 		$paymentType = $bill["paymentType"];
 		$billMemo = $bill["billMemo"];
-		
+
 		$customerDAO = new CustomerDAO($db);
 		$customer = $customerDAO->getCustomerById($customerId);
 		if (! $customer) {
 			return $this->bad("选择的客户不存在");
 		}
-		
+
 		$warehouseDAO = new WarehouseDAO($db);
 		$warehouse = $warehouseDAO->getWarehouseById($warehouseId);
 		if (! $warehouse) {
 			return $this->bad("选择的仓库不存在");
 		}
-		
+
 		$userDAO = new UserDAO($db);
 		$user = $userDAO->getUserById($bizUserId);
 		if (! $user) {
 			return $this->bad("选择的业务员不存在");
 		}
-		
+
 		// 检查业务日期
 		if (! $this->dateIsValid($bizDT)) {
 			return $this->bad("业务日期不正确");
 		}
-		
+
 		$loginUserId = $bill["loginUserId"];
 		if ($this->loginUserIdNotExists($loginUserId)) {
 			return $this->badParam("loginUserId");
 		}
-		
+
 		$bcDAO = new BizConfigDAO($db);
 		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
 		$fmt = "decimal(19, " . $dataScale . ")";
-		
+
 		// 主表
 		$sql = "update t_sr_bill
 				set bizdt = '%s', biz_user_id = '%s', date_created = now(),
 				   input_user_id = '%s', warehouse_id = '%s',
 					payment_type = %d, bill_memo = '%s'
 				where id = '%s' ";
-		$db->execute($sql, $bizDT, $bizUserId, $loginUserId, $warehouseId, $paymentType, $billMemo, 
+		$db->execute($sql, $bizDT, $bizUserId, $loginUserId, $warehouseId, $paymentType, $billMemo,
 				$id);
-		
+
 		// 退货明细
 		$sql = "delete from t_sr_bill_detail where srbill_id = '%s' ";
 		$rc = $db->execute($sql, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		foreach ( $items as $i => $v ) {
 			$wsBillDetailId = $v["id"];
 			$sql = "select inventory_price, convert(goods_count, $fmt) as goods_count, goods_price, goods_money
@@ -734,21 +732,21 @@ class SRBillDAO extends PSIBaseExDAO {
 			$goodsId = $v["goodsId"];
 			$sn = $v["sn"];
 			$memo = $v["memo"];
-			
+
 			$sql = "insert into t_sr_bill_detail(id, date_created, goods_id, goods_count, goods_money,
 					goods_price, inventory_money, inventory_price, rejection_goods_count,
 					rejection_goods_price, rejection_sale_money, show_order, srbill_id, wsbilldetail_id,
 						sn_note, data_org, company_id, memo)
 					values('%s', now(), '%s', convert(%f, $fmt), %f, %f, %f, %f, convert(%f, $fmt),
 						%f, %f, %d, '%s', '%s', '%s', '%s', '%s', '%s') ";
-			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsMoney, 
-					$goodsPrice, $inventoryMoney, $inventoryPrice, $rejCount, $rejPrice, 
-					$rejSaleMoney, $i, $id, $wsBillDetailId, $sn, $dataOrg, $companyId, $memo);
+			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsMoney, $goodsPrice,
+					$inventoryMoney, $inventoryPrice, $rejCount, $rejPrice, $rejSaleMoney, $i, $id,
+					$wsBillDetailId, $sn, $dataOrg, $companyId, $memo);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
 		}
-		
+
 		// 更新主表的汇总信息
 		$sql = "select sum(rejection_sale_money) as rej_money,
 				sum(inventory_money) as inv_money
@@ -771,9 +769,9 @@ class SRBillDAO extends PSIBaseExDAO {
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		$bill["ref"] = $ref;
-		
+
 		// 操作成功
 		return null;
 	}
@@ -781,12 +779,12 @@ class SRBillDAO extends PSIBaseExDAO {
 	/**
 	 * 获得退货入库单单据数据
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return array
 	 */
 	public function srBillInfo($params) {
 		$db = $this->db;
-		
+
 		$companyId = $params["companyId"];
 		if ($this->companyIdNotExists($companyId)) {
 			return $this->emptyResult();
@@ -794,11 +792,12 @@ class SRBillDAO extends PSIBaseExDAO {
 		$bcDAO = new BizConfigDAO($db);
 		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
 		$fmt = "decimal(19, " . $dataScale . ")";
-		
+
 		$id = $params["id"];
-		
+
 		if (! $id) {
 			// 新增单据
+			$result = [];
 			$result["bizUserId"] = $params["loginUserId"];
 			$result["bizUserName"] = $params["loginUserName"];
 			return $result;
@@ -828,7 +827,7 @@ class SRBillDAO extends PSIBaseExDAO {
 				$result["paymentType"] = $data[0]["payment_type"];
 				$result["billMemo"] = $data[0]["bill_memo"];
 			}
-			
+
 			$sql = "select d.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, 
 						convert(d.goods_count, $fmt) as goods_count,
 						d.goods_price, d.goods_money,
@@ -858,9 +857,9 @@ class SRBillDAO extends PSIBaseExDAO {
 						"memo" => $v["memo"]
 				];
 			}
-			
+
 			$result["items"] = $items;
-			
+
 			return $result;
 		}
 	}
@@ -868,39 +867,39 @@ class SRBillDAO extends PSIBaseExDAO {
 	/**
 	 * 删除销售退货入库单
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return NULL|array
 	 */
 	public function deleteSRBill(& $params) {
 		$db = $this->db;
-		
+
 		$id = $params["id"];
-		
+
 		$bill = $this->getSRBillById($id);
 		if (! $bill) {
 			return $this->bad("要删除的销售退货入库单不存在");
 		}
-		
+
 		$billStatus = $bill["billStatus"];
 		$ref = $bill["ref"];
 		if ($billStatus != 0) {
 			return $this->bad("销售退货入库单[单号: {$ref}]已经提交，不能删除");
 		}
-		
+
 		$sql = "delete from t_sr_bill_detail where srbill_id = '%s'";
 		$rc = $db->execute($sql, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		$sql = "delete from t_sr_bill where id = '%s' ";
 		$rc = $db->execute($sql, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		$params["ref"] = $ref;
-		
+
 		// 操作成功
 		return null;
 	}
@@ -908,19 +907,19 @@ class SRBillDAO extends PSIBaseExDAO {
 	/**
 	 * 提交销售退货入库单
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return NULL|array
 	 */
 	public function commitSRBill(& $params) {
 		$db = $this->db;
-		
+
 		$id = $params["id"];
-		
+
 		$loginUserId = $params["loginUserId"];
 		if ($this->loginUserIdNotExists($loginUserId)) {
 			return $this->badParam("loginUserId");
 		}
-		
+
 		$sql = "select ref, bill_status, warehouse_id, customer_id, bizdt,
 					biz_user_id, rejection_sale_money, payment_type,
 					company_id, ws_bill_id
@@ -934,7 +933,7 @@ class SRBillDAO extends PSIBaseExDAO {
 		if ($billStatus != 0) {
 			return $this->bad("销售退货入库单(单号:{$ref})已经提交，不能再次提交");
 		}
-		
+
 		$paymentType = $data[0]["payment_type"];
 		$warehouseId = $data[0]["warehouse_id"];
 		$customerId = $data[0]["customer_id"];
@@ -943,12 +942,12 @@ class SRBillDAO extends PSIBaseExDAO {
 		$rejectionSaleMoney = $data[0]["rejection_sale_money"];
 		$companyId = $data[0]["company_id"];
 		$wsBillId = $data[0]["ws_bill_id"];
-		
+
 		$bs = new BizConfigDAO($db);
 		$fifo = $bs->getInventoryMethod($companyId) == 1; // true: 先进先出
 		$dataScale = $bs->getGoodsCountDecNumber($companyId);
 		$fmt = "decimal(19, " . $dataScale . ")";
-		
+
 		$warehouseDAO = new WarehouseDAO($db);
 		$warehouse = $warehouseDAO->getWarehouseById($warehouseId);
 		if (! $warehouse) {
@@ -959,19 +958,19 @@ class SRBillDAO extends PSIBaseExDAO {
 		if ($inited != 1) {
 			return $this->bad("仓库[{$warehouseName}]还没有建账");
 		}
-		
+
 		$customerDAO = new CustomerDAO($db);
 		$customer = $customerDAO->getCustomerById($customerId);
 		if (! $customer) {
 			return $this->bad("客户不存在，无法提交");
 		}
-		
+
 		$userDAO = new UserDAO($db);
 		$user = $userDAO->getUserById($bizUserId);
 		if (! $user) {
 			return $this->bad("业务人员不存在，无法提交");
 		}
-		
+
 		$allPaymentType = array(
 				0,
 				1,
@@ -980,7 +979,7 @@ class SRBillDAO extends PSIBaseExDAO {
 		if (! in_array($paymentType, $allPaymentType)) {
 			return $this->bad("付款方式不正确，无法提交");
 		}
-		
+
 		// 检查退货数量
 		// 1、不能为负数
 		// 2、累计退货数量不能超过销售的数量
@@ -992,12 +991,12 @@ class SRBillDAO extends PSIBaseExDAO {
 		if (! $data) {
 			return $this->bad("销售退货入库单(单号:{$ref})没有退货明细，无法提交");
 		}
-		
-		foreach ( $data as $i => $v ) {
+
+		foreach ( $data as $v ) {
 			$wsbillDetailId = $v["wsbilldetail_id"];
 			$rejCount = $v["rejection_goods_count"];
 			$goodsId = $v["goods_id"];
-			
+
 			// 退货数量为负数
 			if ($rejCount < 0) {
 				$sql = "select code, name, spec
@@ -1011,7 +1010,7 @@ class SRBillDAO extends PSIBaseExDAO {
 					return $this->bad("商品退货数量不能为负数");
 				}
 			}
-			
+
 			// 累计退货数量不能超过销售数量
 			$sql = "select convert(goods_count, $fmt) as goods_count from t_ws_bill_detail where id = '%s' ";
 			$data = $db->query($sql, $wsbillDetailId);
@@ -1019,7 +1018,7 @@ class SRBillDAO extends PSIBaseExDAO {
 			if ($data) {
 				$saleGoodsCount = $data[0]["goods_count"];
 			}
-			
+
 			$sql = "select sum(convert(d.rejection_goods_count, $fmt)) as rej_count
 					from t_sr_bill s, t_sr_bill_detail d
 					where s.id = d.srbill_id and s.bill_status <> 0
@@ -1039,13 +1038,13 @@ class SRBillDAO extends PSIBaseExDAO {
 				}
 			}
 		}
-		
+
 		$sql = "select goods_id, convert(rejection_goods_count, $fmt) as rejection_goods_count, inventory_money
 				from t_sr_bill_detail
 				where srbill_id = '%s'
 				order by show_order";
 		$items = $db->query($sql, $id);
-		foreach ( $items as $i => $v ) {
+		foreach ( $items as $v ) {
 			$goodsId = $v["goods_id"];
 			$rejCount = $v["rejection_goods_count"];
 			$rejMoney = $v["inventory_money"];
@@ -1053,7 +1052,7 @@ class SRBillDAO extends PSIBaseExDAO {
 				continue;
 			}
 			$rejPrice = $rejMoney / $rejCount;
-			
+
 			if ($fifo) {
 				// TODO 先进先出
 			} else {
@@ -1068,14 +1067,14 @@ class SRBillDAO extends PSIBaseExDAO {
 					$totalInMoney = 0;
 					$totalBalanceCount = 0;
 					$totalBalanceMoney = 0;
-					
+
 					$totalInCount += $rejCount;
 					$totalInMoney += $rejMoney;
 					$totalInPrice = $totalInMoney / $totalInCount;
 					$totalBalanceCount += $rejCount;
 					$totalBalanceMoney += $rejMoney;
 					$totalBalancePrice = $totalBalanceMoney / $totalBalanceCount;
-					
+
 					// 库存明细账
 					$sql = "insert into t_inventory_detail(in_count, in_price, in_money,
 						balance_count, balance_price, balance_money, ref_number, ref_type,
@@ -1083,21 +1082,21 @@ class SRBillDAO extends PSIBaseExDAO {
 						values (convert(%f, $fmt), %f, %f,
 						convert(%f, $fmt), %f, %f, '%s', '销售退货入库',
 						'%s', '%s', now(), '%s', '%s')";
-					$rc = $db->execute($sql, $rejCount, $rejPrice, $rejMoney, $totalBalanceCount, 
-							$totalBalancePrice, $totalBalanceMoney, $ref, $bizDT, $bizUserId, 
+					$rc = $db->execute($sql, $rejCount, $rejPrice, $rejMoney, $totalBalanceCount,
+							$totalBalancePrice, $totalBalanceMoney, $ref, $bizDT, $bizUserId,
 							$goodsId, $warehouseId);
 					if ($rc === false) {
 						return $this->sqlError(__METHOD__, __LINE__);
 					}
-					
+
 					// 库存总账
 					$sql = "insert into t_inventory(in_count, in_price, in_money,
 						balance_count, balance_price, balance_money,
 						goods_id, warehouse_id)
 						values (convert(%f, $fmt), %f, %f,
 						convert(%f, $fmt), %f, %f, '%s', '%s')";
-					$rc = $db->execute($sql, $totalInCount, $totalInPrice, $totalInMoney, 
-							$totalBalanceCount, $totalBalancePrice, $totalBalanceMoney, $goodsId, 
+					$rc = $db->execute($sql, $totalInCount, $totalInPrice, $totalInMoney,
+							$totalBalanceCount, $totalBalancePrice, $totalBalanceMoney, $goodsId,
 							$warehouseId);
 					if ($rc === false) {
 						return $this->sqlError(__METHOD__, __LINE__);
@@ -1107,14 +1106,14 @@ class SRBillDAO extends PSIBaseExDAO {
 					$totalInMoney = $data[0]["in_money"];
 					$totalBalanceCount = $data[0]["balance_count"];
 					$totalBalanceMoney = $data[0]["balance_money"];
-					
+
 					$totalInCount += $rejCount;
 					$totalInMoney += $rejMoney;
 					$totalInPrice = $totalInMoney / $totalInCount;
 					$totalBalanceCount += $rejCount;
 					$totalBalanceMoney += $rejMoney;
 					$totalBalancePrice = $totalBalanceMoney / $totalBalanceCount;
-					
+
 					// 库存明细账
 					$sql = "insert into t_inventory_detail(in_count, in_price, in_money,
 							balance_count, balance_price, balance_money, ref_number, ref_type,
@@ -1122,20 +1121,20 @@ class SRBillDAO extends PSIBaseExDAO {
 							values (convert(%f, $fmt), %f, %f,
 							convert(%f, $fmt), %f, %f, '%s', '销售退货入库',
 							'%s', '%s', now(), '%s', '%s')";
-					$rc = $db->execute($sql, $rejCount, $rejPrice, $rejMoney, $totalBalanceCount, 
-							$totalBalancePrice, $totalBalanceMoney, $ref, $bizDT, $bizUserId, 
+					$rc = $db->execute($sql, $rejCount, $rejPrice, $rejMoney, $totalBalanceCount,
+							$totalBalancePrice, $totalBalanceMoney, $ref, $bizDT, $bizUserId,
 							$goodsId, $warehouseId);
 					if ($rc === false) {
 						return $this->sqlError(__METHOD__, __LINE__);
 					}
-					
+
 					// 库存总账
 					$sql = "update t_inventory
 							set in_count = convert(%f, $fmt), in_price = %f, in_money = %f,
 							  balance_count = convert(%f, $fmt), balance_price = %f, balance_money = %f
 							where goods_id = '%s' and warehouse_id = '%s' ";
-					$rc = $db->execute($sql, $totalInCount, $totalInPrice, $totalInMoney, 
-							$totalBalanceCount, $totalBalancePrice, $totalBalanceMoney, $goodsId, 
+					$rc = $db->execute($sql, $totalInCount, $totalInPrice, $totalInMoney,
+							$totalBalanceCount, $totalBalancePrice, $totalBalanceMoney, $goodsId,
 							$warehouseId);
 					if ($rc === false) {
 						return $this->sqlError(__METHOD__, __LINE__);
@@ -1143,7 +1142,7 @@ class SRBillDAO extends PSIBaseExDAO {
 				}
 			}
 		}
-		
+
 		if ($paymentType == 0) {
 			// 记应付账款
 			// 应付账款总账
@@ -1155,36 +1154,35 @@ class SRBillDAO extends PSIBaseExDAO {
 			if ($data) {
 				$totalPayMoney = $data[0]["pay_money"];
 				$totalBalanceMoney = $data[0]["balance_money"];
-				
+
 				$totalPayMoney += $rejectionSaleMoney;
 				$totalBalanceMoney += $rejectionSaleMoney;
 				$sql = "update t_payables
 						set pay_money = %f, balance_money = %f
 						where ca_id = '%s' and ca_type = 'customer'
 							and company_id = '%s' ";
-				$rc = $db->execute($sql, $totalPayMoney, $totalBalanceMoney, $customerId, 
-						$companyId);
+				$rc = $db->execute($sql, $totalPayMoney, $totalBalanceMoney, $customerId, $companyId);
 				if ($rc === false) {
 					return $this->sqlError(__METHOD__, __LINE__);
 				}
 			} else {
-				
+
 				$sql = "insert into t_payables (id, ca_id, ca_type, pay_money, balance_money,
 							act_money, company_id)
 						values ('%s', '%s', 'customer', %f, %f, %f, '%s')";
-				$rc = $db->execute($sql, $this->newId(), $customerId, $rejectionSaleMoney, 
+				$rc = $db->execute($sql, $this->newId(), $customerId, $rejectionSaleMoney,
 						$rejectionSaleMoney, 0, $companyId);
 				if ($rc === false) {
 					return $this->sqlError(__METHOD__, __LINE__);
 				}
 			}
-			
+
 			// 应付账款明细账
 			$sql = "insert into t_payables_detail(id, ca_id, ca_type, pay_money, balance_money,
 					biz_date, date_created, ref_number, ref_type, act_money, company_id)
 					values ('%s', '%s', 'customer', %f, %f,
 					 '%s', now(), '%s', '销售退货入库', 0, '%s')";
-			$rc = $db->execute($sql, $this->newId(), $customerId, $rejectionSaleMoney, 
+			$rc = $db->execute($sql, $this->newId(), $customerId, $rejectionSaleMoney,
 					$rejectionSaleMoney, $bizDT, $ref, $companyId);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
@@ -1192,14 +1190,14 @@ class SRBillDAO extends PSIBaseExDAO {
 		} else if ($paymentType == 1) {
 			// 现金付款
 			$outCash = $rejectionSaleMoney;
-			
+
 			$sql = "select in_money, out_money, balance_money
 					from t_cash
 					where biz_date = '%s' and company_id = '%s' ";
 			$data = $db->query($sql, $bizDT, $companyId);
 			if (! $data) {
 				// 当天首次发生现金业务
-				
+
 				$sql = "select sum(in_money) as sum_in_money, sum(out_money) as sum_out_money
 						from t_cash
 						where biz_date <= '%s' and company_id = '%s' ";
@@ -1212,7 +1210,7 @@ class SRBillDAO extends PSIBaseExDAO {
 				if (! $sumOutMoney) {
 					$sumOutMoney = 0;
 				}
-				
+
 				$balanceCash = $sumInMoney - $sumOutMoney - $outCash;
 				$sql = "insert into t_cash(out_money, balance_money, biz_date, company_id)
 						values (%f, %f, '%s', '%s')";
@@ -1220,7 +1218,7 @@ class SRBillDAO extends PSIBaseExDAO {
 				if ($rc === false) {
 					return $this->sqlError(__METHOD__, __LINE__);
 				}
-				
+
 				// 记现金明细账
 				$sql = "insert into t_cash_detail(out_money, balance_money, biz_date, ref_type,
 							ref_number, date_created, company_id)
@@ -1239,7 +1237,7 @@ class SRBillDAO extends PSIBaseExDAO {
 				if ($rc === false) {
 					return $this->sqlError(__METHOD__, __LINE__);
 				}
-				
+
 				// 记现金明细账
 				$sql = "insert into t_cash_detail(out_money, balance_money, biz_date, ref_type,
 							ref_number, date_created, company_id)
@@ -1249,7 +1247,7 @@ class SRBillDAO extends PSIBaseExDAO {
 					return $this->sqlError(__METHOD__, __LINE__);
 				}
 			}
-			
+
 			// 调整业务日期之后的现金总账和明细账的余额
 			$sql = "update t_cash
 					set balance_money = balance_money - %f
@@ -1258,7 +1256,7 @@ class SRBillDAO extends PSIBaseExDAO {
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
-			
+
 			$sql = "update t_cash_detail
 					set balance_money = balance_money - %f
 					where biz_date > '%s' and company_id = '%s' ";
@@ -1269,7 +1267,7 @@ class SRBillDAO extends PSIBaseExDAO {
 		} else if ($paymentType == 2) {
 			// 2： 退款转入预收款
 			$inMoney = $rejectionSaleMoney;
-			
+
 			// 预收款总账
 			$totalInMoney = 0;
 			$totalBalanceMoney = 0;
@@ -1282,7 +1280,7 @@ class SRBillDAO extends PSIBaseExDAO {
 				$totalBalanceMoney = $inMoney;
 				$sql = "insert into t_pre_receiving(id, customer_id, in_money, balance_money, company_id)
 						values ('%s', '%s', %f, %f, '%s')";
-				$rc = $db->execute($sql, $this->newId(), $customerId, $totalInMoney, 
+				$rc = $db->execute($sql, $this->newId(), $customerId, $totalInMoney,
 						$totalBalanceMoney, $companyId);
 				if ($rc === false) {
 					return $this->sqlError(__METHOD__, __LINE__);
@@ -1306,19 +1304,19 @@ class SRBillDAO extends PSIBaseExDAO {
 					return $this->sqlError(__METHOD__, __LINE__);
 				}
 			}
-			
+
 			// 预收款明细账
 			$sql = "insert into t_pre_receiving_detail(id, customer_id, in_money, balance_money,
 						biz_date, date_created, ref_number, ref_type, biz_user_id, input_user_id,
 						company_id)
 					values('%s', '%s', %f, %f, '%s', now(), '%s', '销售退货入库', '%s', '%s', '%s')";
-			$rc = $db->execute($sql, $this->newId(), $customerId, $inMoney, $totalBalanceMoney, 
+			$rc = $db->execute($sql, $this->newId(), $customerId, $inMoney, $totalBalanceMoney,
 					$bizDT, $ref, $bizUserId, $loginUserId, $companyId);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
 		}
-		
+
 		// 把单据本身的状态修改为已经提交
 		$sql = "update t_sr_bill
 				set bill_status = 1000
@@ -1327,7 +1325,7 @@ class SRBillDAO extends PSIBaseExDAO {
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 把对应的销售出库单的状态改为：已退货
 		$sql = "update t_ws_bill
 				set bill_status = 2000
@@ -1336,9 +1334,9 @@ class SRBillDAO extends PSIBaseExDAO {
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		$params["ref"] = $ref;
-		
+
 		// 操作成功
 		return null;
 	}
@@ -1346,12 +1344,12 @@ class SRBillDAO extends PSIBaseExDAO {
 	/**
 	 * 查询数据，用于销售退货入库单生成pdf文件
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return array|NULL
 	 */
 	public function getDataForPDF($params) {
 		$ref = $params["ref"];
-		
+
 		$db = $this->db;
 		$sql = "select w.id, w.bizdt, c.name as customer_name, u.name as biz_user_name,
 				 	user.name as input_user_name, h.name as warehouse_name, w.rejection_sale_money,
@@ -1364,14 +1362,14 @@ class SRBillDAO extends PSIBaseExDAO {
 		if (! $data) {
 			return null;
 		}
-		
+
 		$id = $data[0]["id"];
 		$companyId = $data[0]["company_id"];
-		
+
 		$bcDAO = new BizConfigDAO($db);
 		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
 		$fmt = "decimal(19, " . $dataScale . ")";
-		
+
 		$bill = [
 				"bizDT" => $this->toYMD($data[0]["bizdt"]),
 				"customerName" => $data[0]["customer_name"],
@@ -1379,7 +1377,7 @@ class SRBillDAO extends PSIBaseExDAO {
 				"bizUserName" => $data[0]["biz_user_name"],
 				"rejMoney" => $data[0]["rejection_sale_money"]
 		];
-		
+
 		// 明细表
 		$sql = "select s.id, g.code, g.name, g.spec, u.name as unit_name,
 					convert(s.rejection_goods_count, $fmt) as rejection_goods_count, 
@@ -1404,7 +1402,7 @@ class SRBillDAO extends PSIBaseExDAO {
 			];
 		}
 		$bill["items"] = $items;
-		
+
 		return $bill;
 	}
 
@@ -1417,7 +1415,7 @@ class SRBillDAO extends PSIBaseExDAO {
 	 */
 	public function getFullBillDataByRef($ref) {
 		$db = $this->db;
-		
+
 		$sql = "select w.id, w.bizdt, c.name as customer_name,
 					 u.name as biz_user_name,
 					 h.name as warehouse_name, wsBill.ref as ws_bill_ref, w.company_id
@@ -1429,14 +1427,14 @@ class SRBillDAO extends PSIBaseExDAO {
 		if (! $data) {
 			return NULL;
 		}
-		
+
 		$id = $data[0]["id"];
 		$companyId = $data[0]["company_id"];
-		
+
 		$bcDAO = new BizConfigDAO($db);
 		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
 		$fmt = "decimal(19, " . $dataScale . ")";
-		
+
 		$result = [
 				"bizDT" => $this->toYMD($data[0]["bizdt"]),
 				"customerName" => $data[0]["customer_name"],
@@ -1444,7 +1442,7 @@ class SRBillDAO extends PSIBaseExDAO {
 				"bizUserName" => $data[0]["biz_user_name"],
 				"wsBillRef" => $data[0]["ws_bill_ref"]
 		];
-		
+
 		$sql = "select d.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name, 
 					convert(d.goods_count, $fmt) as goods_count,
 					d.goods_price, d.goods_money,
@@ -1473,22 +1471,22 @@ class SRBillDAO extends PSIBaseExDAO {
 					"sn" => $v["sn_note"]
 			];
 		}
-		
+
 		$result["items"] = $items;
-		
+
 		return $result;
 	}
 
 	/**
 	 * 获得打印销售退货入库单的数据
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 */
 	public function getSRBillDataForLodopPrint($params) {
 		$db = $this->db;
-		
+
 		$id = $params["id"];
-		
+
 		$sql = "select w.ref, w.bizdt, c.name as customer_name, u.name as biz_user_name,
 				 	user.name as input_user_name, h.name as warehouse_name, w.rejection_sale_money,
 				 	w.bill_status, w.date_created, w.payment_type, w.company_id
@@ -1500,13 +1498,13 @@ class SRBillDAO extends PSIBaseExDAO {
 		if (! $data) {
 			return null;
 		}
-		
+
 		$companyId = $data[0]["company_id"];
-		
+
 		$bcDAO = new BizConfigDAO($db);
 		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
 		$fmt = "decimal(19, " . $dataScale . ")";
-		
+
 		$bill = [
 				"ref" => $data[0]["ref"],
 				"bizDT" => $this->toYMD($data[0]["bizdt"]),
@@ -1516,7 +1514,7 @@ class SRBillDAO extends PSIBaseExDAO {
 				"rejMoney" => $data[0]["rejection_sale_money"],
 				"printDT" => date("Y-m-d H:i:s")
 		];
-		
+
 		// 明细表
 		$sql = "select s.id, g.code, g.name, g.spec, u.name as unit_name,
 					convert(s.rejection_goods_count, $fmt) as rejection_goods_count,
@@ -1541,7 +1539,7 @@ class SRBillDAO extends PSIBaseExDAO {
 			];
 		}
 		$bill["items"] = $items;
-		
+
 		return $bill;
 	}
 }

@@ -13,7 +13,7 @@ class SubjectDAO extends PSIBaseExDAO {
 
 	private function subjectListInternal($parentId, $companyId) {
 		$db = $this->db;
-		
+
 		$sql = "select id, code, name, category, is_leaf from t_subject
 				where parent_id = '%s' and company_id = '%s'
 				order by code ";
@@ -22,7 +22,7 @@ class SubjectDAO extends PSIBaseExDAO {
 		foreach ( $data as $v ) {
 			// 递归调用自己
 			$children = $this->subjectListInternal($v["id"], $companyId);
-			
+
 			$result[] = [
 					"id" => $v["id"],
 					"code" => $v["code"],
@@ -35,21 +35,21 @@ class SubjectDAO extends PSIBaseExDAO {
 					"expanded" => true
 			];
 		}
-		
+
 		return $result;
 	}
 
 	/**
 	 * 某个公司的科目码列表
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return array
 	 */
 	public function subjectList($params) {
 		$db = $this->db;
-		
+
 		$companyId = $params["companyId"];
-		
+
 		// 判断$companyId是否是公司id
 		$sql = "select count(*) as cnt
 				from t_org where id = '%s' and parent_id is null ";
@@ -58,16 +58,16 @@ class SubjectDAO extends PSIBaseExDAO {
 		if ($cnt == 0) {
 			return $this->emptyResult();
 		}
-		
+
 		$result = [];
-		
+
 		$sql = "select id, code, name, category, is_leaf from t_subject
 				where parent_id is null and company_id = '%s'
 				order by code ";
 		$data = $db->query($sql, $companyId);
 		foreach ( $data as $v ) {
 			$children = $this->subjectListInternal($v["id"], $companyId);
-			
+
 			$result[] = [
 					"id" => $v["id"],
 					"code" => $v["code"],
@@ -80,29 +80,29 @@ class SubjectDAO extends PSIBaseExDAO {
 					"expanded" => true
 			];
 		}
-		
+
 		return $result;
 	}
 
 	private function insertSubjectInternal($code, $name, $category, $companyId, $py, $dataOrg) {
 		$db = $this->db;
-		
+
 		$sql = "select count(*) as cnt from t_subject where code = '%s' and company_id = '%s' ";
 		$data = $db->query($sql, $code, $companyId);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
 			return;
 		}
-		
+
 		$id = $this->newId();
-		
+
 		$sql = "insert into t_subject(id, category, code, name, is_leaf, py, data_org, company_id, parent_id)
 				values ('%s', '%s', '%s', '%s', 0, '%s', '%s', '%s', null)";
 		$rc = $db->execute($sql, $id, $category, $code, $name, $py, $dataOrg, $companyId);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		return null;
 	}
 
@@ -113,7 +113,7 @@ class SubjectDAO extends PSIBaseExDAO {
 	 */
 	private function getStandardSubjectList() {
 		$result = [];
-		
+
 		$result[] = [
 				"code" => "1001",
 				"name" => "库存现金",
@@ -409,7 +409,7 @@ class SubjectDAO extends PSIBaseExDAO {
 				"name" => "所得税费用",
 				"category" => 6
 		];
-		
+
 		return $result;
 	}
 
@@ -418,9 +418,9 @@ class SubjectDAO extends PSIBaseExDAO {
 	 */
 	public function init(& $params, $pinYinService) {
 		$db = $this->db;
-		
+
 		$dataOrg = $params["dataOrg"];
-		
+
 		$companyId = $params["id"];
 		$sql = "select name 
 				from t_org
@@ -429,43 +429,43 @@ class SubjectDAO extends PSIBaseExDAO {
 		if (! $data) {
 			return $this->badParam("companyId");
 		}
-		
+
 		$companyName = $data[0]["name"];
-		
+
 		$sql = "select count(*) as cnt from t_subject where company_id = '%s' ";
 		$data = $db->query($sql, $companyId);
 		$cnt = $data[0]["cnt"];
 		if ($cnt > 0) {
 			return $this->bad("国家科目表已经初始化完毕，不能再次初始化");
 		}
-		
+
 		$subjectList = $this->getStandardSubjectList();
 		foreach ( $subjectList as $v ) {
 			$code = $v["code"];
 			$name = $v["name"];
 			$category = $v["category"];
-			
-			$rc = $this->insertSubjectInternal($code, $name, $category, $companyId, 
+
+			$rc = $this->insertSubjectInternal($code, $name, $category, $companyId,
 					$pinYinService->toPY($name), $dataOrg);
 			if ($rc) {
 				return $rc;
 			}
 		}
-		
+
 		// 操作成功
 		$params["companyName"] = $companyName;
-		
+
 		return null;
 	}
 
 	/**
 	 * 上级科目字段 - 查询数据
 	 *
-	 * @param string $queryKey        	
+	 * @param string $queryKey
 	 */
 	public function queryDataForParentSubject($queryKey, $companyId) {
 		$db = $this->db;
-		
+
 		// length(code) < 8 : 只查询一级二级科目
 		$sql = "select code, name
 				from t_subject
@@ -477,32 +477,32 @@ class SubjectDAO extends PSIBaseExDAO {
 		$queryParams[] = "{$queryKey}%";
 		$queryParams[] = $companyId;
 		$data = $db->query($sql, $queryParams);
-		
+
 		$result = [];
-		
+
 		foreach ( $data as $v ) {
 			$result[] = [
 					"code" => $v["code"],
 					"name" => $v["name"]
 			];
 		}
-		
+
 		return $result;
 	}
 
 	/**
 	 * 新增科目
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 */
 	public function addSubject(& $params) {
 		$db = $this->db;
-		
+
 		$dataOrg = $params["dataOrg"];
 		if ($this->dataOrgNotExists($dataOrg)) {
 			return $this->badParam("dataOrg");
 		}
-		
+
 		$companyId = $params["companyId"];
 		if ($this->companyIdNotExists($companyId)) {
 			return $this->badParam("companyId");
@@ -510,7 +510,7 @@ class SubjectDAO extends PSIBaseExDAO {
 		$code = $params["code"];
 		$name = $params["name"];
 		$isLeaf = $params["isLeaf"];
-		
+
 		$parentCode = $params["parentCode"];
 		$sql = "select id, category 
 				from t_subject 
@@ -521,7 +521,7 @@ class SubjectDAO extends PSIBaseExDAO {
 		}
 		$parentId = $data[0]["id"];
 		$category = $data[0]["category"];
-		
+
 		// 检查科目码是否正确
 		if (strlen($parentCode) == 4) {
 			// 上级科目是一级科目
@@ -542,7 +542,7 @@ class SubjectDAO extends PSIBaseExDAO {
 		} else {
 			return $this->bad("上级科目只能是一级科目或者是二级科目");
 		}
-		
+
 		// 判断科目码是否已经存在
 		$sql = "select count(*) as cnt from t_subject
 				where company_id = '%s' and code = '%s' ";
@@ -551,21 +551,21 @@ class SubjectDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("科目码[{$code}]已经存在");
 		}
-		
+
 		$ps = new PinyinService();
 		$py = $ps->toPY($name);
-		
+
 		$id = $this->newId();
 		$sql = "insert into t_subject(id, category, code, name, is_leaf, py, data_org,
 					company_id, parent_id)
 				values ('%s', '%s', '%s', '%s', %d, '%s', '%s',
 					'%s', '%s')";
-		$rc = $db->execute($sql, $id, $category, $code, $name, $isLeaf, $py, $dataOrg, $companyId, 
+		$rc = $db->execute($sql, $id, $category, $code, $name, $isLeaf, $py, $dataOrg, $companyId,
 				$parentId);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 操作成功
 		$params["id"] = $id;
 		return null;
@@ -574,23 +574,21 @@ class SubjectDAO extends PSIBaseExDAO {
 	/**
 	 * 编辑科目
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 */
 	public function updateSubject(& $params) {
 		$db = $this->db;
-		
+
 		$id = $params["id"];
-		$code = $params["code"];
 		$name = $params["name"];
 		$isLeaf = $params["isLeaf"];
-		$companyId = $params["companyId"];
-		
+
 		$sql = "select parent_id from t_subject where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if (! $data) {
 			return $this->bad("要编辑的科目不存在");
 		}
-		
+
 		$parentId = $data[0]["parent_id"];
 		if (! $parentId) {
 			// 当前科目是一级科目，一级科目只能编辑“末级科目”
@@ -612,7 +610,7 @@ class SubjectDAO extends PSIBaseExDAO {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
 		}
-		
+
 		// 操作成功
 		return null;
 	}
@@ -620,14 +618,14 @@ class SubjectDAO extends PSIBaseExDAO {
 	/**
 	 * 某个科目的详情
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 */
 	public function subjectInfo($params) {
 		$db = $this->db;
-		
+
 		// 科目id
 		$id = $params["id"];
-		
+
 		$sql = "select code, name, is_leaf, parent_id 
 				from t_subject
 				where id = '%s' ";
@@ -635,16 +633,16 @@ class SubjectDAO extends PSIBaseExDAO {
 		if (! $data) {
 			return $this->emptyResult();
 		}
-		
+
 		$v = $data[0];
-		
+
 		$result = [
 				"code" => $v["code"],
 				"name" => $v["name"],
 				"isLeaf" => $v["is_leaf"],
 				"parentCode" => "[无]"
 		];
-		
+
 		$parentId = $v["parent_id"];
 		$sql = "select code, name
 					from t_subject
@@ -653,21 +651,21 @@ class SubjectDAO extends PSIBaseExDAO {
 		if ($data) {
 			$result["parentCode"] = $data[0]["code"];
 		}
-		
+
 		return $result;
 	}
 
 	/**
 	 * 删除科目
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 */
 	public function deleteSubject(&$params) {
 		$db = $this->db;
-		
+
 		// 科目id
 		$id = $params["id"];
-		
+
 		$sql = "select code, parent_id, company_id from t_subject where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if (! $data) {
@@ -677,13 +675,13 @@ class SubjectDAO extends PSIBaseExDAO {
 		if ($this->companyIdNotExists($companyId)) {
 			return $this->bad("当前科目的companyId字段值异常");
 		}
-		
+
 		$code = $data[0]["code"];
 		$parentId = $data[0]["parent_id"];
 		if (! $parentId) {
 			return $this->bad("不能删除一级科目");
 		}
-		
+
 		// 检查科目是否有下级科目
 		$sql = "select count(*) as cnt from t_subject where parent_id = '%s' ";
 		$data = $db->query($sql, $id);
@@ -691,7 +689,7 @@ class SubjectDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("科目[{$code}]还有下级科目，不能删除");
 		}
-		
+
 		// 判断科目是否在账样中使用
 		$sql = "select count(*) as cnt 
 				from t_acc_fmt
@@ -701,13 +699,13 @@ class SubjectDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("科目[{$code}]已经在账样中使用，不能删除");
 		}
-		
+
 		$sql = "delete from t_subject where id = '%s' ";
 		$rc = $db->execute($sql, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 操作成功
 		$params["code"] = $code;
 		return null;
@@ -715,17 +713,17 @@ class SubjectDAO extends PSIBaseExDAO {
 
 	private function insertFmtCols($fmtId, $dbFieldName, $dbFieldType, $dbFieldLength, $dbFieldDecimal, $showOrder, $caption) {
 		$db = $this->db;
-		
+
 		$sql = "insert into t_acc_fmt_cols (id, fmt_id, db_field_name, db_field_type,
 					db_field_length, db_field_decimal, show_order, caption, sys_col)
 				values ('%s', '%s', '%s', '%s',
 					%d, %d, %d, '%s', 1)";
-		$rc = $db->execute($sql, $this->newId(), $fmtId, $dbFieldName, $dbFieldType, $dbFieldLength, 
+		$rc = $db->execute($sql, $this->newId(), $fmtId, $dbFieldName, $dbFieldType, $dbFieldLength,
 				$dbFieldDecimal, $showOrder, $caption);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		return null;
 	}
 
@@ -857,20 +855,20 @@ class SubjectDAO extends PSIBaseExDAO {
 	/**
 	 * 初始化科目的标准账样
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 */
 	public function initFmt(&$params) {
 		$db = $this->db;
-		
+
 		$dataOrg = $params["dataOrg"];
 		if ($this->dataOrgNotExists($dataOrg)) {
 			return $this->badParam("dataOrg");
 		}
-		
+
 		// id:科目id
 		$id = $params["id"];
 		$companyId = $params["companyId"];
-		
+
 		$sql = "select code, is_leaf from t_subject where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if (! $data) {
@@ -881,7 +879,7 @@ class SubjectDAO extends PSIBaseExDAO {
 		if (! $isLeaf) {
 			return $this->bad("科目[{$subjectCode}]不是末级科目，不能设置账样");
 		}
-		
+
 		$sql = "select count(*) as cnt from t_acc_fmt 
 				where company_id = '%s' and subject_code = '%s' ";
 		$data = $db->query($sql, $companyId, $subjectCode);
@@ -889,9 +887,9 @@ class SubjectDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("科目[{$subjectCode}]已经完成了标准账样的初始化，不能再次初始化");
 		}
-		
+
 		$accNumber = str_pad($subjectCode, 8, "0", STR_PAD_RIGHT);
-		
+
 		$tableName = "t_acc_" . $accNumber;
 		$sql = "select count(*) as cnt from t_acc_fmt where db_table_name_prefix like '%s' ";
 		$data = $db->query($sql, "{$tableName}%");
@@ -903,9 +901,9 @@ class SubjectDAO extends PSIBaseExDAO {
 			$t = "_{$cnt}";
 		}
 		$tableName .= $t;
-		
+
 		$id = $this->newId();
-		
+
 		$sql = "insert into t_acc_fmt (id, acc_number, subject_code, memo,
 					date_created, data_org, company_id, in_use, db_table_name_prefix)
 				values ('%s', '%s', '%s', '',
@@ -914,18 +912,18 @@ class SubjectDAO extends PSIBaseExDAO {
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 标准列
 		$fmtId = $id;
 		$cols = $this->getStandardFmtCols();
 		foreach ( $cols as $v ) {
-			$rc = $this->insertFmtCols($fmtId, $v["name"], $v["type"], $v["length"], $v["decimal"], 
+			$rc = $this->insertFmtCols($fmtId, $v["name"], $v["type"], $v["length"], $v["decimal"],
 					$v["showOrder"], $v["caption"]);
 			if ($rc) {
 				return $rc;
 			}
 		}
-		
+
 		// 操作成功
 		$params["code"] = $subjectCode;
 		return null;
@@ -934,20 +932,20 @@ class SubjectDAO extends PSIBaseExDAO {
 	/**
 	 * 某个科目的账样属性
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 */
 	public function fmtPropList($params) {
 		$db = $this->db;
 		$result = [];
-		
+
 		// id: 科目id
 		$id = $params["id"];
 		$companyId = $params["companyId"];
-		
+
 		$sql = "select f.acc_number, f.in_use, f.db_table_name_prefix, f.date_created
 				from t_subject s, t_acc_fmt f
 				where s.id = '%s' and  s.code = f.subject_code and f.company_id = '%s' ";
-		
+
 		$data = $db->query($sql, $id, $companyId);
 		if ($data) {
 			$v = $data[0];
@@ -955,42 +953,39 @@ class SubjectDAO extends PSIBaseExDAO {
 					"propName" => "账簿号",
 					"propValue" => $v["acc_number"]
 			];
-			
+
 			$result[] = [
 					"propName" => "状态",
 					"propValue" => $v["in_use"] == 1 ? "启用" : "停用"
-			
 			];
-			
+
 			$result[] = [
 					"propName" => "表名前缀",
 					"propValue" => $v["db_table_name_prefix"]
-			
 			];
-			
+
 			$result[] = [
 					"propName" => "初始化时间",
 					"propValue" => $v["date_created"]
-			
 			];
 		}
-		
+
 		return $result;
 	}
 
 	/**
 	 * 某个科目的账样字段列表
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 */
 	public function fmtColsList($params) {
 		$db = $this->db;
 		$result = [];
-		
+
 		// id: 科目id
 		$id = $params["id"];
 		$companyId = $params["companyId"];
-		
+
 		$sql = "select c.id, c.show_order, c.caption, c.db_field_name, c.db_field_type,
 					c.db_field_length, c.db_field_decimal
 				from t_subject s, t_acc_fmt f, t_acc_fmt_cols c
@@ -1009,13 +1004,13 @@ class SubjectDAO extends PSIBaseExDAO {
 					"fieldDecimal" => $v["db_field_decimal"] == 0 ? null : $v["db_field_decimal"]
 			];
 		}
-		
+
 		return $result;
 	}
 
 	private function tableExists($tableName) {
 		$db = $this->db;
-		
+
 		$dbName = C('DB_NAME');
 		$sql = "select count(*) as cnt
 				from information_schema.columns
@@ -1030,17 +1025,17 @@ class SubjectDAO extends PSIBaseExDAO {
 	 */
 	public function undoInitFmt(& $params) {
 		$db = $this->db;
-		
+
 		$id = $params["id"];
 		$companyId = $params["companyId"];
-		
+
 		$sql = "select code from t_subject where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if (! $data) {
 			return $this->bad("科目不存在");
 		}
 		$code = $data[0]["code"];
-		
+
 		$sql = "select id, db_table_name_prefix from t_acc_fmt
 				where subject_code = '%s' and company_id = '%s' ";
 		$data = $db->query($sql, $code, $companyId);
@@ -1048,13 +1043,13 @@ class SubjectDAO extends PSIBaseExDAO {
 			return $this->bad("科目[{$code}]还没有初始化标准账样");
 		}
 		$fmtId = $data[0]["id"];
-		
+
 		// 检查是否已经创建了数据库账样表
 		$tableName = $data[0]["db_table_name_prefix"];
 		if ($this->tableExists($tableName)) {
 			return $this->bad("科目[{$code}]的账样已经创建数据库表，不能再做清除操作");
 		}
-		
+
 		// 检查账样是否增加了自定义字段
 		$sql = "select count(*) as cnt from t_acc_fmt_cols
 				where fmt_id = '%s' ";
@@ -1064,19 +1059,19 @@ class SubjectDAO extends PSIBaseExDAO {
 		if ($cnt > count($standardList)) {
 			return $this->bad("账样已经设置了自定义字段，不能清空标准账样了");
 		}
-		
+
 		$sql = "delete from t_acc_fmt_cols where fmt_id = '%s' ";
 		$rc = $db->execute($sql, $fmtId);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		$sql = "delete from t_acc_fmt where id = '%s' ";
 		$rc = $db->execute($sql, $fmtId);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 操作成功
 		$params["code"] = $code;
 		return null;
@@ -1085,7 +1080,7 @@ class SubjectDAO extends PSIBaseExDAO {
 	/**
 	 * 盘点字符串中是否都是小写字母或是下划线
 	 *
-	 * @param string $s        	
+	 * @param string $s
 	 * @return boolean
 	 */
 	private function strIsAllLetters($s) {
@@ -1094,29 +1089,29 @@ class SubjectDAO extends PSIBaseExDAO {
 			if ($c == ord('_')) {
 				continue;
 			}
-			
+
 			if (ord('a') > $c || $c > ord('z')) {
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
 
 	/**
 	 * 新增账样字段
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 */
 	public function addFmtCol(& $params) {
 		$db = $this->db;
-		
+
 		$companyId = $params["companyId"];
 		$subjectCode = $params["subjectCode"];
 		$fieldCaption = $params["fieldCaption"];
 		$fieldName = strtolower($params["fieldName"]);
 		$fieldType = $params["fieldType"];
-		
+
 		// 检查账样
 		$sql = "select id, db_table_name_prefix as cnt from t_acc_fmt
 				where company_id = '%s' and subject_code = '%s' ";
@@ -1126,12 +1121,12 @@ class SubjectDAO extends PSIBaseExDAO {
 		}
 		$dbTableName = $data[0]["db_table_name_prefix"];
 		$fmtId = $data[0]["id"];
-		
+
 		// 检查账样是否已经启用
 		if ($this->tableExists($dbTableName)) {
 			return $this->bad("科目[{$subjectCode}]的账样已经启用，不能再新增账样字段");
 		}
-		
+
 		// 检查字段名是否合格
 		if (strlen($fieldName) == 0) {
 			return $this->bad("没有输入数据库字段名");
@@ -1146,7 +1141,7 @@ class SubjectDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("科目[{$subjectCode}]的账样中已经存在字段[{$fieldName}]");
 		}
-		
+
 		$type = "varchar";
 		$length = 255;
 		$dec = 0;
@@ -1169,24 +1164,24 @@ class SubjectDAO extends PSIBaseExDAO {
 			default :
 				return $this->bad("字段类型不正确");
 		}
-		
+
 		$sql = "select max(show_order) as max_show_order from t_acc_fmt_cols
 				where fmt_id = '%s' and show_order > 0 ";
 		$data = $db->query($sql, $fmtId);
 		$cnt = $data[0]["max_show_order"];
 		$showOrder = $cnt + 1;
-		
+
 		$id = $this->newId();
 		$sql = "insert into t_acc_fmt_cols (id, fmt_id, caption, db_field_name,
 					db_field_type, db_field_length, db_field_decimal, show_order, sys_col)
 				values ('%s', '%s', '%s', '%s',
 					'%s', %d, %d, %d, 0)";
-		$rc = $db->execute($sql, $id, $fmtId, $fieldCaption, $fieldName, $type, $length, $dec, 
+		$rc = $db->execute($sql, $id, $fmtId, $fieldCaption, $fieldName, $type, $length, $dec,
 				$showOrder);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 操作成功
 		$params["id"] = $id;
 		return null;
@@ -1195,18 +1190,17 @@ class SubjectDAO extends PSIBaseExDAO {
 	/**
 	 * 编辑账样字段
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 */
 	public function updateFmtCol(& $params) {
 		$db = $this->db;
-		
+
 		$id = $params["id"];
-		$companyId = $params["companyId"];
 		$subjectCode = $params["subjectCode"];
 		$fieldCaption = $params["fieldCaption"];
 		$fieldName = strtolower($params["fieldName"]);
 		$fieldType = $params["fieldType"];
-		
+
 		$sql = "select fmt_id, sys_col from t_acc_fmt_cols where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if (! $data) {
@@ -1214,7 +1208,7 @@ class SubjectDAO extends PSIBaseExDAO {
 		}
 		$fmtId = $data[0]["fmt_id"];
 		$sysCol = $data[0]["sys_col"] == 1;
-		
+
 		$sql = "select db_table_name_prefix from t_acc_fmt where id = '%s' ";
 		$data = $db->query($sql, $fmtId);
 		if (! $data) {
@@ -1222,10 +1216,10 @@ class SubjectDAO extends PSIBaseExDAO {
 		}
 		$tableName = $data[0]["db_table_name_prefix"];
 		$inited = $this->tableExists($tableName);
-		
+
 		if ($inited) {
 			// $inited:ture 账样已经创建了数据库表，这个时候就不能修改账样的字段类型了
-			
+
 			$sql = "update t_acc_fmt_cols
 						set caption = '%s' 
 					where id = '%s' ";
@@ -1260,7 +1254,7 @@ class SubjectDAO extends PSIBaseExDAO {
 				if ($cnt > 0) {
 					return $this->bad("科目[{$subjectCode}]的账样中已经存在字段[{$fieldName}]");
 				}
-				
+
 				$type = "varchar";
 				$length = 255;
 				$dec = 0;
@@ -1283,7 +1277,7 @@ class SubjectDAO extends PSIBaseExDAO {
 					default :
 						return $this->bad("字段类型不正确");
 				}
-				
+
 				$sql = "update t_acc_fmt_cols
 							set caption = '%s', db_field_name = '%s',
 								db_field_type = '%s',
@@ -1296,7 +1290,7 @@ class SubjectDAO extends PSIBaseExDAO {
 				}
 			}
 		}
-		
+
 		// 操作成功
 		return null;
 	}
@@ -1320,9 +1314,9 @@ class SubjectDAO extends PSIBaseExDAO {
 	public function fmtColInfo($params) {
 		$db = $this->db;
 		$id = $params["id"];
-		
+
 		$result = [];
-		
+
 		$sql = "select caption, db_field_name, sys_col,
 					db_field_type, fmt_id 
 				from t_acc_fmt_cols 
@@ -1330,12 +1324,12 @@ class SubjectDAO extends PSIBaseExDAO {
 		$data = $db->query($sql, $id);
 		if ($data) {
 			$v = $data[0];
-			
+
 			$result["caption"] = $v["caption"];
 			$result["fieldName"] = $v["db_field_name"];
 			$result["sysCol"] = $v["sys_col"];
 			$result["fieldType"] = $this->fieldTypeNameToCode($v["db_field_type"]);
-			
+
 			$fmtId = $v["fmt_id"];
 			$sql = "select db_table_name_prefix from t_acc_fmt where id = '%s' ";
 			$data = $db->query($sql, $fmtId);
@@ -1348,7 +1342,7 @@ class SubjectDAO extends PSIBaseExDAO {
 				}
 			}
 		}
-		
+
 		return $result;
 	}
 
@@ -1357,9 +1351,9 @@ class SubjectDAO extends PSIBaseExDAO {
 	 */
 	public function deleteFmtCol(& $params) {
 		$db = $this->db;
-		
+
 		$id = $params["id"];
-		
+
 		$sql = "select fmt_id, caption, sys_col 
 				from t_acc_fmt_cols
 				where id = '%s' ";
@@ -1374,7 +1368,7 @@ class SubjectDAO extends PSIBaseExDAO {
 		if ($sysCol == 1) {
 			return $this->bad("账样字段[{$caption}]是标准账样字段，不能删除");
 		}
-		
+
 		$sql = "select subject_code, acc_number, db_table_name_prefix 
 				from t_acc_fmt 
 				where id = '%s' ";
@@ -1389,14 +1383,14 @@ class SubjectDAO extends PSIBaseExDAO {
 		}
 		$subjectCode = $v["subject_code"];
 		$accNumber = $v["acc_number"];
-		
+
 		$sql = "delete from t_acc_fmt_cols where id = '%s' ";
 		$rc = $db->execute($sql, $id);
-		
+
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 操作成功
 		$params["caption"] = $caption;
 		$params["subjectCode"] = $subjectCode;
@@ -1409,7 +1403,7 @@ class SubjectDAO extends PSIBaseExDAO {
 	 */
 	public function fmtGridColsList($params) {
 		$db = $this->db;
-		
+
 		// id - 科目的id
 		$id = $params["id"];
 		$sql = "select c.id, c.caption
@@ -1426,7 +1420,7 @@ class SubjectDAO extends PSIBaseExDAO {
 					"caption" => $v["caption"]
 			];
 		}
-		
+
 		return $result;
 	}
 
@@ -1435,27 +1429,26 @@ class SubjectDAO extends PSIBaseExDAO {
 	 */
 	public function editFmtColShowOrder(& $params) {
 		$db = $this->db;
-		
+
 		// id:科目id
 		$id = $params["id"];
-		
+
 		// 账样字段id，以逗号分隔形成的List
 		$idList = $params["idList"];
-		
+
 		$idArray = explode(",", $idList);
-		
+
 		$sql = "select company_id, code from t_subject where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if (! $data) {
 			return $this->bad("科目不存在");
 		}
 		$v = $data[0];
-		$companyId = $v["companyId"];
 		$subjectCode = $v["code"];
-		
+
 		foreach ( $idArray as $i => $colId ) {
 			$showOrder = $i + 1;
-			
+
 			$sql = "update t_acc_fmt_cols
 						set show_order = %d
 					where id = '%s' ";
@@ -1464,7 +1457,7 @@ class SubjectDAO extends PSIBaseExDAO {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
 		}
-		
+
 		// 操作成功
 		$params["subjectCode"] = $subjectCode;
 		return null;
@@ -1475,10 +1468,10 @@ class SubjectDAO extends PSIBaseExDAO {
 	 */
 	public function grCategoryList($params) {
 		$db = $this->db;
-		
+
 		// 供应商id
 		$id = $params["id"];
-		
+
 		$sql = "select r.id, c.code, c.full_name
 				from t_supplier_goods_range r, t_goods_category c
 				where r.supplier_id = '%s' and r.g_id_type = 2
@@ -1486,7 +1479,7 @@ class SubjectDAO extends PSIBaseExDAO {
 				order by c.code";
 		$data = $db->query($sql, $id);
 		$result = [];
-		
+
 		foreach ( $data as $v ) {
 			$result[] = [
 					"id" => $v["id"],
@@ -1494,7 +1487,7 @@ class SubjectDAO extends PSIBaseExDAO {
 					"name" => $v["full_name"]
 			];
 		}
-		
+
 		return $result;
 	}
 }

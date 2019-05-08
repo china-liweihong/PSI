@@ -16,18 +16,17 @@ class CashService extends PSIBaseService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
-		$page = $params["page"];
+
 		$start = $params["start"];
 		$limit = $params["limit"];
-		
+
 		$dtFrom = $params["dtFrom"];
 		$dtTo = $params["dtTo"];
-		
+
 		$db = M();
 		$us = new UserService();
 		$companyId = $us->getCompanyId();
-		
+
 		$result = array();
 		$sql = "select biz_date, in_money, out_money, balance_money
 				from t_cash
@@ -42,14 +41,14 @@ class CashService extends PSIBaseService {
 			$result[$i]["outMoney"] = $v["out_money"];
 			$result[$i]["balanceMoney"] = $v["balance_money"];
 		}
-		
+
 		$sql = "select count(*) as cnt
 				from t_cash
 				where biz_date >= '%s' and biz_date <= '%s' 
 					and company_id = '%s' ";
 		$data = $db->query($sql, $dtFrom, $dtTo, $companyId);
 		$cnt = $data[0]["cnt"];
-		
+
 		return array(
 				"dataList" => $result,
 				"totalCount" => $cnt
@@ -63,17 +62,16 @@ class CashService extends PSIBaseService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
-		$page = $params["page"];
+
 		$start = $params["start"];
 		$limit = $params["limit"];
-		
+
 		$bizDT = $params["bizDT"];
-		
+
 		$db = M();
 		$us = new UserService();
 		$companyId = $us->getCompanyId();
-		
+
 		$result = array();
 		$sql = "select biz_date, in_money, out_money, balance_money, date_created,
 					ref_type, ref_number
@@ -91,13 +89,13 @@ class CashService extends PSIBaseService {
 			$result[$i]["refType"] = $v["ref_type"];
 			$result[$i]["refNumber"] = $v["ref_number"];
 		}
-		
+
 		$sql = "select count(*) as cnt
 				from t_cash_detail
 				where biz_date = '%s' and company_id = '%s' ";
 		$data = $db->query($sql, $bizDT, $companyId);
 		$cnt = $data[0]["cnt"];
-		
+
 		return array(
 				"dataList" => $result,
 				"totalCount" => $cnt

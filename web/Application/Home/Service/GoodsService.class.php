@@ -29,22 +29,22 @@ class GoodsService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$dao = new GoodsUnitDAO($this->db());
-		
+
 		return $dao->allUnits();
 	}
 
 	/**
 	 * 所有的启用的商品计量单位
 	 *
-	 * @param string $goodsId        	
+	 * @param string $goodsId
 	 */
 	public function allEnabledUnits($goodsId) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$dao = new GoodsUnitDAO($this->db());
 		return $dao->allEnabledUnits($goodsId);
 	}
@@ -56,50 +56,50 @@ class GoodsService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
-		
+
 		$id = $params["id"];
 		$name = $params["name"];
-		
+
 		$db = $this->db();
 		$db->startTrans();
-		
+
 		$dao = new GoodsUnitDAO($db);
-		
+
 		$log = null;
-		
+
 		if ($id) {
 			// 编辑
-			
+
 			$rc = $dao->updateUnit($params);
 			if ($rc) {
 				$db->rollback();
 				return $rc;
 			}
-			
+
 			$log = "编辑计量单位: $name";
 		} else {
 			// 新增
-			
+
 			$params["dataOrg"] = $this->getLoginUserDataOrg();
 			$params["companyId"] = $this->getCompanyId();
-			
+
 			$rc = $dao->addUnit($params);
 			if ($rc) {
 				$db->rollback();
 				return $rc;
 			}
-			
+
 			$id = $params["id"];
-			
+
 			$log = "新增计量单位: $name";
 		}
-		
+
 		// 记录业务日志
 		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY_UNIT);
-		
+
 		$db->commit();
-		
+
 		return $this->ok($id);
 	}
 
@@ -110,27 +110,25 @@ class GoodsService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
-		
-		$id = $params["id"];
-		
+
 		$db = $this->db();
 		$db->startTrans();
-		
+
 		$dao = new GoodsUnitDAO($db);
-		
+
 		$rc = $dao->deleteUnit($params);
 		if ($rc) {
 			$db->rollback();
 			return $rc;
 		}
-		
+
 		$name = $params["name"];
 		$log = "删除商品计量单位: $name";
 		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY_UNIT);
-		
+
 		$db->commit();
-		
+
 		return $this->ok();
 	}
 
@@ -141,9 +139,9 @@ class GoodsService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$params["loginUserId"] = $this->getLoginUserId();
-		
+
 		$dao = new GoodsCategoryDAO($this->db());
 		return $dao->allCategories($params);
 	}
@@ -155,7 +153,7 @@ class GoodsService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$dao = new GoodsCategoryDAO($this->db());
 		return $dao->getCategoryInfo($params);
 	}
@@ -167,16 +165,16 @@ class GoodsService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
-		
+
 		$id = $params["id"];
 		$code = $params["code"];
 		$name = $params["name"];
-		
+
 		$db = $this->db();
 		$db->startTrans();
-		
+
 		$dao = new GoodsCategoryDAO($db);
-		
+
 		if ($id) {
 			// 编辑
 			$rc = $dao->updateGoodsCategory($params);
@@ -184,31 +182,31 @@ class GoodsService extends PSIBaseExService {
 				$db->rollback();
 				return $rc;
 			}
-			
+
 			$log = "编辑商品分类: 编码 = {$code}， 分类名称 = {$name}";
 		} else {
 			// 新增
-			
+
 			$params["dataOrg"] = $this->getLoginUserDataOrg();
 			$params["companyId"] = $this->getCompanyId();
-			
+
 			$rc = $dao->addGoodsCategory($params);
 			if ($rc) {
 				$db->rollback();
 				return $rc;
 			}
-			
+
 			$id = $params["id"];
-			
+
 			$log = "新增商品分类: 编码 = {$code}， 分类名称 = {$name}";
 		}
-		
+
 		// 记录业务日志
 		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY_GOODS);
-		
+
 		$db->commit();
-		
+
 		return $this->ok($id);
 	}
 
@@ -219,26 +217,26 @@ class GoodsService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
-		
+
 		$db = $this->db();
 		$db->startTrans();
-		
+
 		$dao = new GoodsCategoryDAO($db);
-		
+
 		$rc = $dao->deleteCategory($params);
 		if ($rc) {
 			$db->rollback();
 			return $rc;
 		}
-		
+
 		$code = $params["code"];
 		$name = $params["name"];
 		$log = "删除商品分类：  编码 = {$code}， 分类名称 = {$name}";
 		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY_GOODS);
-		
+
 		$db->commit();
-		
+
 		return $this->ok();
 	}
 
@@ -249,9 +247,9 @@ class GoodsService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$params["loginUserId"] = $this->getLoginUserId();
-		
+
 		$dao = new GoodsDAO($this->db());
 		return $dao->goodsList($params);
 	}
@@ -263,22 +261,22 @@ class GoodsService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
-		
+
 		$id = $params["id"];
 		$code = $params["code"];
 		$name = $params["name"];
 		$spec = $params["spec"];
-		
+
 		$db = $this->db();
 		$db->startTrans();
 		$dao = new GoodsDAO($db);
-		
+
 		$ps = new PinyinService();
 		$params["py"] = $ps->toPY($name);
 		$params["specPY"] = $ps->toPY($spec);
-		
+
 		$log = null;
-		
+
 		if ($id) {
 			// 编辑
 			$rc = $dao->updateGoods($params);
@@ -286,31 +284,31 @@ class GoodsService extends PSIBaseExService {
 				$db->rollback();
 				return $rc;
 			}
-			
+
 			$log = "编辑商品: 商品编码 = {$code}, 品名 = {$name}, 规格型号 = {$spec}";
 		} else {
 			// 新增
-			
+
 			$params["dataOrg"] = $this->getLoginUserDataOrg();
 			$params["companyId"] = $this->getCompanyId();
-			
+
 			$rc = $dao->addGoods($params);
 			if ($rc) {
 				$db->rollback();
 				return $rc;
 			}
-			
+
 			$id = $params["id"];
-			
+
 			$log = "新增商品: 商品编码 = {$code}, 品名 = {$name}, 规格型号 = {$spec}";
 		}
-		
+
 		// 记录业务日志
 		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY_GOODS);
-		
+
 		$db->commit();
-		
+
 		return $this->ok($id);
 	}
 
@@ -321,27 +319,27 @@ class GoodsService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
-		
+
 		$db = $this->db();
 		$db->startTrans();
-		
+
 		$dao = new GoodsDAO($db);
-		
+
 		$rc = $dao->deleteGoods($params);
 		if ($rc) {
 			$db->rollback();
 			return $rc;
 		}
-		
+
 		$code = $params["code"];
 		$name = $params["name"];
 		$spec = $params["spec"];
 		$log = "删除商品： 商品编码 = {$code}， 品名 = {$name}，规格型号 = {$spec}";
 		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY_GOODS);
-		
+
 		$db->commit();
-		
+
 		return $this->ok();
 	}
 
@@ -352,13 +350,13 @@ class GoodsService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$params = [
 				"queryKey" => $queryKey,
 				"loginUserId" => $this->getLoginUserId(),
 				"companyId" => $this->getCompanyId()
 		];
-		
+
 		$dao = new GoodsDAO($this->db());
 		return $dao->queryData($params);
 	}
@@ -370,12 +368,12 @@ class GoodsService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$params = [
 				"queryKey" => $queryKey,
 				"loginUserId" => $this->getLoginUserId()
 		];
-		
+
 		$dao = new GoodsDAO($this->db());
 		return $dao->queryDataForBOM($params);
 	}
@@ -387,14 +385,14 @@ class GoodsService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$params = array(
 				"queryKey" => $queryKey,
 				"customerId" => $customerId,
 				"loginUserId" => $this->getLoginUserId(),
 				"companyId" => $this->getCompanyId()
 		);
-		
+
 		$dao = new GoodsDAO($this->db());
 		return $dao->queryDataWithSalePrice($params);
 	}
@@ -406,14 +404,14 @@ class GoodsService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$params = array(
 				"queryKey" => $queryKey,
 				"supplierId" => $supplierId,
 				"loginUserId" => $this->getLoginUserId(),
 				"companyId" => $this->getCompanyId()
 		);
-		
+
 		$dao = new GoodsDAO($this->db());
 		return $dao->queryDataWithPurchasePrice($params);
 	}
@@ -425,12 +423,12 @@ class GoodsService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$params = array(
 				"id" => $id,
 				"categoryId" => $categoryId
 		);
-		
+
 		$dao = new GoodsDAO($this->db());
 		return $dao->getGoodsInfo($params);
 	}
@@ -442,9 +440,9 @@ class GoodsService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$params["loginUserId"] = $this->getLoginUserId();
-		
+
 		$dao = new GoodsSiDAO($this->db());
 		return $dao->goodsSafetyInventoryList($params);
 	}
@@ -456,9 +454,9 @@ class GoodsService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$params["loginUserId"] = $this->getLoginUserId();
-		
+
 		$dao = new GoodsSiDAO($this->db());
 		return $dao->siInfo($params);
 	}
@@ -470,34 +468,34 @@ class GoodsService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
-		
+
 		$json = $params["jsonStr"];
 		$bill = json_decode(html_entity_decode($json), true);
 		if ($bill == null) {
 			return $this->bad("传入的参数错误，不是正确的JSON格式");
 		}
-		
+
 		$db = $this->db();
-		
+
 		$db->startTrans();
-		
+
 		$dao = new GoodsSiDAO($db);
 		$rc = $dao->editSafetyInventory($bill);
 		if ($rc) {
 			$db->rollback();
-			
+
 			return $rc;
 		}
-		
+
 		$goodsCode = $bill["code"];
 		$goodsName = $bill["name"];
 		$goodsSpec = $bill["spec"];
 		$bs = new BizlogService($db);
 		$log = "为商品[$goodsCode $goodsName $goodsSpec]设置安全库存";
 		$bs->insertBizlog($log, $this->LOG_CATEGORY_GOODS);
-		
+
 		$db->commit();
-		
+
 		return $this->ok();
 	}
 
@@ -508,9 +506,9 @@ class GoodsService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
-		
+
 		$params["companyId"] = $this->getCompanyId();
-		
+
 		$dao = new GoodsDAO($this->db());
 		return $dao->queryGoodsInfoByBarcode($params);
 	}
@@ -522,9 +520,9 @@ class GoodsService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
-		
+
 		$params["companyId"] = $this->getCompanyId();
-		
+
 		$dao = new GoodsDAO($this->db());
 		return $dao->queryGoodsInfoByBarcodeForPW($params);
 	}
@@ -536,9 +534,9 @@ class GoodsService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$params["loginUserId"] = $this->getLoginUserId();
-		
+
 		$dao = new GoodsDAO($this->db());
 		return $dao->getTotalGoodsCount($params);
 	}
@@ -550,11 +548,11 @@ class GoodsService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$params = array(
 				"loginUserId" => $this->getLoginUserId()
 		);
-		
+
 		$dao = new GoodsBrandDAO($this->db());
 		return $dao->allBrands($params);
 	}
@@ -566,53 +564,53 @@ class GoodsService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
-		
+
 		$id = $params["id"];
 		$name = $params["name"];
-		
+
 		$ps = new PinyinService();
 		$params["py"] = $ps->toPY($name);
-		
+
 		$db = $this->db();
 		$db->startTrans();
-		
+
 		$dao = new GoodsBrandDAO($db);
-		
+
 		$log = null;
-		
+
 		$params["dataOrg"] = $this->getLoginUserDataOrg();
 		$params["companyId"] = $this->getCompanyId();
-		
+
 		if ($id) {
 			// 编辑品牌
-			
+
 			$rc = $dao->updateGoodsBrand($params);
 			if ($rc) {
 				$db->rollback();
 				return $rc;
 			}
-			
+
 			$log = "编辑商品品牌[$name]";
 		} else {
 			// 新增品牌
-			
+
 			$rc = $dao->addBrand($params);
 			if ($rc) {
 				$db->rollback();
 				return $rc;
 			}
-			
+
 			$id = $params["id"];
-			
+
 			$log = "新增商品品牌[$name]";
 		}
-		
+
 		// 记录业务日志
 		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY_BRAND);
-		
+
 		$db->commit();
-		
+
 		return $this->ok($id);
 	}
 
@@ -623,7 +621,7 @@ class GoodsService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$dao = new GoodsBrandDAO($this->db());
 		return $dao->brandParentName($params);
 	}
@@ -635,25 +633,25 @@ class GoodsService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
-		
+
 		$db = $this->db();
 		$db->startTrans();
-		
+
 		$dao = new GoodsBrandDAO($db);
-		
+
 		$rc = $dao->deleteBrand($params);
 		if ($rc) {
 			$db->rollback();
 			return $rc;
 		}
-		
+
 		$fullName = $params["fullName"];
 		$log = "删除商品品牌[$fullName]";
 		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY_BRAND);
-		
+
 		$db->commit();
-		
+
 		return $this->ok();
 	}
 
@@ -664,9 +662,9 @@ class GoodsService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$params["companyId"] = $this->getCompanyId();
-		
+
 		$dao = new GoodsBomDAO($this->db());
 		return $dao->goodsBOMList($params);
 	}
@@ -674,20 +672,20 @@ class GoodsService extends PSIBaseExService {
 	/**
 	 * 新增或编辑商品构成
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 */
 	public function editGoodsBOM($params) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
-		
+
 		$db = $this->db();
 		$db->startTrans();
-		
+
 		$params["companyId"] = $this->getCompanyId();
-		
+
 		$dao = new GoodsBomDAO($db);
-		
+
 		$addBOM = $params["addBOM"] == "1";
 		$rc = null;
 		if ($addBOM) {
@@ -695,15 +693,15 @@ class GoodsService extends PSIBaseExService {
 		} else {
 			$rc = $dao->updateGoodsBOM($params);
 		}
-		
+
 		if ($rc) {
 			$db->rollback();
 			return $rc;
 		}
-		
+
 		$goodsInfo = "编码：" . $params["goodsCode"] . " 名称：" . $params["goodsName"] . " 规格: " . $params["goodsSpec"];
 		$subGoodsInfo = "编码： " . $params["subGoodsCode"] . " 名称：" . $params["subGoodsName"] . " 规格：" . $params["subGoodsSpec"];
-		
+
 		$log = null;
 		if ($addBOM) {
 			$log = "给商品[$goodsInfo]新增子商品[$subGoodsInfo]";
@@ -712,9 +710,9 @@ class GoodsService extends PSIBaseExService {
 		}
 		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY_GOODS_BOM);
-		
+
 		$db->commit();
-		
+
 		return $this->ok();
 	}
 
@@ -725,9 +723,9 @@ class GoodsService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$params["loginUserId"] = $this->getLoginUserId();
-		
+
 		$dao = new GoodsDAO($this->db());
 		return $dao->queryDataForSubGoods($params);
 	}
@@ -739,7 +737,7 @@ class GoodsService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$dao = new GoodsBomDAO($this->db());
 		return $dao->getSubGoodsInfo($params);
 	}
@@ -747,32 +745,32 @@ class GoodsService extends PSIBaseExService {
 	/**
 	 * 删除商品构成中的子商品
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 */
 	public function deleteGoodsBOM($params) {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
-		
+
 		$db = $this->db();
 		$db->startTrans();
-		
+
 		$dao = new GoodsBomDAO($db);
-		
+
 		$rc = $dao->deleteGoodsBOM($params);
 		if ($rc) {
 			$db->rollback();
 			return $rc;
 		}
-		
+
 		$bs = new BizlogService($db);
 		$goodsInfo = "编码：" . $params["goodsCode"] . " 名称：" . $params["goodsName"] . " 规格: " . $params["goodsSpec"];
 		$subGoodsInfo = "编码： " . $params["subGoodsCode"] . " 名称：" . $params["subGoodsName"] . " 规格：" . $params["subGoodsSpec"];
 		$log = "从商品[$goodsInfo]中删除子商品[$subGoodsInfo]";
 		$bs->insertBizlog($log, $this->LOG_CATEGORY_GOODS_BOM);
-		
+
 		$db->commit();
-		
+
 		return $this->ok();
 	}
 
@@ -783,14 +781,14 @@ class GoodsService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
-		
+
 		$params["companyId"] = $this->getCompanyId();
 		$params["dataOrg"] = $this->getLoginUserDataOrg();
-		
+
 		$db = $this->db();
-		
+
 		$db->startTrans();
-		
+
 		$id = $params["id"];
 		$dao = new PriceSystemDAO($db);
 		$log = null;
@@ -801,7 +799,7 @@ class GoodsService extends PSIBaseExService {
 				$db->rollback();
 				return $rc;
 			}
-			
+
 			$name = $params["name"];
 			$log = "编辑价格体系[$name]";
 		} else {
@@ -811,17 +809,17 @@ class GoodsService extends PSIBaseExService {
 				$db->rollback();
 				return $rc;
 			}
-			
+
 			$id = $params["id"];
 			$name = $params["name"];
 			$log = "新增价格体系[$name]";
 		}
-		
+
 		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY_PRICE_SYSTEM);
-		
+
 		$db->commit();
-		
+
 		return $this->ok($id);
 	}
 
@@ -832,7 +830,7 @@ class GoodsService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$params = [
 				"loginUserId" => $this->getLoginUserId()
 		];
@@ -847,25 +845,25 @@ class GoodsService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
-		
+
 		$db = $this->db();
 		$db->startTrans();
-		
+
 		$dao = new PriceSystemDAO($db);
-		
+
 		$rc = $dao->deletePriceSystem($params);
 		if ($rc) {
 			$db->rollback();
 			return $rc;
 		}
-		
+
 		$name = $params["name"];
 		$log = "删除价格体系中的价格[$name]";
 		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY_PRICE_SYSTEM);
-		
+
 		$db->commit();
-		
+
 		return $this->ok();
 	}
 
@@ -876,7 +874,7 @@ class GoodsService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$dao = new PriceSystemDAO($this->db());
 		return $dao->goodsPriceSystemList($params);
 	}
@@ -888,7 +886,7 @@ class GoodsService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$dao = new PriceSystemDAO($this->db());
 		return $dao->goodsPriceSystemInfo($params);
 	}
@@ -900,36 +898,36 @@ class GoodsService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
-		
+
 		$json = $params["jsonStr"];
 		$bill = json_decode(html_entity_decode($json), true);
 		if ($bill == null) {
 			return $this->bad("传入的参数错误，不是正确的JSON格式");
 		}
-		
+
 		$db = $this->db();
 		$db->startTrans();
-		
+
 		$bill["dataOrg"] = $this->getLoginUserDataOrg();
 		$bill["companyId"] = $this->getCompanyId();
-		
+
 		$dao = new PriceSystemDAO($db);
-		
+
 		$rc = $dao->editGoodsPriceSystem($bill);
 		if ($rc) {
 			$db->rollback();
 			return $rc;
 		}
-		
+
 		$code = $bill["code"];
 		$name = $bill["name"];
 		$spec = $bill["spec"];
 		$log = "设置商品[$code $name $spec]的价格体系";
 		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY_PRICE_SYSTEM);
-		
+
 		$db->commit();
-		
+
 		return $this->ok();
 	}
 
@@ -940,12 +938,12 @@ class GoodsService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$params = [
 				"queryKey" => $queryKey,
 				"loginUserId" => $this->getLoginUserId()
 		];
-		
+
 		$dao = new GoodsBrandDAO($this->db());
 		return $dao->queryGoodsBrandData($params);
 	}

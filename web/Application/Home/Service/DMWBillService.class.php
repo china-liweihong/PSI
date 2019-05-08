@@ -20,11 +20,11 @@ class DMWBillService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$params["companyId"] = $this->getCompanyId();
 		$params["loginUserId"] = $this->getLoginUserId();
 		$params["loginUserName"] = $this->getLoginUserName();
-		
+
 		$dao = new DMWBillDAO($this->db());
 		return $dao->dmwBillInfo($params);
 	}
@@ -36,14 +36,14 @@ class DMWBillService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
-		
+
 		$bill = json_decode(html_entity_decode($json), true);
 		if ($bill == null) {
 			return $this->bad("传入的参数错误，不是正确的JSON格式");
 		}
-		
+
 		$id = $bill["id"];
-		
+
 		// 判断权限
 		$us = new UserService();
 		if ($id) {
@@ -55,43 +55,43 @@ class DMWBillService extends PSIBaseExService {
 				return $this->bad("您没有新建成品委托生产入库单的权限");
 			}
 		}
-		
+
 		$db = $this->db();
-		
+
 		$db->startTrans();
-		
+
 		$dao = new DMWBillDAO($db);
-		
+
 		$us = new UserService();
 		$bill["companyId"] = $us->getCompanyId();
 		$bill["loginUserId"] = $us->getLoginUserId();
 		$bill["dataOrg"] = $us->getLoginUserDataOrg();
-		
+
 		$log = null;
 		if ($id) {
 			// 编辑
-			
+
 			$rc = $dao->updateDMWBill($bill);
 			if ($rc) {
 				$db->rollback();
 				return $rc;
 			}
-			
+
 			$ref = $bill["ref"];
-			
+
 			$log = "编辑成品委托生产入库单，单号：{$ref}";
 		} else {
 			// 新建
-			
+
 			$rc = $dao->addDMWBill($bill);
 			if ($rc) {
 				$db->rollback();
 				return $rc;
 			}
-			
+
 			$id = $bill["id"];
 			$ref = $bill["ref"];
-			
+
 			$dmobillRef = $bill["dmobillRef"];
 			if ($dmobillRef) {
 				// 从成品委托生产订单生成入库单
@@ -101,13 +101,13 @@ class DMWBillService extends PSIBaseExService {
 				$log = "新建成品委托生产入库单，单号：{$ref}";
 			}
 		}
-		
+
 		// 记录业务日志
 		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
-		
+
 		$db->commit();
-		
+
 		return $this->ok($id);
 	}
 
@@ -118,9 +118,9 @@ class DMWBillService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$params["loginUserId"] = $this->getLoginUserId();
-		
+
 		$dao = new DMWBillDAO($this->db());
 		return $dao->dmwbillList($params);
 	}
@@ -132,9 +132,9 @@ class DMWBillService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$params["companyId"] = $this->getCompanyId();
-		
+
 		$dao = new DMWBillDAO($this->db());
 		return $dao->dmwBillDetailList($params);
 	}
@@ -146,25 +146,25 @@ class DMWBillService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
-		
+
 		$db = $this->db();
 		$db->startTrans();
-		
+
 		$dao = new DMWBillDAO($db);
 		$rc = $dao->deleteDMWBill($params);
 		if ($rc) {
 			$db->rollback();
 			return $rc;
 		}
-		
+
 		// 记录业务日志
 		$ref = $params["ref"];
 		$log = "删除成品委托生产入库单: 单号 = {$ref}";
 		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
-		
+
 		$db->commit();
-		
+
 		return $this->ok();
 	}
 
@@ -175,49 +175,49 @@ class DMWBillService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return;
 		}
-		
+
 		$bs = new BizConfigService();
 		$productionName = $bs->getProductionName();
-		
+
 		$ref = $params["ref"];
-		
+
 		$dao = new DMWBillDAO($this->db());
-		
+
 		$bill = $dao->getDataForPDF($params);
 		if (! $bill) {
 			return;
 		}
-		
+
 		// 记录业务日志
 		$log = "成品委托生产入库单(单号：$ref)生成PDF文件";
 		$bls = new BizlogService($this->db());
 		$bls->insertBizlog($log, $this->LOG_CATEGORY);
-		
+
 		ob_start();
-		
+
 		$ps = new PDFService();
 		$pdf = $ps->getInstance();
 		$pdf->SetTitle("成品委托生产入库单，单号：{$ref}");
-		
+
 		$pdf->setHeaderFont(Array(
 				"stsongstdlight",
 				"",
 				16
 		));
-		
+
 		$pdf->setFooterFont(Array(
 				"stsongstdlight",
 				"",
 				14
 		));
-		
+
 		$pdf->SetHeaderData("", 0, $productionName, "成品委托生产入库单");
-		
+
 		$pdf->SetFont("stsongstdlight", "", 10);
 		$pdf->AddPage();
-		
+
 		$canViewPrice = true;
-		
+
 		/**
 		 * 注意：
 		 * TCPDF中，用来拼接HTML的字符串需要用单引号，否则HTML中元素的属性就不会被解析
@@ -232,9 +232,9 @@ class DMWBillService extends PSIBaseExService {
 			$html .= '<tr><td colspan="2">货款:' . $bill["goodsMoney"] . '</td></tr>';
 		}
 		$html .= '</table>';
-		
+
 		$pdf->writeHTML($html);
-		
+
 		$html = '<table border="1" cellpadding="1">
 					<tr><td>商品编号</td><td>商品名称</td><td>规格型号</td><td>数量</td><td>单位</td>';
 		if ($canViewPrice) {
@@ -254,12 +254,12 @@ class DMWBillService extends PSIBaseExService {
 			}
 			$html .= '</tr>';
 		}
-		
+
 		$html .= '</table>';
 		$pdf->writeHTML($html, true, false, true, false, '');
-		
+
 		ob_end_clean();
-		
+
 		$pdf->Output("$ref.pdf", "I");
 	}
 
@@ -270,45 +270,46 @@ class DMWBillService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->notOnlineError();
 		}
-		
+
 		$db = $this->db();
 		$db->startTrans();
-		
+
 		$params["loginUserId"] = $this->getLoginUserId();
 		$params["companyId"] = $this->getCompanyId();
-		
+
 		$dao = new DMWBillDAO($db);
-		
+
 		$rc = $dao->commitDMWBill($params);
 		if ($rc) {
 			$db->rollback();
 			return $rc;
 		}
-		
+
 		$ref = $params["ref"];
-		
+
 		// 业务日志
 		$log = "提交成品委托入库单: 单号 = {$ref}";
 		$bs = new BizlogService($db);
 		$bs->insertBizlog($log, $this->LOG_CATEGORY);
-		
+
 		$db->commit();
-		
+
+		$id = $params["id"];
 		return $this->ok($id);
 	}
 
 	/**
 	 * 生成打印成品委托生产入库单的页面
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 */
 	public function getDMWBillDataForLodopPrint($params) {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$params["companyId"] = $this->getCompanyId();
-		
+
 		$dao = new DMWBillDAO($this->db());
 		return $dao->getDMWBillDataForLodopPrint($params);
 	}

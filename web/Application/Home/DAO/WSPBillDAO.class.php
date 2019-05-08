@@ -446,6 +446,7 @@ class WSPBillDAO extends PSIBaseExDAO {
 		if ($billStatus > 0) {
 			return $this->bad("拆分单[单号：{$ref}]已经提交，不能被编辑了");
 		}
+		$dataOrg = $oldBill["dataOrg"];
 
 		$bizDT = $bill["bizDT"];
 		$fromWarehouseId = $bill["fromWarehouseId"];
@@ -811,12 +812,13 @@ class WSPBillDAO extends PSIBaseExDAO {
 	public function getWSPBillById($id) {
 		$db = $this->db;
 
-		$sql = "select ref, bill_status from t_wsp_bill where id = '%s' ";
+		$sql = "select ref, bill_status, data_org from t_wsp_bill where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if ($data) {
 			return [
 					"ref" => $data[0]["ref"],
-					"billStatus" => $data[0]["bill_status"]
+					"billStatus" => $data[0]["bill_status"],
+					"dataOrg" => $data[0]["data_org"]
 			];
 		} else {
 			return null;

@@ -97,8 +97,6 @@ class WarehouseService extends PSIBaseExService {
 			return $this->notOnlineError();
 		}
 
-		$id = $params["id"];
-
 		$db = $this->db();
 		$db->startTrans();
 

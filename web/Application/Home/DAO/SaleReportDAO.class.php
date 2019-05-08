@@ -12,23 +12,22 @@ class SaleReportDAO extends PSIBaseExDAO {
 	/**
 	 * 销售日报表(按商品汇总) - 查询数据
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 */
 	public function saleDayByGoodsQueryData($params) {
 		$db = $this->db;
-		
+
 		$companyId = $params["companyId"];
 		if ($this->companyIdNotExists($companyId)) {
 			return $this->emptyResult();
 		}
-		
-		$page = $params["page"];
+
 		$start = $params["start"];
 		$limit = intval($params["limit"]);
 		$showAllData = $limit == - 1;
-		
+
 		$dt = $params["dt"];
-		
+
 		$sort = $params["sort"];
 		$sortProperty = "goods_code";
 		$sortDirection = "ASC";
@@ -47,16 +46,16 @@ class SaleReportDAO extends PSIBaseExDAO {
 				} else if ($sortProperty == strtolower("rejCount")) {
 					$sortProperty = "rej_count";
 				}
-				
+
 				$sortDirection = strtoupper($sortJSON[0]["direction"]);
 				if ($sortDirection != "ASC" && $sortDirection != "DESC") {
 					$sortDirection = "ASC";
 				}
 			}
 		}
-		
+
 		$result = [];
-		
+
 		// 创建临时表保存数据
 		$sql = "CREATE TEMPORARY TABLE psi_sale_report (
 					biz_dt datetime,
@@ -66,11 +65,11 @@ class SaleReportDAO extends PSIBaseExDAO {
 					profit decimal(19,2), rate decimal(19, 2)
 				)";
 		$db->execute($sql);
-		
+
 		$bcDAO = new BizConfigDAO($db);
 		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
 		$fmt = "decimal(19, " . $dataScale . ")";
-		
+
 		$sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name
 				from t_goods g, t_goods_unit u
 				where g.unit_id = u.id and g.id in(
@@ -86,14 +85,14 @@ class SaleReportDAO extends PSIBaseExDAO {
 					)
 					order by g.code";
 		$items = $db->query($sql, $dt, $companyId, $dt, $companyId);
-		
+
 		foreach ( $items as $v ) {
 			$goodsId = $v["id"];
 			$goodsCode = $v["code"];
 			$goodsName = $v["name"];
 			$goodsSpec = $v["spec"];
 			$unitName = $v["unit_name"];
-			
+
 			$sql = "select sum(d.goods_money) as goods_money, sum(d.inventory_money) as inventory_money,
 						sum(convert(d.goods_count, $fmt)) as goods_count
 					from t_ws_bill w, t_ws_bill_detail d
@@ -112,7 +111,7 @@ class SaleReportDAO extends PSIBaseExDAO {
 			if (! $saleInventoryMoney) {
 				$saleInventoryMoney = 0;
 			}
-			
+
 			$sql = "select sum(convert(d.rejection_goods_count, $fmt)) as rej_count,
 						sum(d.rejection_sale_money) as rej_money,
 						sum(d.inventory_money) as rej_inventory_money
@@ -132,7 +131,7 @@ class SaleReportDAO extends PSIBaseExDAO {
 			if (! $rejInventoryMoney) {
 				$rejInventoryMoney = 0;
 			}
-			
+
 			$c = $saleCount - $rejCount;
 			$m = $saleMoney - $rejSaleMoney;
 			$c = number_format($c, $dataScale, ".", "");
@@ -141,15 +140,15 @@ class SaleReportDAO extends PSIBaseExDAO {
 			if ($m > 0) {
 				$rate = $profit / $m * 100;
 			}
-			
+
 			$sql = "insert into psi_sale_report (biz_dt, goods_code, goods_name, goods_spec, unit_name, 
 						sale_money, sale_count, rej_money, rej_count, m, c, profit, rate)
 					values ('%s', '%s', '%s', '%s', '%s', 
 							%f, %f, %f, %f, %f, %f, %f, %f)";
-			$db->execute($sql, $dt, $goodsCode, $goodsName, $goodsSpec, $unitName, $saleMoney, 
+			$db->execute($sql, $dt, $goodsCode, $goodsName, $goodsSpec, $unitName, $saleMoney,
 					$saleCount, $rejSaleMoney, $rejCount, $m, $c, $profit, $rate);
 		}
-		
+
 		$sql = "select biz_dt, goods_code, goods_name, goods_spec, unit_name,
 					sale_money, convert(sale_count, $fmt) as sale_count, rej_money, 
 					convert(rej_count, $fmt) as rej_count, m, convert(c, $fmt) as c, profit, rate 
@@ -181,17 +180,17 @@ class SaleReportDAO extends PSIBaseExDAO {
 					"rate" => $v["rate"] == 0 ? null : sprintf("%0.2f", $v["rate"]) . "%"
 			];
 		}
-		
+
 		$sql = "select count(*) as cnt
 				from psi_sale_report
 				";
 		$data = $db->query($sql);
 		$cnt = $data[0]["cnt"];
-		
+
 		// 删除临时表
 		$sql = "DROP TEMPORARY TABLE IF EXISTS psi_sale_report";
 		$db->execute($sql);
-		
+
 		return array(
 				"dataList" => $result,
 				"totalCount" => $cnt
@@ -207,13 +206,13 @@ class SaleReportDAO extends PSIBaseExDAO {
 		if ($this->companyIdNotExists($companyId)) {
 			return $this->emptyResult();
 		}
-		
+
 		$start = $params["start"];
 		$limit = intval($params["limit"]);
 		$showAllData = $limit == - 1;
-		
+
 		$dt = $params["dt"];
-		
+
 		$sort = $params["sort"];
 		$sortProperty = "customer_code";
 		$sortDirection = "ASC";
@@ -228,14 +227,14 @@ class SaleReportDAO extends PSIBaseExDAO {
 				} else if ($sortProperty == strtolower("rejMoney")) {
 					$sortProperty = "rej_money";
 				}
-				
+
 				$sortDirection = strtoupper($sortJSON[0]["direction"]);
 				if ($sortDirection != "ASC" && $sortDirection != "DESC") {
 					$sortDirection = "ASC";
 				}
 			}
 		}
-		
+
 		// 创建临时表保存数据
 		$sql = "CREATE TEMPORARY TABLE psi_sale_report (
 					biz_dt datetime,
@@ -245,9 +244,9 @@ class SaleReportDAO extends PSIBaseExDAO {
 					profit decimal(19,2), rate decimal(19, 2)
 				)";
 		$db->execute($sql);
-		
+
 		$result = [];
-		
+
 		$sql = "select c.id, c.code, c.name
 				from t_customer c
 				where c.id in(
@@ -266,7 +265,7 @@ class SaleReportDAO extends PSIBaseExDAO {
 		foreach ( $items as $v ) {
 			$customerCode = $v["code"];
 			$customerName = $v["name"];
-			
+
 			$customerId = $v["id"];
 			$sql = "select sum(w.sale_money) as goods_money, sum(w.inventory_money) as inventory_money
 					from t_ws_bill w
@@ -281,7 +280,7 @@ class SaleReportDAO extends PSIBaseExDAO {
 			if (! $saleInventoryMoney) {
 				$saleInventoryMoney = 0;
 			}
-			
+
 			$sql = "select sum(s.rejection_sale_money) as rej_money,
 						sum(s.inventory_money) as rej_inventory_money
 					from t_sr_bill s
@@ -296,22 +295,22 @@ class SaleReportDAO extends PSIBaseExDAO {
 			if (! $rejInventoryMoney) {
 				$rejInventoryMoney = 0;
 			}
-			
+
 			$m = $saleMoney - $rejSaleMoney;
 			$profit = $saleMoney - $rejSaleMoney - $saleInventoryMoney + $rejInventoryMoney;
 			$rate = 0;
 			if ($m > 0) {
 				$rate = $profit / $m * 100;
 			}
-			
+
 			$sql = "insert into psi_sale_report (biz_dt, customer_code, customer_name,
 						sale_money, rej_money, m, profit, rate)
 					values ('%s', '%s', '%s',
 							%f, %f, %f, %f, %f)";
-			$db->execute($sql, $dt, $customerCode, $customerName, $saleMoney, $rejSaleMoney, $m, 
+			$db->execute($sql, $dt, $customerCode, $customerName, $saleMoney, $rejSaleMoney, $m,
 					$profit, $rate);
 		}
-		
+
 		$sql = "select biz_dt, customer_code, customer_name,
 					sale_money, rej_money,
 					m, profit, rate
@@ -320,13 +319,13 @@ class SaleReportDAO extends PSIBaseExDAO {
 		if (! $showAllData) {
 			$sql .= " limit %d, %d";
 		}
-		
+
 		if ($showAllData) {
 			$data = $db->query($sql, $sortProperty, $sortDirection);
 		} else {
 			$data = $db->query($sql, $sortProperty, $sortDirection, $start, $limit);
 		}
-		
+
 		foreach ( $data as $v ) {
 			$result[] = [
 					"bizDT" => $this->toYMD($v["biz_dt"]),
@@ -339,17 +338,17 @@ class SaleReportDAO extends PSIBaseExDAO {
 					"rate" => $v["rate"] == 0 ? null : sprintf("%0.2f", $v["rate"]) . "%"
 			];
 		}
-		
+
 		$sql = "select count(*) as cnt
 				from psi_sale_report
 				";
 		$data = $db->query($sql);
 		$cnt = $data[0]["cnt"];
-		
+
 		// 删除临时表
 		$sql = "DROP TEMPORARY TABLE IF EXISTS psi_sale_report";
 		$db->execute($sql);
-		
+
 		return array(
 				"dataList" => $result,
 				"totalCount" => $cnt
@@ -361,18 +360,18 @@ class SaleReportDAO extends PSIBaseExDAO {
 	 */
 	public function saleDayByWarehouseQueryData($params) {
 		$db = $this->db;
-		
+
 		$companyId = $params["companyId"];
 		if ($this->companyIdNotExists($companyId)) {
 			return $this->emptyResult();
 		}
-		
+
 		$start = $params["start"];
 		$limit = intval($params["limit"]);
 		$showAllData = $limit == - 1;
-		
+
 		$dt = $params["dt"];
-		
+
 		$sort = $params["sort"];
 		$sortProperty = "warehouse_code";
 		$sortDirection = "ASC";
@@ -387,14 +386,14 @@ class SaleReportDAO extends PSIBaseExDAO {
 				} else if ($sortProperty == strtolower("rejMoney")) {
 					$sortProperty = "rej_money";
 				}
-				
+
 				$sortDirection = strtoupper($sortJSON[0]["direction"]);
 				if ($sortDirection != "ASC" && $sortDirection != "DESC") {
 					$sortDirection = "ASC";
 				}
 			}
 		}
-		
+
 		// 创建临时表保存数据
 		$sql = "CREATE TEMPORARY TABLE psi_sale_report (
 					biz_dt datetime,
@@ -404,7 +403,7 @@ class SaleReportDAO extends PSIBaseExDAO {
 					profit decimal(19,2), rate decimal(19, 2)
 				)";
 		$db->execute($sql);
-		
+
 		$sql = "select w.id, w.code, w.name
 				from t_warehouse w
 				where w.id in(
@@ -420,10 +419,10 @@ class SaleReportDAO extends PSIBaseExDAO {
 					)
 				order by w.code ";
 		$items = $db->query($sql, $dt, $companyId, $dt, $companyId);
-		foreach ( $items as $i => $v ) {
+		foreach ( $items as $v ) {
 			$warehouseCode = $v["code"];
 			$warehouseName = $v["name"];
-			
+
 			$warehouseId = $v["id"];
 			$sql = "select sum(w.sale_money) as goods_money, sum(w.inventory_money) as inventory_money
 					from t_ws_bill w
@@ -438,7 +437,7 @@ class SaleReportDAO extends PSIBaseExDAO {
 			if (! $saleInventoryMoney) {
 				$saleInventoryMoney = 0;
 			}
-			
+
 			$sql = "select sum(s.rejection_sale_money) as rej_money,
 						sum(s.inventory_money) as rej_inventory_money
 					from t_sr_bill s
@@ -453,7 +452,7 @@ class SaleReportDAO extends PSIBaseExDAO {
 			if (! $rejInventoryMoney) {
 				$rejInventoryMoney = 0;
 			}
-			
+
 			$m = $saleMoney - $rejSaleMoney;
 			$profit = $saleMoney - $rejSaleMoney - $saleInventoryMoney + $rejInventoryMoney;
 			$rate = 0;
@@ -464,10 +463,10 @@ class SaleReportDAO extends PSIBaseExDAO {
 						sale_money, rej_money, m, profit, rate)
 					values ('%s', '%s', '%s',
 							%f, %f, %f, %f, %f)";
-			$db->execute($sql, $dt, $warehouseCode, $warehouseName, $saleMoney, $rejSaleMoney, $m, 
+			$db->execute($sql, $dt, $warehouseCode, $warehouseName, $saleMoney, $rejSaleMoney, $m,
 					$profit, $rate);
 		}
-		
+
 		$result = [];
 		$sql = "select biz_dt, warehouse_code, warehouse_name,
 					sale_money, rej_money,
@@ -494,17 +493,17 @@ class SaleReportDAO extends PSIBaseExDAO {
 					"rate" => $v["rate"] == 0 ? null : sprintf("%0.2f", $v["rate"]) . "%"
 			];
 		}
-		
+
 		$sql = "select count(*) as cnt
 				from psi_sale_report
 				";
 		$data = $db->query($sql);
 		$cnt = $data[0]["cnt"];
-		
+
 		// 删除临时表
 		$sql = "DROP TEMPORARY TABLE IF EXISTS psi_sale_report";
 		$db->execute($sql);
-		
+
 		return array(
 				"dataList" => $result,
 				"totalCount" => $cnt
@@ -516,16 +515,16 @@ class SaleReportDAO extends PSIBaseExDAO {
 	 */
 	public function saleMonthByGoodsQueryData($params) {
 		$db = $this->db;
-		
+
 		$companyId = $params["companyId"];
 		if ($this->companyIdNotExists($companyId)) {
 			return $this->emptyResult();
 		}
-		
+
 		$start = $params["start"];
 		$limit = intval($params["limit"]);
 		$showAllData = $limit == - 1;
-		
+
 		$sort = $params["sort"];
 		$sortProperty = "goods_code";
 		$sortDirection = "ASC";
@@ -544,24 +543,24 @@ class SaleReportDAO extends PSIBaseExDAO {
 				} else if ($sortProperty == strtolower("rejCount")) {
 					$sortProperty = "rej_count";
 				}
-				
+
 				$sortDirection = strtoupper($sortJSON[0]["direction"]);
 				if ($sortDirection != "ASC" && $sortDirection != "DESC") {
 					$sortDirection = "ASC";
 				}
 			}
 		}
-		
+
 		$year = $params["year"];
 		$month = $params["month"];
-		
+
 		$dt = "";
 		if ($month < 10) {
 			$dt = "$year-0$month";
 		} else {
 			$dt = "$year-$month";
 		}
-		
+
 		// 创建临时表保存数据
 		$sql = "CREATE TEMPORARY TABLE psi_sale_report (
 					biz_dt varchar(255),
@@ -571,11 +570,11 @@ class SaleReportDAO extends PSIBaseExDAO {
 					profit decimal(19,2), rate decimal(19, 2)
 				)";
 		$db->execute($sql);
-		
+
 		$bcDAO = new BizConfigDAO($db);
 		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
 		$fmt = "decimal(19, " . $dataScale . ")";
-		
+
 		$sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name
 				from t_goods g, t_goods_unit u
 				where g.unit_id = u.id and g.id in(
@@ -599,7 +598,7 @@ class SaleReportDAO extends PSIBaseExDAO {
 			$goodsName = $v["name"];
 			$goodsSpec = $v["spec"];
 			$unitName = $v["unit_name"];
-			
+
 			$sql = "select sum(d.goods_money) as goods_money, sum(d.inventory_money) as inventory_money,
 						sum(convert(d.goods_count, $fmt)) as goods_count
 					from t_ws_bill w, t_ws_bill_detail d
@@ -619,9 +618,7 @@ class SaleReportDAO extends PSIBaseExDAO {
 			if (! $saleInventoryMoney) {
 				$saleInventoryMoney = 0;
 			}
-			$result[$i]["saleMoney"] = $saleMoney;
-			$result[$i]["saleCount"] = $saleCount;
-			
+
 			$sql = "select sum(convert(d.rejection_goods_count, $fmt)) as rej_count,
 						sum(d.rejection_sale_money) as rej_money,
 						sum(d.inventory_money) as rej_inventory_money
@@ -642,7 +639,7 @@ class SaleReportDAO extends PSIBaseExDAO {
 			if (! $rejInventoryMoney) {
 				$rejInventoryMoney = 0;
 			}
-			
+
 			$c = $saleCount - $rejCount;
 			$m = $saleMoney - $rejSaleMoney;
 			$c = number_format($c, $dataScale, ".", "");
@@ -651,15 +648,15 @@ class SaleReportDAO extends PSIBaseExDAO {
 			if ($m > 0) {
 				$rate = $profit / $m * 100;
 			}
-			
+
 			$sql = "insert into psi_sale_report (biz_dt, goods_code, goods_name, goods_spec, unit_name,
 						sale_money, sale_count, rej_money, rej_count, m, c, profit, rate)
 					values ('%s', '%s', '%s', '%s', '%s',
 							%f, %f, %f, %f, %f, %f, %f, %f)";
-			$db->execute($sql, $dt, $goodsCode, $goodsName, $goodsSpec, $unitName, $saleMoney, 
+			$db->execute($sql, $dt, $goodsCode, $goodsName, $goodsSpec, $unitName, $saleMoney,
 					$saleCount, $rejSaleMoney, $rejCount, $m, $c, $profit, $rate);
 		}
-		
+
 		$sql = "select biz_dt, goods_code, goods_name, goods_spec, unit_name,
 					sale_money, convert(sale_count, $fmt) as sale_count, rej_money,
 					convert(rej_count, $fmt) as rej_count, m, convert(c, $fmt) as c, profit, rate
@@ -691,17 +688,17 @@ class SaleReportDAO extends PSIBaseExDAO {
 					"rate" => $v["rate"] == 0 ? null : sprintf("%0.2f", $v["rate"]) . "%"
 			];
 		}
-		
+
 		$sql = "select count(*) as cnt
 				from psi_sale_report
 				";
 		$data = $db->query($sql);
 		$cnt = $data[0]["cnt"];
-		
+
 		// 删除临时表
 		$sql = "DROP TEMPORARY TABLE IF EXISTS psi_sale_report";
 		$db->execute($sql);
-		
+
 		return array(
 				"dataList" => $result,
 				"totalCount" => $cnt
@@ -713,19 +710,19 @@ class SaleReportDAO extends PSIBaseExDAO {
 	 */
 	public function saleMonthByCustomerQueryData($params) {
 		$db = $this->db;
-		
+
 		$companyId = $params["companyId"];
 		if ($this->companyIdNotExists($companyId)) {
 			return $this->emptyResult();
 		}
-		
+
 		$start = $params["start"];
 		$limit = intval($params["limit"]);
 		$showAllData = $limit == - 1;
-		
+
 		$year = $params["year"];
 		$month = $params["month"];
-		
+
 		$sort = $params["sort"];
 		$sortProperty = "customer_code";
 		$sortDirection = "ASC";
@@ -740,14 +737,14 @@ class SaleReportDAO extends PSIBaseExDAO {
 				} else if ($sortProperty == strtolower("rejMoney")) {
 					$sortProperty = "rej_money";
 				}
-				
+
 				$sortDirection = strtoupper($sortJSON[0]["direction"]);
 				if ($sortDirection != "ASC" && $sortDirection != "DESC") {
 					$sortDirection = "ASC";
 				}
 			}
 		}
-		
+
 		// 创建临时表保存数据
 		$sql = "CREATE TEMPORARY TABLE psi_sale_report (
 					biz_dt varchar(255),
@@ -757,13 +754,13 @@ class SaleReportDAO extends PSIBaseExDAO {
 					profit decimal(19,2), rate decimal(19, 2)
 				)";
 		$db->execute($sql);
-		
+
 		if ($month < 10) {
 			$dt = "$year-0$month";
 		} else {
 			$dt = "$year-$month";
 		}
-		
+
 		$sql = "select c.id, c.code, c.name
 				from t_customer c
 				where c.id in(
@@ -779,11 +776,11 @@ class SaleReportDAO extends PSIBaseExDAO {
 					)
 				order by c.code ";
 		$items = $db->query($sql, $year, $month, $companyId, $year, $month, $companyId);
-		foreach ( $items as $i => $v ) {
-			
+		foreach ( $items as $v ) {
+
 			$customerCode = $v["code"];
 			$customerName = $v["name"];
-			
+
 			$customerId = $v["id"];
 			$sql = "select sum(w.sale_money) as goods_money, sum(w.inventory_money) as inventory_money
 					from t_ws_bill w
@@ -799,7 +796,7 @@ class SaleReportDAO extends PSIBaseExDAO {
 			if (! $saleInventoryMoney) {
 				$saleInventoryMoney = 0;
 			}
-			
+
 			$sql = "select sum(s.rejection_sale_money) as rej_money,
 						sum(s.inventory_money) as rej_inventory_money
 					from t_sr_bill s
@@ -815,22 +812,22 @@ class SaleReportDAO extends PSIBaseExDAO {
 			if (! $rejInventoryMoney) {
 				$rejInventoryMoney = 0;
 			}
-			
+
 			$m = $saleMoney - $rejSaleMoney;
 			$profit = $saleMoney - $rejSaleMoney - $saleInventoryMoney + $rejInventoryMoney;
 			$rate = 0;
 			if ($m > 0) {
 				$rate = $profit / $m * 100;
 			}
-			
+
 			$sql = "insert into psi_sale_report (biz_dt, customer_code, customer_name,
 						sale_money, rej_money, m, profit, rate)
 					values ('%s', '%s', '%s',
 							%f, %f, %f, %f, %f)";
-			$db->execute($sql, $dt, $customerCode, $customerName, $saleMoney, $rejSaleMoney, $m, 
+			$db->execute($sql, $dt, $customerCode, $customerName, $saleMoney, $rejSaleMoney, $m,
 					$profit, $rate);
 		}
-		
+
 		$result = [];
 		$sql = "select biz_dt, customer_code, customer_name,
 					sale_money, rej_money,
@@ -857,17 +854,17 @@ class SaleReportDAO extends PSIBaseExDAO {
 					"rate" => $v["rate"] == 0 ? null : sprintf("%0.2f", $v["rate"]) . "%"
 			];
 		}
-		
+
 		$sql = "select count(*) as cnt
 				from psi_sale_report
 				";
 		$data = $db->query($sql);
 		$cnt = $data[0]["cnt"];
-		
+
 		// 删除临时表
 		$sql = "DROP TEMPORARY TABLE IF EXISTS psi_sale_report";
 		$db->execute($sql);
-		
+
 		return array(
 				"dataList" => $result,
 				"totalCount" => $cnt
@@ -879,16 +876,16 @@ class SaleReportDAO extends PSIBaseExDAO {
 	 */
 	public function saleMonthByWarehouseQueryData($params) {
 		$db = $this->db;
-		
+
 		$companyId = $params["companyId"];
 		if ($this->companyIdNotExists($companyId)) {
 			return $this->emptyResult();
 		}
-		
+
 		$start = $params["start"];
 		$limit = intval($params["limit"]);
 		$showAllData = $limit == - 1;
-		
+
 		$year = $params["year"];
 		$month = $params["month"];
 		$dt = "";
@@ -897,7 +894,7 @@ class SaleReportDAO extends PSIBaseExDAO {
 		} else {
 			$dt = "$year-$month";
 		}
-		
+
 		$sort = $params["sort"];
 		$sortProperty = "warehouse_code";
 		$sortDirection = "ASC";
@@ -912,14 +909,14 @@ class SaleReportDAO extends PSIBaseExDAO {
 				} else if ($sortProperty == strtolower("rejMoney")) {
 					$sortProperty = "rej_money";
 				}
-				
+
 				$sortDirection = strtoupper($sortJSON[0]["direction"]);
 				if ($sortDirection != "ASC" && $sortDirection != "DESC") {
 					$sortDirection = "ASC";
 				}
 			}
 		}
-		
+
 		// 创建临时表保存数据
 		$sql = "CREATE TEMPORARY TABLE psi_sale_report (
 					biz_dt varchar(255),
@@ -929,7 +926,7 @@ class SaleReportDAO extends PSIBaseExDAO {
 					profit decimal(19,2), rate decimal(19, 2)
 				)";
 		$db->execute($sql);
-		
+
 		$sql = "select w.id, w.code, w.name
 				from t_warehouse w
 				where w.id in(
@@ -948,7 +945,7 @@ class SaleReportDAO extends PSIBaseExDAO {
 		foreach ( $items as $v ) {
 			$warehouseCode = $v["code"];
 			$warehouseName = $v["name"];
-			
+
 			$warehouseId = $v["id"];
 			$sql = "select sum(w.sale_money) as goods_money, sum(w.inventory_money) as inventory_money
 					from t_ws_bill w
@@ -964,7 +961,7 @@ class SaleReportDAO extends PSIBaseExDAO {
 			if (! $saleInventoryMoney) {
 				$saleInventoryMoney = 0;
 			}
-			
+
 			$sql = "select sum(s.rejection_sale_money) as rej_money,
 						sum(s.inventory_money) as rej_inventory_money
 					from t_sr_bill s
@@ -980,7 +977,7 @@ class SaleReportDAO extends PSIBaseExDAO {
 			if (! $rejInventoryMoney) {
 				$rejInventoryMoney = 0;
 			}
-			
+
 			$m = $saleMoney - $rejSaleMoney;
 			$profit = $saleMoney - $rejSaleMoney - $saleInventoryMoney + $rejInventoryMoney;
 			$rate = 0;
@@ -991,10 +988,10 @@ class SaleReportDAO extends PSIBaseExDAO {
 						sale_money, rej_money, m, profit, rate)
 					values ('%s', '%s', '%s',
 							%f, %f, %f, %f, %f)";
-			$db->execute($sql, $dt, $warehouseCode, $warehouseName, $saleMoney, $rejSaleMoney, $m, 
+			$db->execute($sql, $dt, $warehouseCode, $warehouseName, $saleMoney, $rejSaleMoney, $m,
 					$profit, $rate);
 		}
-		
+
 		$result = [];
 		$sql = "select biz_dt, warehouse_code, warehouse_name,
 					sale_money, rej_money,
@@ -1021,17 +1018,17 @@ class SaleReportDAO extends PSIBaseExDAO {
 					"rate" => $v["rate"] == 0 ? null : sprintf("%0.2f", $v["rate"]) . "%"
 			];
 		}
-		
+
 		$sql = "select count(*) as cnt
 				from psi_sale_report
 				";
 		$data = $db->query($sql);
 		$cnt = $data[0]["cnt"];
-		
+
 		// 删除临时表
 		$sql = "DROP TEMPORARY TABLE IF EXISTS psi_sale_report";
 		$db->execute($sql);
-		
+
 		return array(
 				"dataList" => $result,
 				"totalCount" => $cnt
@@ -1043,18 +1040,18 @@ class SaleReportDAO extends PSIBaseExDAO {
 	 */
 	public function saleDayByBizuserQueryData($params) {
 		$db = $this->db;
-		
+
 		$companyId = $params["companyId"];
 		if ($this->companyIdNotExists($companyId)) {
 			return $this->emptyResult();
 		}
-		
+
 		$start = $params["start"];
 		$limit = intval($params["limit"]);
 		$showAllData = $limit == - 1;
-		
+
 		$dt = $params["dt"];
-		
+
 		$sort = $params["sort"];
 		$sortProperty = "user_code";
 		$sortDirection = "ASC";
@@ -1069,14 +1066,14 @@ class SaleReportDAO extends PSIBaseExDAO {
 				} else if ($sortProperty == strtolower("rejMoney")) {
 					$sortProperty = "rej_money";
 				}
-				
+
 				$sortDirection = strtoupper($sortJSON[0]["direction"]);
 				if ($sortDirection != "ASC" && $sortDirection != "DESC") {
 					$sortDirection = "ASC";
 				}
 			}
 		}
-		
+
 		// 创建临时表保存数据
 		$sql = "CREATE TEMPORARY TABLE psi_sale_report (
 					biz_dt datetime,
@@ -1086,7 +1083,7 @@ class SaleReportDAO extends PSIBaseExDAO {
 					profit decimal(19,2), rate decimal(19, 2)
 				)";
 		$db->execute($sql);
-		
+
 		$sql = "select u.id, u.org_code, u.name
 				from t_user u
 				where u.id in(
@@ -1102,10 +1099,10 @@ class SaleReportDAO extends PSIBaseExDAO {
 					)
 				order by u.org_code ";
 		$items = $db->query($sql, $dt, $companyId, $dt, $companyId);
-		foreach ( $items as $i => $v ) {
+		foreach ( $items as $v ) {
 			$userName = $v["name"];
 			$userCode = $v["org_code"];
-			
+
 			$userId = $v["id"];
 			$sql = "select sum(w.sale_money) as goods_money, sum(w.inventory_money) as inventory_money
 					from t_ws_bill w
@@ -1120,7 +1117,7 @@ class SaleReportDAO extends PSIBaseExDAO {
 			if (! $saleInventoryMoney) {
 				$saleInventoryMoney = 0;
 			}
-			
+
 			$sql = "select sum(s.rejection_sale_money) as rej_money,
 						sum(s.inventory_money) as rej_inventory_money
 					from t_sr_bill s
@@ -1135,10 +1132,10 @@ class SaleReportDAO extends PSIBaseExDAO {
 			if (! $rejInventoryMoney) {
 				$rejInventoryMoney = 0;
 			}
-			
+
 			$m = $saleMoney - $rejSaleMoney;
 			$profit = $saleMoney - $rejSaleMoney - $saleInventoryMoney + $rejInventoryMoney;
-			
+
 			$rate = 0;
 			if ($m > 0) {
 				$rate = $profit / $m * 100;
@@ -1147,10 +1144,10 @@ class SaleReportDAO extends PSIBaseExDAO {
 						sale_money, rej_money, m, profit, rate)
 					values ('%s', '%s', '%s',
 							%f, %f, %f, %f, %f)";
-			$db->execute($sql, $dt, $userCode, $userName, $saleMoney, $rejSaleMoney, $m, $profit, 
+			$db->execute($sql, $dt, $userCode, $userName, $saleMoney, $rejSaleMoney, $m, $profit,
 					$rate);
 		}
-		
+
 		$result = [];
 		$sql = "select biz_dt, user_code, user_name,
 					sale_money, rej_money,
@@ -1177,17 +1174,17 @@ class SaleReportDAO extends PSIBaseExDAO {
 					"rate" => $v["rate"] == 0 ? null : sprintf("%0.2f", $v["rate"]) . "%"
 			];
 		}
-		
+
 		$sql = "select count(*) as cnt
 				from psi_sale_report
 				";
 		$data = $db->query($sql);
 		$cnt = $data[0]["cnt"];
-		
+
 		// 删除临时表
 		$sql = "DROP TEMPORARY TABLE IF EXISTS psi_sale_report";
 		$db->execute($sql);
-		
+
 		return array(
 				"dataList" => $result,
 				"totalCount" => $cnt
@@ -1199,16 +1196,16 @@ class SaleReportDAO extends PSIBaseExDAO {
 	 */
 	public function saleMonthByBizuserQueryData($params) {
 		$db = $this->db;
-		
+
 		$companyId = $params["companyId"];
 		if ($this->companyIdNotExists($companyId)) {
 			return $this->emptyResult();
 		}
-		
+
 		$start = $params["start"];
 		$limit = intval($params["limit"]);
 		$showAllData = $limit == - 1;
-		
+
 		$year = $params["year"];
 		$month = $params["month"];
 		$dt = "";
@@ -1217,7 +1214,7 @@ class SaleReportDAO extends PSIBaseExDAO {
 		} else {
 			$dt = "$year-$month";
 		}
-		
+
 		$sort = $params["sort"];
 		$sortProperty = "user_code";
 		$sortDirection = "ASC";
@@ -1232,14 +1229,14 @@ class SaleReportDAO extends PSIBaseExDAO {
 				} else if ($sortProperty == strtolower("rejMoney")) {
 					$sortProperty = "rej_money";
 				}
-				
+
 				$sortDirection = strtoupper($sortJSON[0]["direction"]);
 				if ($sortDirection != "ASC" && $sortDirection != "DESC") {
 					$sortDirection = "ASC";
 				}
 			}
 		}
-		
+
 		// 创建临时表保存数据
 		$sql = "CREATE TEMPORARY TABLE psi_sale_report (
 					biz_dt varchar(255),
@@ -1249,7 +1246,7 @@ class SaleReportDAO extends PSIBaseExDAO {
 					profit decimal(19,2), rate decimal(19, 2)
 				)";
 		$db->execute($sql);
-		
+
 		$sql = "select u.id, u.org_code as code, u.name
 				from t_user u
 				where u.id in(
@@ -1265,10 +1262,10 @@ class SaleReportDAO extends PSIBaseExDAO {
 					)
 				order by u.org_code ";
 		$items = $db->query($sql, $year, $month, $companyId, $year, $month, $companyId);
-		foreach ( $items as $i => $v ) {
+		foreach ( $items as $v ) {
 			$userCode = $v["code"];
 			$userName = $v["name"];
-			
+
 			$userId = $v["id"];
 			$sql = "select sum(w.sale_money) as goods_money, sum(w.inventory_money) as inventory_money
 					from t_ws_bill w
@@ -1284,7 +1281,7 @@ class SaleReportDAO extends PSIBaseExDAO {
 			if (! $saleInventoryMoney) {
 				$saleInventoryMoney = 0;
 			}
-			
+
 			$sql = "select sum(s.rejection_sale_money) as rej_money,
 						sum(s.inventory_money) as rej_inventory_money
 					from t_sr_bill s
@@ -1300,22 +1297,22 @@ class SaleReportDAO extends PSIBaseExDAO {
 			if (! $rejInventoryMoney) {
 				$rejInventoryMoney = 0;
 			}
-			
+
 			$m = $saleMoney - $rejSaleMoney;
 			$profit = $saleMoney - $rejSaleMoney - $saleInventoryMoney + $rejInventoryMoney;
 			$rate = 0;
 			if ($m > 0) {
 				$rate = $profit / $m * 100;
 			}
-			
+
 			$sql = "insert into psi_sale_report (biz_dt, user_code, user_name,
 						sale_money, rej_money, m, profit, rate)
 					values ('%s', '%s', '%s',
 							%f, %f, %f, %f, %f)";
-			$db->execute($sql, $dt, $userCode, $userName, $saleMoney, $rejSaleMoney, $m, $profit, 
+			$db->execute($sql, $dt, $userCode, $userName, $saleMoney, $rejSaleMoney, $m, $profit,
 					$rate);
 		}
-		
+
 		$result = [];
 		$sql = "select biz_dt, user_code, user_name,
 					sale_money, rej_money,
@@ -1325,7 +1322,7 @@ class SaleReportDAO extends PSIBaseExDAO {
 		if (! $showAllData) {
 			$sql .= " limit %d, %d ";
 		}
-		$data = $showAllData ? $db->query($sql, $sortProperty, $sortDirection) : $db->query($sql, 
+		$data = $showAllData ? $db->query($sql, $sortProperty, $sortDirection) : $db->query($sql,
 				$sortProperty, $sortDirection, $start, $limit);
 		foreach ( $data as $v ) {
 			$result[] = [
@@ -1339,17 +1336,17 @@ class SaleReportDAO extends PSIBaseExDAO {
 					"rate" => $v["rate"] == 0 ? null : sprintf("%0.2f", $v["rate"]) . "%"
 			];
 		}
-		
+
 		$sql = "select count(*) as cnt
 				from psi_sale_report
 				";
 		$data = $db->query($sql);
 		$cnt = $data[0]["cnt"];
-		
+
 		// 删除临时表
 		$sql = "DROP TEMPORARY TABLE IF EXISTS psi_sale_report";
 		$db->execute($sql);
-		
+
 		return array(
 				"dataList" => $result,
 				"totalCount" => $cnt

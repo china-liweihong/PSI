@@ -290,135 +290,142 @@ Ext.define("PSI.User.MainForm", {
 				});
 
 		me.__userGrid = Ext.create("Ext.grid.Panel", {
-					cls : "PSI",
-					header : {
-						height : 30,
-						title : me.formatGridHeaderTitle("人员列表")
-					},
-					viewConfig : {
-						enableTextSelection : true
-					},
-					columnLines : true,
-					columns : [Ext.create("Ext.grid.RowNumberer", {
-										text : "序号",
-										width : 40
-									}), {
-								header : "登录名",
-								dataIndex : "loginName",
-								menuDisabled : true,
-								sortable : false,
-								locked : true
-							}, {
-								header : "姓名",
-								dataIndex : "name",
-								menuDisabled : true,
-								sortable : false,
-								locked : true
-							}, {
-								header : "权限角色",
-								dataIndex : "roleName",
-								menuDisabled : true,
-								sortable : false,
-								width : 200
-							}, {
-								header : "编码",
-								dataIndex : "orgCode",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "是否允许登录",
-								dataIndex : "enabled",
-								menuDisabled : true,
-								sortable : false,
-								renderer : function(value) {
-									return value == 1
-											? "允许登录"
-											: "<span style='color:red'>禁止登录</span>";
-								}
-							}, {
-								header : "性别",
-								dataIndex : "gender",
-								menuDisabled : true,
-								sortable : false,
-								width : 70
-							}, {
-								header : "生日",
-								dataIndex : "birthday",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "身份证号",
-								dataIndex : "idCardNumber",
-								menuDisabled : true,
-								sortable : false,
-								width : 200
-							}, {
-								header : "联系电话",
-								dataIndex : "tel",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "备用联系电话",
-								dataIndex : "tel02",
-								menuDisabled : true,
-								sortable : false
-							}, {
-								header : "家庭住址",
-								dataIndex : "address",
-								menuDisabled : true,
-								sortable : false,
-								width : 200
-							}, {
-								header : "数据域",
-								dataIndex : "dataOrg",
-								menuDisabled : true,
-								sortable : false,
-								width : 100
-							}],
-					store : storeGrid,
-					listeners : {
-						itemdblclick : {
-							fn : me.onEditUser,
-							scope : me
+			cls : "PSI",
+			header : {
+				height : 30,
+				title : me.formatGridHeaderTitle("人员列表")
+			},
+			viewConfig : {
+				enableTextSelection : true
+			},
+			columnLines : true,
+			columns : [Ext.create("Ext.grid.RowNumberer", {
+								text : "序号",
+								width : 40
+							}), {
+						header : "登录名",
+						dataIndex : "loginName",
+						menuDisabled : true,
+						sortable : false,
+						locked : true,
+						renderer : function(value, metaData, record) {
+							if (parseInt(record.get("enabled")) == 1) {
+								return value;
+							} else {
+								return "<span style='color:gray;text-decoration:line-through;'>"
+										+ value + "</span>";
+							}
 						}
-					},
-					bbar : ["->", {
-								id : "pagingToolbar",
-								border : 0,
-								xtype : "pagingtoolbar",
-								store : storeGrid
-							}, "-", {
-								xtype : "displayfield",
-								value : "每页显示"
-							}, {
-								id : "comboCountPerPage",
-								xtype : "combobox",
-								editable : false,
-								width : 60,
-								store : Ext.create("Ext.data.ArrayStore", {
-											fields : ["text"],
-											data : [["20"], ["50"], ["100"],
-													["300"], ["1000"]]
-										}),
-								value : 20,
-								listeners : {
-									change : {
-										fn : function() {
-											storeGrid.pageSize = Ext
-													.getCmp("comboCountPerPage")
-													.getValue();
-											storeGrid.currentPage = 1;
-											Ext.getCmp("pagingToolbar")
-													.doRefresh();
-										},
-										scope : me
-									}
-								}
-							}, {
-								xtype : "displayfield",
-								value : "条记录"
-							}]
-				});
+					}, {
+						header : "姓名",
+						dataIndex : "name",
+						menuDisabled : true,
+						sortable : false,
+						locked : true
+					}, {
+						header : "权限角色",
+						dataIndex : "roleName",
+						menuDisabled : true,
+						sortable : false,
+						width : 200
+					}, {
+						header : "编码",
+						dataIndex : "orgCode",
+						menuDisabled : true,
+						sortable : false
+					}, {
+						header : "是否允许登录",
+						dataIndex : "enabled",
+						menuDisabled : true,
+						sortable : false,
+						renderer : function(value) {
+							return value == 1
+									? "允许登录"
+									: "<span style='color:red'>禁止登录</span>";
+						}
+					}, {
+						header : "性别",
+						dataIndex : "gender",
+						menuDisabled : true,
+						sortable : false,
+						width : 70
+					}, {
+						header : "生日",
+						dataIndex : "birthday",
+						menuDisabled : true,
+						sortable : false
+					}, {
+						header : "身份证号",
+						dataIndex : "idCardNumber",
+						menuDisabled : true,
+						sortable : false,
+						width : 200
+					}, {
+						header : "联系电话",
+						dataIndex : "tel",
+						menuDisabled : true,
+						sortable : false
+					}, {
+						header : "备用联系电话",
+						dataIndex : "tel02",
+						menuDisabled : true,
+						sortable : false
+					}, {
+						header : "家庭住址",
+						dataIndex : "address",
+						menuDisabled : true,
+						sortable : false,
+						width : 200
+					}, {
+						header : "数据域",
+						dataIndex : "dataOrg",
+						menuDisabled : true,
+						sortable : false,
+						width : 100
+					}],
+			store : storeGrid,
+			listeners : {
+				itemdblclick : {
+					fn : me.onEditUser,
+					scope : me
+				}
+			},
+			bbar : ["->", {
+						id : "pagingToolbar",
+						border : 0,
+						xtype : "pagingtoolbar",
+						store : storeGrid
+					}, "-", {
+						xtype : "displayfield",
+						value : "每页显示"
+					}, {
+						id : "comboCountPerPage",
+						xtype : "combobox",
+						editable : false,
+						width : 60,
+						store : Ext.create("Ext.data.ArrayStore", {
+									fields : ["text"],
+									data : [["20"], ["50"], ["100"], ["300"],
+											["1000"]]
+								}),
+						value : 20,
+						listeners : {
+							change : {
+								fn : function() {
+									storeGrid.pageSize = Ext
+											.getCmp("comboCountPerPage")
+											.getValue();
+									storeGrid.currentPage = 1;
+									Ext.getCmp("pagingToolbar").doRefresh();
+								},
+								scope : me
+							}
+						}
+					}, {
+						xtype : "displayfield",
+						value : "条记录"
+					}]
+		});
 
 		return me.__userGrid;
 	},

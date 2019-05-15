@@ -520,7 +520,15 @@ class OrgDAO extends PSIBaseExDAO {
 
 			// 在查询的时候，过滤掉没有用户记录的组织机构
 			foreach ( $result as $v ) {
-				if ($v["userCount"] > 0) {
+				$children = $v["children"];
+				$newChildren = [];
+				foreach ( $children as $child ) {
+					if (intval($child["userCount"]) > 0) {
+						$newChildren[] = $child;
+					}
+				}
+				if (count($newChildren) > 0) {
+					$v["children"] = $newChildren;
 					$data[] = $v;
 				}
 			}

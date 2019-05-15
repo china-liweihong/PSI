@@ -28,7 +28,7 @@ Ext.define("PSI.Supplier.MainForm", {
 						header : false,
 						layout : {
 							type : "table",
-							columns : 4
+							columns : 5
 						},
 						items : me.getQueryCmp()
 					}, {
@@ -206,7 +206,8 @@ Ext.define("PSI.Supplier.MainForm", {
 							fn : me.onQueryEditSpecialKey,
 							scope : me
 						}
-					}
+					},
+					width : 240
 				}, {
 					id : "editQueryMobile",
 					labelWidth : 70,
@@ -250,6 +251,22 @@ Ext.define("PSI.Supplier.MainForm", {
 						}
 					}
 				}, {
+					id : "editQueryRecordStatus",
+					xtype : "combo",
+					queryMode : "local",
+					editable : false,
+					valueField : "id",
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "状态",
+					margin : "5, 0, 0, 0",
+					store : Ext.create("Ext.data.ArrayStore", {
+								fields : ["id", "text"],
+								data : [[-1, "全部"], [1000, "启用"], [0, "停用"]]
+							}),
+					value : -1
+				}, {
 					xtype : "container",
 					items : [{
 								xtype : "button",
@@ -267,7 +284,10 @@ Ext.define("PSI.Supplier.MainForm", {
 								margin : "5, 0, 0, 15",
 								handler : me.onClearQuery,
 								scope : me
-							}, {
+							}]
+				}, {
+					xtype : "container",
+					items : [{
 								xtype : "button",
 								text : "隐藏查询条件栏",
 								width : 130,
@@ -940,6 +960,8 @@ Ext.define("PSI.Supplier.MainForm", {
 			result.qq = qq;
 		}
 
+		result.recordStatus = Ext.getCmp("editQueryRecordStatus").getValue();
+
 		return result;
 	},
 
@@ -961,6 +983,8 @@ Ext.define("PSI.Supplier.MainForm", {
 				edit.setValue(null);
 			}
 		}
+
+		Ext.getCmp("editQueryRecordStatus").setValue(-1);
 
 		me.onQuery();
 	},

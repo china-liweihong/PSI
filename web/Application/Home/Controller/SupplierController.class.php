@@ -19,22 +19,22 @@ class SupplierController extends PSIBaseController {
 	 */
 	public function index() {
 		$us = new UserService();
-		
+
 		if ($us->hasPermission(FIdConst::SUPPLIER)) {
 			$this->initVar();
-			
+
 			$this->assign("title", "供应商档案");
-			
-			$this->assign("pAddCategory", 
+
+			$this->assign("pAddCategory",
 					$us->hasPermission(FIdConst::SUPPLIER_CATEGORY_ADD) ? 1 : 0);
-			$this->assign("pEditCategory", 
+			$this->assign("pEditCategory",
 					$us->hasPermission(FIdConst::SUPPLIER_CATEGORY_EDIT) ? 1 : 0);
-			$this->assign("pDeleteCategory", 
+			$this->assign("pDeleteCategory",
 					$us->hasPermission(FIdConst::SUPPLIER_CATEGORY_DELETE) ? 1 : 0);
 			$this->assign("pAddSupplier", $us->hasPermission(FIdConst::SUPPLIER_ADD) ? 1 : 0);
 			$this->assign("pEditSupplier", $us->hasPermission(FIdConst::SUPPLIER_EDIT) ? 1 : 0);
 			$this->assign("pDeleteSupplier", $us->hasPermission(FIdConst::SUPPLIER_DELETE) ? 1 : 0);
-			
+
 			$this->display();
 		} else {
 			$this->gotoLoginPage("/Home/Supplier/index");
@@ -53,7 +53,8 @@ class SupplierController extends PSIBaseController {
 					"contact" => I("post.contact"),
 					"mobile" => I("post.mobile"),
 					"tel" => I("post.tel"),
-					"qq" => I("post.qq")
+					"qq" => I("post.qq"),
+					"recordStatus" => I("post.recordStatus")
 			);
 			$ss = new SupplierService();
 			$this->ajaxReturn($ss->categoryList($params));
@@ -74,7 +75,7 @@ class SupplierController extends PSIBaseController {
 					"mobile" => I("post.mobile"),
 					"tel" => I("post.tel"),
 					"qq" => I("post.qq"),
-					"page" => I("post.page"),
+					"recordStatus" => I("post.recordStatus"),
 					"start" => I("post.start"),
 					"limit" => I("post.limit")
 			);
@@ -102,7 +103,7 @@ class SupplierController extends PSIBaseController {
 					return;
 				}
 			}
-			
+
 			$params = array(
 					"id" => I("post.id"),
 					"code" => strtoupper(I("post.code")),
@@ -123,7 +124,7 @@ class SupplierController extends PSIBaseController {
 				$this->ajaxReturn($this->noPermission("删除供应商分类"));
 				return;
 			}
-			
+
 			$params = array(
 					"id" => I("post.id")
 			);
@@ -151,7 +152,7 @@ class SupplierController extends PSIBaseController {
 					return;
 				}
 			}
-			
+
 			$params = array(
 					"id" => I("post.id"),
 					"code" => strtoupper(I("post.code")),
@@ -193,7 +194,7 @@ class SupplierController extends PSIBaseController {
 				$this->ajaxReturn($this->noPermission("删除供应商档案"));
 				return;
 			}
-			
+
 			$params = array(
 					"id" => I("post.id")
 			);

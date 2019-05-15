@@ -468,6 +468,7 @@ class OrgDAO extends PSIBaseExDAO {
 		$db = $this->db;
 
 		$loginUserId = $params["loginUserId"];
+		$enabled = intval($params["enabled"]);
 
 		$ds = new DataOrgDAO($db);
 		$queryParams = array();
@@ -508,8 +509,9 @@ class OrgDAO extends PSIBaseExDAO {
 			$this->getUserCountWithSubOrg($db, $result[$i], $params);
 		}
 
+		// 判断当前状态是否是在查询状态下
 		$inQuery = false;
-		if ($params["loginName"] || $params["name"]) {
+		if ($params["loginName"] || $params["name"] || $enabled != - 1) {
 			$inQuery = true;
 		}
 
@@ -531,6 +533,7 @@ class OrgDAO extends PSIBaseExDAO {
 
 	private function getUserCountWithSubOrg($db, &$org, &$params) {
 		$loginUserId = $params["loginUserId"];
+		$enabled = intval($params["enabled"]);
 
 		// 这里要使用&引用children，这个地方因为少些&导致我浪费好多时间来debug这段代码
 		$children = &$org["children"];
@@ -562,6 +565,10 @@ class OrgDAO extends PSIBaseExDAO {
 			$sql .= " and (u.name like '%s' or u.py like '%s') ";
 			$queryParam[] = "%$name%";
 			$queryParam[] = "%$name%";
+		}
+		if ($enabled != - 1) {
+			$sql .= " and (u.enabled = %d) ";
+			$queryParam[] = $enabled;
 		}
 
 		$data = $db->query($sql, $queryParam);

@@ -21,26 +21,24 @@ class UserController extends PSIBaseController {
 	 */
 	public function index() {
 		$us = new UserService();
-		
+
 		if ($us->hasPermission(FIdConst::USR_MANAGEMENT)) {
 			$this->initVar();
-			
+
 			$this->assign("title", "用户管理");
-			
+
 			$this->assign("pAddOrg", $us->hasPermission(FIdConst::USER_MANAGEMENT_ADD_ORG) ? 1 : 0);
-			$this->assign("pEditOrg", 
-					$us->hasPermission(FIdConst::USER_MANAGEMENT_EDIT_ORG) ? 1 : 0);
-			$this->assign("pDeleteOrg", 
+			$this->assign("pEditOrg", $us->hasPermission(FIdConst::USER_MANAGEMENT_EDIT_ORG) ? 1 : 0);
+			$this->assign("pDeleteOrg",
 					$us->hasPermission(FIdConst::USER_MANAGEMENT_DELETE_ORG) ? 1 : 0);
-			$this->assign("pAddUser", 
-					$us->hasPermission(FIdConst::USER_MANAGEMENT_ADD_USER) ? 1 : 0);
-			$this->assign("pEditUser", 
+			$this->assign("pAddUser", $us->hasPermission(FIdConst::USER_MANAGEMENT_ADD_USER) ? 1 : 0);
+			$this->assign("pEditUser",
 					$us->hasPermission(FIdConst::USER_MANAGEMENT_EDIT_USER) ? 1 : 0);
-			$this->assign("pDeleteUser", 
+			$this->assign("pDeleteUser",
 					$us->hasPermission(FIdConst::USER_MANAGEMENT_DELETE_USER) ? 1 : 0);
-			$this->assign("pChangePassword", 
+			$this->assign("pChangePassword",
 					$us->hasPermission(FIdConst::USER_MANAGEMENT_CHANGE_USER_PASSWORD) ? 1 : 0);
-			
+
 			$this->display();
 		} else {
 			$this->gotoLoginPage("/Home/User/index");
@@ -55,31 +53,31 @@ class UserController extends PSIBaseController {
 			// 已经登录了，就返回首页
 			redirect(__ROOT__);
 		}
-		
+
 		// 自动初始化数据库
 		$installService = new InstallService();
 		$installService->autoInstallWhenFirstRun();
-		
+
 		$this->initVar();
-		
+
 		$bcs = new BizConfigService();
 		$productionName = $bcs->getProductionName();
-		
+
 		if ($productionName == "PSI") {
 			$productionName .= " - 开源ERP";
 		}
-		
+
 		$this->assign("productionName", $productionName);
-		
+
 		$this->assign("title", "登录");
-		
+
 		$this->assign("returnPage", I("get.returnPage"));
-		
+
 		$this->assign("year", date("Y"));
-		
+
 		$us = new UserService();
 		$this->assign("demoInfo", $us->getDemoLoginInfo());
-		
+
 		$this->display();
 	}
 
@@ -88,15 +86,15 @@ class UserController extends PSIBaseController {
 	 */
 	public function changeMyPassword() {
 		$us = new UserService();
-		
+
 		if ($us->hasPermission(FIdConst::CHANGE_MY_PASSWORD)) {
 			$this->initVar();
-			
+
 			$this->assign("loginUserId", $us->getLoginUserId());
 			$this->assign("loginName", $us->getLoginName());
 			$this->assign("loginUserName", $us->getLoignUserNameWithOrgFullName());
 			$this->assign("title", "修改我的密码");
-			
+
 			$this->display();
 		} else {
 			$this->gotoLoginPage("/Home/User/changeMyPassword");
@@ -114,7 +112,7 @@ class UserController extends PSIBaseController {
 					"oldPassword" => I("post.oldPassword"),
 					"newPassword" => I("post.newPassword")
 			);
-			
+
 			$result = $us->changeMyPassword($params);
 			$this->ajaxReturn($result);
 		}
@@ -127,15 +125,15 @@ class UserController extends PSIBaseController {
 		if (IS_POST) {
 			$ip = get_client_ip();
 			$ipFrom = (new IPService())->toRegion($ip);
-			
+
 			session("PSI_login_user_ip", $ip);
 			session("PSI_login_user_ip_from", $ipFrom);
-			
+
 			$params = array(
 					"loginName" => I("post.loginName"),
 					"password" => I("post.password")
 			);
-			
+
 			$us = new UserService();
 			$this->ajaxReturn($us->doLogin($params));
 		}
@@ -148,12 +146,13 @@ class UserController extends PSIBaseController {
 		if (IS_POST) {
 			$params = [
 					"loginName" => I("post.queryLoginName"),
-					"name" => I("post.queryName")
+					"name" => I("post.queryName"),
+					"enabled" => I("post.enabled")
 			];
-			
+
 			$us = new UserService();
 			$data = $us->allOrgs($params);
-			
+
 			$this->ajaxReturn($data);
 		}
 	}
@@ -169,9 +168,10 @@ class UserController extends PSIBaseController {
 					"start" => I("post.start"),
 					"limit" => I("post.limit"),
 					"loginName" => I("post.queryLoginName"),
-					"name" => I("post.queryName")
+					"name" => I("post.queryName"),
+					"enabled" => I("post.enabled")
 			);
-			
+
 			$this->ajaxReturn($us->users($params));
 		}
 	}
@@ -187,7 +187,7 @@ class UserController extends PSIBaseController {
 			$parentId = I("post.parentId");
 			$orgCode = strtoupper(I("post.orgCode"));
 			$orgType = I("post.orgType");
-			
+
 			if ($id) {
 				// 编辑组织机构
 				if (! $us->hasPermission(FIdConst::USER_MANAGEMENT_EDIT_ORG)) {
@@ -201,9 +201,9 @@ class UserController extends PSIBaseController {
 					return;
 				}
 			}
-			
+
 			$result = $us->editOrg($id, $name, $parentId, $orgCode, $orgType);
-			
+
 			$this->ajaxReturn($result);
 		}
 	}
@@ -216,7 +216,7 @@ class UserController extends PSIBaseController {
 			$us = new UserService();
 			$id = I("post.id");
 			$data = $us->orgParentName($id);
-			
+
 			$this->ajaxReturn($data);
 		}
 	}
@@ -227,15 +227,15 @@ class UserController extends PSIBaseController {
 	public function deleteOrg() {
 		if (IS_POST) {
 			$us = new UserService();
-			
+
 			if (! $us->hasPermission(FIdConst::USER_MANAGEMENT_DELETE_ORG)) {
 				$this->ajaxReturn($this->noPermission("删除组织机构"));
 				return;
 			}
-			
+
 			$id = I("post.id");
 			$data = $us->deleteOrg($id);
-			
+
 			$this->ajaxReturn($data);
 		}
 	}
@@ -246,7 +246,7 @@ class UserController extends PSIBaseController {
 	public function editUser() {
 		if (IS_POST) {
 			$us = new UserService();
-			
+
 			if (I("post.id")) {
 				// 编辑用户
 				if (! $us->hasPermission(FIdConst::USER_MANAGEMENT_EDIT_USER)) {
@@ -260,7 +260,7 @@ class UserController extends PSIBaseController {
 					return;
 				}
 			}
-			
+
 			$params = array(
 					"id" => I("post.id"),
 					"loginName" => I("post.loginName"),
@@ -275,9 +275,9 @@ class UserController extends PSIBaseController {
 					"tel02" => I("post.tel02"),
 					"address" => I("post.address")
 			);
-			
+
 			$result = $us->editUser($params);
-			
+
 			$this->ajaxReturn($result);
 		}
 	}
@@ -288,18 +288,18 @@ class UserController extends PSIBaseController {
 	public function deleteUser() {
 		if (IS_POST) {
 			$us = new UserService();
-			
+
 			if (! $us->hasPermission(FIdConst::USER_MANAGEMENT_DELETE_USER)) {
 				$this->ajaxReturn($this->noPermission("删除用户"));
 				return;
 			}
-			
+
 			$params = array(
 					"id" => I("post.id")
 			);
-			
+
 			$result = $us->deleteUser($params);
-			
+
 			$this->ajaxReturn($result);
 		}
 	}
@@ -310,19 +310,19 @@ class UserController extends PSIBaseController {
 	public function changePassword() {
 		if (IS_POST) {
 			$us = new UserService();
-			
+
 			if (! $us->hasPermission(FIdConst::USER_MANAGEMENT_CHANGE_USER_PASSWORD)) {
 				$this->ajaxReturn($this->noPermission("修改用户密码"));
 				return;
 			}
-			
+
 			$params = array(
 					"id" => I("post.id"),
 					"password" => I("post.password")
 			);
-			
+
 			$result = $us->changePassword($params);
-			
+
 			$this->ajaxReturn($result);
 		}
 	}

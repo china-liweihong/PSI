@@ -126,6 +126,22 @@ Ext.define("PSI.User.MainForm", {
 					margin : "5, 0, 0, 0",
 					xtype : "textfield"
 				}, {
+					id : "editQueryEnabled",
+					xtype : "combo",
+					queryMode : "local",
+					editable : false,
+					valueField : "id",
+					labelWidth : 60,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "状态",
+					margin : "5, 0, 0, 0",
+					store : Ext.create("Ext.data.ArrayStore", {
+								fields : ["id", "text"],
+								data : [[-1, "全部"], [1, "允许登录"], [0, "禁止登录"]]
+							}),
+					value : -1
+				}, {
 					xtype : "container",
 					items : [{
 								xtype : "button",
@@ -701,10 +717,17 @@ Ext.define("PSI.User.MainForm", {
 			queryName = editQueryName.getValue();
 		}
 
+		var enabled = -1;
+		var edit = Ext.getCmp("editQueryEnabled");
+		if (edit) {
+			enabled = edit.getValue();
+		}
+
 		return {
 			orgId : org.get("id"),
 			queryLoginName : queryLoginName,
-			queryName : queryName
+			queryName : queryName,
+			enabled : enabled
 		}
 	},
 
@@ -713,6 +736,7 @@ Ext.define("PSI.User.MainForm", {
 
 		Ext.getCmp("editQueryLoginName").setValue(null);
 		Ext.getCmp("editQueryName").setValue(null);
+		Ext.getCmp("editQueryEnabled").setValue(-1);
 
 		me.onQuery();
 	},
@@ -738,9 +762,16 @@ Ext.define("PSI.User.MainForm", {
 			queryName = editQueryName.getValue();
 		}
 
+		var enabled = -1;
+		var edit = Ext.getCmp("editQueryEnabled");
+		if (edit) {
+			enabled = edit.getValue();
+		}
+
 		return {
 			queryLoginName : queryLoginName,
-			queryName : queryName
+			queryName : queryName,
+			enabled : enabled
 		};
 	}
 });

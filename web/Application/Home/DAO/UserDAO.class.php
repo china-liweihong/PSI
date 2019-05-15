@@ -157,6 +157,7 @@ class UserDAO extends PSIBaseExDAO {
 
 		$loginName = $params["loginName"];
 		$name = $params["name"];
+		$enabled = intval($params["enabled"]);
 
 		$sql = "select id, login_name,  name, enabled, org_code, gender, birthday, id_card_number, tel,
 				    tel02, address, data_org
@@ -173,6 +174,10 @@ class UserDAO extends PSIBaseExDAO {
 			$sql .= " and (name like '%s' or py like '%s') ";
 			$queryParam[] = "%$name%";
 			$queryParam[] = "%$name%";
+		}
+		if ($enabled != - 1) {
+			$sql .= " and (enabled = %d) ";
+			$queryParam[] = $enabled;
 		}
 
 		$sql .= " order by org_code
@@ -219,9 +224,25 @@ class UserDAO extends PSIBaseExDAO {
 
 		$sql = "select count(*) as cnt
 				from t_user
-				where org_id = '%s' ";
+				where (org_id = '%s') ";
+		$queryParam = [];
+		$queryParam[] = $orgId;
 
-		$data = $db->query($sql, $orgId);
+		if ($loginName) {
+			$sql .= " and (login_name like '%s') ";
+			$queryParam[] = "%$loginName%";
+		}
+		if ($name) {
+			$sql .= " and (name like '%s' or py like '%s') ";
+			$queryParam[] = "%$name%";
+			$queryParam[] = "%$name%";
+		}
+		if ($enabled != - 1) {
+			$sql .= " and (enabled = %d) ";
+			$queryParam[] = $enabled;
+		}
+
+		$data = $db->query($sql, $queryParam);
 		$cnt = $data[0]["cnt"];
 
 		return [

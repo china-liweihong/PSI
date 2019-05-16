@@ -26,9 +26,10 @@ class FactoryDAO extends PSIBaseExDAO {
 		$contact = $params["contact"];
 		$mobile = $params["mobile"];
 		$tel = $params["tel"];
+		$recordStatus = intval($params["recordStatus"]);
 
 		$inQuery = false;
-		if ($code || $name || $address || $contact || $mobile || $tel) {
+		if ($code || $name || $address || $contact || $mobile || $tel || $recordStatus != - 1) {
 			$inQuery = true;
 		}
 
@@ -87,6 +88,10 @@ class FactoryDAO extends PSIBaseExDAO {
 				$sql .= " and (s.tel01 like '%s' or s.tel02 like '%s' ) ";
 				$queryParam[] = "%{$tel}%";
 				$queryParam[] = "%{$tel}";
+			}
+			if ($recordStatus != - 1) {
+				$sql .= " and (s.record_status = %d) ";
+				$queryParam[] = $recordStatus;
 			}
 			$rs = $ds->buildSQL(FIdConst::FACTORY, "s", $loginUserId);
 			if ($rs) {
@@ -283,6 +288,7 @@ class FactoryDAO extends PSIBaseExDAO {
 		$contact = $params["contact"];
 		$mobile = $params["mobile"];
 		$tel = $params["tel"];
+		$recordStatus = intval($params["recordStatus"]);
 
 		$loginUserId = $params["loginUserId"];
 		if ($this->loginUserIdNotExists($loginUserId)) {
@@ -325,6 +331,10 @@ class FactoryDAO extends PSIBaseExDAO {
 			$sql .= " and (tel01 like '%s' or tel02 like '%s' ) ";
 			$queryParam[] = "%{$tel}%";
 			$queryParam[] = "%{$tel}";
+		}
+		if ($recordStatus != - 1) {
+			$sql .= " and (record_status = %d) ";
+			$queryParam[] = $recordStatus;
 		}
 
 		$ds = new DataOrgDAO($db);
@@ -397,6 +407,10 @@ class FactoryDAO extends PSIBaseExDAO {
 			$sql .= " and (tel01 like '%s' or tel02 like '%s' ) ";
 			$queryParam[] = "%{$tel}%";
 			$queryParam[] = "%{$tel}";
+		}
+		if ($recordStatus != - 1) {
+			$sql .= " and (record_status = %d) ";
+			$queryParam[] = $recordStatus;
 		}
 		$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::FACTORY, "t_factory", $loginUserId);

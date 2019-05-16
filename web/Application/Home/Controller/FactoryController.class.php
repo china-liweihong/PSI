@@ -19,22 +19,21 @@ class FactoryController extends PSIBaseController {
 	 */
 	public function index() {
 		$us = new UserService();
-		
+
 		if ($us->hasPermission(FIdConst::FACTORY)) {
 			$this->initVar();
-			
-			$this->assign("pAddCategory", 
-					$us->hasPermission(FIdConst::FACTORY_CATEGORY_ADD) ? 1 : 0);
-			$this->assign("pEditCategory", 
+
+			$this->assign("pAddCategory", $us->hasPermission(FIdConst::FACTORY_CATEGORY_ADD) ? 1 : 0);
+			$this->assign("pEditCategory",
 					$us->hasPermission(FIdConst::FACTORY_CATEGORY_EDIT) ? 1 : 0);
-			$this->assign("pDeleteCategory", 
+			$this->assign("pDeleteCategory",
 					$us->hasPermission(FIdConst::FACTORY_CATEGORY_DELETE) ? 1 : 0);
 			$this->assign("pAdd", $us->hasPermission(FIdConst::FACTORY_ADD) ? 1 : 0);
 			$this->assign("pEdit", $us->hasPermission(FIdConst::FACTORY_EDIT) ? 1 : 0);
 			$this->assign("pDelete", $us->hasPermission(FIdConst::FACTORY_DELETE) ? 1 : 0);
-			
+
 			$this->assign("title", "工厂");
-			
+
 			$this->display();
 		} else {
 			$this->gotoLoginPage("/Home/Factory/index");
@@ -52,7 +51,8 @@ class FactoryController extends PSIBaseController {
 					"address" => I("post.address"),
 					"contact" => I("post.contact"),
 					"mobile" => I("post.mobile"),
-					"tel" => I("post.tel")
+					"tel" => I("post.tel"),
+					"recordStatus" => I("post.recordStatus")
 			];
 			$service = new FactoryService();
 			$this->ajaxReturn($service->categoryList($params));
@@ -78,13 +78,13 @@ class FactoryController extends PSIBaseController {
 					return;
 				}
 			}
-			
+
 			$params = [
 					"id" => I("post.id"),
 					"code" => strtoupper(I("post.code")),
 					"name" => I("post.name")
 			];
-			
+
 			$service = new FactoryService();
 			$this->ajaxReturn($service->editCategory($params));
 		}
@@ -100,11 +100,11 @@ class FactoryController extends PSIBaseController {
 				$this->ajaxReturn($this->noPermission("删除工厂分类"));
 				return;
 			}
-			
+
 			$params = [
 					"id" => I("post.id")
 			];
-			
+
 			$service = new FactoryService();
 			$this->ajaxReturn($service->deleteCategory($params));
 		}
@@ -123,7 +123,7 @@ class FactoryController extends PSIBaseController {
 					"contact" => I("post.contact"),
 					"mobile" => I("post.mobile"),
 					"tel" => I("post.tel"),
-					"page" => I("post.page"),
+					"recordStatus" => I("post.recordStatus"),
 					"start" => I("post.start"),
 					"limit" => I("post.limit")
 			);
@@ -151,7 +151,7 @@ class FactoryController extends PSIBaseController {
 					return;
 				}
 			}
-			
+
 			$params = [
 					"id" => I("post.id"),
 					"code" => strtoupper(I("post.code")),
@@ -186,7 +186,7 @@ class FactoryController extends PSIBaseController {
 			$params = [
 					"id" => I("post.id")
 			];
-			
+
 			$service = new FactoryService();
 			$this->ajaxReturn($service->factoryInfo($params));
 		}
@@ -202,11 +202,11 @@ class FactoryController extends PSIBaseController {
 				$this->ajaxReturn($this->noPermission("删除工厂"));
 				return;
 			}
-			
+
 			$params = [
 					"id" => I("post.id")
 			];
-			
+
 			$service = new FactoryService();
 			$this->ajaxReturn($service->deleteFactory($params));
 		}

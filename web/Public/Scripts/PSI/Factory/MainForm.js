@@ -164,7 +164,6 @@ Ext.define("PSI.Factory.MainForm", {
 					fieldLabel : "地址",
 					margin : "5, 0, 0, 0",
 					xtype : "textfield",
-					width : 400,
 					listeners : {
 						specialkey : {
 							fn : me.onQueryEditSpecialKey,
@@ -213,6 +212,22 @@ Ext.define("PSI.Factory.MainForm", {
 							scope : me
 						}
 					}
+				}, {
+					id : "editQueryRecordStatus",
+					xtype : "combo",
+					queryMode : "local",
+					editable : false,
+					valueField : "id",
+					labelWidth : 70,
+					labelAlign : "right",
+					labelSeparator : "",
+					fieldLabel : "状态",
+					margin : "5, 0, 0, 0",
+					store : Ext.create("Ext.data.ArrayStore", {
+								fields : ["id", "text"],
+								data : [[-1, "全部"], [1000, "启用"], [0, "停用"]]
+							}),
+					value : -1
 				}, {
 					xtype : "container",
 					items : [{
@@ -845,6 +860,8 @@ Ext.define("PSI.Factory.MainForm", {
 			result.tel = tel;
 		}
 
+		result.recordStatus = Ext.getCmp("editQueryRecordStatus").getValue();
+
 		return result;
 	},
 
@@ -866,6 +883,8 @@ Ext.define("PSI.Factory.MainForm", {
 				edit.setValue(null);
 			}
 		}
+
+		Ext.getCmp("editQueryRecordStatus").setValue(-1);
 
 		me.onQuery();
 	}

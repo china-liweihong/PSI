@@ -239,6 +239,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20190506_01();
 		$this->update_20190506_02();
 		$this->update_20190506_03();
+		$this->update_20190516_01();
 
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -259,6 +260,18 @@ class UpdateDBService extends PSIBaseService {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// ============================================
 	private function notForgot() {
+	}
+
+	private function update_20190516_01() {
+		// 本次更新：调整t_sysdict_record_status的记录
+		$db = $this->db;
+
+		$sql = "TRUNCATE TABLE `t_sysdict_record_status`;
+				INSERT INTO `t_sysdict_record_status` (`id`, `code`, `code_int`, `name`, `py`, `memo`) VALUES
+				('9B90C56E-696E-11E9-B2BF-782BCBD7746B', '1000', 1000, '启用', 'QY', '记录处于启用状态'),
+				('AC7F3FAB-696E-11E9-B2BF-782BCBD7746B', '0', 0, '停用', 'TY', '记录处于停用状态');
+		";
+		$db->execute($sql);
 	}
 
 	private function update_20190506_03() {

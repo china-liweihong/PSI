@@ -112,7 +112,7 @@ class PSIBaseService {
 			if ($ud->isDisabled($userId)) {
 				return true;
 			}
-			
+
 			return false;
 		}
 	}
@@ -138,7 +138,7 @@ class PSIBaseService {
 	/**
 	 * 判断日期是否是正确的Y-m-d格式
 	 *
-	 * @param string $date        	
+	 * @param string $date
 	 * @return boolean true: 是正确的格式
 	 */
 	protected function dateIsValid($date) {
@@ -146,7 +146,7 @@ class PSIBaseService {
 		if (! $dt) {
 			return false;
 		}
-		
+
 		return date("Y-m-d", $dt) == $date;
 	}
 
@@ -162,7 +162,7 @@ class PSIBaseService {
 
 	protected function columnExists($db, $tableName, $columnName) {
 		$dbName = C('DB_NAME');
-		
+
 		$sql = "select count(*) as cnt
 				from information_schema.columns
 				where table_schema = '%s'
@@ -172,9 +172,9 @@ class PSIBaseService {
 		$cnt = $data[0]["cnt"];
 		return $cnt == 1;
 	}
-	
+
 	/**
 	 * 当前数据库表结构版本
 	 */
-	protected $CURRENT_DB_VERSION = "20190506-03";
+	protected $CURRENT_DB_VERSION = "20190516-01";
 }

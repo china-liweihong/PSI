@@ -552,12 +552,12 @@ INSERT INTO `t_dict_table_md` (`id`, `code`, `name`, `table_name`, `category_id`
 
 TRUNCATE TABLE `t_sysdict_record_status`;
 INSERT INTO `t_sysdict_record_status` (`id`, `code`, `code_int`, `name`, `py`, `memo`) VALUES
-('9B90C56E-696E-11E9-B2BF-782BCBD7746B', '1', 1, '启用', 'QY', '记录处于启用状态'),
-('AC7F3FAB-696E-11E9-B2BF-782BCBD7746B', '2', 2, '停用', 'TY', '记录处于停用状态');
+('9B90C56E-696E-11E9-B2BF-782BCBD7746B', '1000', 1000, '启用', 'QY', '记录处于启用状态'),
+('AC7F3FAB-696E-11E9-B2BF-782BCBD7746B', '0', 0, '停用', 'TY', '记录处于停用状态');
 
 TRUNCATE TABLE `t_psi_db_version`;
 INSERT INTO `t_psi_db_version` (`db_version`, `update_dt`) VALUES
-('20190506-03', now());
+('20190516-01', now());
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

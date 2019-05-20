@@ -244,8 +244,8 @@ class CodeTableDAO extends PSIBaseExDAO {
 		$tableName = strtolower($tableName);
 
 		$len = strlen($tableName);
-		if ($len < 5) {
-			return $this->bad("数据库表名长度不能小于5");
+		if ($len < 6) {
+			return $this->bad("数据库表名长度不能小于6");
 		}
 
 		$c = ord($tableName{0});
@@ -266,8 +266,8 @@ class CodeTableDAO extends PSIBaseExDAO {
 		}
 
 		// 码表需要以t_ct开头
-		if (! (substr($tableName, 0, 4) == "t_ct")) {
-			return $this->bad("数据库表名需要以 <span style='color:red'>t_ct</span> 开头");
+		if (! (substr($tableName, 0, 5) == "t_ct_")) {
+			return $this->bad("数据库表名需要以 <span style='color:red'>t_ct_</span> 开头");
 		}
 
 		// 表名正确

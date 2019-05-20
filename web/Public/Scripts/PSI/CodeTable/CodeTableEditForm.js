@@ -200,6 +200,7 @@ Ext.define("PSI.CodeTable.CodeTableEditForm", {
 
 		if (me.adding) {
 			// 新建
+			me.editTableName.setValue("t_ct_");
 		} else {
 			// 编辑
 			var el = me.getEl();

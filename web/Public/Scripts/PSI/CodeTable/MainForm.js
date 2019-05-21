@@ -681,7 +681,19 @@ Ext.define("PSI.CodeTable.MainForm", {
 
 			onAddCol : function() {
 				var me = this;
-				me.showInfo("TODO");
+
+				var item = me.getMainGrid().getSelectionModel().getSelection();
+				if (item == null || item.length != 1) {
+					me.showInfo("请选择要新增列的码表");
+					return;
+				}
+
+				var codeTable = item[0];
+
+				var form = Ext.create("PSI.CodeTable.CodeTableColEditForm", {
+							codeTable : codeTable
+						});
+				form.show();
 			},
 
 			onEditCol : function() {

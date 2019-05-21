@@ -270,6 +270,19 @@ Ext.define("PSI.CodeTable.MainForm", {
 								height : 30,
 								title : me.formatGridHeaderTitle("码表列")
 							},
+							tbar : [{
+										text : "新增列",
+										handler : me.onAddCol,
+										scope : me
+									}, "-", {
+										text : "编辑列",
+										handler : me.onEditCol,
+										scope : me
+									}, "-", {
+										text : "删除列",
+										handler : me.onDeleteCol,
+										scope : me
+									}],
 							columnLines : true,
 							columns : {
 								defaults : {
@@ -664,5 +677,20 @@ Ext.define("PSI.CodeTable.MainForm", {
 				};
 
 				me.confirm(info, funcConfirm);
+			},
+
+			onAddCol : function() {
+				var me = this;
+				me.showInfo("TODO");
+			},
+
+			onEditCol : function() {
+				var me = this;
+				me.showInfo("TODO");
+			},
+
+			onDeleteCol : function() {
+				var me = this;
+				me.showInfo("TODO");
 			}
 		});

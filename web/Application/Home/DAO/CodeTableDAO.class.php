@@ -873,8 +873,8 @@ class CodeTableDAO extends PSIBaseExDAO {
 				// 引用系统数据字典
 				$sql = "select %s as col_1, name
 						from %s
-						order by %s";
-				$d = $db->query($sql, $valueFromColName, $valueFromTableName, $valueFromColName);
+						order by show_order";
+				$d = $db->query($sql, $valueFromColName, $valueFromTableName);
 				foreach ( $d as $item ) {
 					$valueFromExtData[] = [
 							"{$valueFromColName}" => $item["col_1"],

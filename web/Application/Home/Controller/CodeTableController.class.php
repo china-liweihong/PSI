@@ -19,12 +19,12 @@ class CodeTableController extends PSIBaseController {
 	 */
 	public function index() {
 		$us = new UserService();
-		
+
 		if ($us->hasPermission(FIdConst::CODE_TABLE)) {
 			$this->initVar();
-			
+
 			$this->assign("title", "码表设置");
-			
+
 			$this->display();
 		} else {
 			$this->gotoLoginPage("/Home/CodeTable/index");
@@ -36,21 +36,21 @@ class CodeTableController extends PSIBaseController {
 	 */
 	public function run() {
 		$fid = I("get.fid");
-		
+
 		$us = new UserService();
 		if ($us->hasPermission($fid)) {
 			$this->initVar();
-			
+
 			$service = new CodeTableService();
 			$md = $service->getMetaDataByFid($fid);
-			
+
 			if ($md) {
 				$this->assign("title", $md["title"]);
 				$this->assign("fid", $fid);
-				
+
 				$this->display();
 			} else {
-				
+
 				// 错误的fid，跳转到首页
 				$this->gotoLoginPage("/Home");
 			}
@@ -65,7 +65,7 @@ class CodeTableController extends PSIBaseController {
 	public function categoryList() {
 		if (IS_POST) {
 			$params = [];
-			
+
 			$service = new CodeTableService();
 			$this->ajaxReturn($service->categoryList($params));
 		}
@@ -81,7 +81,7 @@ class CodeTableController extends PSIBaseController {
 					"code" => I("post.code"),
 					"name" => I("post.name")
 			];
-			
+
 			$service = new CodeTableService();
 			$this->ajaxReturn($service->editCodeTableCategory($params));
 		}
@@ -95,7 +95,7 @@ class CodeTableController extends PSIBaseController {
 			$params = [
 					"id" => I("post.id")
 			];
-			
+
 			$service = new CodeTableService();
 			$this->ajaxReturn($service->deleteCodeTableCategory($params));
 		}
@@ -109,7 +109,7 @@ class CodeTableController extends PSIBaseController {
 			$params = [
 					"categoryId" => I("post.categoryId")
 			];
-			
+
 			$service = new CodeTableService();
 			$this->ajaxReturn($service->codeTableList($params));
 		}
@@ -123,7 +123,7 @@ class CodeTableController extends PSIBaseController {
 			$params = [
 					"queryKey" => I("post.queryKey")
 			];
-			
+
 			$service = new CodeTableService();
 			$this->ajaxReturn($service->queryDataForCategory($params));
 		}
@@ -142,7 +142,7 @@ class CodeTableController extends PSIBaseController {
 					"tableName" => I("post.tableName"),
 					"memo" => I("post.memo")
 			];
-			
+
 			$service = new CodeTableService();
 			$this->ajaxReturn($service->editCodeTable($params));
 		}
@@ -162,6 +162,23 @@ class CodeTableController extends PSIBaseController {
 	}
 
 	/**
+	 * 新增或编辑码表列
+	 */
+	public function editCodeTableCol() {
+		if (IS_POST) {
+			$params = [
+					"id" => I("post.id"),
+					"codeTableId" => I("post.codeTableId"),
+					"name" => I("post.name"),
+					"memo" => I("post.memo")
+			];
+
+			$service = new CodeTableService();
+			$this->ajaxReturn($service->editCodeTableCol($params));
+		}
+	}
+
+	/**
 	 * 删除码表
 	 */
 	public function deleteCodeTable() {
@@ -169,7 +186,7 @@ class CodeTableController extends PSIBaseController {
 			$params = [
 					"id" => I("post.id")
 			];
-			
+
 			$service = new CodeTableService();
 			$this->ajaxReturn($service->deleteCodeTable($params));
 		}
@@ -183,7 +200,7 @@ class CodeTableController extends PSIBaseController {
 			$params = [
 					"id" => I("post.id")
 			];
-			
+
 			$service = new CodeTableService();
 			$this->ajaxReturn($service->codeTableInfo($params));
 		}
@@ -197,7 +214,7 @@ class CodeTableController extends PSIBaseController {
 			$params = [
 					"fid" => I("post.fid")
 			];
-			
+
 			$service = new CodeTableService();
 			$this->ajaxReturn($service->getMetaDataForRuntime($params));
 		}
@@ -211,22 +228,22 @@ class CodeTableController extends PSIBaseController {
 			$params = [
 					"fid" => I("post.fid")
 			];
-			
+
 			$service = new CodeTableService();
-			
+
 			$md = $service->getMetaDataForRuntime($params);
-			
+
 			$params["id"] = I("post.id");
-			
+
 			foreach ( $md["cols"] as $colMd ) {
 				if ($colMd["isVisible"]) {
 					$fieldName = $colMd["fieldName"];
 					$params[$fieldName] = I("post.{$fieldName}");
 				}
 			}
-			
+
 			$params["code"] = strtoupper($params["code"]);
-			
+
 			$this->ajaxReturn($service->editCodeTableRecord($params));
 		}
 	}
@@ -239,7 +256,7 @@ class CodeTableController extends PSIBaseController {
 			$params = [
 					"fid" => I("post.fid")
 			];
-			
+
 			$service = new CodeTableService();
 			$this->ajaxReturn($service->codeTableRecordList($params));
 		}

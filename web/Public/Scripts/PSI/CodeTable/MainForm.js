@@ -258,7 +258,7 @@ Ext.define("PSI.CodeTable.MainForm", {
 									"valueFrom", "valueFromTableName",
 									"valueFromColName", "mustInput",
 									"showOrder", "sysCol", "isVisible",
-									"widthInView"]
+									"widthInView", "note"]
 						});
 
 				me.__colsGrid = Ext.create("Ext.grid.Panel", {
@@ -344,7 +344,12 @@ Ext.define("PSI.CodeTable.MainForm", {
 										}, {
 											header : "显示次序",
 											dataIndex : "showOrder",
-											width : 70
+											width : 80,
+											align : "right"
+										}, {
+											header : "备注",
+											dataIndex : "note",
+											width : 200
 										}]
 							},
 							store : Ext.create("Ext.data.Store", {

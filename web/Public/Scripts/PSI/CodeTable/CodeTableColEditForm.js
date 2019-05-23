@@ -61,7 +61,7 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
 					}, {
 						region : "center",
 						border : 0,
-						id : "PSI_CodeTable_CodeTableEditForm_editForm",
+						id : "PSI_CodeTable_CodeTableColEditForm_editForm",
 						xtype : "form",
 						layout : {
 							type : "table",
@@ -86,24 +86,23 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
 									name : "codeTableId",
 									value : me.getCodeTable().get("id")
 								}, {
-									id : "PSI_CodeTable_CodeTableEditForm_editName",
+									id : "PSI_CodeTable_CodeTableColEditForm_editName",
 									fieldLabel : "码表名称",
 									readOnly : true,
 									value : me.getCodeTable().get("name")
 								}, {
-									id : "PSI_CodeTable_CodeTableEditForm_editTableName",
+									id : "PSI_CodeTable_CodeTableColEditForm_editTableName",
 									fieldLabel : "数据库表名",
 									readOnly : true,
 									colspan : 2,
 									width : 510,
 									value : me.getCodeTable().get("tableName")
 								}, {
-									id : "PSI_CodeTable_CodeTableEditForm_editCaption",
+									id : "PSI_CodeTable_CodeTableColEditForm_editCaption",
 									fieldLabel : "列标题",
 									allowBlank : false,
 									blankText : "没有输入列标题",
 									beforeLabelTextTpl : PSI.Const.REQUIRED,
-									readOnly : true,
 									listeners : {
 										specialkey : {
 											fn : me.onEditSpecialKey,
@@ -112,12 +111,11 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
 									},
 									name : "caption"
 								}, {
-									id : "PSI_CodeTable_CodeTableEditForm_editFieldName",
+									id : "PSI_CodeTable_CodeTableColEditForm_editFieldName",
 									fieldLabel : "列数据库名",
 									allowBlank : false,
 									blankText : "没有输入列数据库名",
 									beforeLabelTextTpl : PSI.Const.REQUIRED,
-									readOnly : true,
 									listeners : {
 										specialkey : {
 											fn : me.onEditSpecialKey,
@@ -128,7 +126,7 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
 									width : 510,
 									name : "fieldName"
 								}, {
-									id : "PSI_CodeTable_CodeTableEditForm_editFieldType",
+									id : "PSI_CodeTable_CodeTableColEditForm_editFieldType",
 									xtype : "combo",
 									queryMode : "local",
 									editable : false,
@@ -146,22 +144,29 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
 														["decimal", "decimal"]]
 											}),
 									value : "varchar",
-									name : "fieldType"
+									name : "fieldType",
+									listeners : {
+										change : {
+											fn : me.onFieldTypeChange,
+											scope : me
+										}
+									}
 								}, {
-									id : "PSI_CodeTable_CodeTableEditForm_editFieldLength",
+									id : "PSI_CodeTable_CodeTableColEditForm_editFieldLength",
 									fieldLabel : "列数据长度",
-									allowBlank : false,
-									blankText : "没有输入列数据长度",
-									beforeLabelTextTpl : PSI.Const.REQUIRED,
 									listeners : {
 										specialkey : {
 											fn : me.onEditSpecialKey,
 											scope : me
 										}
 									},
+									xtype : "numberfield",
+									hideTrigger : true,
+									allowDecimal : false,
+									minValue : 1,
 									name : "fieldLength"
 								}, {
-									id : "PSI_CodeTable_CodeTableEditForm_editFieldDec",
+									id : "PSI_CodeTable_CodeTableColEditForm_editFieldDec",
 									fieldLabel : "列小数位数",
 									listeners : {
 										specialkey : {
@@ -169,9 +174,14 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
 											scope : me
 										}
 									},
-									name : "fieldDec"
+									xtype : "numberfield",
+									hideTrigger : true,
+									allowDecimal : false,
+									minValue : 0,
+									name : "fieldDec",
+									disabled : true
 								}, {
-									id : "PSI_CodeTable_CodeTableEditForm_editMemo",
+									id : "PSI_CodeTable_CodeTableColEditForm_editMemo",
 									fieldLabel : "备注",
 									name : "memo",
 									value : entity == null ? null : entity
@@ -201,12 +211,22 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
 
 		me.callParent(arguments);
 
-		me.editForm = Ext.getCmp("PSI_CodeTable_CodeTableEditForm_editForm");
+		me.editForm = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editForm");
 
-		me.editName = Ext.getCmp("PSI_CodeTable_CodeTableEditForm_editName");
+		me.editName = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editName");
 		me.editTableName = Ext
-				.getCmp("PSI_CodeTable_CodeTableEditForm_editTableName");
-		me.editMemo = Ext.getCmp("PSI_CodeTable_CodeTableEditForm_editMemo");
+				.getCmp("PSI_CodeTable_CodeTableColEditForm_editTableName");
+		me.editCaption = Ext
+				.getCmp("PSI_CodeTable_CodeTableColEditForm_editCaption");
+		me.editFieldName = Ext
+				.getCmp("PSI_CodeTable_CodeTableColEditForm_editFieldName");
+		me.editFieldType = Ext
+				.getCmp("PSI_CodeTable_CodeTableColEditForm_editFieldType");
+		me.editFieldLength = Ext
+				.getCmp("PSI_CodeTable_CodeTableColEditForm_editFieldLength");
+		me.editFieldDec = Ext
+				.getCmp("PSI_CodeTable_CodeTableColEditForm_editFieldDec");
+		me.editMemo = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editMemo");
 
 		me.__editorList = [me.editName, me.editTableName, me.editMemo];
 	},
@@ -308,6 +328,21 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
 			if (me.getParentForm()) {
 				me.getParentForm().refreshColsGrid(me.__lastId);
 			}
+		}
+	},
+
+	onFieldTypeChange : function() {
+		var me = this;
+		var v = me.editFieldType.getValue();
+		if (v == "varchar") {
+			me.editFieldLength.setDisabled(false);
+			me.editFieldDec.setDisabled(true);
+		} else if (v == "int") {
+			me.editFieldLength.setDisabled(true);
+			me.editFieldDec.setDisabled(true);
+		} else if (v == "decimal") {
+			me.editFieldLength.setDisabled(false);
+			me.editFieldDec.setDisabled(false);
 		}
 	}
 });

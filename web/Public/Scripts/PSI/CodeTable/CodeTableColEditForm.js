@@ -164,6 +164,7 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
 									hideTrigger : true,
 									allowDecimal : false,
 									minValue : 1,
+									value : 255,
 									name : "fieldLength"
 								}, {
 									id : "PSI_CodeTable_CodeTableColEditForm_editFieldDec",
@@ -178,6 +179,7 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
 									hideTrigger : true,
 									allowDecimal : false,
 									minValue : 0,
+									value : 0,
 									name : "fieldDec",
 									disabled : true
 								}, {
@@ -259,6 +261,10 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
 									hideTrigger : true,
 									allowDecimal : false,
 									minValue : 10,
+									value : 120,
+									allowBlank : false,
+									blankText : "没有输入列视图宽度",
+									beforeLabelTextTpl : PSI.Const.REQUIRED,
 									name : "widthInView"
 								}, {
 									id : "PSI_CodeTable_CodeTableColEditForm_editShowOrder",

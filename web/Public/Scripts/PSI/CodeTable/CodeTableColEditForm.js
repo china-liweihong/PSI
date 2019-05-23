@@ -181,6 +181,40 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
 									name : "fieldDec",
 									disabled : true
 								}, {
+									id : "PSI_CodeTable_CodeTableColEditForm_editValueFrom",
+									xtype : "combo",
+									queryMode : "local",
+									editable : false,
+									valueField : "id",
+									labelAlign : "right",
+									labelSeparator : "",
+									fieldLabel : "值来源",
+									allowBlank : false,
+									blankText : "没有输入值来源",
+									beforeLabelTextTpl : PSI.Const.REQUIRED,
+									store : Ext.create("Ext.data.ArrayStore", {
+												fields : ["id", "text"],
+												data : [[1, "直接录入"],
+														[2, "引用系统数据字典"],
+														[3, "引用其他码表"]]
+											}),
+									value : 1,
+									name : "valueFrom",
+									listeners : {
+										change : {
+											fn : me.onValueFromChange,
+											scope : me
+										}
+									}
+								}, {
+									id : "PSI_CodeTable_CodeTableColEditForm_editValueFromTableName",
+									fieldLabel : "引用表名",
+									disabled : true
+								}, {
+									id : "PSI_CodeTable_CodeTableColEditForm_editValueFromColName",
+									fieldLabel : "引用列名",
+									disabled : true
+								}, {
 									id : "PSI_CodeTable_CodeTableColEditForm_editMemo",
 									fieldLabel : "备注",
 									name : "memo",
@@ -226,6 +260,12 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
 				.getCmp("PSI_CodeTable_CodeTableColEditForm_editFieldLength");
 		me.editFieldDec = Ext
 				.getCmp("PSI_CodeTable_CodeTableColEditForm_editFieldDec");
+		me.editValueFrom = Ext
+				.getCmp("PSI_CodeTable_CodeTableColEditForm_editValueFrom");
+		me.editValueFromTableName = Ext
+				.getCmp("PSI_CodeTable_CodeTableColEditForm_editValueFromTableName");
+		me.editValueFromColName = Ext
+				.getCmp("PSI_CodeTable_CodeTableColEditForm_editValueFromColName");
 		me.editMemo = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editMemo");
 
 		me.__editorList = [me.editName, me.editTableName, me.editMemo];
@@ -343,6 +383,21 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
 		} else if (v == "decimal") {
 			me.editFieldLength.setDisabled(false);
 			me.editFieldDec.setDisabled(false);
+		}
+	},
+
+	onValueFromChange : function() {
+		var me = this;
+		var v = me.editValueFrom.getValue();
+		if (v == 1) {
+			me.editValueFromTableName.setDisabled(true);
+			me.editValueFromColName.setDisabled(true);
+		} else if (v == 2) {
+			me.editValueFromTableName.setDisabled(false);
+			me.editValueFromColName.setDisabled(false);
+		} else if (v == 3) {
+			me.editValueFromTableName.setDisabled(false);
+			me.editValueFromColName.setDisabled(false);
 		}
 	}
 });

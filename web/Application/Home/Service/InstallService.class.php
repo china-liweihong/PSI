@@ -182,6 +182,8 @@ class InstallService extends PSIBaseExService {
 				  `data_org` varchar(255) DEFAULT NULL,
 				  `company_id` varchar(255) DEFAULT NULL,
 				  `enabled` int(11) NOT NULL DEFAULT 1,
+				  `org_id` varchar(255) DEFAULT NULL,
+				  `sale_area` decimal(19,2) DEFAULT NULL,
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";

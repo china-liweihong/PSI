@@ -137,7 +137,8 @@ Ext.define("PSI.Report.SaleDayByWarehouseForm", {
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
 					fields : ["bizDT", "warehouseCode", "warehouseName",
-							"saleMoney", "rejMoney", "m", "profit", "rate"]
+							"saleMoney", "rejMoney", "m", "profit", "rate",
+							"saleArea", "saleAreaRate"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -222,6 +223,20 @@ Ext.define("PSI.Report.SaleDayByWarehouseForm", {
 								menuDisabled : true,
 								sortable : true,
 								align : "right"
+							}, {
+								header : "每平方米销售额",
+								dataIndex : "saleAreaRate",
+								menuDisabled : true,
+								sortable : true,
+								align : "right",
+								width : 120
+							}, {
+								header : "仓库销售核算面积(平方米)",
+								dataIndex : "saleArea",
+								menuDisabled : true,
+								sortable : true,
+								align : "right",
+								width : 180
 							}],
 					store : store
 				});

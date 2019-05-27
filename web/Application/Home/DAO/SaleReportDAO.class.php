@@ -385,6 +385,10 @@ class SaleReportDAO extends PSIBaseExDAO {
 					$sortProperty = "sale_money";
 				} else if ($sortProperty == strtolower("rejMoney")) {
 					$sortProperty = "rej_money";
+				} else if ($sortProperty == strtolower("saleAreaRate")) {
+					$sortProperty = "sale_area_rate";
+				} else if ($sortProperty == strtolower("saleArea")) {
+					$sortProperty = "sale_area";
 				}
 
 				$sortDirection = strtoupper($sortJSON[0]["direction"]);
@@ -400,11 +404,12 @@ class SaleReportDAO extends PSIBaseExDAO {
 					warehouse_code varchar(255), warehouse_name varchar(255),
 					sale_money decimal(19,2),
 					rej_money decimal(19,2), m decimal(19,2),
-					profit decimal(19,2), rate decimal(19, 2)
+					profit decimal(19,2), rate decimal(19, 2),
+					sale_area decimal(19,2), sale_area_rate decimal(19, 2)
 				)";
 		$db->execute($sql);
 
-		$sql = "select w.id, w.code, w.name
+		$sql = "select w.id, w.code, w.name, w.sale_area
 				from t_warehouse w
 				where w.id in(
 					select distinct w.warehouse_id
@@ -422,6 +427,7 @@ class SaleReportDAO extends PSIBaseExDAO {
 		foreach ( $items as $v ) {
 			$warehouseCode = $v["code"];
 			$warehouseName = $v["name"];
+			$saleArea = $v["sale_area"] ?? 0;
 
 			$warehouseId = $v["id"];
 			$sql = "select sum(w.sale_money) as goods_money, sum(w.inventory_money) as inventory_money
@@ -459,18 +465,23 @@ class SaleReportDAO extends PSIBaseExDAO {
 			if ($m > 0) {
 				$rate = $profit / $m * 100;
 			}
+			$saleAreaRate = 0;
+			if ($saleArea > 0) {
+				$saleAreaRate = $m / $saleArea;
+			}
+
 			$sql = "insert into psi_sale_report (biz_dt, warehouse_code, warehouse_name,
-						sale_money, rej_money, m, profit, rate)
+						sale_money, rej_money, m, profit, rate, sale_area, sale_area_rate)
 					values ('%s', '%s', '%s',
-							%f, %f, %f, %f, %f)";
+							%f, %f, %f, %f, %f, %f, %f)";
 			$db->execute($sql, $dt, $warehouseCode, $warehouseName, $saleMoney, $rejSaleMoney, $m,
-					$profit, $rate);
+					$profit, $rate, $saleArea, $saleAreaRate);
 		}
 
 		$result = [];
 		$sql = "select biz_dt, warehouse_code, warehouse_name,
 					sale_money, rej_money,
-					m, profit, rate
+					m, profit, rate, sale_area, sale_area_rate
 				from psi_sale_report
 				order by %s %s ";
 		if (! $showAllData) {
@@ -490,7 +501,9 @@ class SaleReportDAO extends PSIBaseExDAO {
 					"rejMoney" => $v["rej_money"],
 					"m" => $v["m"],
 					"profit" => $v["profit"],
-					"rate" => $v["rate"] == 0 ? null : sprintf("%0.2f", $v["rate"]) . "%"
+					"rate" => $v["rate"] == 0 ? null : sprintf("%0.2f", $v["rate"]) . "%",
+					"saleArea" => $v["sale_area"] == 0 ? null : $v["sale_area"],
+					"saleAreaRate" => $v["sale_area_rate"] == 0 ? null : $v["sale_area_rate"]
 			];
 		}
 

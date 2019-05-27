@@ -57,7 +57,7 @@ class WarehouseDAO extends PSIBaseExDAO {
 					"inited" => $v["inited"],
 					"dataOrg" => $v["data_org"],
 					"enabled" => $v["enabled"],
-					"saleArea" => $v["sale_area"],
+					"saleArea" => $v["sale_area"] == 0 ? null : $v["sale_area"],
 					"orgId" => $orgId,
 					"orgName" => $orgName
 			];

@@ -44,6 +44,9 @@ Ext.define("PSI.User.OrgEditor", {
 								actionMethods : {
 									read : "POST"
 								},
+								extraParams : {
+									enabled : -1
+								},
 								url : PSI.Const.BASE_URL + "Home/User/allOrgs"
 							}
 						});

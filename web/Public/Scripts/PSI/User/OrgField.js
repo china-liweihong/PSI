@@ -40,6 +40,12 @@ Ext.define("PSI.User.OrgField", {
 							model : modelName,
 							proxy : {
 								type : "ajax",
+								extraParams : {
+									enabled : -1
+								},
+								actionMethods : {
+									read : "POST"
+								},
 								url : PSI.Const.BASE_URL + "Home/User/allOrgs"
 							}
 						});

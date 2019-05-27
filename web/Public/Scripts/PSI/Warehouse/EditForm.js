@@ -67,7 +67,7 @@ Ext.define("PSI.Warehouse.EditForm", {
 				height : 40
 			},
 			width : 400,
-			height : me.adding ? 240 : 270,
+			height : 340,
 			layout : "border",
 			listeners : {
 				show : {
@@ -97,7 +97,7 @@ Ext.define("PSI.Warehouse.EditForm", {
 						bodyPadding : 5,
 						defaultType : 'textfield',
 						fieldDefaults : {
-							labelWidth : 60,
+							labelWidth : 80,
 							labelAlign : "right",
 							labelSeparator : "",
 							msgTarget : 'side',
@@ -140,12 +140,38 @@ Ext.define("PSI.Warehouse.EditForm", {
 										}
 									}
 								}, {
+									id : "PSI_Warehouse_EditForm_editOrg",
+									fieldLabel : "核算组织机构",
+									xtype : "psi_orgfield",
+									value : entity == null ? null : entity
+											.get("orgName"),
+									listeners : {
+										specialkey : {
+											fn : me.onEditOrgSpecialKey,
+											scope : me
+										}
+									}
+								}, {
+									id : "PSI_Warehouse_EditForm_editSaleArea",
+									fieldLabel : "销售核算面积",
+									value : entity == null ? null : entity
+											.get("saleArea"),
+									xtype : "numberfield",
+									hideTrigger : true,
+									allowDecimal : true,
+									minValue : 0,
+									listeners : {
+										specialkey : {
+											fn : me.onEditSaleAreaSpecialKey,
+											scope : me
+										}
+									}
+								}, {
 									id : "PSI_Warehouse_EditForm_editEnabled",
 									xtype : "combo",
 									queryMode : "local",
 									editable : false,
 									valueField : "id",
-									labelWidth : 60,
 									labelAlign : "right",
 									labelSeparator : "",
 									fieldLabel : "状态",
@@ -154,7 +180,6 @@ Ext.define("PSI.Warehouse.EditForm", {
 												fields : ["id", "text"],
 												data : [[1, "启用"], [2, "停用"]]
 											}),
-									hidden : me.adding,
 									value : entity == null
 											? 1
 											: parseInt(entity.get("enabled"))

@@ -817,10 +817,10 @@ class SaleReportService extends PSIBaseExService {
 		$sheet->getColumnDimension('G')->setWidth(15);
 		$sheet->setCellValue("G2", "毛利率");
 
-		$sheet->getColumnDimension('H')->setWidth(15);
+		$sheet->getColumnDimension('H')->setWidth(20);
 		$sheet->setCellValue("H2", "每平方米销售额");
 
-		$sheet->getColumnDimension('I')->setWidth(15);
+		$sheet->getColumnDimension('I')->setWidth(20);
 		$sheet->setCellValue("I2", "仓库销售核算面积");
 
 		foreach ( $items as $i => $v ) {
@@ -1901,6 +1901,7 @@ class SaleReportService extends PSIBaseExService {
 					<tr><td>仓库编码</td><td>仓库</td>
 						<td>销售出库金额</td><td>退货入库金额</td>
 						<td>净销售金额</td><td>毛利</td><td>毛利率</td>
+						<td>每平方米销售额</td><td>仓库销售核算面积</td>
 					</tr>
 				';
 		foreach ( $items as $v ) {
@@ -1912,6 +1913,8 @@ class SaleReportService extends PSIBaseExService {
 			$html .= '<td align="right">' . $v["m"] . '</td>';
 			$html .= '<td align="right">' . $v["profit"] . '</td>';
 			$html .= '<td align="right">' . $v["rate"] . '</td>';
+			$html .= '<td align="right">' . $v["saleAreaRate"] . '</td>';
+			$html .= '<td align="right">' . $v["saleArea"] . '</td>';
 			$html .= '</tr>';
 		}
 
@@ -1994,6 +1997,12 @@ class SaleReportService extends PSIBaseExService {
 		$sheet->getColumnDimension('G')->setWidth(15);
 		$sheet->setCellValue("G2", "毛利率");
 
+		$sheet->getColumnDimension('H')->setWidth(20);
+		$sheet->setCellValue("H2", "每平方米销售额");
+
+		$sheet->getColumnDimension('I')->setWidth(20);
+		$sheet->setCellValue("I2", "仓库销售核算面积");
+
 		foreach ( $items as $i => $v ) {
 			$row = $i + 3;
 			$sheet->setCellValue("A" . $row, $v["warehouseCode"]);
@@ -2003,6 +2012,8 @@ class SaleReportService extends PSIBaseExService {
 			$sheet->setCellValue("E" . $row, $v["m"]);
 			$sheet->setCellValue("F" . $row, $v["profit"]);
 			$sheet->setCellValue("G" . $row, $v["rate"]);
+			$sheet->setCellValue("H" . $row, $v["saleAreaRate"]);
+			$sheet->setCellValue("I" . $row, $v["saleArea"]);
 		}
 
 		// 画表格边框
@@ -2014,7 +2025,7 @@ class SaleReportService extends PSIBaseExService {
 				]
 		];
 		$lastRow = count($items) + 2;
-		$sheet->getStyle('A2:G' . $lastRow)->applyFromArray($styleArray);
+		$sheet->getStyle('A2:I' . $lastRow)->applyFromArray($styleArray);
 
 		$dt = date("YmdHis");
 

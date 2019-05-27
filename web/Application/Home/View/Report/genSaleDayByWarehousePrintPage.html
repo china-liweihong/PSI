@@ -40,6 +40,8 @@
 			<td><div align="center" style='font-size: 13'>净销售金额</div></td>
 			<td><div align="center" style='font-size: 13'>毛利</div></td>
 			<td><div align="center" style='font-size: 13'>毛利率</div></td>
+			<td><div align="center" style='font-size: 13'>每平方米销售额</div></td>
+			<td><div align="center" style='font-size: 13'>仓库销售核算面积</div></td>
 		</tr>
 		<foreach name="data['items']" item="v" key="i">
 		<tr>
@@ -50,6 +52,8 @@
 			<td><div align="right" style='font-size: 13'>{$v["m"]}</div></td>
 			<td><div align="right" style='font-size: 13'>{$v["profit"]}</div></td>
 			<td><div align="right" style='font-size: 13'>{$v["rate"]}</div></td>
+			<td><div align="right" style='font-size: 13'>{$v["saleAreaRate"]}</div></td>
+			<td><div align="right" style='font-size: 13'>{$v["saleArea"]}</div></td>
 		</tr>
 		</foreach>
 	</table>

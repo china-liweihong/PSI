@@ -80,6 +80,8 @@ class WarehouseDAO extends PSIBaseExDAO {
 		$py = $params["py"];
 		$dataOrg = $params["dataOrg"];
 		$companyId = $params["companyId"];
+		$orgId = $params["orgId"] ?? "";
+		$saleArea = floatval($params["saleArea"] ?? 0);
 
 		if ($this->dataOrgNotExists($dataOrg)) {
 			return $this->bad("参数dataOrg不正确");
@@ -105,12 +107,25 @@ class WarehouseDAO extends PSIBaseExDAO {
 			return $this->bad("编码为 [$code] 的仓库已经存在");
 		}
 
+		if ($orgId) {
+			// 检查orgId是否存在
+			$orgDAO = new OrgDAO($db);
+			if (! $orgDAO->getOrgById($orgId)) {
+				return $this->badParam("orgId");
+			}
+		}
+
+		// 销售核算面积不能为负数
+		if ($saleArea < 0) {
+			return $this->bad("销售核算面积不能为负数");
+		}
+
 		$id = $this->newId();
 		$params["id"] = $id;
 
-		$sql = "insert into t_warehouse(id, code, name, inited, py, data_org, company_id)
-					values ('%s', '%s', '%s', 0, '%s', '%s', '%s')";
-		$rc = $db->execute($sql, $id, $code, $name, $py, $dataOrg, $companyId);
+		$sql = "insert into t_warehouse(id, code, name, inited, py, data_org, company_id, org_id, sale_area)
+					values ('%s', '%s', '%s', 0, '%s', '%s', '%s', '%s', %f)";
+		$rc = $db->execute($sql, $id, $code, $name, $py, $dataOrg, $companyId, $orgId, $saleArea);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
@@ -131,6 +146,8 @@ class WarehouseDAO extends PSIBaseExDAO {
 		$name = trim($params["name"]);
 		$py = $params["py"];
 		$enabled = intval($params["enabled"]);
+		$orgId = $params["orgId"] ?? "";
+		$saleArea = floatval($params["saleArea"] ?? 0);
 
 		if ($this->isEmptyStringAfterTrim($code)) {
 			return $this->bad("仓库编码不能为空");
@@ -155,11 +172,24 @@ class WarehouseDAO extends PSIBaseExDAO {
 			return $this->bad("要编辑的仓库不存在");
 		}
 
+		if ($orgId) {
+			// 检查orgId是否存在
+			$orgDAO = new OrgDAO($db);
+			if (! $orgDAO->getOrgById($orgId)) {
+				return $this->badParam("orgId");
+			}
+		}
+
+		// 销售核算面积不能为负数
+		if ($saleArea < 0) {
+			return $this->bad("销售核算面积不能为负数");
+		}
+
 		$sql = "update t_warehouse
 				set code = '%s', name = '%s', py = '%s',
-					enabled = %d
+					enabled = %d, org_id = '%s', sale_area = %f
 				where id = '%s' ";
-		$rc = $db->execute($sql, $code, $name, $py, $enabled, $id);
+		$rc = $db->execute($sql, $code, $name, $py, $enabled, $orgId, $saleArea, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}

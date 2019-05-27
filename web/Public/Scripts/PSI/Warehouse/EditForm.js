@@ -152,6 +152,10 @@ Ext.define("PSI.Warehouse.EditForm", {
 										}
 									}
 								}, {
+									id : "PSI_Warehouse_EditForm_hiddenOrgId",
+									xtype : "hidden",
+									name : "orgId"
+								}, {
 									id : "PSI_Warehouse_EditForm_editSaleArea",
 									fieldLabel : "销售核算面积",
 									value : entity == null ? null : entity
@@ -160,6 +164,7 @@ Ext.define("PSI.Warehouse.EditForm", {
 									hideTrigger : true,
 									allowDecimal : true,
 									minValue : 0,
+									name : "saleArea",
 									listeners : {
 										specialkey : {
 											fn : me.onEditSaleAreaSpecialKey,
@@ -199,7 +204,14 @@ Ext.define("PSI.Warehouse.EditForm", {
 		me.editCode = Ext.getCmp("PSI_Warehouse_EditForm_editCode");
 		me.editName = Ext.getCmp("PSI_Warehouse_EditForm_editName");
 		me.editEnabled = Ext.getCmp("PSI_Warehouse_EditForm_editEnabled");
+		me.editOrg = Ext.getCmp("PSI_Warehouse_EditForm_editOrg");
+		me.editSaleArea = Ext.getCmp("PSI_Warehouse_EditForm_editSaleArea");
 		me.hiddenEnabled = Ext.getCmp("PSI_Warehouse_EditForm_hiddenEnabled");
+		me.hiddenOrgId = Ext.getCmp("PSI_Warehouse_EditForm_hiddenOrgId");
+
+		if (!me.adding) {
+			me.editOrg.setIdValue(entity.get("orgId"));
+		}
 	},
 
 	/**
@@ -208,6 +220,7 @@ Ext.define("PSI.Warehouse.EditForm", {
 	onOK : function(thenAdd) {
 		var me = this;
 
+		me.hiddenOrgId.setValue(me.editOrg.getIdValue());
 		me.hiddenEnabled.setValue(me.editEnabled.getValue());
 
 		var f = me.editForm;
@@ -243,13 +256,33 @@ Ext.define("PSI.Warehouse.EditForm", {
 		var me = this;
 
 		if (e.getKey() == e.ENTER) {
-			var editName = me.editName;
-			editName.focus();
-			editName.setValue(editName.getValue());
+			var edit = me.editName;
+			edit.focus();
+			edit.setValue(edit.getValue());
 		}
 	},
 
 	onEditNameSpecialKey : function(field, e) {
+		var me = this;
+
+		if (e.getKey() == e.ENTER) {
+			var edit = me.editOrg;
+			edit.focus();
+			edit.setValue(edit.getValue());
+		}
+	},
+
+	onEditOrgSpecialKey : function(field, e) {
+		var me = this;
+
+		if (e.getKey() == e.ENTER) {
+			var edit = me.editSaleArea;
+			edit.focus();
+			edit.setValue(edit.getValue());
+		}
+	},
+
+	onEditSaleAreaSpecialKey : function(field, e) {
 		var me = this;
 
 		if (e.getKey() == e.ENTER) {

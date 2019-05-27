@@ -19,28 +19,28 @@ class WarehouseController extends PSIBaseController {
 	 */
 	public function index() {
 		$us = new UserService();
-		
+
 		if ($us->hasPermission(FIdConst::WAREHOUSE)) {
 			$this->initVar();
-			
+
 			$this->assign("title", "仓库");
-			
+
 			// 按钮权限： 新增仓库
 			$this->assign("pAdd", $us->hasPermission(FIdConst::WAREHOUSE_ADD) ? 1 : 0);
-			
+
 			// 按钮权限：编辑仓库
 			$this->assign("pEdit", $us->hasPermission(FIdConst::WAREHOUSE_EDIT) ? 1 : 0);
-			
+
 			// 按钮权限：删除仓库
 			$this->assign("pDelete", $us->hasPermission(FIdConst::WAREHOUSE_DELETE) ? 1 : 0);
-			
+
 			// 按钮权限：编辑仓库数据域
-			$this->assign("pEditDataOrg", 
+			$this->assign("pEditDataOrg",
 					$us->hasPermission(FIdConst::WAREHOUSE_EDIT_DATAORG) ? 1 : 0);
-			
+
 			// 按钮权限：打开库存建账模块
 			$this->assign("pInitInv", $us->hasPermission(FIdConst::INVENTORY_INIT) ? 1 : 0);
-			
+
 			$this->display();
 		} else {
 			$this->gotoLoginPage("/Home/Warehouse/index");
@@ -76,11 +76,13 @@ class WarehouseController extends PSIBaseController {
 					return;
 				}
 			}
-			
+
 			$params = array(
 					"id" => I("post.id"),
 					"code" => strtoupper(I("post.code")),
 					"name" => I("post.name"),
+					"orgId" => I("post.orgId"),
+					"saleArea" => I("post.saleArea"),
 					"enabled" => I("post.enabled")
 			);
 			$ws = new WarehouseService();
@@ -98,7 +100,7 @@ class WarehouseController extends PSIBaseController {
 				$this->ajaxReturn($this->noPermission("删除仓库"));
 				return;
 			}
-			
+
 			$params = array(
 					"id" => I("post.id")
 			);
@@ -129,7 +131,7 @@ class WarehouseController extends PSIBaseController {
 				$this->ajaxReturn($this->noPermission("修改数据域"));
 				return;
 			}
-			
+
 			$params = array(
 					"id" => I("post.id"),
 					"dataOrg" => I("post.dataOrg")

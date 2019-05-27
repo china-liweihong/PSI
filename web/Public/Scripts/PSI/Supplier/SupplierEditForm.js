@@ -508,6 +508,9 @@ Ext.define("PSI.Supplier.SupplierEditForm", {
 				el.mask(PSI.Const.LOADING);
 				var r = {
 					url : me.URL("/Home/Supplier/categoryList"),
+					params : {
+						recordStatus : -1
+					},
 					callback : function(options, success, response) {
 						store.removeAll();
 

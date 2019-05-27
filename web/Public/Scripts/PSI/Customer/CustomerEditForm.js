@@ -545,6 +545,9 @@ Ext.define("PSI.Customer.CustomerEditForm", {
 				el.mask(PSI.Const.LOADING);
 				Ext.Ajax.request({
 							url : me.URL("/Home/Customer/categoryList"),
+							params : {
+								recordStatus : -1
+							},
 							method : "POST",
 							callback : function(options, success, response) {
 								store.removeAll();

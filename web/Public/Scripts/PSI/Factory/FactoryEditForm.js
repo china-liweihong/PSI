@@ -426,6 +426,9 @@ Ext.define("PSI.Factory.FactoryEditForm", {
 				el.mask(PSI.Const.LOADING);
 				var r = {
 					url : me.URL("/Home/Factory/categoryList"),
+					params : {
+						recordStatus : -1
+					},
 					callback : function(options, success, response) {
 						store.removeAll();
 

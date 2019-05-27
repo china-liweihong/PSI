@@ -359,10 +359,21 @@ Ext.define("PSI.Home.MainForm", {
 			},
 			flex : 1,
 			width : "100%",
-			height : 240,
+			height : 270,
 			margin : "5",
-			layout : "fit",
-			items : [me.getPurchaseGrid()]
+			xtype : "tabpanel",
+			tabPosition : "bottom",
+			items : [{
+						title : "图表",
+						border : 0,
+						layout : "fit",
+						items : me.getPurchaseChart()
+					}, {
+						title : "表格",
+						layout : "fit",
+						border : 0,
+						items : me.getPurchaseGrid()
+					}]
 		};
 	},
 
@@ -459,11 +470,23 @@ Ext.define("PSI.Home.MainForm", {
 						if (success) {
 							var data = Ext.JSON.decode(response.responseText);
 							store.add(data);
+							me.copyDataFromPurchaseGrid(data);
 						}
 
 						el.unmask();
 					}
 				});
+	},
+
+	copyDataFromPurchaseGrid : function(data) {
+		var me = this;
+		var store = me.getPurchaseChart().getStore();
+		store.removeAll();
+		var len = data.length;
+		for (var i = len - 1; i >= 0; i--) {
+			var d = data[i];
+			store.add(d);
+		}
 	},
 
 	queryMoneyData : function() {
@@ -494,5 +517,53 @@ Ext.define("PSI.Home.MainForm", {
 			border : 0,
 			html : "<h1>欢迎使用" + me.getProductionName() + "</h1>"
 		}
+	},
+
+	getPurchaseChart : function() {
+		var me = this;
+		if (me.__purchaseChart) {
+			return me.__purchaseChart;
+		}
+
+		var modelName = "purchaseChart";
+		Ext.define(modelName, {
+					extend : 'Ext.data.Model',
+					fields : ['purchaseMoney', 'month']
+				});
+		var store = Ext.create('Ext.data.Store', {
+					model : modelName,
+					data : [{
+								purchaseMoney : 58,
+								month : "2019-01"
+							}, {
+								purchaseMoney : 158,
+								month : "2019-02"
+							}, {
+								purchaseMoney : 98,
+								month : "2019-03"
+							}]
+				});
+
+		me.__purchaseChart = Ext.create('Ext.chart.Chart', {
+					theme : 'Green',
+					store : store,
+					axes : [{
+								title : '采购金额',
+								type : 'Numeric',
+								position : 'left',
+								fields : ['purchaseMoney']
+							}, {
+								title : '月份',
+								type : 'Category',
+								position : 'bottom',
+								fields : ['month']
+							}],
+					series : [{
+								type : 'line',
+								xField : 'month',
+								yField : 'purchaseMoney'
+							}]
+				});
+		return me.__purchaseChart;
 	}
 });

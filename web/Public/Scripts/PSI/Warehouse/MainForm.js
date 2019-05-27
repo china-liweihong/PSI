@@ -85,7 +85,7 @@ Ext.define("PSI.Warehouse.MainForm", {
 		Ext.define(modelName, {
 					extend : "Ext.data.Model",
 					fields : ["id", "code", "name", "inited", "dataOrg",
-							"enabled"]
+							"enabled", "orgId", "orgName", "saleArea"]
 				});
 
 		me.__mainGrid = Ext.create("Ext.grid.Panel", {
@@ -118,7 +118,16 @@ Ext.define("PSI.Warehouse.MainForm", {
 						}, {
 							header : "仓库名称",
 							dataIndex : "name",
-							width : 300
+							width : 200
+						}, {
+							header : "核算组织机构",
+							dataIndex : "orgName",
+							width : 250
+						}, {
+							header : "销售核算面积(平方米)",
+							dataIndex : "saleArea",
+							width : 150,
+							align : "right"
 						}, {
 							header : "库存建账",
 							dataIndex : "inited",
@@ -129,10 +138,6 @@ Ext.define("PSI.Warehouse.MainForm", {
 										: "<span style='color:red'>待建账</span>";
 							}
 						}, {
-							header : "创建人的数据域",
-							dataIndex : "dataOrg",
-							width : 150
-						}, {
 							header : "仓库状态",
 							dataIndex : "enabled",
 							width : 90,
@@ -141,6 +146,10 @@ Ext.define("PSI.Warehouse.MainForm", {
 										? "启用"
 										: "<span style='color:red'>停用</span>";
 							}
+						}, {
+							header : "创建人的数据域",
+							dataIndex : "dataOrg",
+							width : 150
 						}]
 			},
 			store : Ext.create("Ext.data.Store", {

@@ -337,15 +337,26 @@ Ext.define("PSI.Home.MainForm", {
 		return {
 			flex : 1,
 			width : "100%",
-			height : 240,
+			height : 270,
 			margin : "5",
 			header : {
 				title : "<span style='font-size:120%;font-weight:normal;'>销售看板</span>",
 				iconCls : "PSI-portal-sale",
 				height : 40
 			},
-			layout : "fit",
-			items : [me.getSaleGrid()]
+			xtype : "tabpanel",
+			tabPosition : "bottom",
+			items : [{
+						title : "图表",
+						layout : "fit",
+						border : 0,
+						items : me.getSaleChart()
+					}, {
+						title : "表格",
+						layout : "fit",
+						border : 0,
+						items : me.getSaleGrid()
+					}]
 		};
 	},
 
@@ -387,7 +398,7 @@ Ext.define("PSI.Home.MainForm", {
 			},
 			flex : 1,
 			width : "100%",
-			height : 240,
+			height : 270,
 			margin : "5",
 			layout : "fit",
 			items : [me.getInventoryGrid()]
@@ -404,7 +415,7 @@ Ext.define("PSI.Home.MainForm", {
 			},
 			flex : 1,
 			width : "100%",
-			height : 240,
+			height : 270,
 			margin : "5",
 			layout : "fit",
 			items : [me.getMoneyGrid()]
@@ -448,11 +459,28 @@ Ext.define("PSI.Home.MainForm", {
 						if (success) {
 							var data = Ext.JSON.decode(response.responseText);
 							store.add(data);
+
+							me.copyDataFromSaleGrid(data);
 						}
 
 						el.unmask();
 					}
 				});
+	},
+
+	copyDataFromSaleGrid : function(data) {
+		var me = this;
+		var store = me.getSaleChart().getStore();
+		store.removeAll();
+		var len = data.length;
+		for (var i = len - 1; i >= 0; i--) {
+			var d = data[i];
+			store.add({
+						month : d.month,
+						"销售额" : d.saleMoney,
+						"毛利" : d.profit
+					});
+		}
 	},
 
 	queryPurchaseData : function() {
@@ -519,6 +547,83 @@ Ext.define("PSI.Home.MainForm", {
 		}
 	},
 
+	getSaleChart : function() {
+		var me = this;
+		if (me.__saleChart) {
+			return me.__saleChart;
+		}
+
+		var modelName = "saleChart";
+		Ext.define(modelName, {
+					extend : "Ext.data.Model",
+					fields : ["销售额", "毛利", "month"]
+				});
+		var store = Ext.create("Ext.data.Store", {
+					model : modelName,
+					data : []
+				});
+
+		me.__saleChart = Ext.create("Ext.chart.Chart", {
+					theme : "Category1",
+					animate : true,
+					legend : {
+						position : "top"
+					},
+					store : store,
+					axes : [{
+								title : "金额",
+								type : "Numeric",
+								position : "left",
+								grid : true,
+								fields : ["销售额", "毛利"]
+							}, {
+								type : "Category",
+								position : "bottom",
+								fields : ["month"]
+							}],
+					series : [{
+								type : "line",
+								xField : "month",
+								yField : "销售额",
+								highlight : {
+									size : 7,
+									radius : 7
+								},
+								tips : {
+									trackMouse : true,
+									width : 120,
+									height : 50,
+									renderer : function(storeItem, item) {
+										this.setTitle("销售额");
+										this.update(storeItem.get("销售额"));
+									}
+								}
+							}, {
+								type : "line",
+								xField : "month",
+								yField : "毛利",
+								highlight : {
+									size : 7,
+									radius : 7
+								},
+								highlight : {
+									size : 7,
+									radius : 7
+								},
+								tips : {
+									trackMouse : true,
+									width : 120,
+									height : 50,
+									renderer : function(storeItem, item) {
+										this.setTitle("毛利");
+										this.update(storeItem.get("毛利"));
+									}
+								}
+							}]
+				});
+		return me.__saleChart;
+	},
+
 	getPurchaseChart : function() {
 		var me = this;
 		if (me.__purchaseChart) {
@@ -527,41 +632,47 @@ Ext.define("PSI.Home.MainForm", {
 
 		var modelName = "purchaseChart";
 		Ext.define(modelName, {
-					extend : 'Ext.data.Model',
-					fields : ['purchaseMoney', 'month']
+					extend : "Ext.data.Model",
+					fields : ["purchaseMoney", "month"]
 				});
-		var store = Ext.create('Ext.data.Store', {
+		var store = Ext.create("Ext.data.Store", {
 					model : modelName,
-					data : [{
-								purchaseMoney : 58,
-								month : "2019-01"
-							}, {
-								purchaseMoney : 158,
-								month : "2019-02"
-							}, {
-								purchaseMoney : 98,
-								month : "2019-03"
-							}]
+					data : []
 				});
 
-		me.__purchaseChart = Ext.create('Ext.chart.Chart', {
-					theme : 'Green',
+		me.__purchaseChart = Ext.create("Ext.chart.Chart", {
+					theme : "Green",
+					animate : true,
 					store : store,
 					axes : [{
-								title : '采购金额',
-								type : 'Numeric',
-								position : 'left',
-								fields : ['purchaseMoney']
+								title : "采购金额",
+								type : "Numeric",
+								position : "left",
+								grid : true,
+								fields : ["purchaseMoney"]
 							}, {
-								title : '月份',
-								type : 'Category',
-								position : 'bottom',
-								fields : ['month']
+								type : "Category",
+								position : "bottom",
+								fields : ["month"]
 							}],
 					series : [{
-								type : 'line',
-								xField : 'month',
-								yField : 'purchaseMoney'
+								type : "line",
+								xField : "month",
+								yField : "purchaseMoney",
+								highlight : {
+									size : 7,
+									radius : 7
+								},
+								tips : {
+									trackMouse : true,
+									width : 120,
+									height : 50,
+									renderer : function(storeItem, item) {
+										this.setTitle("采购金额");
+										this.update(storeItem
+												.get("purchaseMoney"));
+									}
+								}
 							}]
 				});
 		return me.__purchaseChart;

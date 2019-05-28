@@ -1431,6 +1431,17 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 			return;
 		}
 
+		var item = me.getMainGrid().getSelectionModel().getSelection();
+		if (item == null || item.length != 1) {
+			me.showInfo("没有选择要变更的销售订单");
+			return;
+		}
+		var bill = item[0];
+		if (parseInt(bill.get("billStatus")) >= 4000) {
+			me.showInfo("订单已经关闭，不能再做变更操作");
+			return;
+		}
+
 		var entity = grid.getStore().getAt(row);
 		if (!entity) {
 			me.showInfo("请选择要变更的明细记录");

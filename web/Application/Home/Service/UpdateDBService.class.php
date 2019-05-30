@@ -243,6 +243,7 @@ class UpdateDBService extends PSIBaseService {
 		$this->update_20190521_01();
 		$this->update_20190521_02();
 		$this->update_20190526_01();
+		$this->update_20190530_01();
 
 		$sql = "delete from t_psi_db_version";
 		$db->execute($sql);
@@ -263,6 +264,18 @@ class UpdateDBService extends PSIBaseService {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// ============================================
 	private function notForgot() {
+	}
+
+	private function update_20190530_01() {
+		// 本次更新：t_po_bill_detail新增字段goods_price_with_tax
+		$db = $this->db;
+
+		$tableName = "t_po_bill_detail";
+		$columnName = "goods_price_with_tax";
+		if (! $this->columnExists($db, $tableName, $columnName)) {
+			$sql = "alter table {$tableName} add {$columnName} decimal(19,2) DEFAULT NULL;";
+			$db->execute($sql);
+		}
 	}
 
 	private function update_20190526_01() {

@@ -582,44 +582,47 @@ Ext.define("PSI.Home.MainForm", {
 								fields : ["month"]
 							}],
 					series : [{
-								type : "line",
-								xField : "month",
-								yField : "销售额",
-								highlight : {
-									size : 7,
-									radius : 7
-								},
-								tips : {
-									trackMouse : true,
-									width : 120,
-									height : 50,
-									renderer : function(storeItem, item) {
-										this.setTitle("销售额");
-										this.update(storeItem.get("销售额"));
-									}
-								}
-							}, {
-								type : "line",
-								xField : "month",
-								yField : "毛利",
-								highlight : {
-									size : 7,
-									radius : 7
-								},
-								highlight : {
-									size : 7,
-									radius : 7
-								},
-								tips : {
-									trackMouse : true,
-									width : 120,
-									height : 50,
-									renderer : function(storeItem, item) {
-										this.setTitle("毛利");
-										this.update(storeItem.get("毛利"));
-									}
-								}
-							}]
+						type : "line",
+						xField : "month",
+						yField : "销售额",
+						highlight : {
+							size : 7,
+							radius : 7
+						},
+						tips : {
+							trackMouse : true,
+							width : 120,
+							height : 50,
+							renderer : function(storeItem, item) {
+								this.setTitle("销售额");
+								this.update(me
+										.formatMoney(storeItem.get("销售额")));
+							}
+						}
+					}, {
+						type : "line",
+						xField : "month",
+						yField : "毛利",
+						highlight : {
+							size : 7,
+							radius : 7
+						},
+						highlight : {
+							size : 7,
+							radius : 7
+						},
+						tips : {
+							trackMouse : true,
+							width : 120,
+							height : 50,
+							renderer : function(storeItem, item) {
+								this.setTitle("毛利");
+								this
+										.update(me.formatMoney(storeItem
+												.get("毛利")));
+							}
+						}
+					}]
 				});
 		return me.__saleChart;
 	},
@@ -656,25 +659,35 @@ Ext.define("PSI.Home.MainForm", {
 								fields : ["month"]
 							}],
 					series : [{
-								type : "line",
-								xField : "month",
-								yField : "purchaseMoney",
-								highlight : {
-									size : 7,
-									radius : 7
-								},
-								tips : {
-									trackMouse : true,
-									width : 120,
-									height : 50,
-									renderer : function(storeItem, item) {
-										this.setTitle("采购金额");
-										this.update(storeItem
-												.get("purchaseMoney"));
-									}
-								}
-							}]
+						type : "line",
+						xField : "month",
+						yField : "purchaseMoney",
+						highlight : {
+							size : 7,
+							radius : 7
+						},
+						tips : {
+							trackMouse : true,
+							width : 120,
+							height : 50,
+							renderer : function(storeItem, item) {
+								this.setTitle("采购金额");
+								this.update(me.formatMoney(storeItem
+										.get("purchaseMoney")));
+							}
+						}
+					}]
 				});
 		return me.__purchaseChart;
+	},
+
+	formatMoney : function(value) {
+		var value = parseFloat(value);
+		var format = "0,000.00";
+		if (value >= 0) {
+			return Ext.util.Format.number(value, format);
+		} else {
+			return "-" + Ext.util.Format.number(Math.abs(value), format);
+		}
 	}
 });

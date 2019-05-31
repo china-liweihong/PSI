@@ -575,7 +575,12 @@ Ext.define("PSI.Home.MainForm", {
 								type : "Numeric",
 								position : "left",
 								grid : true,
-								fields : ["销售额", "毛利"]
+								fields : ["销售额", "毛利"],
+								label : {
+									renderer : function(v) {
+										return me.formatMoney2(v);
+									}
+								}
 							}, {
 								type : "Category",
 								position : "bottom",
@@ -652,7 +657,12 @@ Ext.define("PSI.Home.MainForm", {
 								type : "Numeric",
 								position : "left",
 								grid : true,
-								fields : ["purchaseMoney"]
+								fields : ["purchaseMoney"],
+								label : {
+									renderer : function(v) {
+										return me.formatMoney2(v);
+									}
+								}
 							}, {
 								type : "Category",
 								position : "bottom",
@@ -689,5 +699,16 @@ Ext.define("PSI.Home.MainForm", {
 		} else {
 			return "-" + Ext.util.Format.number(Math.abs(value), format);
 		}
+	},
+
+	formatMoney2 : function(value) {
+		var value = parseFloat(value);
+		var format = "0,000";
+		if (value >= 0) {
+			return Ext.util.Format.number(value, format);
+		} else {
+			return "-" + Ext.util.Format.number(Math.abs(value), format);
+		}
 	}
+
 });

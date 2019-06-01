@@ -1284,6 +1284,7 @@ class InstallService extends PSIBaseExService {
 				  `discount` int(11) NOT NULL,
 				  `so_count` decimal(19,8) NOT NULL,
 				  `left_count` decimal(19,8) NOT NULL,
+				  `goods_price_with_tax` decimal(19,2) DEFAULT NULL,
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";

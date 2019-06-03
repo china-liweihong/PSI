@@ -1321,6 +1321,7 @@ CREATE TABLE IF NOT EXISTS `t_dmw_bill_detail` (
   `tax_rate` decimal(19,2) DEFAULT NULL,
   `tax` decimal(19,2) DEFAULT NULL,
   `money_with_tax` decimal(19,2) DEFAULT NULL,
+  `goods_price_with_tax` decimal(19,2) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

@@ -4,7 +4,7 @@ PSI是一款基于SaaS模式(Software as a Service软件即服务)的企业管�
 
 # PSI演示
 
-PSI的演示见：<a target="_blank" href="https://psi-demo.butterfly.mopaasapp.com/">https://psi-demo.butterfly.mopaasapp.com/</a>
+PSI的演示见：<a target="_blank" href="https://psi.butterfly.mopaasapp.com/">https://psi.butterfly.mopaasapp.com/</a>
 
 PC端请用`360浏览器`或者是`谷歌浏览器`访问
  

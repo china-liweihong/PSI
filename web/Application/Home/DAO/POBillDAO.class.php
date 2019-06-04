@@ -1331,14 +1331,15 @@ class POBillDAO extends PSIBaseExDAO {
 		$leftCount = $goodsCount - $pwCount;
 		$tax = $goodsMoney * $taxRate / 100;
 		$moneyWithTax = $goodsMoney + $tax;
+		$goodsPriceWithTax = $moneyWithTax / $goodsCount;
 
 		$sql = "update t_po_bill_detail
 				set goods_count = convert(%f, $fmt), goods_price = %f,
 					goods_money = %f, left_count = convert(%f, $fmt),
-					tax = %f, money_with_tax = %f
+					tax = %f, money_with_tax = %f, goods_price_with_tax = %f
 				where id = '%s' ";
 		$rc = $db->execute($sql, $goodsCount, $goodsPrice, $goodsMoney, $leftCount, $tax,
-				$moneyWithTax, $detailId);
+				$moneyWithTax, $goodsPriceWithTax, $detailId);
 
 		// 同步主表的金额合计字段
 		$sql = "select sum(goods_money) as sum_goods_money, sum(tax) as sum_tax,

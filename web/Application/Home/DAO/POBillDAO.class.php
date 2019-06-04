@@ -378,6 +378,8 @@ class POBillDAO extends PSIBaseExDAO {
 				return $this->bad("采购单价不能是负数");
 			}
 
+			$goodsPriceWithTax = $v["goodsPriceWithTax"];
+
 			// 检查供应商关联商品
 			if (! $supplierDAO->goodsIdIsInGoodsRange($supplierId, $goodsId)) {
 				$recordInde = $i + 1;
@@ -392,11 +394,12 @@ class POBillDAO extends PSIBaseExDAO {
 
 			$sql = "insert into t_po_bill_detail(id, date_created, goods_id, goods_count, goods_money,
 						goods_price, pobill_id, tax_rate, tax, money_with_tax, pw_count, left_count,
-						show_order, data_org, company_id, memo)
+						show_order, data_org, company_id, memo, goods_price_with_tax)
 					values ('%s', now(), '%s', convert(%f, $fmt), %f,
-						%f, '%s', %d, %f, %f, 0, convert(%f, $fmt), %d, '%s', '%s', '%s')";
+						%f, '%s', %d, %f, %f, 0, convert(%f, $fmt), %d, '%s', '%s', '%s', %f)";
 			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsMoney, $goodsPrice,
-					$id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i, $dataOrg, $companyId, $memo);
+					$id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i, $dataOrg, $companyId, $memo,
+					$goodsPriceWithTax);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
@@ -547,6 +550,8 @@ class POBillDAO extends PSIBaseExDAO {
 				return $this->bad("采购单价不能是负数");
 			}
 
+			$goodsPriceWithTax = $v["goodsPriceWithTax"];
+
 			// 检查供应商关联商品
 			if (! $supplierDAO->goodsIdIsInGoodsRange($supplierId, $goodsId)) {
 				$recordInde = $i + 1;
@@ -561,11 +566,12 @@ class POBillDAO extends PSIBaseExDAO {
 
 			$sql = "insert into t_po_bill_detail(id, date_created, goods_id, goods_count, goods_money,
 						goods_price, pobill_id, tax_rate, tax, money_with_tax, pw_count, left_count,
-						show_order, data_org, company_id, memo)
+						show_order, data_org, company_id, memo, goods_price_with_tax)
 					values ('%s', now(), '%s', convert(%f, $fmt), %f,
-						%f, '%s', %d, %f, %f, 0, convert(%f, $fmt), %d, '%s', '%s', '%s')";
+						%f, '%s', %d, %f, %f, 0, convert(%f, $fmt), %d, '%s', '%s', '%s', %f)";
 			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsMoney, $goodsPrice,
-					$id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i, $dataOrg, $companyId, $memo);
+					$id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i, $dataOrg, $companyId, $memo,
+					$goodsPriceWithTax);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
@@ -737,7 +743,8 @@ class POBillDAO extends PSIBaseExDAO {
 				$sql = "select p.id, p.goods_id, g.code, g.name, g.spec, 
 							convert(p.goods_count, " . $fmt . ") as goods_count, 
 							p.goods_price, p.goods_money,
-							p.tax_rate, p.tax, p.money_with_tax, u.name as unit_name, p.memo
+							p.tax_rate, p.tax, p.money_with_tax, u.name as unit_name, p.memo,
+							p.goods_price_with_tax
 						from t_po_bill_detail p, t_goods g, t_goods_unit u
 						where p.pobill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
 						order by p.show_order";
@@ -745,6 +752,14 @@ class POBillDAO extends PSIBaseExDAO {
 				$data = $db->query($sql, $id);
 
 				foreach ( $data as $v ) {
+					$goodsPriceWithTax = $v["goods_price_with_tax"];
+					if ($goodsPriceWithTax == null) {
+						// 兼容旧数据
+						if ($v["goods_count"] != 0) {
+							$goodsPriceWithTax = $v["money_with_tax"] / $v["goods_count"];
+						}
+					}
+
 					$items[] = [
 							"goodsId" => $v["goods_id"],
 							"goodsCode" => $v["code"],
@@ -757,7 +772,8 @@ class POBillDAO extends PSIBaseExDAO {
 							"tax" => $v["tax"],
 							"moneyWithTax" => $v["money_with_tax"],
 							"unitName" => $v["unit_name"],
-							"memo" => $v["memo"]
+							"memo" => $v["memo"],
+							"goodsPriceWithTax" => $goodsPriceWithTax
 					];
 				}
 

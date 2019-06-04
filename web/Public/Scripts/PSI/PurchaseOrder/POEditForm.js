@@ -816,8 +816,9 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 
 		goods.set("moneyWithTax", goods.get("goodsPriceWithTax")
 						* goods.get("goodsCount"));
-		goods.set("tax", goods.get("goodsMoney") * goods.get("taxRate") / 100);
-		goods.set("goodsMoney", goods.get("moneyWithTax") - goods.get("tax"));
+		goods.set("goodsMoney", goods.get("moneyWithTax")
+						/ (1 + goods.get("taxRate") / 100));
+		goods.set("tax", goods.get("moneyWithTax") - goods.get("goodsMoney"));
 		if (goods.get("goodsCount") != 0) {
 			goods.set("goodsPrice", goods.get("goodsMoney")
 							/ goods.get("goodsCount"));

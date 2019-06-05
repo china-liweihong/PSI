@@ -522,7 +522,7 @@ Ext.define("PSI.SaleContract.SCMainForm", {
 					fields : ["id", "goodsCode", "goodsName", "goodsSpec",
 							"unitName", "goodsCount", "goodsMoney",
 							"goodsPrice", "taxRate", "tax", "moneyWithTax",
-							"soCount", "leftCount", "memo"]
+							"soCount", "leftCount", "memo", "goodsPriceWithTax"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -629,6 +629,14 @@ Ext.define("PSI.SaleContract.SCMainForm", {
 							}, {
 								header : "价税合计",
 								dataIndex : "moneyWithTax",
+								menuDisabled : true,
+								sortable : false,
+								align : "right",
+								xtype : "numbercolumn",
+								width : 150
+							}, {
+								header : "含税价",
+								dataIndex : "goodsPriceWithTax",
 								menuDisabled : true,
 								sortable : false,
 								align : "right",

@@ -14,18 +14,18 @@ class SCBillDAO extends PSIBaseExDAO {
 	/**
 	 * 生成新的销售合同号
 	 *
-	 * @param string $companyId        	
+	 * @param string $companyId
 	 *
 	 * @return string
 	 */
 	private function genNewBillRef($companyId) {
 		$db = $this->db;
-		
+
 		$bs = new BizConfigDAO($db);
 		$pre = $bs->getSCBillRefPre($companyId);
-		
+
 		$mid = date("Ymd");
-		
+
 		$sql = "select ref from t_sc_bill where ref like '%s' order by ref desc limit 1";
 		$data = $db->query($sql, $pre . $mid . "%");
 		$sufLength = 3;
@@ -35,34 +35,34 @@ class SCBillDAO extends PSIBaseExDAO {
 			$nextNumber = intval(substr($ref, strlen($pre . $mid))) + 1;
 			$suf = str_pad($nextNumber, $sufLength, "0", STR_PAD_LEFT);
 		}
-		
+
 		return $pre . $mid . $suf;
 	}
 
 	/**
 	 * 获得销售合同主表信息列表
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return array
 	 */
 	public function scbillList($params) {
 		$db = $this->db;
-		
+
 		$loginUserId = $params["loginUserId"];
 		if ($this->loginUserIdNotExists($loginUserId)) {
 			return $this->emptyResult();
 		}
-		
+
 		$start = $params["start"];
 		$limit = $params["limit"];
-		
+
 		$billStatus = $params["billStatus"];
 		$ref = $params["ref"];
 		$fromDT = $params["fromDT"];
 		$toDT = $params["toDT"];
 		$customerId = $params["customerId"];
 		$goodsId = $params["goodsId"];
-		
+
 		$sql = "select s.id, s.ref, s.bill_status, c.name as customer_name,
 					u.name as input_user_name, g.full_name as org_name,
 					s.begin_dt, s.end_dt, s.goods_money, s.tax, s.money_with_tax,
@@ -72,9 +72,9 @@ class SCBillDAO extends PSIBaseExDAO {
 				from t_sc_bill s, t_customer c, t_user u, t_org g, t_user u2
 				where (s.customer_id = c.id) and (s.input_user_id = u.id) 
 					and (s.org_id = g.id) and (s.biz_user_id = u2.id) ";
-		
+
 		$queryParams = [];
-		
+
 		$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::SALE_CONTRACT, "s", $loginUserId);
 		if ($rs) {
@@ -110,7 +110,7 @@ class SCBillDAO extends PSIBaseExDAO {
 		$queryParams[] = $start;
 		$queryParams[] = $limit;
 		$data = $db->query($sql, $queryParams);
-		
+
 		$result = [];
 		foreach ( $data as $v ) {
 			$item = [
@@ -133,7 +133,7 @@ class SCBillDAO extends PSIBaseExDAO {
 					"inputUserName" => $v["input_user_name"],
 					"dateCreated" => $v["date_created"]
 			];
-			
+
 			$confirmUserId = $v["confirm_user_id"];
 			if ($confirmUserId) {
 				$sql = "select name from t_user where id = '%s' ";
@@ -143,16 +143,16 @@ class SCBillDAO extends PSIBaseExDAO {
 					$item["confirmDate"] = $v["confirm_date"];
 				}
 			}
-			
+
 			$result[] = $item;
 		}
-		
+
 		$sql = "select count(*) as cnt
 				from t_sc_bill s, t_customer c, t_user u, t_org g, t_user u2
 				where (s.customer_id = c.id) and (s.input_user_id = u.id)
 					and (s.org_id = g.id) and (s.biz_user_id = u2.id) ";
 		$queryParams = [];
-		
+
 		$ds = new DataOrgDAO($db);
 		$rs = $ds->buildSQL(FIdConst::SALE_CONTRACT, "s", $loginUserId);
 		if ($rs) {
@@ -183,10 +183,10 @@ class SCBillDAO extends PSIBaseExDAO {
 			$sql .= " and (s.id in (select distinct scbill_id from t_sc_bill_detail where goods_id = '%s')) ";
 			$queryParams[] = $goodsId;
 		}
-		
+
 		$data = $db->query($sql, $queryParams);
 		$cnt = $data[0]["cnt"];
-		
+
 		return [
 				"dataList" => $result,
 				"totalCount" => $cnt
@@ -198,25 +198,25 @@ class SCBillDAO extends PSIBaseExDAO {
 	 */
 	public function scBillInfo($params) {
 		$db = $this->db;
-		
+
 		// 销售合同id
 		$id = $params["id"];
 		$result = [];
-		
+
 		$companyId = $params["companyId"];
 		if ($this->companyIdNotExists($companyId)) {
 			return $this->emptyResult();
 		}
-		
+
 		$cs = new BizConfigDAO($db);
 		$result["taxRate"] = $cs->getTaxRate($companyId);
-		
+
 		$dataScale = $cs->getGoodsCountDecNumber($companyId);
 		$fmt = "decimal(19, " . $dataScale . ")";
-		
+
 		if ($id) {
 			// 编辑或查看
-			
+
 			// 主表
 			$sql = "select s.ref, s.customer_id, c.name as customer_name,
 						s.begin_dt, s.end_dt, s.org_id, g.full_name as org_name,
@@ -231,7 +231,7 @@ class SCBillDAO extends PSIBaseExDAO {
 			if (! $data) {
 				return $this->emptyResult();
 			}
-			
+
 			$v = $data[0];
 			$result["ref"] = $v["ref"];
 			$result["customerId"] = $v["customer_id"];
@@ -251,7 +251,7 @@ class SCBillDAO extends PSIBaseExDAO {
 			$result["insuranceClause"] = $v["insurance_clause"];
 			$result["transportClause"] = $v["transport_clause"];
 			$result["otherClause"] = $v["other_clause"];
-			
+
 			// 明细
 			$sql = "select s.id, s.goods_id, g.code, g.name, g.spec,
 							convert(s.goods_count, " . $fmt . ") as goods_count, s.goods_price, s.goods_money,
@@ -261,7 +261,7 @@ class SCBillDAO extends PSIBaseExDAO {
 				order by s.show_order";
 			$items = [];
 			$data = $db->query($sql, $id);
-			
+
 			foreach ( $data as $v ) {
 				$items[] = [
 						"id" => $v["id"],
@@ -279,14 +279,14 @@ class SCBillDAO extends PSIBaseExDAO {
 						"memo" => $v["memo"]
 				];
 			}
-			
+
 			$result["items"] = $items;
 		} else {
 			// 新建
 			$loginUserId = $params["loginUserId"];
 			$result["bizUserId"] = $loginUserId;
 			$result["bizUserName"] = $params["loginUserName"];
-			
+
 			$sql = "select o.id, o.full_name
 					from t_org o, t_user u
 					where o.id = u.org_id and u.id = '%s' ";
@@ -296,41 +296,41 @@ class SCBillDAO extends PSIBaseExDAO {
 				$result["orgFullName"] = $data[0]["full_name"];
 			}
 		}
-		
+
 		return $result;
 	}
 
 	/**
 	 * 新增销售合同
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return array|null
 	 */
 	public function addSCBill(& $bill) {
 		$db = $this->db;
-		
+
 		$companyId = $bill["companyId"];
 		if ($this->companyIdNotExists($companyId)) {
 			return $this->badParam("companyId");
 		}
-		
+
 		$dataOrg = $bill["dataOrg"];
 		if ($this->dataOrgNotExists($dataOrg)) {
 			return $this->badParam("dataOrg");
 		}
-		
+
 		$loginUserId = $bill["loginUserId"];
 		if ($this->loginUserIdNotExists($loginUserId)) {
 			return $this->badParam("loginUserId");
 		}
-		
+
 		$customerId = $bill["customerId"];
 		$customerDAO = new CustomerDAO($db);
 		$customer = $customerDAO->getCustomerById($customerId);
 		if (! $customer) {
 			return $this->bad("甲方客户不存在");
 		}
-		
+
 		$beginDT = $bill["beginDT"];
 		if (! $this->dateIsValid($beginDT)) {
 			return $this->bad("合同开始日期不正确");
@@ -339,19 +339,19 @@ class SCBillDAO extends PSIBaseExDAO {
 		if (! $this->dateIsValid($endDT)) {
 			return $this->bad("合同结束日期不正确");
 		}
-		
+
 		$orgId = $bill["orgId"];
 		$orgDAO = new OrgDAO($db);
 		$org = $orgDAO->getOrgById($orgId);
 		if (! $org) {
 			return $this->bad("乙方组织机构不存在");
 		}
-		
+
 		$dealDate = $bill["dealDate"];
 		if (! $this->dateIsValid($dealDate)) {
 			return $this->bad("交货日期不正确");
 		}
-		
+
 		$bizDT = $bill["bizDT"];
 		if (! $this->dateIsValid($bizDT)) {
 			return $this->bad("合同签订日期不正确");
@@ -362,28 +362,28 @@ class SCBillDAO extends PSIBaseExDAO {
 		if (! $user) {
 			return $this->bad("业务员不存在");
 		}
-		
+
 		$dealAddress = $bill["dealAddress"];
 		$discount = intval($bill["discount"]);
 		if ($discount < 0 || $discount > 100) {
 			$discount = 100;
 		}
-		
+
 		$billMemo = $bill["billMemo"];
 		$qualityClause = $bill["qualityClause"];
 		$insuranceClause = $bill["insuranceClause"];
 		$transportClause = $bill["transportClause"];
 		$otherClause = $bill["otherClause"];
-		
+
 		$items = $bill["items"];
-		
+
 		$bcDAO = new BizConfigDAO($db);
 		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
 		$fmt = "decimal(19, " . $dataScale . ")";
-		
+
 		$id = $this->newId();
 		$ref = $this->genNewBillRef($companyId);
-		
+
 		// 主表
 		$sql = "insert into t_sc_bill (id, ref, customer_id, org_id, biz_user_id,
 					biz_dt, input_user_id, date_created, bill_status, goods_money,
@@ -395,13 +395,13 @@ class SCBillDAO extends PSIBaseExDAO {
 					0, 0, '%s', '%s', '%s',
 					'%s', '%s', '%s', '%s', %d,
 					'%s', '%s', '%s', '%s')";
-		$rc = $db->execute($sql, $id, $ref, $customerId, $orgId, $bizUserId, $bizDT, $loginUserId, 
-				$dealDate, $dealAddress, $billMemo, $dataOrg, $companyId, $beginDT, $endDT, 
+		$rc = $db->execute($sql, $id, $ref, $customerId, $orgId, $bizUserId, $bizDT, $loginUserId,
+				$dealDate, $dealAddress, $billMemo, $dataOrg, $companyId, $beginDT, $endDT,
 				$discount, $qualityClause, $insuranceClause, $transportClause, $otherClause);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 明细表
 		foreach ( $items as $i => $v ) {
 			$goodsId = $v["goodsId"];
@@ -415,20 +415,20 @@ class SCBillDAO extends PSIBaseExDAO {
 			$tax = $v["tax"];
 			$moneyWithTax = $v["moneyWithTax"];
 			$memo = $v["memo"];
-			
+
 			$sql = "insert into t_sc_bill_detail(id, date_created, goods_id, goods_count, goods_money,
 						goods_price, scbill_id, tax_rate, tax, money_with_tax, so_count, left_count,
 						show_order, data_org, company_id, memo, discount)
 					values ('%s', now(), '%s', convert(%f, $fmt), %f,
 						%f, '%s', %d, %f, %f, 0, convert(%f, $fmt), %d, '%s', '%s', '%s', %d)";
-			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsMoney, 
-					$goodsPrice, $id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i, $dataOrg, 
-					$companyId, $memo, $discount);
+			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsMoney, $goodsPrice,
+					$id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i, $dataOrg, $companyId, $memo,
+					$discount);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
 		}
-		
+
 		// 同步主表的金额合计字段
 		$sql = "select sum(goods_money) as sum_goods_money, sum(tax) as sum_tax,
 					sum(money_with_tax) as sum_money_with_tax
@@ -447,7 +447,7 @@ class SCBillDAO extends PSIBaseExDAO {
 		if (! $sumMoneyWithTax) {
 			$sumMoneyWithTax = 0;
 		}
-		
+
 		$sql = "update t_sc_bill
 				set goods_money = %f, tax = %f, money_with_tax = %f
 				where id = '%s' ";
@@ -455,7 +455,7 @@ class SCBillDAO extends PSIBaseExDAO {
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 操作成功
 		$bill["id"] = $id;
 		$bill["ref"] = $ref;
@@ -464,7 +464,7 @@ class SCBillDAO extends PSIBaseExDAO {
 
 	public function getSCBillById($id) {
 		$db = $this->db;
-		
+
 		$sql = "select ref, bill_status, data_org
 				from t_sc_bill
 				where id = '%s' ";
@@ -484,12 +484,12 @@ class SCBillDAO extends PSIBaseExDAO {
 	/**
 	 * 编辑销售合同
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 * @return array|null
 	 */
 	public function updateSCBill(& $bill) {
 		$db = $this->db;
-		
+
 		// 销售合同主表id
 		$id = $bill["id"];
 		$b = $this->getSCBillById($id);
@@ -505,19 +505,19 @@ class SCBillDAO extends PSIBaseExDAO {
 		if ($this->dataOrgNotExists($dataOrg)) {
 			return $this->badParam("dataOrg");
 		}
-		
+
 		$companyId = $bill["companyId"];
 		if ($this->companyIdNotExists($companyId)) {
 			return $this->badParam("companyId");
 		}
-		
+
 		$customerId = $bill["customerId"];
 		$customerDAO = new CustomerDAO($db);
 		$customer = $customerDAO->getCustomerById($customerId);
 		if (! $customer) {
 			return $this->bad("甲方客户不存在");
 		}
-		
+
 		$beginDT = $bill["beginDT"];
 		if (! $this->dateIsValid($beginDT)) {
 			return $this->bad("合同开始日期不正确");
@@ -526,19 +526,19 @@ class SCBillDAO extends PSIBaseExDAO {
 		if (! $this->dateIsValid($endDT)) {
 			return $this->bad("合同结束日期不正确");
 		}
-		
+
 		$orgId = $bill["orgId"];
 		$orgDAO = new OrgDAO($db);
 		$org = $orgDAO->getOrgById($orgId);
 		if (! $org) {
 			return $this->bad("乙方组织机构不存在");
 		}
-		
+
 		$dealDate = $bill["dealDate"];
 		if (! $this->dateIsValid($dealDate)) {
 			return $this->bad("交货日期不正确");
 		}
-		
+
 		$bizDT = $bill["bizDT"];
 		if (! $this->dateIsValid($bizDT)) {
 			return $this->bad("合同签订日期不正确");
@@ -549,25 +549,25 @@ class SCBillDAO extends PSIBaseExDAO {
 		if (! $user) {
 			return $this->bad("业务员不存在");
 		}
-		
+
 		$dealAddress = $bill["dealAddress"];
 		$discount = intval($bill["discount"]);
 		if ($discount < 0 || $discount > 100) {
 			$discount = 100;
 		}
-		
+
 		$billMemo = $bill["billMemo"];
 		$qualityClause = $bill["qualityClause"];
 		$insuranceClause = $bill["insuranceClause"];
 		$transportClause = $bill["transportClause"];
 		$otherClause = $bill["otherClause"];
-		
+
 		$items = $bill["items"];
-		
+
 		$bcDAO = new BizConfigDAO($db);
 		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
 		$fmt = "decimal(19, " . $dataScale . ")";
-		
+
 		// 主表
 		$sql = "update t_sc_bill
 				set customer_id = '%s', begin_dt = '%s', end_dt = '%s',
@@ -577,20 +577,20 @@ class SCBillDAO extends PSIBaseExDAO {
 					insurance_clause = '%s', transport_clause = '%s',
 					other_clause = '%s'
 				where id = '%s' ";
-		$rc = $db->execute($sql, $customerId, $beginDT, $endDT, $orgId, $bizDT, $dealDate, 
-				$dealAddress, $bizUserId, $discount, $billMemo, $qualityClause, $insuranceClause, 
+		$rc = $db->execute($sql, $customerId, $beginDT, $endDT, $orgId, $bizDT, $dealDate,
+				$dealAddress, $bizUserId, $discount, $billMemo, $qualityClause, $insuranceClause,
 				$transportClause, $otherClause, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 明细表
 		$sql = "delete from t_sc_bill_detail where scbill_id = '%s' ";
 		$rc = $db->execute($sql, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		foreach ( $items as $i => $v ) {
 			$goodsId = $v["goodsId"];
 			if (! $goodsId) {
@@ -603,20 +603,20 @@ class SCBillDAO extends PSIBaseExDAO {
 			$tax = $v["tax"];
 			$moneyWithTax = $v["moneyWithTax"];
 			$memo = $v["memo"];
-			
+
 			$sql = "insert into t_sc_bill_detail(id, date_created, goods_id, goods_count, goods_money,
 						goods_price, scbill_id, tax_rate, tax, money_with_tax, so_count, left_count,
 						show_order, data_org, company_id, memo, discount)
 					values ('%s', now(), '%s', convert(%f, $fmt), %f,
 						%f, '%s', %d, %f, %f, 0, convert(%f, $fmt), %d, '%s', '%s', '%s', %d)";
-			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsMoney, 
-					$goodsPrice, $id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i, $dataOrg, 
-					$companyId, $memo, $discount);
+			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsMoney, $goodsPrice,
+					$id, $taxRate, $tax, $moneyWithTax, $goodsCount, $i, $dataOrg, $companyId, $memo,
+					$discount);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
 		}
-		
+
 		// 同步主表销售金额
 		$sql = "select sum(goods_money) as sum_goods_money, sum(tax) as sum_tax,
 					sum(money_with_tax) as sum_money_with_tax
@@ -635,7 +635,7 @@ class SCBillDAO extends PSIBaseExDAO {
 		if (! $sumMoneyWithTax) {
 			$sumMoneyWithTax = 0;
 		}
-		
+
 		$sql = "update t_sc_bill
 				set goods_money = %f, tax = %f, money_with_tax = %f
 				where id = '%s' ";
@@ -643,7 +643,7 @@ class SCBillDAO extends PSIBaseExDAO {
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 操作成功
 		$bill["ref"] = $ref;
 		return null;
@@ -654,26 +654,26 @@ class SCBillDAO extends PSIBaseExDAO {
 	 */
 	public function scBillDetailList($params) {
 		$db = $this->db;
-		
+
 		$companyId = $params["companyId"];
 		if ($this->companyIdNotExists($companyId)) {
 			return $this->emptyResult();
 		}
-		
+
 		$bcDAO = new BizConfigDAO($db);
 		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
 		$fmt = "decimal(19, " . $dataScale . ")";
-		
+
 		// 销售合同主表id
 		$id = $params["id"];
-		
+
 		$sql = "select quality_clause, insurance_clause, transport_clause, other_clause
 				from t_sc_bill where id = '%s' ";
 		$data = $db->query($sql, $id);
 		if (! $data) {
 			return $this->emptyResult();
 		}
-		
+
 		$v = $data[0];
 		$result = [
 				"qualityClause" => $v["quality_clause"],
@@ -681,19 +681,27 @@ class SCBillDAO extends PSIBaseExDAO {
 				"transportClause" => $v["transport_clause"],
 				"otherClause" => $v["other_clause"]
 		];
-		
+
 		$sql = "select s.id, g.code, g.name, g.spec, convert(s.goods_count, " . $fmt . ") as goods_count,
 					s.goods_price, s.goods_money,
 					s.tax_rate, s.tax, s.money_with_tax, u.name as unit_name,
 					convert(s.so_count, " . $fmt . ") as so_count,
-					convert(s.left_count, " . $fmt . ") as left_count, s.memo
+					convert(s.left_count, " . $fmt . ") as left_count, s.memo,
+					s.goods_price_with_tax
 				from t_sc_bill_detail s, t_goods g, t_goods_unit u
 				where s.scbill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
 				order by s.show_order";
 		$items = [];
 		$data = $db->query($sql, $id);
-		
+
 		foreach ( $data as $v ) {
+			$goodsPriceWithTax = $v["goods_price_with_tax"];
+			if ($goodsPriceWithTax == null) {
+				// 兼容旧数据
+				if ($v["goods_count"] != 0) {
+					$goodsPriceWithTax = $v["money_with_tax"] / $v["goods_count"];
+				}
+			}
 			$items[] = [
 					"id" => $v["id"],
 					"goodsCode" => $v["code"],
@@ -708,12 +716,13 @@ class SCBillDAO extends PSIBaseExDAO {
 					"unitName" => $v["unit_name"],
 					"soCount" => $v["so_count"],
 					"leftCount" => $v["left_count"],
-					"memo" => $v["memo"]
+					"memo" => $v["memo"],
+					"goodsPriceWithTax" => $goodsPriceWithTax
 			];
 		}
-		
+
 		$result["items"] = $items;
-		
+
 		return $result;
 	}
 
@@ -722,10 +731,10 @@ class SCBillDAO extends PSIBaseExDAO {
 	 */
 	public function deleteSCBill(& $params) {
 		$db = $this->db;
-		
+
 		// 销售合同主表
 		$id = $params["id"];
-		
+
 		$bill = $this->getSCBillById($id);
 		if (! $bill) {
 			return $this->bad("要删除的销售合同不存在");
@@ -735,21 +744,21 @@ class SCBillDAO extends PSIBaseExDAO {
 		if ($billStatus > 0) {
 			return $this->bad("销售合同[合同号：{$ref}]已经审核，不能被删除");
 		}
-		
+
 		// 删除明细表
 		$sql = "delete from t_sc_bill_detail where scbill_id = '%s' ";
 		$rc = $db->execute($sql, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 删除主表
 		$sql = "delete from t_sc_bill where id = '%s' ";
 		$rc = $db->execute($sql, $id);
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 操作成功
 		$params["ref"] = $ref;
 		return null;
@@ -760,10 +769,10 @@ class SCBillDAO extends PSIBaseExDAO {
 	 */
 	public function commitSCBill(& $params) {
 		$db = $this->db;
-		
+
 		// 销售合同主表
 		$id = $params["id"];
-		
+
 		$bill = $this->getSCBillById($id);
 		if (! $bill) {
 			return $this->bad("要审核的销售合同不存在");
@@ -773,7 +782,7 @@ class SCBillDAO extends PSIBaseExDAO {
 		if ($billStatus > 0) {
 			return $this->bad("销售合同[合同号：{$ref}]已经审核");
 		}
-		
+
 		$sql = "update t_sc_bill
 				set bill_status = 1000
 				where id = '%s' ";
@@ -781,7 +790,7 @@ class SCBillDAO extends PSIBaseExDAO {
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 操作成功
 		$params["ref"] = $ref;
 		return null;
@@ -792,10 +801,10 @@ class SCBillDAO extends PSIBaseExDAO {
 	 */
 	public function cancelConfirmSCBill(& $params) {
 		$db = $this->db;
-		
+
 		// 销售合同主表
 		$id = $params["id"];
-		
+
 		$bill = $this->getSCBillById($id);
 		if (! $bill) {
 			return $this->bad("要取消审核的销售合同不存在");
@@ -805,7 +814,7 @@ class SCBillDAO extends PSIBaseExDAO {
 		if ($billStatus == 0) {
 			return $this->bad("销售合同[合同号：{$ref}]还没有审核，无需取消");
 		}
-		
+
 		// 检查是否生成了销售订单
 		$sql = "select count(*) as cnt
 				from t_sc_so
@@ -815,7 +824,7 @@ class SCBillDAO extends PSIBaseExDAO {
 		if ($cnt > 0) {
 			return $this->bad("销售合同[合同号：{$ref}]已经生成了销售订单，不能再取消");
 		}
-		
+
 		$sql = "update t_sc_bill
 				set bill_status = 0
 				where id = '%s' ";
@@ -823,7 +832,7 @@ class SCBillDAO extends PSIBaseExDAO {
 		if ($rc === false) {
 			return $this->sqlError(__METHOD__, __LINE__);
 		}
-		
+
 		// 操作成功
 		$params["ref"] = $ref;
 		return null;
@@ -832,22 +841,22 @@ class SCBillDAO extends PSIBaseExDAO {
 	/**
 	 * 为销售合同生成PDF文件查询数据
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 */
 	public function getDataForPDF($params) {
 		$db = $this->db;
-		
+
 		$companyId = $params["companyId"];
 		if ($this->companyIdNotExists($companyId)) {
 			return $this->emptyResult();
 		}
-		
+
 		$bcDAO = new BizConfigDAO($db);
 		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
 		$fmt = "decimal(19, " . $dataScale . ")";
-		
+
 		$ref = $params["ref"];
-		
+
 		$sql = "select s.id, s.bill_status, c.name as customer_name,
 					u.name as input_user_name, g.full_name as org_name,
 					s.begin_dt, s.end_dt, s.goods_money, s.tax, s.money_with_tax,
@@ -862,11 +871,11 @@ class SCBillDAO extends PSIBaseExDAO {
 		if (! $data) {
 			return $this->emptyResult();
 		}
-		
+
 		$v = $data[0];
-		
+
 		$id = $v["id"];
-		
+
 		$result = [
 				"ref" => $ref,
 				"billStatus" => $v["bill_status"],
@@ -889,9 +898,8 @@ class SCBillDAO extends PSIBaseExDAO {
 				"insuranceClause" => $v["insurance_clause"],
 				"transportClause" => $v["transport_clause"],
 				"otherClause" => $v["other_clause"]
-		
 		];
-		
+
 		$sql = "select g.code, g.name, g.spec, convert(s.goods_count, " . $fmt . ") as goods_count,
 					s.goods_price, s.goods_money,
 					s.tax_rate, s.tax, s.money_with_tax, u.name as unit_name,
@@ -902,7 +910,7 @@ class SCBillDAO extends PSIBaseExDAO {
 				order by s.show_order";
 		$items = [];
 		$data = $db->query($sql, $id);
-		
+
 		foreach ( $data as $v ) {
 			$items[] = [
 					"goodsCode" => $v["code"],
@@ -920,31 +928,31 @@ class SCBillDAO extends PSIBaseExDAO {
 					"memo" => $v["memo"]
 			];
 		}
-		
+
 		$result["items"] = $items;
-		
+
 		return $result;
 	}
 
 	/**
 	 * 查询销售合同的数据，用于Lodop打印
 	 *
-	 * @param array $params        	
+	 * @param array $params
 	 */
 	public function getSCBillDataForLodopPrint($params) {
 		$db = $this->db;
-		
+
 		$companyId = $params["companyId"];
 		if ($this->companyIdNotExists($companyId)) {
 			return $this->emptyResult();
 		}
-		
+
 		$bcDAO = new BizConfigDAO($db);
 		$dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
 		$fmt = "decimal(19, " . $dataScale . ")";
-		
+
 		$id = $params["id"];
-		
+
 		$sql = "select s.ref, s.bill_status, c.name as customer_name,
 					u.name as input_user_name, g.full_name as org_name,
 					s.begin_dt, s.end_dt, s.goods_money, s.tax, s.money_with_tax,
@@ -959,9 +967,9 @@ class SCBillDAO extends PSIBaseExDAO {
 		if (! $data) {
 			return $this->emptyResult();
 		}
-		
+
 		$v = $data[0];
-		
+
 		$result = [
 				"ref" => $v["ref"],
 				"billStatus" => $v["bill_status"],
@@ -986,7 +994,7 @@ class SCBillDAO extends PSIBaseExDAO {
 				"otherClause" => $v["other_clause"],
 				"printDT" => date("Y-m-d H:i:s")
 		];
-		
+
 		$sql = "select g.code, g.name, g.spec, convert(s.goods_count, " . $fmt . ") as goods_count,
 					s.goods_price, s.goods_money,
 					s.tax_rate, s.tax, s.money_with_tax, u.name as unit_name,
@@ -997,7 +1005,7 @@ class SCBillDAO extends PSIBaseExDAO {
 				order by s.show_order";
 		$items = [];
 		$data = $db->query($sql, $id);
-		
+
 		foreach ( $data as $v ) {
 			$items[] = [
 					"goodsCode" => $v["code"],
@@ -1015,9 +1023,9 @@ class SCBillDAO extends PSIBaseExDAO {
 					"memo" => $v["memo"]
 			];
 		}
-		
+
 		$result["items"] = $items;
-		
+
 		return $result;
 	}
 }

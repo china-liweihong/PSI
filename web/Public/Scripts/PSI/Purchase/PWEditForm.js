@@ -520,7 +520,7 @@ Ext.define("PSI.Purchase.PWEditForm", {
 							}, {
 								name : "moneyWithTax",
 								type : "float"
-							}]
+							}, "goodsPriceWithTax"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -605,11 +605,19 @@ Ext.define("PSI.Purchase.PWEditForm", {
 							summaryType : "sum",
 							hidden : !me.getViewPrice()
 						}, {
+							header : "含税价",
+							dataIndex : "goodsPriceWithTax",
+							align : "right",
+							xtype : "numbercolumn",
+							width : 100,
+							hidden : !me.getViewPrice()
+						}, {
 							header : "税率(%)",
 							dataIndex : "taxRate",
 							align : "right",
 							format : "0",
-							width : 80
+							width : 80,
+							hidden : !me.getViewPrice()
 						}, {
 							header : "税金",
 							dataIndex : "tax",
@@ -620,7 +628,8 @@ Ext.define("PSI.Purchase.PWEditForm", {
 								xtype : "numberfield",
 								hideTrigger : true
 							},
-							summaryType : "sum"
+							summaryType : "sum",
+							hidden : !me.getViewPrice()
 						}, {
 							header : "价税合计",
 							dataIndex : "moneyWithTax",
@@ -631,7 +640,8 @@ Ext.define("PSI.Purchase.PWEditForm", {
 								xtype : "numberfield",
 								hideTrigger : true
 							},
-							summaryType : "sum"
+							summaryType : "sum",
+							hidden : !me.getViewPrice()
 						}, {
 							header : "备注",
 							dataIndex : "memo",
@@ -762,6 +772,10 @@ Ext.define("PSI.Purchase.PWEditForm", {
 			if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
 				me.calcMoneyWithTax(goods);
 			}
+		} else if (fieldName == "goodsPriceWithTax") {
+			if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
+				me.calcMoney2(goods);
+			}
 		}
 	},
 
@@ -775,17 +789,32 @@ Ext.define("PSI.Purchase.PWEditForm", {
 		goods.set("goodsMoney", goods.get("moneyWithTax") - tax);
 
 		// 计算单价
-		goods.set("goodsPrice", goods.get("goodsMoney")
-						/ goods.get("goodsCount"))
+		if (goods.get("goodsCount") == 0) {
+			goods.set("goodsPrice", null);
+			goods.set("goodsPriceWithTax", null);
+		} else {
+			goods.set("goodsPrice", goods.get("goodsMoney")
+							/ goods.get("goodsCount"));
+			goods.set("goodsPriceWithTax", goods.get("moneyWithTax")
+							/ goods.get("goodsCount"));
+		}
 	},
 
 	calcMoneyWithTax : function(goods) {
 		if (!goods) {
 			return;
 		}
+		goods.set("goodsMoney", goods.get("tax") * 100 / goods.get("taxRate"));
 		goods.set("moneyWithTax", goods.get("goodsMoney") + goods.get("tax"));
+		if (goods.get("goodsCount") != 0) {
+			goods.set("goodsPrice", goods.get("goodsMoney")
+							/ goods.get("goodsCount"));
+			goods.set("goodsPriceWithTax", goods.get("moneyWithTax")
+							/ goods.get("goodsCount"));
+		}
 	},
 
+	// 因为不含税价格变化，重新计算金额
 	calcMoney : function(goods) {
 		if (!goods) {
 			return;
@@ -795,7 +824,27 @@ Ext.define("PSI.Purchase.PWEditForm", {
 						* goods.get("goodsPrice"));
 		goods.set("tax", goods.get("goodsMoney") * goods.get("taxRate") / 100);
 		goods.set("moneyWithTax", goods.get("goodsMoney") + goods.get("tax"));
+		if (goods.get("goodsCount") != 0) {
+			goods.set("goodsPriceWithTax", goods.get("moneyWithTax")
+							/ goods.get("goodsCount"));
+		}
+	},
 
+	// 因为含税价变化，重新计算金额
+	calcMoney2 : function(goods) {
+		if (!goods) {
+			return;
+		}
+
+		goods.set("moneyWithTax", goods.get("goodsPriceWithTax")
+						* goods.get("goodsCount"));
+		goods.set("goodsMoney", goods.get("moneyWithTax")
+						/ (1 + goods.get("taxRate") / 100));
+		goods.set("tax", goods.get("moneyWithTax") - goods.get("goodsMoney"));
+		if (goods.get("goodsCount") != 0) {
+			goods.set("goodsPrice", goods.get("goodsMoney")
+							/ goods.get("goodsCount"));
+		}
 	},
 
 	calcPrice : function(goods) {
@@ -806,6 +855,8 @@ Ext.define("PSI.Purchase.PWEditForm", {
 		var goodsCount = goods.get("goodsCount");
 		if (goodsCount && goodsCount != 0) {
 			goods.set("goodsPrice", goods.get("goodsMoney")
+							/ goods.get("goodsCount"));
+			goods.set("goodsPriceWithTax", goods.get("moneyWithTax")
 							/ goods.get("goodsCount"));
 		}
 	},
@@ -840,7 +891,8 @@ Ext.define("PSI.Purchase.PWEditForm", {
 						poBillDetailId : item.get("poBillDetailId"),
 						taxRate : item.get("taxRate"),
 						tax : item.get("tax"),
-						moneyWithTax : item.get("moneyWithTax")
+						moneyWithTax : item.get("moneyWithTax"),
+						goodsPriceWithTax : item.get("goodsPriceWithTax")
 					});
 		}
 

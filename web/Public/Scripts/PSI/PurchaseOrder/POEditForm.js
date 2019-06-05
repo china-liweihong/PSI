@@ -787,12 +787,18 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 		if (!goods) {
 			return;
 		}
+
+		goods.set("goodsMoney", goods.get("tax") * 100 / goods.get("taxRate"));
 		goods.set("moneyWithTax", goods.get("goodsMoney") + goods.get("tax"));
-		goods.set("goodsPriceWithTax", goods.get("moneyWithTax")
-						/ goods.get("goodsCount"));
+		if (goods.get("goodsCount") != 0) {
+			goods.set("goodsPrice", goods.get("goodsMoney")
+							/ goods.get("goodsCount"));
+			goods.set("goodsPriceWithTax", goods.get("moneyWithTax")
+							/ goods.get("goodsCount"));
+		}
 	},
 
-	// 因为不含税价格变化，重现计算金额
+	// 因为不含税价格变化，重新计算金额
 	calcMoney : function(goods) {
 		if (!goods) {
 			return;
@@ -808,7 +814,7 @@ Ext.define("PSI.PurchaseOrder.POEditForm", {
 		}
 	},
 
-	// 因为含税价变化，重现计算金额
+	// 因为含税价变化，重新计算金额
 	calcMoney2 : function(goods) {
 		if (!goods) {
 			return;

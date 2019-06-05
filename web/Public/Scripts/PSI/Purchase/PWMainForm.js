@@ -348,13 +348,15 @@ Ext.define("PSI.Purchase.PWMainForm", {
 							dataIndex : "tax",
 							align : "right",
 							xtype : "numbercolumn",
-							width : 150
+							width : 150,
+							hidden : me.getPermission().viewPrice == "0"
 						}, {
 							header : "价税合计",
 							dataIndex : "moneyWithTax",
 							align : "right",
 							xtype : "numbercolumn",
-							width : 150
+							width : 150,
+							hidden : me.getPermission().viewPrice == "0"
 						}, {
 							header : "付款方式",
 							dataIndex : "paymentType",
@@ -482,7 +484,7 @@ Ext.define("PSI.Purchase.PWMainForm", {
 					fields : ["id", "goodsCode", "goodsName", "goodsSpec",
 							"unitName", "goodsCount", "goodsMoney",
 							"goodsPrice", "memo", "taxRate", "tax",
-							"moneyWithTax"]
+							"moneyWithTax", "goodsPriceWithTax"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -548,19 +550,29 @@ Ext.define("PSI.Purchase.PWMainForm", {
 									dataIndex : "taxRate",
 									align : "right",
 									xtype : "numbercolumn",
-									format : "0"
+									format : "0",
+									hidden : me.getPermission().viewPrice == "0"
 								}, {
 									header : "税金",
 									dataIndex : "tax",
 									align : "right",
 									xtype : "numbercolumn",
-									width : 150
+									width : 150,
+									hidden : me.getPermission().viewPrice == "0"
 								}, {
 									header : "价税合计",
 									dataIndex : "moneyWithTax",
 									align : "right",
 									xtype : "numbercolumn",
-									width : 150
+									width : 150,
+									hidden : me.getPermission().viewPrice == "0"
+								}, {
+									header : "含税价",
+									dataIndex : "goodsPriceWithTax",
+									align : "right",
+									xtype : "numbercolumn",
+									width : 150,
+									hidden : me.getPermission().viewPrice == "0"
 								}, {
 									header : "备注",
 									dataIndex : "memo",

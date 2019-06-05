@@ -1069,7 +1069,7 @@ class PWBillDAO extends PSIBaseExDAO {
 								convert(p.goods_count, $fmt) as goods_count, 
 								p.goods_price, p.goods_money, 
 								convert(p.left_count, $fmt) as left_count, p.memo,
-								p.tax_rate, p.tax, p.money_with_tax
+								p.tax_rate, p.tax, p.money_with_tax, p.goods_price_with_tax
 							from t_po_bill_detail p, t_goods g, t_goods_unit u
 							where p.pobill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
 							order by p.show_order ";
@@ -1089,7 +1089,8 @@ class PWBillDAO extends PSIBaseExDAO {
 								"memo" => $v["memo"],
 								"taxRate" => $v["tax_rate"],
 								"tax" => $v["tax"],
-								"moneyWithTax" => $v["money_with_tax"]
+								"moneyWithTax" => $v["money_with_tax"],
+								"goodsPriceWithTax" => $v["goods_price_with_tax"]
 						];
 					}
 

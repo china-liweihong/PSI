@@ -513,7 +513,7 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 							}, {
 								name : "moneyWithTax",
 								type : "float"
-							}, "memo"]
+							}, "memo", "goodsPriceWithTax"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -621,6 +621,19 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 									hideTrigger : true
 								},
 								summaryType : "sum"
+							}, {
+								header : "含税价",
+								dataIndex : "goodsPriceWithTax",
+								menuDisabled : true,
+								sortable : false,
+								draggable : false,
+								align : "right",
+								xtype : "numbercolumn",
+								width : 100,
+								editor : {
+									xtype : "numberfield",
+									hideTrigger : true
+								}
 							}, {
 								header : "税率(%)",
 								dataIndex : "taxRate",
@@ -843,6 +856,10 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 			if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
 				me.calcMoney(goods);
 			}
+		} else if (fieldName == "goodsPriceWithTax") {
+			if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
+				me.calcMoney2(goods);
+			}
 		}
 	},
 
@@ -856,17 +873,32 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 		goods.set("goodsMoney", goods.get("moneyWithTax") - tax);
 
 		// 计算单价
-		goods.set("goodsPrice", goods.get("goodsMoney")
-						/ goods.get("goodsCount"))
+		if (goods.get("goodsCount") == 0) {
+			goods.set("goodsPrice", null);
+			goods.set("goodsPriceWithTax", null);
+		} else {
+			goods.set("goodsPrice", goods.get("goodsMoney")
+							/ goods.get("goodsCount"));
+			goods.set("goodsPriceWithTax", goods.get("moneyWithTax")
+							/ goods.get("goodsCount"));
+		}
 	},
 
 	calcMoneyWithTax : function(goods) {
 		if (!goods) {
 			return;
 		}
+		goods.set("goodsMoney", goods.get("tax") * 100 / goods.get("taxRate"));
 		goods.set("moneyWithTax", goods.get("goodsMoney") + goods.get("tax"));
+		if (goods.get("goodsCount") != 0) {
+			goods.set("goodsPrice", goods.get("goodsMoney")
+							/ goods.get("goodsCount"));
+			goods.set("goodsPriceWithTax", goods.get("moneyWithTax")
+							/ goods.get("goodsCount"));
+		}
 	},
 
+	// 因为不含税价格变化，重新计算金额
 	calcMoney : function(goods) {
 		if (!goods) {
 			return;
@@ -876,6 +908,27 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 						* goods.get("goodsPrice"));
 		goods.set("tax", goods.get("goodsMoney") * goods.get("taxRate") / 100);
 		goods.set("moneyWithTax", goods.get("goodsMoney") + goods.get("tax"));
+		if (goods.get("goodsCount") != 0) {
+			goods.set("goodsPriceWithTax", goods.get("moneyWithTax")
+							/ goods.get("goodsCount"));
+		}
+	},
+
+	// 因为含税价变化，重新计算金额
+	calcMoney2 : function(goods) {
+		if (!goods) {
+			return;
+		}
+
+		goods.set("moneyWithTax", goods.get("goodsPriceWithTax")
+						* goods.get("goodsCount"));
+		goods.set("goodsMoney", goods.get("moneyWithTax")
+						/ (1 + goods.get("taxRate") / 100));
+		goods.set("tax", goods.get("moneyWithTax") - goods.get("goodsMoney"));
+		if (goods.get("goodsCount") != 0) {
+			goods.set("goodsPrice", goods.get("goodsMoney")
+							/ goods.get("goodsCount"));
+		}
 	},
 
 	calcPrice : function(goods) {
@@ -886,6 +939,8 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 		var goodsCount = goods.get("goodsCount");
 		if (goodsCount && goodsCount != 0) {
 			goods.set("goodsPrice", goods.get("goodsMoney")
+							/ goods.get("goodsCount"));
+			goods.set("goodsPriceWithTax", goods.get("moneyWithTax")
 							/ goods.get("goodsCount"));
 		}
 	},
@@ -924,7 +979,8 @@ Ext.define("PSI.SaleContract.SCEditForm", {
 						tax : item.get("tax"),
 						taxRate : item.get("taxRate"),
 						moneyWithTax : item.get("moneyWithTax"),
-						memo : item.get("memo")
+						memo : item.get("memo"),
+						goodsPriceWithTax : item.get("goodsPriceWithTax")
 					});
 		}
 

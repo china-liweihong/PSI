@@ -19,7 +19,7 @@ class PortalController extends Controller {
 	public function inventoryPortal() {
 		if (IS_POST) {
 			$ps = new PortalService();
-			
+
 			$this->ajaxReturn($ps->inventoryPortal());
 		}
 	}
@@ -30,7 +30,7 @@ class PortalController extends Controller {
 	public function salePortal() {
 		if (IS_POST) {
 			$ps = new PortalService();
-			
+
 			$this->ajaxReturn($ps->salePortal());
 		}
 	}
@@ -41,7 +41,7 @@ class PortalController extends Controller {
 	public function purchasePortal() {
 		if (IS_POST) {
 			$ps = new PortalService();
-			
+
 			$this->ajaxReturn($ps->purchasePortal());
 		}
 	}
@@ -52,7 +52,7 @@ class PortalController extends Controller {
 	public function moneyPortal() {
 		if (IS_POST) {
 			$ps = new PortalService();
-			
+
 			$this->ajaxReturn($ps->moneyPortal());
 		}
 	}

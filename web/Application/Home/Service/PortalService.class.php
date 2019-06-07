@@ -15,13 +15,13 @@ class PortalService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$result = array();
-		
+
 		$db = $this->db();
 		$sql = "select id, name 
 				from t_warehouse 
-				where (inited = 1) ";
+				where (inited = 1) and (enabled = 1) ";
 		$queryParams = array();
 		$ds = new DataOrgService();
 		$rs = $ds->buildSQL(FIdConst::PORTAL_INVENTORY, "t_warehouse");
@@ -29,13 +29,13 @@ class PortalService extends PSIBaseExService {
 			$sql .= " and " . $rs[0];
 			$queryParams = $rs[1];
 		}
-		
+
 		$sql .= " order by code ";
 		$data = $db->query($sql, $queryParams);
 		foreach ( $data as $i => $v ) {
 			$result[$i]["warehouseName"] = $v["name"];
 			$warehouseId = $v["id"];
-			
+
 			// 库存金额
 			$sql = "select sum(balance_money) as balance_money 
 					from t_inventory
@@ -55,7 +55,7 @@ class PortalService extends PSIBaseExService {
 						and i.warehouse_id = '%s' ";
 			$d = $db->query($sql, $warehouseId);
 			$result[$i]["siCount"] = $d[0]["cnt"];
-			
+
 			// 超过库存上限的商品种类
 			$sql = "select count(*) as cnt
 					from t_inventory i, t_goods_si s
@@ -66,7 +66,7 @@ class PortalService extends PSIBaseExService {
 			$d = $db->query($sql, $warehouseId);
 			$result[$i]["iuCount"] = $d[0]["cnt"];
 		}
-		
+
 		return $result;
 	}
 
@@ -74,24 +74,24 @@ class PortalService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$result = array();
-		
+
 		$db = $this->db();
-		
+
 		// 当月
 		$sql = "select year(now()) as y, month(now()) as m";
 		$data = $db->query($sql);
 		$year = $data[0]["y"];
 		$month = $data[0]["m"];
-		
+
 		for($i = 0; $i < 6; $i ++) {
 			if ($month < 10) {
 				$result[$i]["month"] = "$year-0$month";
 			} else {
 				$result[$i]["month"] = "$year-$month";
 			}
-			
+
 			$sql = "select sum(w.sale_money) as sale_money, sum(w.profit) as profit
 					from t_ws_bill w
 					where w.bill_status >= 1000
@@ -106,7 +106,7 @@ class PortalService extends PSIBaseExService {
 				$sql .= " and " . $rs[0];
 				$queryParams = array_merge($queryParams, $rs[1]);
 			}
-			
+
 			$data = $db->query($sql, $queryParams);
 			$saleMoney = $data[0]["sale_money"];
 			if (! $saleMoney) {
@@ -116,7 +116,7 @@ class PortalService extends PSIBaseExService {
 			if (! $profit) {
 				$profit = 0;
 			}
-			
+
 			// 扣除退货
 			$sql = "select sum(s.rejection_sale_money) as rej_sale_money,
 						sum(s.profit) as rej_profit
@@ -133,7 +133,7 @@ class PortalService extends PSIBaseExService {
 				$sql .= " and " . $rs[0];
 				$queryParams = array_merge($queryParams, $rs[1]);
 			}
-			
+
 			$data = $db->query($sql, $queryParams);
 			$rejSaleMoney = $data[0]["rej_sale_money"];
 			if (! $rejSaleMoney) {
@@ -143,19 +143,19 @@ class PortalService extends PSIBaseExService {
 			if (! $rejProfit) {
 				$rejProfit = 0;
 			}
-			
+
 			$saleMoney -= $rejSaleMoney;
 			$profit += $rejProfit; // 这里是+号，因为$rejProfit是负数
-			
+
 			$result[$i]["saleMoney"] = $saleMoney;
 			$result[$i]["profit"] = $profit;
-			
+
 			if ($saleMoney != 0) {
 				$result[$i]["rate"] = sprintf("%0.2f", $profit / $saleMoney * 100) . "%";
 			} else {
 				$result[$i]["rate"] = "";
 			}
-			
+
 			// 获得上个月
 			if ($month == 1) {
 				$month = 12;
@@ -164,7 +164,7 @@ class PortalService extends PSIBaseExService {
 				$month -= 1;
 			}
 		}
-		
+
 		return $result;
 	}
 
@@ -172,24 +172,24 @@ class PortalService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$result = array();
-		
+
 		$db = $this->db();
-		
+
 		// 当月
 		$sql = "select year(now()) as y, month(now()) as m";
 		$data = $db->query($sql);
 		$year = $data[0]["y"];
 		$month = $data[0]["m"];
-		
+
 		for($i = 0; $i < 6; $i ++) {
 			if ($month < 10) {
 				$result[$i]["month"] = "$year-0$month";
 			} else {
 				$result[$i]["month"] = "$year-$month";
 			}
-			
+
 			$sql = "select sum(w.goods_money) as goods_money
 					from t_pw_bill w
 					where w.bill_status >= 1000
@@ -204,13 +204,13 @@ class PortalService extends PSIBaseExService {
 				$sql .= " and " . $rs[0];
 				$queryParams = array_merge($queryParams, $rs[1]);
 			}
-			
+
 			$data = $db->query($sql, $queryParams);
 			$goodsMoney = $data[0]["goods_money"];
 			if (! $goodsMoney) {
 				$goodsMoney = 0;
 			}
-			
+
 			// 扣除退货
 			$sql = "select sum(s.rejection_money) as rej_money
 					from t_pr_bill s
@@ -226,17 +226,17 @@ class PortalService extends PSIBaseExService {
 				$sql .= " and " . $rs[0];
 				$queryParams = array_merge($queryParams, $rs[1]);
 			}
-			
+
 			$data = $db->query($sql, $queryParams);
 			$rejMoney = $data[0]["rej_money"];
 			if (! $rejMoney) {
 				$rejMoney = 0;
 			}
-			
+
 			$goodsMoney -= $rejMoney;
-			
+
 			$result[$i]["purchaseMoney"] = $goodsMoney;
-			
+
 			// 获得上个月
 			if ($month == 1) {
 				$month = 12;
@@ -245,7 +245,7 @@ class PortalService extends PSIBaseExService {
 				$month -= 1;
 			}
 		}
-		
+
 		return $result;
 	}
 
@@ -253,13 +253,13 @@ class PortalService extends PSIBaseExService {
 		if ($this->isNotOnline()) {
 			return $this->emptyResult();
 		}
-		
+
 		$result = array();
-		
+
 		$db = $this->db();
 		$us = new UserService();
 		$companyId = $us->getCompanyId();
-		
+
 		// 应收账款
 		$result[0]["item"] = "应收账款";
 		$sql = "select sum(balance_money) as balance_money
@@ -271,7 +271,7 @@ class PortalService extends PSIBaseExService {
 			$balance = 0;
 		}
 		$result[0]["balanceMoney"] = $balance;
-		
+
 		// 账龄30天内
 		$sql = "select sum(balance_money) as balance_money
 				from t_receivables_detail
@@ -283,7 +283,7 @@ class PortalService extends PSIBaseExService {
 			$balance = 0;
 		}
 		$result[0]["money30"] = $balance;
-		
+
 		// 账龄30-60天
 		$sql = "select sum(balance_money) as balance_money
 				from t_receivables_detail
@@ -296,7 +296,7 @@ class PortalService extends PSIBaseExService {
 			$balance = 0;
 		}
 		$result[0]["money30to60"] = $balance;
-		
+
 		// 账龄60-90天
 		$sql = "select sum(balance_money) as balance_money
 				from t_receivables_detail
@@ -309,7 +309,7 @@ class PortalService extends PSIBaseExService {
 			$balance = 0;
 		}
 		$result[0]["money60to90"] = $balance;
-		
+
 		// 账龄大于90天
 		$sql = "select sum(balance_money) as balance_money
 				from t_receivables_detail
@@ -321,7 +321,7 @@ class PortalService extends PSIBaseExService {
 			$balance = 0;
 		}
 		$result[0]["money90"] = $balance;
-		
+
 		// 应付账款
 		$result[1]["item"] = "应付账款";
 		$sql = "select sum(balance_money) as balance_money
@@ -333,7 +333,7 @@ class PortalService extends PSIBaseExService {
 			$balance = 0;
 		}
 		$result[1]["balanceMoney"] = $balance;
-		
+
 		// 账龄30天内
 		$sql = "select sum(balance_money) as balance_money
 				from t_payables_detail
@@ -345,7 +345,7 @@ class PortalService extends PSIBaseExService {
 			$balance = 0;
 		}
 		$result[1]["money30"] = $balance;
-		
+
 		// 账龄30-60天
 		$sql = "select sum(balance_money) as balance_money
 				from t_payables_detail
@@ -358,7 +358,7 @@ class PortalService extends PSIBaseExService {
 			$balance = 0;
 		}
 		$result[1]["money30to60"] = $balance;
-		
+
 		// 账龄60-90天
 		$sql = "select sum(balance_money) as balance_money
 				from t_payables_detail
@@ -371,7 +371,7 @@ class PortalService extends PSIBaseExService {
 			$balance = 0;
 		}
 		$result[1]["money60to90"] = $balance;
-		
+
 		// 账龄大于90天
 		$sql = "select sum(balance_money) as balance_money
 				from t_payables_detail
@@ -383,7 +383,7 @@ class PortalService extends PSIBaseExService {
 			$balance = 0;
 		}
 		$result[1]["money90"] = $balance;
-		
+
 		return $result;
 	}
 }

@@ -238,7 +238,7 @@ class SOBillDAO extends PSIBaseExDAO {
 					s.goods_price, s.goods_money,
 					s.tax_rate, s.tax, s.money_with_tax, u.name as unit_name,
 					convert(s.ws_count, " . $fmt . ") as ws_count,
-					convert(s.left_count, " . $fmt . ") as left_count, s.memo
+					convert(s.left_count, " . $fmt . ") as left_count, s.memo, s.goods_price_with_tax
 				from t_so_bill_detail s, t_goods g, t_goods_unit u
 				where s.sobill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
 				order by s.show_order";
@@ -246,7 +246,14 @@ class SOBillDAO extends PSIBaseExDAO {
 		$data = $db->query($sql, $id);
 
 		foreach ( $data as $v ) {
-			$item = array(
+			$goodsPriceWithTax = $v["goods_price_with_tax"];
+			if ($goodsPriceWithTax == null) {
+				// 兼容旧数据
+				if ($v["goods_count"] != 0) {
+					$goodsPriceWithTax = $v["money_with_tax"] / $v["goods_count"];
+				}
+			}
+			$result[] = [
 					"id" => $v["id"],
 					"goodsCode" => $v["code"],
 					"goodsName" => $v["name"],
@@ -260,9 +267,9 @@ class SOBillDAO extends PSIBaseExDAO {
 					"unitName" => $v["unit_name"],
 					"wsCount" => $v["ws_count"],
 					"leftCount" => $v["left_count"],
-					"memo" => $v["memo"]
-			);
-			$result[] = $item;
+					"memo" => $v["memo"],
+					"goodsPriceWithTax" => $goodsPriceWithTax
+			];
 		}
 
 		return $result;

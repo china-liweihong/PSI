@@ -365,6 +365,9 @@ Ext.define("PSI.Bizlog.MainForm", {
 		PSI.MsgBox.confirm("请确认是否升级数据库？", function() {
 			var el = Ext.getBody();
 			el.mask("正在升级数据库，请稍等......");
+
+			// 把超时设置为5分钟，主要是为了在低端配置上能正确升级
+			Ext.Ajax.timeout = 5 * 60 * 1000;
 			Ext.Ajax.request({
 						url : PSI.Const.BASE_URL + "Home/Bizlog/updateDatabase",
 						method : "POST",

@@ -493,7 +493,8 @@ Ext.define("PSI.DMO.DMOMainForm", {
 					fields : ["id", "goodsCode", "goodsName", "goodsSpec",
 							"unitName", "goodsCount", "goodsMoney",
 							"goodsPrice", "taxRate", "tax", "moneyWithTax",
-							"dmwCount", "leftCount", "memo"]
+							"dmwCount", "leftCount", "memo",
+							"goodsPriceWithTax"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -579,6 +580,12 @@ Ext.define("PSI.DMO.DMOMainForm", {
 								}, {
 									header : "价税合计",
 									dataIndex : "moneyWithTax",
+									align : "right",
+									xtype : "numbercolumn",
+									width : 150
+								}, {
+									header : "含税价",
+									dataIndex : "goodsPriceWithTax",
 									align : "right",
 									xtype : "numbercolumn",
 									width : 150

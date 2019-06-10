@@ -23,6 +23,9 @@
 <script
 	src="{$uri}Public/Scripts/PSI/SaleOrder/SOMainForm.js?dt={$dtFlag}"
 	type="text/javascript"></script>
+<!-- GoodsPrice会mix到SOEditForm，所以需要放在其前面引用 -->
+<script src="{$uri}Public/Scripts/PSI/Mix/GoodsPrice.js?dt={$dtFlag}"
+	type="text/javascript"></script>
 <script
 	src="{$uri}Public/Scripts/PSI/SaleOrder/SOEditForm.js?dt={$dtFlag}"
 	type="text/javascript"></script>

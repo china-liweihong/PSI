@@ -31,6 +31,10 @@
 <script
 	src="{$uri}Public/Scripts/PSI/Purchase/PWMainForm.js?dt={$dtFlag}"
 	type="text/javascript"></script>
+
+<!-- GoodsPrice会mix到PWEditForm，所以需要放在其前面引用 -->
+<script src="{$uri}Public/Scripts/PSI/Mix/GoodsPrice.js?dt={$dtFlag}"
+	type="text/javascript"></script>
 <script
 	src="{$uri}Public/Scripts/PSI/Purchase/PWEditForm.js?dt={$dtFlag}"
 	type="text/javascript"></script>

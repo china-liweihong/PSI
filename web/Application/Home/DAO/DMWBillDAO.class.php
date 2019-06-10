@@ -763,7 +763,8 @@ class DMWBillDAO extends PSIBaseExDAO {
 
 		$sql = "select p.id, g.code, g.name, g.spec, u.name as unit_name,
 					convert(p.goods_count, $fmt) as goods_count, p.goods_price,
-					p.goods_money, p.memo, p.tax_rate, p.tax, p.money_with_tax
+					p.goods_money, p.memo, p.tax_rate, p.tax, p.money_with_tax,
+					p.goods_price_with_tax
 				from t_dmw_bill_detail p, t_goods g, t_goods_unit u
 				where p.dmwbill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
 				order by p.show_order ";
@@ -771,6 +772,13 @@ class DMWBillDAO extends PSIBaseExDAO {
 		$result = [];
 
 		foreach ( $data as $v ) {
+			$goodsPriceWithTax = $v["goods_price_with_tax"];
+			if ($goodsPriceWithTax == null) {
+				// 兼容旧数据
+				if ($v["goods_count"] != 0) {
+					$goodsPriceWithTax = $v["money_with_tax"] / $v["goods_count"];
+				}
+			}
 			$result[] = [
 					"id" => $v["id"],
 					"goodsCode" => $v["code"],
@@ -783,7 +791,8 @@ class DMWBillDAO extends PSIBaseExDAO {
 					"memo" => $v["memo"],
 					"taxRate" => $v["tax_rate"],
 					"tax" => $v["tax"],
-					"moneyWithTax" => $v["money_with_tax"]
+					"moneyWithTax" => $v["money_with_tax"],
+					"goodsPriceWithTax" => $goodsPriceWithTax
 			];
 		}
 

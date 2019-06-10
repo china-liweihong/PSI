@@ -434,7 +434,7 @@ Ext.define("PSI.DMW.DMWMainForm", {
 					fields : ["id", "goodsCode", "goodsName", "goodsSpec",
 							"unitName", "goodsCount", "goodsMoney",
 							"goodsPrice", "memo", "taxRate", "tax",
-							"moneyWithTax"]
+							"moneyWithTax", "goodsPriceWithTax"]
 				});
 		var store = Ext.create("Ext.data.Store", {
 					autoLoad : false,
@@ -508,6 +508,12 @@ Ext.define("PSI.DMW.DMWMainForm", {
 								}, {
 									header : "价税合计",
 									dataIndex : "moneyWithTax",
+									align : "right",
+									xtype : "numbercolumn",
+									width : 150
+								}, {
+									header : "含税价",
+									dataIndex : "goodsPriceWithTax",
 									align : "right",
 									xtype : "numbercolumn",
 									width : 150

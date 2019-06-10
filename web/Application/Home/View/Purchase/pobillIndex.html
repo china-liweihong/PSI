@@ -20,10 +20,8 @@
 <script
 	src="{$uri}Public/Scripts/PSI/Goods/GoodsBrandField.js?dt={$dtFlag}"
 	type="text/javascript"></script>
-<script
-	src="{$uri}Public/Scripts/PSI/Goods/GoodsField.js?dt={$dtFlag}"
+<script src="{$uri}Public/Scripts/PSI/Goods/GoodsField.js?dt={$dtFlag}"
 	type="text/javascript"></script>
-
 
 <script
 	src="{$uri}Public/Scripts/PSI/Supplier/SupplierEditForm.js?dt={$dtFlag}"
@@ -31,6 +29,10 @@
 
 <script
 	src="{$uri}Public/Scripts/PSI/PurchaseOrder/POMainForm.js?dt={$dtFlag}"
+	type="text/javascript"></script>
+
+<!-- GoodsPrice会mix到POEditForm，所以需要放在其前面引用 -->
+<script src="{$uri}Public/Scripts/PSI/Mix/GoodsPrice.js?dt={$dtFlag}"
 	type="text/javascript"></script>
 <script
 	src="{$uri}Public/Scripts/PSI/PurchaseOrder/POEditForm.js?dt={$dtFlag}"

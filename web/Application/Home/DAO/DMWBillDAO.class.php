@@ -126,12 +126,19 @@ class DMWBillDAO extends PSIBaseExDAO {
 			$items = [];
 			$sql = "select p.id, p.goods_id, g.code, g.name, g.spec, u.name as unit_name,
 						convert(p.goods_count, $fmt) as goods_count, p.goods_price, p.goods_money, p.memo,
-						p.dmobilldetail_id, p.tax_rate, p.tax, p.money_with_tax
+						p.dmobilldetail_id, p.tax_rate, p.tax, p.money_with_tax, p.goods_price_with_tax
 					from t_dmw_bill_detail p, t_goods g, t_goods_unit u
 					where p.goods_Id = g.id and g.unit_id = u.id and p.dmwbill_id = '%s'
 					order by p.show_order";
 			$data = $db->query($sql, $id);
 			foreach ( $data as $v ) {
+				$goodsPriceWithTax = $v["goods_price_with_tax"];
+				if ($goodsPriceWithTax == null) {
+					// 兼容旧数据
+					if ($v["goods_count"] != 0) {
+						$goodsPriceWithTax = $v["money_with_tax"] / $v["goods_count"];
+					}
+				}
 				$items[] = [
 						"id" => $v["id"],
 						"goodsId" => $v["goods_id"],
@@ -146,7 +153,8 @@ class DMWBillDAO extends PSIBaseExDAO {
 						"dmoBillDetailId" => $v["dmobilldetail_id"],
 						"taxRate" => $v["tax_rate"],
 						"tax" => $v["tax"],
-						"moneyWithTax" => $v["money_with_tax"]
+						"moneyWithTax" => $v["money_with_tax"],
+						"goodsPriceWithTax" => $goodsPriceWithTax
 				];
 			}
 
@@ -186,7 +194,8 @@ class DMWBillDAO extends PSIBaseExDAO {
 					$sql = "select p.id, p.goods_id, g.code, g.name, g.spec, u.name as unit_name,
 								convert(p.goods_count, $fmt) as goods_count,
 								p.goods_price, p.goods_money,
-								convert(p.left_count, $fmt) as left_count, p.memo, p.tax_rate
+								convert(p.left_count, $fmt) as left_count, p.memo, p.tax_rate,
+								p.goods_price_with_tax
 							from t_dmo_bill_detail p, t_goods g, t_goods_unit u
 							where p.dmobill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
 							order by p.show_order ";
@@ -197,6 +206,14 @@ class DMWBillDAO extends PSIBaseExDAO {
 						$goodsMoney = $v["left_count"] * $v["goods_price"];
 						$tax = $goodsMoney * $taxRate / 100;
 						$moneyWithTax = $goodsMoney + $tax;
+
+						$goodsPriceWithTax = $v["goods_price_with_tax"];
+						if ($goodsPriceWithTax == null) {
+							// 兼容旧数据
+							if ($v["goods_count"] != 0) {
+								$goodsPriceWithTax = $moneyWithTax / $v["goods_count"];
+							}
+						}
 
 						$items[] = [
 								"id" => $v["id"],
@@ -212,7 +229,8 @@ class DMWBillDAO extends PSIBaseExDAO {
 								"memo" => $v["memo"],
 								"taxRate" => $taxRate,
 								"tax" => $tax,
-								"moneyWithTax" => $moneyWithTax
+								"moneyWithTax" => $moneyWithTax,
+								"goodsPriceWithTax" => $goodsPriceWithTax
 						];
 					}
 
@@ -344,6 +362,9 @@ class DMWBillDAO extends PSIBaseExDAO {
 			// 采购单价
 			$goodsPrice = $item["goodsPrice"];
 
+			// 含税价
+			$goodsPriceWithTax = $item["goodsPriceWithTax"];
+
 			// 采购金额
 			$goodsMoney = $item["goodsMoney"];
 
@@ -357,12 +378,12 @@ class DMWBillDAO extends PSIBaseExDAO {
 			$sql = "insert into t_dmw_bill_detail
 						(id, date_created, goods_id, goods_count, goods_price,
 						goods_money,  dmwbill_id, show_order, data_org, memo, company_id,
-						dmobilldetail_id, tax_rate, tax, money_with_tax)
+						dmobilldetail_id, tax_rate, tax, money_with_tax, goods_price_with_tax)
 					values ('%s', now(), '%s', convert(%f, $fmt), %f, %f, '%s', %d, '%s', '%s', '%s', '%s',
-						%d, %f, %f)";
+						%d, %f, %f, %f)";
 			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsPrice, $goodsMoney,
 					$id, $i, $dataOrg, $memo, $companyId, $dmoBillDetailId, $taxRate, $tax,
-					$moneyWithTax);
+					$moneyWithTax, $goodsPriceWithTax);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}
@@ -536,6 +557,9 @@ class DMWBillDAO extends PSIBaseExDAO {
 			// 单价
 			$goodsPrice = $item["goodsPrice"];
 
+			// 含税价
+			$goodsPriceWithTax = $item["goodsPriceWithTax"];
+
 			// 金额
 			$goodsMoney = $item["goodsMoney"];
 
@@ -548,12 +572,12 @@ class DMWBillDAO extends PSIBaseExDAO {
 
 			$sql = "insert into t_dmw_bill_detail (id, date_created, goods_id, goods_count, goods_price,
 						goods_money,  dmwbill_id, show_order, data_org, memo, company_id, dmobilldetail_id,
-						tax_rate, tax, money_with_tax)
+						tax_rate, tax, money_with_tax, goods_price_with_tax)
 					values ('%s', now(), '%s', convert(%f, $fmt), %f, %f, '%s', %d, '%s', '%s', '%s', '%s',
-						%d, %f, %f)";
+						%d, %f, %f, %f)";
 			$rc = $db->execute($sql, $this->newId(), $goodsId, $goodsCount, $goodsPrice, $goodsMoney,
 					$id, $i, $dataOrg, $memo, $companyId, $dmoBillDetailId, $taxRate, $tax,
-					$moneyWithTax);
+					$moneyWithTax, $goodsPriceWithTax);
 			if ($rc === false) {
 				return $this->sqlError(__METHOD__, __LINE__);
 			}

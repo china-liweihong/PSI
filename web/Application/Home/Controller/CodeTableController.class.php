@@ -169,7 +169,14 @@ class CodeTableController extends PSIBaseController {
 			$params = [
 					"id" => I("post.id"),
 					"codeTableId" => I("post.codeTableId"),
-					"name" => I("post.name"),
+					"caption" => I("post.catpion"),
+					"fieldName" => I("post.fieldName"),
+					"fieldType" => I("post.fieldType"),
+					"fieldLength" => I("post.fieldLength"),
+					"valueFrom" => I("post.valueFrom"),
+					"mustInput" => I("post.mustInput"),
+					"widthInView" => I("post.widthInView"),
+					"showOrder" => I("post.showOrder"),
 					"memo" => I("post.memo")
 			];
 

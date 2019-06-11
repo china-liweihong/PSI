@@ -337,6 +337,7 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
 
 		if (me.adding) {
 			// 新建
+			me.editCaption.focus();
 		} else {
 			// 编辑
 			var el = me.getEl();
@@ -355,6 +356,8 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
 								me.editTableName.setValue(data.tableName);
 								me.editTableName.setReadOnly(true);
 								me.editMemo.setValue(data.memo);
+
+								me.editCaption.focus();
 							}
 
 							el && el.unmask();

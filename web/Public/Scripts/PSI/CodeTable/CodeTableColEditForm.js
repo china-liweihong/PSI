@@ -211,11 +211,13 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
 								}, {
 									id : "PSI_CodeTable_CodeTableColEditForm_editValueFromTableName",
 									fieldLabel : "引用表名",
-									disabled : true
+									disabled : true,
+									name : "valueFromTableName"
 								}, {
 									id : "PSI_CodeTable_CodeTableColEditForm_editValueFromColName",
 									fieldLabel : "引用列名",
-									disabled : true
+									disabled : true,
+									name : "valueFromColName"
 								}, {
 									id : "PSI_CodeTable_CodeTableColEditForm_editIsVisible",
 									xtype : "combo",

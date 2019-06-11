@@ -267,14 +267,26 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
 									allowBlank : false,
 									blankText : "没有输入列视图宽度",
 									beforeLabelTextTpl : PSI.Const.REQUIRED,
-									name : "widthInView"
+									name : "widthInView",
+									listeners : {
+										specialkey : {
+											fn : me.onEditSpecialKey,
+											scope : me
+										}
+									}
 								}, {
 									id : "PSI_CodeTable_CodeTableColEditForm_editShowOrder",
 									fieldLabel : "显示次序",
 									xtype : "numberfield",
 									hideTrigger : true,
 									allowDecimal : false,
-									name : "showOrder"
+									name : "showOrder",
+									listeners : {
+										specialkey : {
+											fn : me.onEditSpecialKey,
+											scope : me
+										}
+									}
 								}, {
 									id : "PSI_CodeTable_CodeTableColEditForm_editMemo",
 									fieldLabel : "备注",
@@ -327,9 +339,14 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
 				.getCmp("PSI_CodeTable_CodeTableColEditForm_editValueFromTableName");
 		me.editValueFromColName = Ext
 				.getCmp("PSI_CodeTable_CodeTableColEditForm_editValueFromColName");
+		me.editWidthInView = Ext
+				.getCmp("PSI_CodeTable_CodeTableColEditForm_editWidthInView");
+		me.editShowOrder = Ext
+				.getCmp("PSI_CodeTable_CodeTableColEditForm_editShowOrder");
 		me.editMemo = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editMemo");
 
-		me.__editorList = [me.editName, me.editTableName, me.editMemo];
+		me.__editorList = [me.editCaption, me.editFieldName,
+				me.editWidthInView, me.editShowOrder, me.editMemo];
 	},
 
 	onWndShow : function() {

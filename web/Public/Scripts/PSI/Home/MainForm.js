@@ -15,69 +15,81 @@ Ext.define("PSI.Home.MainForm", {
 	border : 0,
 	bodyPadding : 5,
 
-	getPortal : function(index) {
-		var me = this;
-		if (!me.__portalList) {
-			me.__portalList = [];
-			var pSale = me.getPSale() == "1";
-			if (pSale) {
-				me.__portalList.push(me.getSalePortal());
-			}
-
-			var pInventory = me.getPInventory() == "1";
-			if (pInventory) {
-				me.__portalList.push(me.getInventoryPortal());
-			}
-
-			var pPurchase = me.getPPurchase() == "1";
-			if (pPurchase) {
-				me.__portalList.push(me.getPurchasePortal());
-			}
-
-			var pMoney = me.getPMoney() == "1";
-			if (pMoney) {
-				me.__portalList.push(me.getMoneyPortal());
-			}
-		}
-
-		if (index == 0 && me.__portalList.length == 0) {
-			return me.getInfoPortal();
-		}
-
-		if (index >= me.__portalList.length || index < 0) {
-			return {
-				border : 0
-			};
-		}
-
-		return me.__portalList[index];
-	},
-
 	initComponent : function() {
 		var me = this;
 
+		var items = [];
+
+		// 销售看板
+		if (me.getPSale() == "1") {
+			items.push({
+						width : "100%",
+						layout : "hbox",
+						border : 0,
+						hidden : me.getPSale() != "1",
+						items : [me.getSalePortal1(), me.getSalePortal2()]
+					});
+		}
+		// 采购看板
+		if (me.getPPurchase() == "1") {
+			items.push({
+						width : "100%",
+						layout : "hbox",
+						border : 0,
+						items : [me.getPurchasePortal1(),
+								me.getPurchasePortal2()]
+					});
+		}
+		// 库存看板
+		if (me.getPInventory() == "1") {
+			items.push({
+						width : "100%",
+						layout : "hbox",
+						border : 0,
+						items : [me.getInventoryPortal()]
+					});
+		}
+		// 资金看板
+		if (me.getPMoney() == "1") {
+			items.push({
+						width : "100%",
+						layout : "hbox",
+						border : 0,
+						items : [me.getMoneyPortal()]
+					});
+		}
+		// 如果上述看板都没有权限，则显示默认信息
+		if (items.length == 0) {
+			items.push({
+						width : "100%",
+						layout : "hbox",
+						border : 0,
+						items : [me.getInfoPortal()]
+					});
+		}
 		Ext.apply(me, {
-					layout : "hbox",
-					items : [{
-								region : "west",
-								flex : 1,
-								layout : "vbox",
-								border : 0,
-								items : [me.getPortal(0), me.getPortal(2)]
-							}, {
-								flex : 1,
-								layout : "vbox",
-								border : 0,
-								items : [me.getPortal(1), me.getPortal(3)]
-							}]
+					layout : "vbox",
+					autoScroll : true,
+					items : items
 				});
 
 		me.callParent(arguments);
 
-		me.querySaleData();
-		me.queryInventoryData();
-		me.queryPurchaseData();
-		me.queryMoneyData();
+		if (me.getPSale() == "1") {
+			me.querySaleData();
+		}
+
+		if (me.getPPurchase() == "1") {
+			me.queryPurchaseData();
+		}
+
+		if (me.getPInventory() == "1") {
+			me.queryInventoryData();
+		}
+
+		if (me.getPMoney() == "1") {
+			me.queryMoneyData();
+		}
 	},
 
 	getSaleGrid : function() {
@@ -332,7 +344,7 @@ Ext.define("PSI.Home.MainForm", {
 		return me.__moneyGrid;
 	},
 
-	getSalePortal : function() {
+	getSalePortal1 : function() {
 		var me = this;
 		return {
 			flex : 1,
@@ -344,23 +356,29 @@ Ext.define("PSI.Home.MainForm", {
 				iconCls : "PSI-portal-sale",
 				height : 40
 			},
-			xtype : "tabpanel",
-			tabPosition : "bottom",
-			items : [{
-						title : "图表",
-						layout : "fit",
-						border : 0,
-						items : me.getSaleChart()
-					}, {
-						title : "表格",
-						layout : "fit",
-						border : 0,
-						items : me.getSaleGrid()
-					}]
+			layout : "fit",
+			items : me.getSaleChart()
 		};
 	},
 
-	getPurchasePortal : function() {
+	getSalePortal2 : function() {
+		var me = this;
+		return {
+			flex : 1,
+			width : "100%",
+			height : 270,
+			margin : "5",
+			header : {
+				title : "<span style='font-size:120%;font-weight:normal;'>销售看板</span>",
+				iconCls : "PSI-portal-sale",
+				height : 40
+			},
+			layout : "fit",
+			items : me.getSaleGrid()
+		};
+	},
+
+	getPurchasePortal1 : function() {
 		var me = this;
 		return {
 			header : {
@@ -372,19 +390,25 @@ Ext.define("PSI.Home.MainForm", {
 			width : "100%",
 			height : 270,
 			margin : "5",
-			xtype : "tabpanel",
-			tabPosition : "bottom",
-			items : [{
-						title : "图表",
-						border : 0,
-						layout : "fit",
-						items : me.getPurchaseChart()
-					}, {
-						title : "表格",
-						layout : "fit",
-						border : 0,
-						items : me.getPurchaseGrid()
-					}]
+			layout : "fit",
+			items : me.getPurchaseChart()
+		};
+	},
+
+	getPurchasePortal2 : function() {
+		var me = this;
+		return {
+			header : {
+				title : "<span style='font-size:120%;font-weight:normal;'>采购看板</span>",
+				iconCls : "PSI-portal-purchase",
+				height : 40
+			},
+			flex : 1,
+			width : "100%",
+			height : 270,
+			margin : "5",
+			layout : "fit",
+			items : me.getPurchaseGrid()
 		};
 	},
 

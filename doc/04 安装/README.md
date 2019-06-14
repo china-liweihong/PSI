@@ -29,13 +29,3 @@ http://www.thinkphp.cn/topic/9728.html (wamp集成环境开启rewrite伪静态�
 
 PSI在phpstudy的默认安装下不能正常启动，如果自己不能解决，请改用xampp部署
 
-
-# 本地开发环境
-
-本地开发环境推荐用xampp: https://www.apachefriends.org/zh_cn/index.html
-
-IDE: Eclipse IDE for PHP
-导入：PSI\doc\98 编码规范\PSI_编码风格_Ecllipse.xml 以保证编码格式化风格一致
-
-ExtJS插件：http://www.spket.com/
-安装方法：Eclipse的Help菜单-Install New Software菜单-Work With输入： http://www.agpad.com/update/

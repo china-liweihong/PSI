@@ -116,19 +116,13 @@ Ext.define("PSI.Bill.WSPViewForm", {
         el.unmask();
 
         if (success) {
-          var data = Ext.JSON
-            .decode(response.responseText);
+          var data = Ext.JSON.decode(response.responseText);
 
-          Ext.getCmp("editBizUser")
-            .setValue(data.bizUserName);
-          Ext.getCmp("editBizDT")
-            .setValue(data.bizDT);
-          Ext.getCmp("editFromWarehouse")
-            .setValue(data.fromWarehouseName);
-          Ext.getCmp("editToWarehouse")
-            .setValue(data.toWarehouseName);
-          Ext.getCmp("editBillMemo")
-            .setValue(data.billMemo);
+          Ext.getCmp("editBizUser").setValue(data.bizUserName);
+          Ext.getCmp("editBizDT").setValue(data.bizDT);
+          Ext.getCmp("editFromWarehouse").setValue(data.fromWarehouseName);
+          Ext.getCmp("editToWarehouse").setValue(data.toWarehouseName);
+          Ext.getCmp("editBillMemo").setValue(data.billMemo);
 
           var store = me.getGoodsGrid().getStore();
           store.removeAll();

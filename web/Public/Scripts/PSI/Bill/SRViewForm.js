@@ -100,21 +100,14 @@ Ext.define("PSI.Bill.SRViewForm", {
         el.unmask();
 
         if (success) {
-          var data = Ext.JSON
-            .decode(response.responseText);
+          var data = Ext.JSON.decode(response.responseText);
 
-          Ext.getCmp("editCustomer")
-            .setValue(data.customerName
-              + " 销售单号: "
-              + data.wsBillRef);
+          Ext.getCmp("editCustomer").setValue(data.customerName + " 销售单号: " + data.wsBillRef);
 
-          Ext.getCmp("editWarehouse")
-            .setValue(data.warehouseName);
+          Ext.getCmp("editWarehouse").setValue(data.warehouseName);
 
-          Ext.getCmp("editBizUser")
-            .setValue(data.bizUserName);
-          Ext.getCmp("editBizDT")
-            .setValue(data.bizDT);
+          Ext.getCmp("editBizUser").setValue(data.bizUserName);
+          Ext.getCmp("editBizDT").setValue(data.bizDT);
 
           var store = me.getGoodsGrid().getStore();
           store.removeAll();

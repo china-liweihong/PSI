@@ -93,11 +93,9 @@ Ext.define("PSI.Bill.ICViewForm", {
         if (success) {
           var data = Ext.JSON.decode(response.responseText);
 
-          Ext.getCmp("editBizUser")
-            .setValue(data.bizUserName);
+          Ext.getCmp("editBizUser").setValue(data.bizUserName);
           Ext.getCmp("editBizDT").setValue(data.bizDT);
-          Ext.getCmp("editWarehouse")
-            .setValue(data.warehouseName);
+          Ext.getCmp("editWarehouse").setValue(data.warehouseName);
 
           var store = me.getGoodsGrid().getStore();
           store.removeAll();

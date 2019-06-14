@@ -102,21 +102,14 @@ Ext.define("PSI.Bill.PRViewForm", {
         el.unmask();
 
         if (success) {
-          var data = Ext.JSON
-            .decode(response.responseText);
+          var data = Ext.JSON.decode(response.responseText);
 
-          Ext.getCmp("editSupplier")
-            .setValue(data.supplierName
-              + " 采购入库单单号："
-              + data.pwbillRef);
+          Ext.getCmp("editSupplier").setValue(data.supplierName + " 采购入库单单号：" + data.pwbillRef);
 
-          Ext.getCmp("editWarehouse")
-            .setValue(data.warehouseName);
+          Ext.getCmp("editWarehouse").setValue(data.warehouseName);
 
-          Ext.getCmp("editBizUser")
-            .setValue(data.bizUserName);
-          Ext.getCmp("editBizDT")
-            .setValue(data.bizDT);
+          Ext.getCmp("editBizUser").setValue(data.bizUserName);
+          Ext.getCmp("editBizDT").setValue(data.bizDT);
 
           var store = me.getGoodsGrid().getStore();
           store.removeAll();

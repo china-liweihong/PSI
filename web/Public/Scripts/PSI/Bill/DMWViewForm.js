@@ -102,17 +102,12 @@ Ext.define("PSI.Bill.DMWViewForm", {
         el.unmask();
 
         if (success) {
-          var data = Ext.JSON
-            .decode(response.responseText);
+          var data = Ext.JSON.decode(response.responseText);
 
-          Ext.getCmp("editFactory")
-            .setValue(data.factoryName);
-          Ext.getCmp("editWarehouse")
-            .setValue(data.warehouseName);
-          Ext.getCmp("editBizUser")
-            .setValue(data.bizUserName);
-          Ext.getCmp("editBizDT")
-            .setValue(data.bizDT);
+          Ext.getCmp("editFactory").setValue(data.factoryName);
+          Ext.getCmp("editWarehouse").setValue(data.warehouseName);
+          Ext.getCmp("editBizUser").setValue(data.bizUserName);
+          Ext.getCmp("editBizDT").setValue(data.bizDT);
 
           var store = me.getGoodsGrid().getStore();
           store.removeAll();

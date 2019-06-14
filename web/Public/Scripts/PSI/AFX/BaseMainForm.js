@@ -2,52 +2,52 @@
  * 主界面基类
  */
 Ext.define("PSI.AFX.BaseMainForm", {
-			extend : "Ext.panel.Panel",
+  extend: "Ext.panel.Panel",
 
-			border : 0,
+  border: 0,
 
-			layout : "border",
+  layout: "border",
 
-			initComponent : function() {
-				var me = this;
+  initComponent: function () {
+    var me = this;
 
-				Ext.apply(me, {
-							tbar : me.afxGetToolbarCmp()
-						});
+    Ext.apply(me, {
+      tbar: me.afxGetToolbarCmp()
+    });
 
-				me.callParent(arguments);
+    me.callParent(arguments);
 
-				me.afxInitComponent();
-			},
+    me.afxInitComponent();
+  },
 
-			URL : function(url) {
-				return PSI.Const.BASE_URL + url;
-			},
+  URL: function (url) {
+    return PSI.Const.BASE_URL + url;
+  },
 
-			decodeJSON : function(str) {
-				return Ext.JSON.decode(str);
-			},
+  decodeJSON: function (str) {
+    return Ext.JSON.decode(str);
+  },
 
-			tip : function(info) {
-				PSI.MsgBox.tip(info);
-			},
+  tip: function (info) {
+    PSI.MsgBox.tip(info);
+  },
 
-			showInfo : function(info) {
-				PSI.MsgBox.showInfo(info);
-			},
+  showInfo: function (info) {
+    PSI.MsgBox.showInfo(info);
+  },
 
-			confirm : function(confirmInfo, funcOnYes) {
-				PSI.MsgBox.confirm(confirmInfo, funcOnYes);
-			},
+  confirm: function (confirmInfo, funcOnYes) {
+    PSI.MsgBox.confirm(confirmInfo, funcOnYes);
+  },
 
-			ajax : function(r) {
-				Ext.Ajax.request(r);
-			},
+  ajax: function (r) {
+    Ext.Ajax.request(r);
+  },
 
-			afxGetToolbarCmp : function() {
-				return [];
-			},
+  afxGetToolbarCmp: function () {
+    return [];
+  },
 
-			afxInitComponent : function() {
-			}
-		});
+  afxInitComponent: function () {
+  }
+});

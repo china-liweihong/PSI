@@ -7,5 +7,5 @@ namespace Home\DAO;
  *
  * @author 李静波
  */
-class IdGenDAO extends PSIBaseExDAO {
-}
+class IdGenDAO extends PSIBaseExDAO
+{ }

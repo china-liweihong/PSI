@@ -24,6 +24,9 @@ PSI的开源协议为GPL v3
 
 如有技术方面的问题，可以提出Issue一起讨论：https://gitee.com/crm8000/PSI/issues
 
+# 本地开发环境
+参见：<a href="https://gitee.com/crm8000/PSI/tree/master/doc/06%20%E6%9C%AC%E5%9C%B0%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83">本地开发环境</a>
+
 # 商务合作
 
 微信/Tel: 13842851510

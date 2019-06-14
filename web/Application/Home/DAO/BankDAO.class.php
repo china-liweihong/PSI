@@ -93,9 +93,9 @@ class BankDAO extends PSIBaseExDAO
 
     $id = $this->newId();
     $sql = "insert into t_bank_account(id, bank_name, bank_number, memo,
-  					date_created, data_org, company_id)
-	    			values ('%s', '%s', '%s', '%s',
-			  		now(), '%s', '%s')";
+            date_created, data_org, company_id)
+            values ('%s', '%s', '%s', '%s',
+            now(), '%s', '%s')";
     $rc = $db->execute($sql, $id, $bankName, $bankNumber, $memo, $dataOrg, $companyId);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -152,9 +152,9 @@ class BankDAO extends PSIBaseExDAO
 
     // 检查银行账户是否存在
     $sql = "select count(*) as cnt
-				    from t_bank_account
-				    where company_id = '%s' and bank_name = '%s' 
-					    and bank_number = '%s' and id <> '%s' ";
+            from t_bank_account
+            where company_id = '%s' and bank_name = '%s' 
+              and bank_number = '%s' and id <> '%s' ";
     $data = $db->query($sql, $companyId, $bankName, $bankNumber, $id);
     $cnt = $data[0]["cnt"];
     if ($cnt > 0) {

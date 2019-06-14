@@ -8,8 +8,10 @@ require __DIR__ . '/../Common/Pinyin/pinyin.php';
  *
  * @author 李静波
  */
-class PinyinService {
-	public function toPY($s) {
-		return strtoupper(pinyin($s, "first", ""));
-	}
+class PinyinService
+{
+  public function toPY($s)
+  {
+    return strtoupper(pinyin($s, "first", ""));
+  }
 }

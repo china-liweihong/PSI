@@ -9,9 +9,11 @@ require __DIR__ . '/../Common/Money/Money.php';
  *
  * @author 李静波
  */
-class MoneyCaptialService {
+class MoneyCaptialService
+{
 
-	public function toCaptial($m) {
-		return (new \Capital\Money($m))->toCapital();
-	}
+  public function toCaptial($m)
+  {
+    return (new \Capital\Money($m))->toCapital();
+  }
 }

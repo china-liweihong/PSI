@@ -9,17 +9,19 @@ use Home\DAO\IdGenDAO;
  *
  * @author 李静波
  */
-class IdGenService {
+class IdGenService
+{
 
-	/**
-	 * 创建一个新的UUID
-	 */
-	public function newId($db = null) {
-		if (! $db) {
-			$db = M();
-		}
-		
-		$dao = new IdGenDAO($db);
-		return $dao->newId();
-	}
+  /**
+   * 创建一个新的UUID
+   */
+  public function newId($db = null)
+  {
+    if (!$db) {
+      $db = M();
+    }
+
+    $dao = new IdGenDAO($db);
+    return $dao->newId();
+  }
 }

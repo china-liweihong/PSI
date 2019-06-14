@@ -10,458 +10,480 @@ use Home\DAO\BizConfigDAO;
  *
  * @author 李静波
  */
-class BizConfigService extends PSIBaseExService {
-	private $LOG_CATEGORY = "业务设置";
+class BizConfigService extends PSIBaseExService
+{
+  private $LOG_CATEGORY = "业务设置";
 
-	/**
-	 * 返回所有的配置项
-	 */
-	public function allConfigs($params) {
-		if ($this->isNotOnline()) {
-			return $this->emptyResult();
-		}
+  /**
+   * 返回所有的配置项
+   */
+  public function allConfigs($params)
+  {
+    if ($this->isNotOnline()) {
+      return $this->emptyResult();
+    }
 
-		$dao = new BizConfigDAO($this->db());
+    $dao = new BizConfigDAO($this->db());
 
-		return $dao->allConfigs($params);
-	}
+    return $dao->allConfigs($params);
+  }
 
-	/**
-	 * 返回所有的配置项，附带着附加数据集
-	 */
-	public function allConfigsWithExtData($params) {
-		if ($this->isNotOnline()) {
-			return $this->emptyResult();
-		}
+  /**
+   * 返回所有的配置项，附带着附加数据集
+   */
+  public function allConfigsWithExtData($params)
+  {
+    if ($this->isNotOnline()) {
+      return $this->emptyResult();
+    }
 
-		$us = new UserService();
-		$params["loginUserId"] = $us->getLoginUserId();
+    $us = new UserService();
+    $params["loginUserId"] = $us->getLoginUserId();
 
-		$dao = new BizConfigDAO($this->db());
+    $dao = new BizConfigDAO($this->db());
 
-		return $dao->allConfigsWithExtData($params);
-	}
+    return $dao->allConfigsWithExtData($params);
+  }
 
-	/**
-	 * 保存配置项
-	 */
-	public function edit($params) {
-		if ($this->isNotOnline()) {
-			return $this->notOnlineError();
-		}
+  /**
+   * 保存配置项
+   */
+  public function edit($params)
+  {
+    if ($this->isNotOnline()) {
+      return $this->notOnlineError();
+    }
 
-		$db = $this->db();
+    $db = $this->db();
 
-		$db->startTrans();
+    $db->startTrans();
 
-		$params["isDemo"] = $this->isDemo();
+    $params["isDemo"] = $this->isDemo();
 
-		$dao = new BizConfigDAO($db);
-		$rc = $dao->edit($params);
-		if ($rc) {
-			$db->rollback();
-			return $rc;
-		}
+    $dao = new BizConfigDAO($db);
+    $rc = $dao->edit($params);
+    if ($rc) {
+      $db->rollback();
+      return $rc;
+    }
 
-		$db->commit();
+    $db->commit();
 
-		return $this->ok();
-	}
+    return $this->ok();
+  }
 
-	/**
-	 * 获得增值税税率
-	 */
-	public function getTaxRate() {
-		$us = new UserService();
+  /**
+   * 获得增值税税率
+   */
+  public function getTaxRate()
+  {
+    $us = new UserService();
 
-		$dao = new BizConfigDAO($this->db());
-		return $dao->getTaxRate($us->getCompanyId());
-	}
+    $dao = new BizConfigDAO($this->db());
+    return $dao->getTaxRate($us->getCompanyId());
+  }
 
-	/**
-	 * 获得本产品名称，默认值是：PSI
-	 */
-	public function getProductionName() {
-		$us = new UserService();
-		$params = array(
-				"companyId" => $us->getCompanyId()
-		);
+  /**
+   * 获得本产品名称，默认值是：PSI
+   */
+  public function getProductionName()
+  {
+    $us = new UserService();
+    $params = array(
+      "companyId" => $us->getCompanyId()
+    );
 
-		$dao = new BizConfigDAO($this->db());
+    $dao = new BizConfigDAO($this->db());
 
-		return $dao->getProductionName($params);
-	}
+    return $dao->getProductionName($params);
+  }
 
-	/**
-	 * 模块打开方式
-	 *
-	 * @return string
-	 */
-	public function getModuleOpenType(): string {
-		$us = new UserService();
-		$companyId = $us->getCompanyId();
+  /**
+   * 模块打开方式
+   *
+   * @return string
+   */
+  public function getModuleOpenType(): string
+  {
+    $us = new UserService();
+    $companyId = $us->getCompanyId();
 
-		if ($companyId == null) {
-			return "0";
-		}
+    if ($companyId == null) {
+      return "0";
+    }
 
-		$dao = new BizConfigDAO($this->db());
+    $dao = new BizConfigDAO($this->db());
 
-		return $dao->getModuleOpenType($companyId);
-	}
+    return $dao->getModuleOpenType($companyId);
+  }
 
-	/**
-	 * 获得存货计价方法
-	 * 0： 移动平均法
-	 * 1：先进先出法
-	 */
-	public function getInventoryMethod() {
-		// 2015-11-19 为发布稳定版本，临时取消先进先出法
-		$result = 0;
+  /**
+   * 获得存货计价方法
+   * 0： 移动平均法
+   * 1：先进先出法
+   */
+  public function getInventoryMethod()
+  {
+    // 2015-11-19 为发布稳定版本，临时取消先进先出法
+    $result = 0;
 
-		return $result;
-	}
+    return $result;
+  }
 
-	/**
-	 * 获得采购订单单号前缀
-	 */
-	public function getPOBillRefPre() {
-		$result = "PO";
+  /**
+   * 获得采购订单单号前缀
+   */
+  public function getPOBillRefPre()
+  {
+    $result = "PO";
 
-		$db = $this->db();
-		$companyId = $this->getCompanyId();
+    $db = $this->db();
+    $companyId = $this->getCompanyId();
 
-		$id = "9003-01";
-		$sql = "select value from t_config 
+    $id = "9003-01";
+    $sql = "select value from t_config 
 				where id = '%s' and company_id = '%s' ";
-		$data = $db->query($sql, $id, $companyId);
-		if ($data) {
-			$result = $data[0]["value"];
+    $data = $db->query($sql, $id, $companyId);
+    if ($data) {
+      $result = $data[0]["value"];
 
-			if ($result == null || $result == "") {
-				$result = "PO";
-			}
-		}
+      if ($result == null || $result == "") {
+        $result = "PO";
+      }
+    }
 
-		return $result;
-	}
+    return $result;
+  }
 
-	/**
-	 * 获得采购入库单单号前缀
-	 */
-	public function getPWBillRefPre() {
-		$result = "PW";
+  /**
+   * 获得采购入库单单号前缀
+   */
+  public function getPWBillRefPre()
+  {
+    $result = "PW";
 
-		$db = $this->db();
-		$companyId = $this->getCompanyId();
+    $db = $this->db();
+    $companyId = $this->getCompanyId();
 
-		$id = "9003-02";
-		$sql = "select value from t_config 
+    $id = "9003-02";
+    $sql = "select value from t_config 
 				where id = '%s' and company_id = '%s' ";
-		$data = $db->query($sql, $id, $companyId);
-		if ($data) {
-			$result = $data[0]["value"];
+    $data = $db->query($sql, $id, $companyId);
+    if ($data) {
+      $result = $data[0]["value"];
 
-			if ($result == null || $result == "") {
-				$result = "PW";
-			}
-		}
+      if ($result == null || $result == "") {
+        $result = "PW";
+      }
+    }
 
-		return $result;
-	}
+    return $result;
+  }
 
-	/**
-	 * 获得采购退货出库单单号前缀
-	 */
-	public function getPRBillRefPre() {
-		$result = "PR";
+  /**
+   * 获得采购退货出库单单号前缀
+   */
+  public function getPRBillRefPre()
+  {
+    $result = "PR";
 
-		$db = $this->db();
-		$companyId = $this->getCompanyId();
+    $db = $this->db();
+    $companyId = $this->getCompanyId();
 
-		$id = "9003-03";
-		$sql = "select value from t_config 
+    $id = "9003-03";
+    $sql = "select value from t_config 
 				where id = '%s' and company_id = '%s' ";
-		$data = $db->query($sql, $id, $companyId);
-		if ($data) {
-			$result = $data[0]["value"];
+    $data = $db->query($sql, $id, $companyId);
+    if ($data) {
+      $result = $data[0]["value"];
 
-			if ($result == null || $result == "") {
-				$result = "PR";
-			}
-		}
+      if ($result == null || $result == "") {
+        $result = "PR";
+      }
+    }
 
-		return $result;
-	}
+    return $result;
+  }
 
-	/**
-	 * 获得销售出库单单号前缀
-	 */
-	public function getWSBillRefPre() {
-		$result = "WS";
+  /**
+   * 获得销售出库单单号前缀
+   */
+  public function getWSBillRefPre()
+  {
+    $result = "WS";
 
-		$db = $this->db();
-		$companyId = $this->getCompanyId();
+    $db = $this->db();
+    $companyId = $this->getCompanyId();
 
-		$id = "9003-04";
-		$sql = "select value from t_config 
+    $id = "9003-04";
+    $sql = "select value from t_config 
 				where id = '%s' and company_id = '%s' ";
-		$data = $db->query($sql, $id, $companyId);
-		if ($data) {
-			$result = $data[0]["value"];
+    $data = $db->query($sql, $id, $companyId);
+    if ($data) {
+      $result = $data[0]["value"];
 
-			if ($result == null || $result == "") {
-				$result = "WS";
-			}
-		}
+      if ($result == null || $result == "") {
+        $result = "WS";
+      }
+    }
 
-		return $result;
-	}
+    return $result;
+  }
 
-	/**
-	 * 获得销售退货入库单单号前缀
-	 */
-	public function getSRBillRefPre() {
-		$result = "SR";
+  /**
+   * 获得销售退货入库单单号前缀
+   */
+  public function getSRBillRefPre()
+  {
+    $result = "SR";
 
-		$db = $this->db();
-		$companyId = $this->getCompanyId();
+    $db = $this->db();
+    $companyId = $this->getCompanyId();
 
-		$id = "9003-05";
-		$sql = "select value from t_config 
+    $id = "9003-05";
+    $sql = "select value from t_config 
 				where id = '%s' and company_id = '%s' ";
-		$data = $db->query($sql, $id, $companyId);
-		if ($data) {
-			$result = $data[0]["value"];
+    $data = $db->query($sql, $id, $companyId);
+    if ($data) {
+      $result = $data[0]["value"];
 
-			if ($result == null || $result == "") {
-				$result = "SR";
-			}
-		}
+      if ($result == null || $result == "") {
+        $result = "SR";
+      }
+    }
 
-		return $result;
-	}
+    return $result;
+  }
 
-	/**
-	 * 获得调拨单单号前缀
-	 */
-	public function getITBillRefPre() {
-		$result = "IT";
+  /**
+   * 获得调拨单单号前缀
+   */
+  public function getITBillRefPre()
+  {
+    $result = "IT";
 
-		$db = $this->db();
-		$companyId = $this->getCompanyId();
+    $db = $this->db();
+    $companyId = $this->getCompanyId();
 
-		$id = "9003-06";
-		$sql = "select value from t_config 
+    $id = "9003-06";
+    $sql = "select value from t_config 
 				where id = '%s' and company_id = '%s' ";
-		$data = $db->query($sql, $id, $companyId);
-		if ($data) {
-			$result = $data[0]["value"];
+    $data = $db->query($sql, $id, $companyId);
+    if ($data) {
+      $result = $data[0]["value"];
 
-			if ($result == null || $result == "") {
-				$result = "IT";
-			}
-		}
+      if ($result == null || $result == "") {
+        $result = "IT";
+      }
+    }
 
-		return $result;
-	}
+    return $result;
+  }
 
-	/**
-	 * 获得盘点单单号前缀
-	 */
-	public function getICBillRefPre() {
-		$result = "IC";
+  /**
+   * 获得盘点单单号前缀
+   */
+  public function getICBillRefPre()
+  {
+    $result = "IC";
 
-		$db = $this->db();
-		$companyId = $this->getCompanyId();
+    $db = $this->db();
+    $companyId = $this->getCompanyId();
 
-		$id = "9003-07";
-		$sql = "select value from t_config 
+    $id = "9003-07";
+    $sql = "select value from t_config 
 				where id = '%s' and company_id = '%s' ";
-		$data = $db->query($sql, $id, $companyId);
-		if ($data) {
-			$result = $data[0]["value"];
+    $data = $db->query($sql, $id, $companyId);
+    if ($data) {
+      $result = $data[0]["value"];
 
-			if ($result == null || $result == "") {
-				$result = "IC";
-			}
-		}
+      if ($result == null || $result == "") {
+        $result = "IC";
+      }
+    }
 
-		return $result;
-	}
+    return $result;
+  }
 
-	/**
-	 * 获得当前用户可以设置的公司
-	 */
-	public function getCompany() {
-		if ($this->isNotOnline()) {
-			return $this->emptyResult();
-		}
+  /**
+   * 获得当前用户可以设置的公司
+   */
+  public function getCompany()
+  {
+    if ($this->isNotOnline()) {
+      return $this->emptyResult();
+    }
 
-		$db = $this->db();
-		$result = array();
+    $db = $this->db();
+    $result = array();
 
-		$sql = "select id, name
+    $sql = "select id, name
 				from t_org
 				where (parent_id is null) ";
-		$queryParams = array();
+    $queryParams = array();
 
-		$ds = new DataOrgService();
-		$rs = $ds->buildSQL(FIdConst::BIZ_CONFIG, "t_org");
+    $ds = new DataOrgService();
+    $rs = $ds->buildSQL(FIdConst::BIZ_CONFIG, "t_org");
 
-		if ($rs) {
-			$sql .= " and " . $rs[0];
-			$queryParams = array_merge($queryParams, $rs[1]);
-		}
+    if ($rs) {
+      $sql .= " and " . $rs[0];
+      $queryParams = array_merge($queryParams, $rs[1]);
+    }
 
-		$sql .= " order by org_code ";
+    $sql .= " order by org_code ";
 
-		$data = $db->query($sql, $queryParams);
-		foreach ( $data as $i => $v ) {
-			$result[$i]["id"] = $v["id"];
-			$result[$i]["name"] = $v["name"];
-		}
+    $data = $db->query($sql, $queryParams);
+    foreach ($data as $i => $v) {
+      $result[$i]["id"] = $v["id"];
+      $result[$i]["name"] = $v["name"];
+    }
 
-		return $result;
-	}
+    return $result;
+  }
 
-	/**
-	 * 获得销售订单单号前缀
-	 */
-	public function getSOBillRefPre() {
-		$result = "PO";
+  /**
+   * 获得销售订单单号前缀
+   */
+  public function getSOBillRefPre()
+  {
+    $result = "PO";
 
-		$db = $this->db();
-		$companyId = $this->getCompanyId();
+    $db = $this->db();
+    $companyId = $this->getCompanyId();
 
-		$id = "9003-08";
-		$sql = "select value from t_config
+    $id = "9003-08";
+    $sql = "select value from t_config
 				where id = '%s' and company_id = '%s' ";
-		$data = $db->query($sql, $id, $companyId);
-		if ($data) {
-			$result = $data[0]["value"];
+    $data = $db->query($sql, $id, $companyId);
+    if ($data) {
+      $result = $data[0]["value"];
 
-			if ($result == null || $result == "") {
-				$result = "SO";
-			}
-		}
+      if ($result == null || $result == "") {
+        $result = "SO";
+      }
+    }
 
-		return $result;
-	}
+    return $result;
+  }
 
-	/**
-	 * 获得采购订单默认付款方式
-	 */
-	public function getPOBillDefaultPayment() {
-		$result = "0";
+  /**
+   * 获得采购订单默认付款方式
+   */
+  public function getPOBillDefaultPayment()
+  {
+    $result = "0";
 
-		$db = $this->db();
-		$companyId = $this->getCompanyId();
+    $db = $this->db();
+    $companyId = $this->getCompanyId();
 
-		$id = "2001-02";
-		$sql = "select value from t_config
+    $id = "2001-02";
+    $sql = "select value from t_config
 				where id = '%s' and company_id = '%s' ";
-		$data = $db->query($sql, $id, $companyId);
-		if ($data) {
-			$result = $data[0]["value"];
+    $data = $db->query($sql, $id, $companyId);
+    if ($data) {
+      $result = $data[0]["value"];
 
-			if ($result == null || $result == "") {
-				$result = "0";
-			}
-		}
+      if ($result == null || $result == "") {
+        $result = "0";
+      }
+    }
 
-		return $result;
-	}
+    return $result;
+  }
 
-	/**
-	 * 获得采购入库单默认付款方式
-	 */
-	public function getPWBillDefaultPayment() {
-		$result = "0";
+  /**
+   * 获得采购入库单默认付款方式
+   */
+  public function getPWBillDefaultPayment()
+  {
+    $result = "0";
 
-		$db = $this->db();
-		$companyId = $this->getCompanyId();
+    $db = $this->db();
+    $companyId = $this->getCompanyId();
 
-		$id = "2001-03";
-		$sql = "select value from t_config
+    $id = "2001-03";
+    $sql = "select value from t_config
 				where id = '%s' and company_id = '%s' ";
-		$data = $db->query($sql, $id, $companyId);
-		if ($data) {
-			$result = $data[0]["value"];
+    $data = $db->query($sql, $id, $companyId);
+    if ($data) {
+      $result = $data[0]["value"];
 
-			if ($result == null || $result == "") {
-				$result = "0";
-			}
-		}
+      if ($result == null || $result == "") {
+        $result = "0";
+      }
+    }
 
-		return $result;
-	}
+    return $result;
+  }
 
-	/**
-	 * 获得销售出库单默认收款方式
-	 */
-	public function getWSBillDefaultReceving() {
-		$result = "0";
+  /**
+   * 获得销售出库单默认收款方式
+   */
+  public function getWSBillDefaultReceving()
+  {
+    $result = "0";
 
-		$db = M();
-		$us = new UserService();
-		$companyId = $us->getCompanyId();
+    $db = M();
+    $us = new UserService();
+    $companyId = $us->getCompanyId();
 
-		$id = "2002-03";
-		$sql = "select value from t_config
+    $id = "2002-03";
+    $sql = "select value from t_config
 				where id = '%s' and company_id = '%s' ";
-		$data = $db->query($sql, $id, $companyId);
-		if ($data) {
-			$result = $data[0]["value"];
+    $data = $db->query($sql, $id, $companyId);
+    if ($data) {
+      $result = $data[0]["value"];
 
-			if ($result == null || $result == "") {
-				$result = "0";
-			}
-		}
+      if ($result == null || $result == "") {
+        $result = "0";
+      }
+    }
 
-		return $result;
-	}
+    return $result;
+  }
 
-	/**
-	 * 获得销售订单默认收款方式
-	 */
-	public function getSOBillDefaultReceving() {
-		$result = "0";
+  /**
+   * 获得销售订单默认收款方式
+   */
+  public function getSOBillDefaultReceving()
+  {
+    $result = "0";
 
-		$db = M();
-		$us = new UserService();
-		$companyId = $us->getCompanyId();
+    $db = M();
+    $us = new UserService();
+    $companyId = $us->getCompanyId();
 
-		$id = "2002-04";
-		$sql = "select value from t_config
+    $id = "2002-04";
+    $sql = "select value from t_config
 				where id = '%s' and company_id = '%s' ";
-		$data = $db->query($sql, $id, $companyId);
-		if ($data) {
-			$result = $data[0]["value"];
+    $data = $db->query($sql, $id, $companyId);
+    if ($data) {
+      $result = $data[0]["value"];
 
-			if ($result == null || $result == "") {
-				$result = "0";
-			}
-		}
+      if ($result == null || $result == "") {
+        $result = "0";
+      }
+    }
 
-		return $result;
-	}
+    return $result;
+  }
 
-	/**
-	 * 获得商品数量小数位数
-	 *
-	 * @return int
-	 */
-	public function getGoodsCountDecNumber(): int {
-		$us = new UserService();
-		$companyId = $us->getCompanyId();
+  /**
+   * 获得商品数量小数位数
+   *
+   * @return int
+   */
+  public function getGoodsCountDecNumber(): int
+  {
+    $us = new UserService();
+    $companyId = $us->getCompanyId();
 
-		if (! $companyId) {
-			return 0;
-		}
+    if (!$companyId) {
+      return 0;
+    }
 
-		$dao = new BizConfigDAO($this->db());
+    $dao = new BizConfigDAO($this->db());
 
-		return $dao->getGoodsCountDecNumber($companyId);
-	}
+    return $dao->getGoodsCountDecNumber($companyId);
+  }
 }

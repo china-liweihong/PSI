@@ -7,72 +7,75 @@ namespace Home\Service;
  *
  * @author 李静波
  */
-class InstallService extends PSIBaseExService {
+class InstallService extends PSIBaseExService
+{
 
-	/**
-	 * 首次运行PSI的时候，自动初始化数据库(创建表和往表里面插入初始化数据)
-	 *
-	 * 只在MoPaaS下有效
-	 */
-	public function autoInstallWhenFirstRun() {
-		if (! $this->isMoPaaS()) {
-			return;
-		}
+  /**
+   * 首次运行PSI的时候，自动初始化数据库(创建表和往表里面插入初始化数据)
+   *
+   * 只在MoPaaS下有效
+   */
+  public function autoInstallWhenFirstRun()
+  {
+    if (!$this->isMoPaaS()) {
+      return;
+    }
 
-		$db = $this->db();
-		$tableName = "t_biz_log";
+    $db = $this->db();
+    $tableName = "t_biz_log";
 
-		// 用 t_biz_log 这个表是否存在 来判断是否已经初始化了数据库
-		if ($this->tableExists($db, $tableName)) {
-			return;
-		}
+    // 用 t_biz_log 这个表是否存在 来判断是否已经初始化了数据库
+    if ($this->tableExists($db, $tableName)) {
+      return;
+    }
 
-		$this->createTables();
-		$this->insertInitData();
-	}
+    $this->createTables();
+    $this->insertInitData();
+  }
 
-	/**
-	 * 创建表
-	 */
-	private function createTables() {
-		$db = $this->db();
+  /**
+   * 创建表
+   */
+  private function createTables()
+  {
+    $db = $this->db();
 
-		// think_session
-		$sql = "CREATE TABLE `think_session` (
-				  `session_id` varchar(255) NOT NULL,
-				  `session_expire` int(11) NOT NULL,
-				  `session_data` blob,
-				  UNIQUE KEY `session_id` (`session_id`)
-				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+    // think_session
+    $sql = "CREATE TABLE `think_session` (
+              `session_id` varchar(255) NOT NULL,
+              `session_expire` int(11) NOT NULL,
+              `session_data` blob,
+              UNIQUE KEY `session_id` (`session_id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_biz_log
-		$sql = "CREATE TABLE IF NOT EXISTS `t_biz_log` (
-				  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-				  `date_created` datetime DEFAULT NULL,
-				  `info` varchar(1000) NOT NULL,
-				  `ip` varchar(255) NOT NULL,
-				  `user_id` varchar(255) NOT NULL,
-				  `log_category` varchar(50) NOT NULL,
-				  `data_org` varchar(255) DEFAULT NULL,
-				  `ip_from` varchar(255) DEFAULT NULL,
-				  `company_id` varchar(255) DEFAULT NULL,
-				  PRIMARY KEY (`id`)
-				) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+    // t_biz_log
+    $sql = "CREATE TABLE IF NOT EXISTS `t_biz_log` (
+              `id` bigint(20) NOT NULL AUTO_INCREMENT,
+              `date_created` datetime DEFAULT NULL,
+              `info` varchar(1000) NOT NULL,
+              `ip` varchar(255) NOT NULL,
+              `user_id` varchar(255) NOT NULL,
+              `log_category` varchar(50) NOT NULL,
+              `data_org` varchar(255) DEFAULT NULL,
+              `ip_from` varchar(255) DEFAULT NULL,
+              `company_id` varchar(255) DEFAULT NULL,
+              PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_fid
-		$sql = "CREATE TABLE IF NOT EXISTS `t_fid` (
-				  `fid` varchar(255) NOT NULL,
-				  `name` varchar(255) NOT NULL
-				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+    // t_fid
+    $sql = "CREATE TABLE IF NOT EXISTS `t_fid` (
+              `fid` varchar(255) NOT NULL,
+              `name` varchar(255) NOT NULL
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 				";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_menu_item
-		$sql = "CREATE TABLE IF NOT EXISTS `t_menu_item` (
+    // t_menu_item
+    $sql = "CREATE TABLE IF NOT EXISTS `t_menu_item` (
 				  `id` varchar(255) NOT NULL,
 				  `caption` varchar(255) NOT NULL,
 				  `fid` varchar(255) DEFAULT NULL,
@@ -81,10 +84,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_org
-		$sql = "CREATE TABLE IF NOT EXISTS `t_org` (
+    // t_org
+    $sql = "CREATE TABLE IF NOT EXISTS `t_org` (
 				  `id` varchar(255) NOT NULL,
 				  `full_name` varchar(1000) NOT NULL,
 				  `name` varchar(255) NOT NULL,
@@ -95,10 +98,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_permission
-		$sql = "CREATE TABLE IF NOT EXISTS `t_permission` (
+    // t_permission
+    $sql = "CREATE TABLE IF NOT EXISTS `t_permission` (
 				  `id` varchar(255) NOT NULL,
 				  `fid` varchar(255) NOT NULL,
 				  `name` varchar(255) NOT NULL,
@@ -109,19 +112,19 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_recent_fid
-		$sql = "CREATE TABLE IF NOT EXISTS `t_recent_fid` (
+    // t_recent_fid
+    $sql = "CREATE TABLE IF NOT EXISTS `t_recent_fid` (
 				  `fid` varchar(255) NOT NULL,
 				  `user_id` varchar(255) NOT NULL,
 				  `click_count` int(11) NOT NULL
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_role
-		$sql = "CREATE TABLE IF NOT EXISTS `t_role` (
+    // t_role
+    $sql = "CREATE TABLE IF NOT EXISTS `t_role` (
 				  `id` varchar(255) NOT NULL,
 				  `name` varchar(255) NOT NULL,
 				  `data_org` varchar(255) DEFAULT NULL,
@@ -130,27 +133,27 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_role_permission
-		$sql = "CREATE TABLE IF NOT EXISTS `t_role_permission` (
+    // t_role_permission
+    $sql = "CREATE TABLE IF NOT EXISTS `t_role_permission` (
 				  `role_id` varchar(255) DEFAULT NULL,
 				  `permission_id` varchar(255) DEFAULT NULL,
 				  `data_org` varchar(255) DEFAULT NULL
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_role_user
-		$sql = "CREATE TABLE IF NOT EXISTS `t_role_user` (
+    // t_role_user
+    $sql = "CREATE TABLE IF NOT EXISTS `t_role_user` (
 				  `role_id` varchar(255) DEFAULT NULL,
 				  `user_id` varchar(255) DEFAULT NULL
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_user
-		$sql = "CREATE TABLE IF NOT EXISTS `t_user` (
+    // t_user
+    $sql = "CREATE TABLE IF NOT EXISTS `t_user` (
 				  `id` varchar(255) NOT NULL,
 				  `enabled` int(11) NOT NULL,
 				  `login_name` varchar(255) NOT NULL,
@@ -170,10 +173,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_warehouse
-		$sql = "CREATE TABLE IF NOT EXISTS `t_warehouse` (
+    // t_warehouse
+    $sql = "CREATE TABLE IF NOT EXISTS `t_warehouse` (
 				  `id` varchar(255) NOT NULL,
 				  `code` varchar(255) NOT NULL,
 				  `inited` int(11) NOT NULL,
@@ -187,10 +190,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_supplier
-		$sql = "CREATE TABLE IF NOT EXISTS `t_supplier` (
+    // t_supplier
+    $sql = "CREATE TABLE IF NOT EXISTS `t_supplier` (
 				  `id` varchar(255) NOT NULL,
 				  `category_id` varchar(255) NOT NULL,
 				  `code` varchar(255) NOT NULL,
@@ -224,10 +227,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_supplier_category
-		$sql = "CREATE TABLE IF NOT EXISTS `t_supplier_category` (
+    // t_supplier_category
+    $sql = "CREATE TABLE IF NOT EXISTS `t_supplier_category` (
 				  `id` varchar(255) NOT NULL,
 				  `code` varchar(255) NOT NULL,
 				  `name` varchar(255) NOT NULL,
@@ -238,10 +241,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_goods
-		$sql = "CREATE TABLE IF NOT EXISTS `t_goods` (
+    // t_goods
+    $sql = "CREATE TABLE IF NOT EXISTS `t_goods` (
 				  `id` varchar(255) NOT NULL,
 				  `category_id` varchar(255) NOT NULL,
 				  `code` varchar(255) NOT NULL,
@@ -262,10 +265,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_goods_category
-		$sql = "CREATE TABLE IF NOT EXISTS `t_goods_category` (
+    // t_goods_category
+    $sql = "CREATE TABLE IF NOT EXISTS `t_goods_category` (
 				  `id` varchar(255) NOT NULL,
 				  `code` varchar(255) NOT NULL,
 				  `name` varchar(255) NOT NULL,
@@ -277,10 +280,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_goods_unit
-		$sql = "CREATE TABLE IF NOT EXISTS `t_goods_unit` (
+    // t_goods_unit
+    $sql = "CREATE TABLE IF NOT EXISTS `t_goods_unit` (
 				  `id` varchar(255) NOT NULL,
 				  `name` varchar(255) NOT NULL,
 				  `data_org` varchar(255) DEFAULT NULL,
@@ -290,10 +293,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_customer
-		$sql = "CREATE TABLE IF NOT EXISTS `t_customer` (
+    // t_customer
+    $sql = "CREATE TABLE IF NOT EXISTS `t_customer` (
 				  `id` varchar(255) NOT NULL,
 				  `category_id` varchar(255) NOT NULL,
 				  `code` varchar(255) NOT NULL,
@@ -326,10 +329,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_customer_category
-		$sql = "CREATE TABLE IF NOT EXISTS `t_customer_category` (
+    // t_customer_category
+    $sql = "CREATE TABLE IF NOT EXISTS `t_customer_category` (
 				  `id` varchar(255) NOT NULL,
 				  `code` varchar(255) NOT NULL,
 				  `name` varchar(255) NOT NULL,
@@ -340,10 +343,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_inventory
-		$sql = "CREATE TABLE IF NOT EXISTS `t_inventory` (
+    // t_inventory
+    $sql = "CREATE TABLE IF NOT EXISTS `t_inventory` (
 				  `id` bigint(20) NOT NULL AUTO_INCREMENT,
 				  `balance_count` decimal(19,8) NOT NULL,
 				  `balance_money` decimal(19,2) NOT NULL,
@@ -364,10 +367,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_inventory_detail
-		$sql = "CREATE TABLE IF NOT EXISTS `t_inventory_detail` (
+    // t_inventory_detail
+    $sql = "CREATE TABLE IF NOT EXISTS `t_inventory_detail` (
 				  `id` bigint(20) NOT NULL AUTO_INCREMENT,
 				  `balance_count` decimal(19,8) NOT NULL,
 				  `balance_money` decimal(19,2) NOT NULL,
@@ -390,10 +393,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_pw_bill
-		$sql = "CREATE TABLE IF NOT EXISTS `t_pw_bill` (
+    // t_pw_bill
+    $sql = "CREATE TABLE IF NOT EXISTS `t_pw_bill` (
 				  `id` varchar(255) NOT NULL,
 				  `bill_status` int(11) NOT NULL,
 				  `biz_dt` datetime NOT NULL,
@@ -415,10 +418,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_pw_bill_detail
-		$sql = "CREATE TABLE IF NOT EXISTS `t_pw_bill_detail` (
+    // t_pw_bill_detail
+    $sql = "CREATE TABLE IF NOT EXISTS `t_pw_bill_detail` (
 				  `id` varchar(255) NOT NULL,
 				  `date_created` datetime DEFAULT NULL,
 				  `goods_id` varchar(255) NOT NULL,
@@ -438,10 +441,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_payables
-		$sql = "CREATE TABLE IF NOT EXISTS `t_payables` (
+    // t_payables
+    $sql = "CREATE TABLE IF NOT EXISTS `t_payables` (
 				  `id` varchar(255) NOT NULL,
 				  `act_money` decimal(19,2) NOT NULL,
 				  `balance_money` decimal(19,2) NOT NULL,
@@ -453,10 +456,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_payables_detail
-		$sql = "CREATE TABLE IF NOT EXISTS `t_payables_detail` (
+    // t_payables_detail
+    $sql = "CREATE TABLE IF NOT EXISTS `t_payables_detail` (
 				  `id` varchar(255) NOT NULL,
 				  `act_money` decimal(19,2) NOT NULL,
 				  `balance_money` decimal(19,2) NOT NULL,
@@ -472,10 +475,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_receivables
-		$sql = "CREATE TABLE IF NOT EXISTS `t_receivables` (
+    // t_receivables
+    $sql = "CREATE TABLE IF NOT EXISTS `t_receivables` (
 				  `id` varchar(255) NOT NULL,
 				  `act_money` decimal(19,2) NOT NULL,
 				  `balance_money` decimal(19,2) NOT NULL,
@@ -487,10 +490,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_receivables_detail
-		$sql = "CREATE TABLE IF NOT EXISTS `t_receivables_detail` (
+    // t_receivables_detail
+    $sql = "CREATE TABLE IF NOT EXISTS `t_receivables_detail` (
 				  `id` varchar(255) NOT NULL,
 				  `act_money` decimal(19,2) NOT NULL,
 				  `balance_money` decimal(19,2) NOT NULL,
@@ -506,10 +509,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_payment
-		$sql = "CREATE TABLE IF NOT EXISTS `t_payment` (
+    // t_payment
+    $sql = "CREATE TABLE IF NOT EXISTS `t_payment` (
 				  `id` varchar(255) NOT NULL,
 				  `act_money` decimal(19,2) NOT NULL,
 				  `biz_date` datetime NOT NULL,
@@ -525,10 +528,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_ws_bill
-		$sql = "CREATE TABLE IF NOT EXISTS `t_ws_bill` (
+    // t_ws_bill
+    $sql = "CREATE TABLE IF NOT EXISTS `t_ws_bill` (
 				  `id` varchar(255) NOT NULL,
 				  `bill_status` int(11) NOT NULL,
 				  `bizdt` datetime NOT NULL,
@@ -551,10 +554,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_ws_bill_detail
-		$sql = "CREATE TABLE IF NOT EXISTS `t_ws_bill_detail` (
+    // t_ws_bill_detail
+    $sql = "CREATE TABLE IF NOT EXISTS `t_ws_bill_detail` (
 				  `id` varchar(255) NOT NULL,
 				  `date_created` datetime DEFAULT NULL,
 				  `goods_id` varchar(255) NOT NULL,
@@ -577,10 +580,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_receiving
-		$sql = "CREATE TABLE IF NOT EXISTS `t_receiving` (
+    // t_receiving
+    $sql = "CREATE TABLE IF NOT EXISTS `t_receiving` (
 				  `id` varchar(255) NOT NULL,
 				  `act_money` decimal(19,2) NOT NULL,
 				  `biz_date` datetime NOT NULL,
@@ -596,10 +599,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_sr_bill
-		$sql = "CREATE TABLE IF NOT EXISTS `t_sr_bill` (
+    // t_sr_bill
+    $sql = "CREATE TABLE IF NOT EXISTS `t_sr_bill` (
 				  `id` varchar(255) NOT NULL,
 				  `bill_status` int(11) NOT NULL,
 				  `bizdt` datetime NOT NULL,
@@ -620,10 +623,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_sr_bill_detail
-		$sql = "CREATE TABLE IF NOT EXISTS `t_sr_bill_detail` (
+    // t_sr_bill_detail
+    $sql = "CREATE TABLE IF NOT EXISTS `t_sr_bill_detail` (
 				  `id` varchar(255) NOT NULL,
 				  `date_created` datetime DEFAULT NULL,
 				  `goods_id` varchar(255) NOT NULL,
@@ -645,10 +648,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_it_bill
-		$sql = "CREATE TABLE IF NOT EXISTS `t_it_bill` (
+    // t_it_bill
+    $sql = "CREATE TABLE IF NOT EXISTS `t_it_bill` (
 				  `id` varchar(255) NOT NULL,
 				  `bill_status` int(11) NOT NULL,
 				  `bizdt` datetime NOT NULL,
@@ -664,10 +667,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_it_bill_detail
-		$sql = "CREATE TABLE IF NOT EXISTS `t_it_bill_detail` (
+    // t_it_bill_detail
+    $sql = "CREATE TABLE IF NOT EXISTS `t_it_bill_detail` (
 				  `id` varchar(255) NOT NULL,
 				  `date_created` datetime DEFAULT NULL,
 				  `goods_id` varchar(255) NOT NULL,
@@ -680,10 +683,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_ic_bill
-		$sql = "CREATE TABLE IF NOT EXISTS `t_ic_bill` (
+    // t_ic_bill
+    $sql = "CREATE TABLE IF NOT EXISTS `t_ic_bill` (
 				  `id` varchar(255) NOT NULL,
 				  `bill_status` int(11) NOT NULL,
 				  `bizdt` datetime NOT NULL,
@@ -698,10 +701,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_ic_bill_detail
-		$sql = "CREATE TABLE IF NOT EXISTS `t_ic_bill_detail` (
+    // t_ic_bill_detail
+    $sql = "CREATE TABLE IF NOT EXISTS `t_ic_bill_detail` (
 				  `id` varchar(255) NOT NULL,
 				  `date_created` datetime DEFAULT NULL,
 				  `goods_id` varchar(255) NOT NULL,
@@ -715,10 +718,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_pr_bill
-		$sql = "CREATE TABLE IF NOT EXISTS `t_pr_bill` (
+    // t_pr_bill
+    $sql = "CREATE TABLE IF NOT EXISTS `t_pr_bill` (
 				  `id` varchar(255) NOT NULL,
 				  `bill_status` int(11) NOT NULL,
 				  `bizdt` datetime NOT NULL,
@@ -738,10 +741,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_pr_bill_detail
-		$sql = "CREATE TABLE IF NOT EXISTS `t_pr_bill_detail` (
+    // t_pr_bill_detail
+    $sql = "CREATE TABLE IF NOT EXISTS `t_pr_bill_detail` (
 				  `id` varchar(255) NOT NULL,
 				  `date_created` datetime DEFAULT NULL,
 				  `goods_id` varchar(255) NOT NULL,
@@ -762,10 +765,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_config
-		$sql = "CREATE TABLE IF NOT EXISTS `t_config` (
+    // t_config
+    $sql = "CREATE TABLE IF NOT EXISTS `t_config` (
 				  `id` varchar(255) NOT NULL,
 				  `name` varchar(255) NOT NULL,
 				  `value` varchar(255) NOT NULL,
@@ -774,18 +777,18 @@ class InstallService extends PSIBaseExService {
 				  `company_id` varchar(255) DEFAULT NULL
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_psi_db_version
-		$sql = "CREATE TABLE IF NOT EXISTS `t_psi_db_version` (
+    // t_psi_db_version
+    $sql = "CREATE TABLE IF NOT EXISTS `t_psi_db_version` (
 				  `db_version` varchar(255) NOT NULL,
 				  `update_dt` datetime NOT NULL
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_goods_si
-		$sql = "CREATE TABLE IF NOT EXISTS `t_goods_si` (
+    // t_goods_si
+    $sql = "CREATE TABLE IF NOT EXISTS `t_goods_si` (
 				  `id` varchar(255) NOT NULL,
 				  `goods_id` varchar(255) NOT NULL,
 				  `warehouse_id` varchar(255) NOT NULL,
@@ -796,10 +799,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_cash
-		$sql = "CREATE TABLE IF NOT EXISTS `t_cash` (
+    // t_cash
+    $sql = "CREATE TABLE IF NOT EXISTS `t_cash` (
 				  `id` bigint(20) NOT NULL AUTO_INCREMENT,
 				  `biz_date` datetime NOT NULL,
 				  `in_money` decimal(19,2) DEFAULT NULL,
@@ -810,10 +813,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_cash_detail
-		$sql = "CREATE TABLE IF NOT EXISTS `t_cash_detail` (
+    // t_cash_detail
+    $sql = "CREATE TABLE IF NOT EXISTS `t_cash_detail` (
 				  `id` bigint(20) NOT NULL AUTO_INCREMENT,
 				  `biz_date` datetime NOT NULL,
 				  `in_money` decimal(19,2) DEFAULT NULL,
@@ -827,10 +830,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_pre_receiving
-		$sql = "CREATE TABLE IF NOT EXISTS `t_pre_receiving` (
+    // t_pre_receiving
+    $sql = "CREATE TABLE IF NOT EXISTS `t_pre_receiving` (
 				  `id` varchar(255) NOT NULL,
 				  `customer_id` varchar(255) NOT NULL,
 				  `in_money` decimal(19,2) DEFAULT NULL,
@@ -841,10 +844,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_pre_receiving_detail
-		$sql = "CREATE TABLE IF NOT EXISTS `t_pre_receiving_detail` (
+    // t_pre_receiving_detail
+    $sql = "CREATE TABLE IF NOT EXISTS `t_pre_receiving_detail` (
 				  `id` varchar(255) NOT NULL,
 				  `customer_id` varchar(255) NOT NULL,
 				  `in_money` decimal(19,2) DEFAULT NULL,
@@ -861,10 +864,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_pre_payment
-		$sql = "CREATE TABLE IF NOT EXISTS `t_pre_payment` (
+    // t_pre_payment
+    $sql = "CREATE TABLE IF NOT EXISTS `t_pre_payment` (
 				  `id` varchar(255) NOT NULL,
 				  `supplier_id` varchar(255) NOT NULL,
 				  `in_money` decimal(19,2) DEFAULT NULL,
@@ -875,10 +878,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_pre_payment_detail
-		$sql = "CREATE TABLE IF NOT EXISTS `t_pre_payment_detail` (
+    // t_pre_payment_detail
+    $sql = "CREATE TABLE IF NOT EXISTS `t_pre_payment_detail` (
 				  `id` varchar(255) NOT NULL,
 				  `supplier_id` varchar(255) NOT NULL,
 				  `in_money` decimal(19,2) DEFAULT NULL,
@@ -895,10 +898,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_po_bill
-		$sql = "CREATE TABLE IF NOT EXISTS `t_po_bill` (
+    // t_po_bill
+    $sql = "CREATE TABLE IF NOT EXISTS `t_po_bill` (
 				  `id` varchar(255) NOT NULL,
 				  `bill_status` int(11) NOT NULL,
 				  `biz_dt` datetime NOT NULL,
@@ -925,10 +928,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_po_bill_detail
-		$sql = "CREATE TABLE IF NOT EXISTS `t_po_bill_detail` (
+    // t_po_bill_detail
+    $sql = "CREATE TABLE IF NOT EXISTS `t_po_bill_detail` (
 				  `id` varchar(255) NOT NULL,
 				  `date_created` datetime DEFAULT NULL,
 				  `goods_id` varchar(255) NOT NULL,
@@ -949,27 +952,27 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_po_pw
-		$sql = "CREATE TABLE IF NOT EXISTS `t_po_pw` (
+    // t_po_pw
+    $sql = "CREATE TABLE IF NOT EXISTS `t_po_pw` (
 				  `po_id` varchar(255) NOT NULL,
 				  `pw_id` varchar(255) NOT NULL
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_role_permission_dataorg
-		$sql = "CREATE TABLE IF NOT EXISTS `t_role_permission_dataorg` (
+    // t_role_permission_dataorg
+    $sql = "CREATE TABLE IF NOT EXISTS `t_role_permission_dataorg` (
 				  `role_id` varchar(255) DEFAULT NULL,
 				  `permission_id` varchar(255) DEFAULT NULL,
 				  `data_org` varchar(255) DEFAULT NULL
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_inventory_fifo
-		$sql = "CREATE TABLE IF NOT EXISTS `t_inventory_fifo` (
+    // t_inventory_fifo
+    $sql = "CREATE TABLE IF NOT EXISTS `t_inventory_fifo` (
 				  `id` bigint(20) NOT NULL AUTO_INCREMENT,
 				  `balance_count` decimal(19,8) NOT NULL,
 				  `balance_money` decimal(19,2) NOT NULL,
@@ -990,10 +993,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_inventory_fifo_detail
-		$sql = "CREATE TABLE IF NOT EXISTS `t_inventory_fifo_detail` (
+    // t_inventory_fifo_detail
+    $sql = "CREATE TABLE IF NOT EXISTS `t_inventory_fifo_detail` (
 				  `id` bigint(20) NOT NULL AUTO_INCREMENT,
 				  `balance_count` decimal(19,8) NOT NULL,
 				  `balance_money` decimal(19,2) NOT NULL,
@@ -1013,10 +1016,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_so_bill
-		$sql = "CREATE TABLE IF NOT EXISTS `t_so_bill` (
+    // t_so_bill
+    $sql = "CREATE TABLE IF NOT EXISTS `t_so_bill` (
 				  `id` varchar(255) NOT NULL,
 				  `bill_status` int(11) NOT NULL,
 				  `biz_dt` datetime NOT NULL,
@@ -1043,10 +1046,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_so_bill_detail
-		$sql = "CREATE TABLE IF NOT EXISTS `t_so_bill_detail` (
+    // t_so_bill_detail
+    $sql = "CREATE TABLE IF NOT EXISTS `t_so_bill_detail` (
 				  `id` varchar(255) NOT NULL,
 				  `date_created` datetime DEFAULT NULL,
 				  `goods_id` varchar(255) NOT NULL,
@@ -1068,18 +1071,18 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_so_ws
-		$sql = "CREATE TABLE IF NOT EXISTS `t_so_ws` (
+    // t_so_ws
+    $sql = "CREATE TABLE IF NOT EXISTS `t_so_ws` (
 				  `so_id` varchar(255) NOT NULL,
 				  `ws_id` varchar(255) NOT NULL
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 				";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_goods_brand
-		$sql = "CREATE TABLE IF NOT EXISTS `t_goods_brand` (
+    // t_goods_brand
+    $sql = "CREATE TABLE IF NOT EXISTS `t_goods_brand` (
 				  `id` varchar(255) NOT NULL,
 				  `name` varchar(255) NOT NULL,
 				  `parent_id` varchar(255) DEFAULT NULL,
@@ -1091,10 +1094,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_goods_bom
-		$sql = "CREATE TABLE IF NOT EXISTS `t_goods_bom` (
+    // t_goods_bom
+    $sql = "CREATE TABLE IF NOT EXISTS `t_goods_bom` (
 				  `id` varchar(255) NOT NULL,
 				  `goods_id` varchar(255) NOT NULL,
 				  `sub_goods_id` varchar(255) NOT NULL,
@@ -1104,10 +1107,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 				";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_subject
-		$sql = "CREATE TABLE IF NOT EXISTS `t_subject` (
+    // t_subject
+    $sql = "CREATE TABLE IF NOT EXISTS `t_subject` (
 				  `id` varchar(255) NOT NULL,
 				  `category` int NOT NULL,
 				  `code` varchar(255) NOT NULL,
@@ -1120,10 +1123,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 				";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_price_system
-		$sql = "CREATE TABLE IF NOT EXISTS `t_price_system` (
+    // t_price_system
+    $sql = "CREATE TABLE IF NOT EXISTS `t_price_system` (
 				  `id` varchar(255) NOT NULL,
 				  `name` varchar(255) NOT NULL,
 				  `data_org` varchar(255) DEFAULT NULL,
@@ -1132,10 +1135,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 			";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_goods_price
-		$sql = "CREATE TABLE IF NOT EXISTS `t_goods_price` (
+    // t_goods_price
+    $sql = "CREATE TABLE IF NOT EXISTS `t_goods_price` (
 				  `id` varchar(255) NOT NULL,
 				  `goods_id` varchar(255) NOT NULL,
 				  `ps_id` varchar(255) NOT NULL,
@@ -1145,10 +1148,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 			";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_bank_account
-		$sql = "CREATE TABLE IF NOT EXISTS `t_bank_account` (
+    // t_bank_account
+    $sql = "CREATE TABLE IF NOT EXISTS `t_bank_account` (
 				  `id` varchar(255) NOT NULL,
 				  `bank_name` varchar(255) NOT NULL,
 				  `bank_number` varchar(255) NOT NULL,
@@ -1159,10 +1162,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 			";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_menu_item_h5
-		$sql = "CREATE TABLE IF NOT EXISTS `t_menu_item_h5` (
+    // t_menu_item_h5
+    $sql = "CREATE TABLE IF NOT EXISTS `t_menu_item_h5` (
 				  `id` varchar(255) NOT NULL,
 				  `caption` varchar(255) NOT NULL,
 				  `fid` varchar(255) DEFAULT NULL,
@@ -1171,10 +1174,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_acc_fmt
-		$sql = "CREATE TABLE IF NOT EXISTS `t_acc_fmt` (
+    // t_acc_fmt
+    $sql = "CREATE TABLE IF NOT EXISTS `t_acc_fmt` (
 				  `id` varchar(255) NOT NULL,
 				  `acc_number` varchar(255) NOT NULL,
 				  `subject_code` varchar(255) NOT NULL,
@@ -1187,10 +1190,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_acc_fmt_cols
-		$sql = "CREATE TABLE IF NOT EXISTS `t_acc_fmt_cols` (
+    // t_acc_fmt_cols
+    $sql = "CREATE TABLE IF NOT EXISTS `t_acc_fmt_cols` (
 				  `id` varchar(255) NOT NULL,
 				  `fmt_id` varchar(255) NOT NULL,
 				  `db_field_name` varchar(255) NOT NULL,
@@ -1203,10 +1206,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_fv_md
-		$sql = "CREATE TABLE IF NOT EXISTS `t_fv_md` (
+    // t_fv_md
+    $sql = "CREATE TABLE IF NOT EXISTS `t_fv_md` (
 				  `id` varchar(255) NOT NULL,
 				  `parent_id` varchar(255) DEFAULT NULL,
 				  `prop_name` varchar(255) NOT NULL,
@@ -1215,10 +1218,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_acc_period
-		$sql = "CREATE TABLE IF NOT EXISTS `t_acc_period` (
+    // t_acc_period
+    $sql = "CREATE TABLE IF NOT EXISTS `t_acc_period` (
 				  `id` varchar(255) NOT NULL,
 				  `acc_year` int(11) NOT NULL,
 				  `acc_month` int(11) NOT NULL,
@@ -1232,10 +1235,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_sc_bill
-		$sql = "CREATE TABLE IF NOT EXISTS `t_sc_bill` (
+    // t_sc_bill
+    $sql = "CREATE TABLE IF NOT EXISTS `t_sc_bill` (
 				  `id` varchar(255) NOT NULL,
 				  `ref` varchar(255) NOT NULL,
 				  `customer_id` varchar(255) NOT NULL,
@@ -1265,10 +1268,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_sc_bill_detail
-		$sql = "CREATE TABLE IF NOT EXISTS `t_sc_bill_detail` (
+    // t_sc_bill_detail
+    $sql = "CREATE TABLE IF NOT EXISTS `t_sc_bill_detail` (
 				  `id` varchar(255) NOT NULL,
 				  `scbill_id` varchar(255) NOT NULL,
 				  `show_order` int(11) NOT NULL,
@@ -1290,18 +1293,18 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_sc_so
-		$sql = "CREATE TABLE IF NOT EXISTS `t_sc_so` (
+    // t_sc_so
+    $sql = "CREATE TABLE IF NOT EXISTS `t_sc_so` (
 				  `sc_id` varchar(255) NOT NULL,
 				  `so_id` varchar(255) NOT NULL
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_wsp_bill
-		$sql = "CREATE TABLE IF NOT EXISTS `t_wsp_bill` (
+    // t_wsp_bill
+    $sql = "CREATE TABLE IF NOT EXISTS `t_wsp_bill` (
 				  `id` varchar(255) NOT NULL,
 				  `ref` varchar(255) NOT NULL,
 				  `from_warehouse_id` varchar(255) NOT NULL,
@@ -1317,10 +1320,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_wsp_bill_detail
-		$sql = "CREATE TABLE IF NOT EXISTS `t_wsp_bill_detail` (
+    // t_wsp_bill_detail
+    $sql = "CREATE TABLE IF NOT EXISTS `t_wsp_bill_detail` (
 				  `id` varchar(255) NOT NULL,
 				  `wspbill_id` varchar(255) NOT NULL,
 				  `show_order` int(11) NOT NULL,
@@ -1333,10 +1336,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_wsp_bill_detail_ex
-		$sql = "CREATE TABLE IF NOT EXISTS `t_wsp_bill_detail_ex` (
+    // t_wsp_bill_detail_ex
+    $sql = "CREATE TABLE IF NOT EXISTS `t_wsp_bill_detail_ex` (
 				  `id` varchar(255) NOT NULL,
 				  `wspbill_id` varchar(255) NOT NULL,
 				  `show_order` int(11) NOT NULL,
@@ -1350,10 +1353,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_wsp_bill_bom
-		$sql = "CREATE TABLE IF NOT EXISTS `t_wsp_bill_detail_bom` (
+    // t_wsp_bill_bom
+    $sql = "CREATE TABLE IF NOT EXISTS `t_wsp_bill_detail_bom` (
 				  `id` varchar(255) NOT NULL,
 				  `wspbilldetail_id` varchar(255) NOT NULL,
 				  `goods_id` varchar(255) NOT NULL,
@@ -1364,10 +1367,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_factory
-		$sql = "CREATE TABLE IF NOT EXISTS `t_factory` (
+    // t_factory
+    $sql = "CREATE TABLE IF NOT EXISTS `t_factory` (
 				  `id` varchar(255) NOT NULL,
 				  `category_id` varchar(255) NOT NULL,
 				  `code` varchar(255) NOT NULL,
@@ -1395,10 +1398,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_factory_category
-		$sql = "CREATE TABLE IF NOT EXISTS `t_factory_category` (
+    // t_factory_category
+    $sql = "CREATE TABLE IF NOT EXISTS `t_factory_category` (
 				  `id` varchar(255) NOT NULL,
 				  `code` varchar(255) NOT NULL,
 				  `name` varchar(255) NOT NULL,
@@ -1409,10 +1412,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_dmo_bill
-		$sql = "CREATE TABLE IF NOT EXISTS `t_dmo_bill` (
+    // t_dmo_bill
+    $sql = "CREATE TABLE IF NOT EXISTS `t_dmo_bill` (
 				  `id` varchar(255) NOT NULL,
 				  `ref` varchar(255) NOT NULL,
 				  `factory_id` varchar(255) NOT NULL,
@@ -1439,10 +1442,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_dmo_bill_detail
-		$sql = "CREATE TABLE IF NOT EXISTS `t_dmo_bill_detail` (
+    // t_dmo_bill_detail
+    $sql = "CREATE TABLE IF NOT EXISTS `t_dmo_bill_detail` (
 				  `id` varchar(255) NOT NULL,
 				  `dmobill_id` varchar(255) NOT NULL,
 				  `show_order` int(11) NOT NULL,
@@ -1463,10 +1466,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_dmw_bill
-		$sql = "CREATE TABLE IF NOT EXISTS `t_dmw_bill` (
+    // t_dmw_bill
+    $sql = "CREATE TABLE IF NOT EXISTS `t_dmw_bill` (
 				  `id` varchar(255) NOT NULL,
 				  `ref` varchar(255) NOT NULL,
 				  `factory_id` varchar(255) NOT NULL,
@@ -1486,10 +1489,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_dmw_bill_detail
-		$sql = "CREATE TABLE IF NOT EXISTS `t_dmw_bill_detail` (
+    // t_dmw_bill_detail
+    $sql = "CREATE TABLE IF NOT EXISTS `t_dmw_bill_detail` (
 				  `id` varchar(255) NOT NULL,
 				  `dmwbill_id` varchar(255) NOT NULL,
 				  `show_order` int(11) NOT NULL,
@@ -1509,18 +1512,18 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_dmo_dmw
-		$sql = "CREATE TABLE IF NOT EXISTS `t_dmo_dmw` (
+    // t_dmo_dmw
+    $sql = "CREATE TABLE IF NOT EXISTS `t_dmo_dmw` (
 				  `dmo_id` varchar(255) NOT NULL,
 				  `dmw_id` varchar(255) NOT NULL
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_supplier_goods_range
-		$sql = "CREATE TABLE IF NOT EXISTS `t_supplier_goods_range` (
+    // t_supplier_goods_range
+    $sql = "CREATE TABLE IF NOT EXISTS `t_supplier_goods_range` (
 				  `id` varchar(255) NOT NULL,
 				  `supplier_id` varchar(255) NOT NULL,
 				  `g_id` varchar(255) NOT NULL,
@@ -1528,18 +1531,18 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_so_po
-		$sql = "CREATE TABLE IF NOT EXISTS `t_so_po` (
+    // t_so_po
+    $sql = "CREATE TABLE IF NOT EXISTS `t_so_po` (
 				  `so_id` varchar(255) NOT NULL,
 				  `po_id` varchar(255) NOT NULL
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_dict_table_category
-		$sql = "CREATE TABLE IF NOT EXISTS `t_dict_table_category` (
+    // t_dict_table_category
+    $sql = "CREATE TABLE IF NOT EXISTS `t_dict_table_category` (
 				  `id` varchar(255) NOT NULL,
 				  `code` varchar(255) NOT NULL,
 				  `name` varchar(255) NOT NULL,
@@ -1547,10 +1550,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_dict_table_md
-		$sql = "CREATE TABLE IF NOT EXISTS `t_dict_table_md` (
+    // t_dict_table_md
+    $sql = "CREATE TABLE IF NOT EXISTS `t_dict_table_md` (
 				  `id` varchar(255) NOT NULL,
 				  `code` varchar(255) NOT NULL,
 				  `name` varchar(255) NOT NULL,
@@ -1561,10 +1564,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_code_table_category
-		$sql = "CREATE TABLE IF NOT EXISTS `t_code_table_category` (
+    // t_code_table_category
+    $sql = "CREATE TABLE IF NOT EXISTS `t_code_table_category` (
 				  `id` varchar(255) NOT NULL,
 				  `code` varchar(255) NOT NULL,
 				  `name` varchar(255) NOT NULL,
@@ -1572,10 +1575,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_code_table_md
-		$sql = "CREATE TABLE IF NOT EXISTS `t_code_table_md` (
+    // t_code_table_md
+    $sql = "CREATE TABLE IF NOT EXISTS `t_code_table_md` (
 				  `id` varchar(255) NOT NULL,
 				  `code` varchar(255) NOT NULL,
 				  `name` varchar(255) NOT NULL,
@@ -1589,10 +1592,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_code_table_cols_md
-		$sql = "CREATE TABLE IF NOT EXISTS `t_code_table_cols_md` (
+    // t_code_table_cols_md
+    $sql = "CREATE TABLE IF NOT EXISTS `t_code_table_cols_md` (
 				  `id` varchar(255) NOT NULL,
 				  `table_id` varchar(255) NOT NULL,
 				  `caption` varchar(255) NOT NULL,
@@ -1612,18 +1615,18 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_fid_plus
-		$sql = "CREATE TABLE IF NOT EXISTS `t_fid_plus` (
+    // t_fid_plus
+    $sql = "CREATE TABLE IF NOT EXISTS `t_fid_plus` (
 				  `fid` varchar(255) NOT NULL,
 				  `name` varchar(255) NOT NULL
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_menu_item_plus
-		$sql = "CREATE TABLE IF NOT EXISTS `t_menu_item_plus` (
+    // t_menu_item_plus
+    $sql = "CREATE TABLE IF NOT EXISTS `t_menu_item_plus` (
 				  `id` varchar(255) NOT NULL,
 				  `caption` varchar(255) NOT NULL,
 				  `fid` varchar(255) DEFAULT NULL,
@@ -1632,10 +1635,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_permission_plus
-		$sql = "CREATE TABLE IF NOT EXISTS `t_permission_plus` (
+    // t_permission_plus
+    $sql = "CREATE TABLE IF NOT EXISTS `t_permission_plus` (
 				  `id` varchar(255) NOT NULL,
 				  `fid` varchar(255) NOT NULL,
 				  `name` varchar(255) NOT NULL,
@@ -1646,10 +1649,10 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_sysdict_record_status
-		$sql = "CREATE TABLE IF NOT EXISTS `t_sysdict_record_status` (
+    // t_sysdict_record_status
+    $sql = "CREATE TABLE IF NOT EXISTS `t_sysdict_record_status` (
 				  `id` varchar(255) NOT NULL,
 				  `code` varchar(255) NOT NULL,
 				  `code_int` int(11) NOT NULL,
@@ -1660,19 +1663,20 @@ class InstallService extends PSIBaseExService {
 				  PRIMARY KEY (`id`)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 		";
-		$db->execute($sql);
-	}
+    $db->execute($sql);
+  }
 
-	/**
-	 * 插入初始化数据
-	 */
-	private function insertInitData() {
-		$db = $this->db();
+  /**
+   * 插入初始化数据
+   */
+  private function insertInitData()
+  {
+    $db = $this->db();
 
-		$db->startTrans();
+    $db->startTrans();
 
-		// t_fid
-		$sql = "INSERT INTO `t_fid` (`fid`, `name`) VALUES
+    // t_fid
+    $sql = "INSERT INTO `t_fid` (`fid`, `name`) VALUES
 				('-7994', '系统数据字典'),
 				('-7995', '主菜单维护'),
 				('-7996', '码表设置'),
@@ -1837,10 +1841,10 @@ class InstallService extends PSIBaseExService {
 				('2102', '银行账户'),
 				('2103', '会计期间');
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_menu_item
-		$sql = "INSERT INTO `t_menu_item` (`id`, `caption`, `fid`, `parent_id`, `show_order`) VALUES
+    // t_menu_item
+    $sql = "INSERT INTO `t_menu_item` (`id`, `caption`, `fid`, `parent_id`, `show_order`) VALUES
 				('01', '文件', NULL, NULL, 1),
 				('0101', '首页', '-9997', '01', 1),
 				('0102', '重新登录', '-9999', '01', 2),
@@ -1917,17 +1921,17 @@ class InstallService extends PSIBaseExService {
 				('1001', '使用帮助', '-9995', '10', 1),
 				('1003', '关于', '-9994', '10', 3);
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_org
-		$sql = "INSERT INTO `t_org` (`id`, `full_name`, `name`, `org_code`, `data_org`, `parent_id`) VALUES
+    // t_org
+    $sql = "INSERT INTO `t_org` (`id`, `full_name`, `name`, `org_code`, `data_org`, `parent_id`) VALUES
 					('4D74E1E4-A129-11E4-9B6A-782BCBD7746B', '公司', '公司', '01', '01', NULL),
 					('5EBDBE11-A129-11E4-9B6A-782BCBD7746B', '公司\\\\信息部', '信息部', '0199', '0101', '4D74E1E4-A129-11E4-9B6A-782BCBD7746B');
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_permission
-		$sql = "INSERT INTO `t_permission` (`id`, `fid`, `name`, `note`, `category`, `py`, `show_order`) VALUES
+    // t_permission
+    $sql = "INSERT INTO `t_permission` (`id`, `fid`, `name`, `note`, `category`, `py`, `show_order`) VALUES
 				('-7994', '-7994', '系统数据字典', '模块权限：通过菜单进入系统数据字典模块的权限', '系统数据字典', 'XTSJZD', 100),
 				('-7995', '-7995', '主菜单维护', '模块权限：通过菜单进入主菜单维护模块的权限', '主菜单维护', 'ZCDWH', 100),
 				('-7996', '-7996', '码表设置', '模块权限：通过菜单进入码表设置模块的权限', '码表设置', 'MBSZ', 100),
@@ -2120,16 +2124,16 @@ class InstallService extends PSIBaseExService {
 				('2102', '2102', '银行账户', '模块权限：通过菜单进入银行账户模块的权限', '银行账户', 'YHZH', 100),
 				('2103', '2103', '会计期间', '模块权限：通过菜单进入会计期间模块的权限', '会计期间', 'KJQJ', 100);
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_role
-		$sql = "INSERT INTO `t_role` (`id`, `name`, `data_org`, `company_id`, `code`) VALUES
+    // t_role
+    $sql = "INSERT INTO `t_role` (`id`, `name`, `data_org`, `company_id`, `code`) VALUES
 				('A83F617E-A153-11E4-A9B8-782BCBD7746B', '系统管理', '01010001', '4D74E1E4-A129-11E4-9B6A-782BCBD7746B', '01');
 				";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_role_permission
-		$sql = "INSERT INTO `t_role_permission` (`role_id`, `permission_id`) VALUES
+    // t_role_permission
+    $sql = "INSERT INTO `t_role_permission` (`role_id`, `permission_id`) VALUES
 					('A83F617E-A153-11E4-A9B8-782BCBD7746B', '-8999'),
 					('A83F617E-A153-11E4-A9B8-782BCBD7746B', '-8997'),
 					('A83F617E-A153-11E4-A9B8-782BCBD7746B', '-8996'),
@@ -2179,22 +2183,22 @@ class InstallService extends PSIBaseExService {
 					('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2030-03'),
 					('A83F617E-A153-11E4-A9B8-782BCBD7746B', '2031');
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_role_user
-		$sql = "INSERT INTO `t_role_user` (`role_id`, `user_id`) VALUES
+    // t_role_user
+    $sql = "INSERT INTO `t_role_user` (`role_id`, `user_id`) VALUES
 					('A83F617E-A153-11E4-A9B8-782BCBD7746B', '6C2A09CD-A129-11E4-9B6A-782BCBD7746B');
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_user
-		$sql = "INSERT INTO `t_user` (`id`, `enabled`, `login_name`, `name`, `org_id`, `org_code`, `data_org`, `password`, `py`) VALUES
+    // t_user
+    $sql = "INSERT INTO `t_user` (`id`, `enabled`, `login_name`, `name`, `org_id`, `org_code`, `data_org`, `password`, `py`) VALUES
 					('6C2A09CD-A129-11E4-9B6A-782BCBD7746B', '1', 'admin', '系统管理员', '5EBDBE11-A129-11E4-9B6A-782BCBD7746B', '019901', '01010001', '21232f297a57a5a743894a0e4a801fc3', 'XTGLY');
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_config
-		$sql = "INSERT INTO `t_config` (`id`, `name`, `value`, `note`, `show_order`) VALUES
+    // t_config
+    $sql = "INSERT INTO `t_config` (`id`, `name`, `value`, `note`, `show_order`) VALUES
 					('9000-01', '公司名称', '', '', 100),
 					('9000-02', '公司地址', '', '', 101),
 					('9000-03', '公司电话', '', '', 102),
@@ -2215,47 +2219,47 @@ class InstallService extends PSIBaseExService {
 					('9003-07', '盘点单单号前缀', 'IC', '', 607),
 					('9003-08', '销售订单单号前缀', 'SO', '', 608);
 				";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		$sql = "update t_config set company_id = '4D74E1E4-A129-11E4-9B6A-782BCBD7746B' ;";
-		$db->execute($sql);
+    $sql = "update t_config set company_id = '4D74E1E4-A129-11E4-9B6A-782BCBD7746B' ;";
+    $db->execute($sql);
 
-		// t_menu_item_h5
-		$sql = "INSERT INTO `t_menu_item_h5` (`id`, `caption`, `fid`, `parent_id`, `show_order`) VALUES
+    // t_menu_item_h5
+    $sql = "INSERT INTO `t_menu_item_h5` (`id`, `caption`, `fid`, `parent_id`, `show_order`) VALUES
 				('01', '销售', NULL, NULL, 1),
 				('0101', '销售订单', '2028', '01', 1),
 				('02', '客户关系', NULL, NULL, 2),
 				('0201', '客户资料', '1007', '02', 1);
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_dict_table_category
-		$sql = "INSERT INTO `t_dict_table_category` (`id`, `code`, `name`, `parent_id`) VALUES
+    // t_dict_table_category
+    $sql = "INSERT INTO `t_dict_table_category` (`id`, `code`, `name`, `parent_id`) VALUES
 				('01', '01', '码表', NULL);
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_dict_table_md
-		$sql = "INSERT INTO `t_dict_table_md` (`id`, `code`, `name`, `table_name`, `category_id`, `memo`, `py`) VALUES
+    // t_dict_table_md
+    $sql = "INSERT INTO `t_dict_table_md` (`id`, `code`, `name`, `table_name`, `category_id`, `memo`, `py`) VALUES
 				('01', '01', '码表记录状态', 't_sysdict_record_status', '01', '用于码表', 'MBJLZT');
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_sysdict_record_status
-		$sql = "INSERT INTO `t_sysdict_record_status` (`id`, `code`, `code_int`, `name`, `py`, `memo`, `show_order`) VALUES
+    // t_sysdict_record_status
+    $sql = "INSERT INTO `t_sysdict_record_status` (`id`, `code`, `code_int`, `name`, `py`, `memo`, `show_order`) VALUES
 				('9B90C56E-696E-11E9-B2BF-782BCBD7746B', '1000', 1000, '启用', 'QY', '记录处于启用状态', 1),
 				('AC7F3FAB-696E-11E9-B2BF-782BCBD7746B', '0', 0, '停用', 'TY', '记录处于停用状态', 2);
 		";
-		$db->execute($sql);
+    $db->execute($sql);
 
-		// t_psi_db_version
-		$sql = "INSERT INTO `t_psi_db_version` (`db_version`, `update_dt`) VALUES
+    // t_psi_db_version
+    $sql = "INSERT INTO `t_psi_db_version` (`db_version`, `update_dt`) VALUES
 					('%s', now());
 		";
-		$db->execute($sql, $this->CURRENT_DB_VERSION);
+    $db->execute($sql, $this->CURRENT_DB_VERSION);
 
-		$db->commit();
+    $db->commit();
 
-		return true;
-	}
+    return true;
+  }
 }

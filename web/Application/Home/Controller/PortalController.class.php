@@ -11,49 +11,54 @@ use Home\Service\PortalService;
  * @author 李静波
  *        
  */
-class PortalController extends Controller {
+class PortalController extends Controller
+{
 
-	/**
-	 * 库存看板
-	 */
-	public function inventoryPortal() {
-		if (IS_POST) {
-			$ps = new PortalService();
+  /**
+   * 库存看板
+   */
+  public function inventoryPortal()
+  {
+    if (IS_POST) {
+      $ps = new PortalService();
 
-			$this->ajaxReturn($ps->inventoryPortal());
-		}
-	}
+      $this->ajaxReturn($ps->inventoryPortal());
+    }
+  }
 
-	/**
-	 * 销售看板
-	 */
-	public function salePortal() {
-		if (IS_POST) {
-			$ps = new PortalService();
+  /**
+   * 销售看板
+   */
+  public function salePortal()
+  {
+    if (IS_POST) {
+      $ps = new PortalService();
 
-			$this->ajaxReturn($ps->salePortal());
-		}
-	}
+      $this->ajaxReturn($ps->salePortal());
+    }
+  }
 
-	/**
-	 * 采购看板
-	 */
-	public function purchasePortal() {
-		if (IS_POST) {
-			$ps = new PortalService();
+  /**
+   * 采购看板
+   */
+  public function purchasePortal()
+  {
+    if (IS_POST) {
+      $ps = new PortalService();
 
-			$this->ajaxReturn($ps->purchasePortal());
-		}
-	}
+      $this->ajaxReturn($ps->purchasePortal());
+    }
+  }
 
-	/**
-	 * 资金看板
-	 */
-	public function moneyPortal() {
-		if (IS_POST) {
-			$ps = new PortalService();
+  /**
+   * 资金看板
+   */
+  public function moneyPortal()
+  {
+    if (IS_POST) {
+      $ps = new PortalService();
 
-			$this->ajaxReturn($ps->moneyPortal());
-		}
-	}
+      $this->ajaxReturn($ps->moneyPortal());
+    }
+  }
 }

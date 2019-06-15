@@ -4,16 +4,16 @@
 
 
 <script>
-    Ext.onReady(function(){
-        var app = Ext.create("PSI.App", {
-            userName: "{$loginUserName}",
-            productionName: "{$productionName}"
-        });
-
-        app.add(Ext.create("PSI.Funds.CashMainForm"));
-        app.setAppHeader({
-            title: "{$title}",
-            iconCls: "PSI-fid2024"
-            });
+  Ext.onReady(function () {
+    var app = Ext.create("PSI.App", {
+      userName: "{$loginUserName}",
+      productionName: "{$productionName}"
     });
+
+    app.add(Ext.create("PSI.Funds.CashMainForm"));
+    app.setAppHeader({
+      title: "{$title}",
+      iconCls: "PSI-fid2024"
+    });
+  });
 </script>

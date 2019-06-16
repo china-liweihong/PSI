@@ -383,9 +383,9 @@ class BizConfigDAO extends PSIBaseExDAO
     $companyId = $params["companyId"];
 
     $sql = "select id, name, value, note
-				from t_config
-				where company_id = '%s'
-				order by show_order";
+            from t_config
+            where company_id = '%s'
+            order by show_order";
     $data = $db->query($sql, $companyId);
     $result = [];
 
@@ -454,9 +454,9 @@ class BizConfigDAO extends PSIBaseExDAO
 
     foreach ($result as $i => $v) {
       $sql = "select value
-				from t_config
-				where company_id = '%s' and id = '%s'
-				";
+              from t_config
+              where company_id = '%s' and id = '%s'
+              ";
       $data = $db->query($sql, $companyId, $v["id"]);
       if ($data) {
         $result[$i]["value"] = $data[0]["value"];
@@ -550,7 +550,7 @@ class BizConfigDAO extends PSIBaseExDAO
       if ($key == "1003-02") {
         // 存货计价方法
         $sql = "select name, value from t_config
-						where id = '%s' and company_id = '%s' ";
+                where id = '%s' and company_id = '%s' ";
         $data = $db->query($sql, $key, $companyId);
         if (!$data) {
           continue;
@@ -565,7 +565,7 @@ class BizConfigDAO extends PSIBaseExDAO
         }
 
         $sql = "select count(*) as cnt from t_inventory_detail
-						where ref_type <> '库存建账' ";
+                where ref_type <> '库存建账' ";
         $data = $db->query($sql);
         $cnt = $data[0]["cnt"];
         if ($cnt > 0) {
@@ -610,14 +610,14 @@ class BizConfigDAO extends PSIBaseExDAO
       }
 
       $sql = "select name, value from t_config
-					where id = '%s' and company_id = '%s' ";
+              where id = '%s' and company_id = '%s' ";
       $data = $db->query($sql, $key, $companyId);
       $itemName = "";
       if (!$data) {
         foreach ($defaultConfigs as $dc) {
           if ($dc["id"] == $key) {
             $sql = "insert into t_config(id, name, value, note, show_order, company_id)
-								values ('%s', '%s', '%s', '%s', %d, '%s')";
+                    values ('%s', '%s', '%s', '%s', %d, '%s')";
             $rc = $db->execute(
               $sql,
               $key,
@@ -645,7 +645,7 @@ class BizConfigDAO extends PSIBaseExDAO
         }
 
         $sql = "update t_config set value = '%s'
-						where id = '%s' and company_id = '%s' ";
+                where id = '%s' and company_id = '%s' ";
         $rc = $db->execute($sql, $value, $key, $companyId);
         if ($rc === false) {
           return $this->sqlError(__METHOD__, __LINE__);
@@ -715,7 +715,7 @@ class BizConfigDAO extends PSIBaseExDAO
     $db = $this->db;
 
     $sql = "select value from t_config
-				where id = '9001-01' and company_id = '%s' ";
+            where id = '9001-01' and company_id = '%s' ";
     $data = $db->query($sql, $companyId);
     if ($data) {
       $result = $data[0]["value"];
@@ -741,14 +741,14 @@ class BizConfigDAO extends PSIBaseExDAO
     $companyId = $params["companyId"];
 
     $sql = "select value from t_config
-				where id = '9002-01' and company_id = '%s' ";
+            where id = '9002-01' and company_id = '%s' ";
     $data = $db->query($sql, $companyId);
     if ($data) {
       return $data[0]["value"];
     } else {
       // 登录页面的时候，并不知道company_id的值
       $sql = "select value from t_config
-				where id = '9002-01' ";
+              where id = '9002-01' ";
       $data = $db->query($sql);
       if ($data) {
         return $data[0]["value"];
@@ -772,7 +772,7 @@ class BizConfigDAO extends PSIBaseExDAO
 
     $id = "9003-01";
     $sql = "select value from t_config
-				where id = '%s' and company_id = '%s' ";
+            where id = '%s' and company_id = '%s' ";
     $data = $db->query($sql, $id, $companyId);
     if ($data) {
       $result = $data[0]["value"];
@@ -800,7 +800,7 @@ class BizConfigDAO extends PSIBaseExDAO
 
     $id = "2001-02";
     $sql = "select value from t_config
-				where id = '%s' and company_id = '%s' ";
+            where id = '%s' and company_id = '%s' ";
     $data = $db->query($sql, $id, $companyId);
     if ($data) {
       $result = $data[0]["value"];
@@ -827,7 +827,7 @@ class BizConfigDAO extends PSIBaseExDAO
 
     $id = "9003-02";
     $sql = "select value from t_config
-				where id = '%s' and company_id = '%s' ";
+            where id = '%s' and company_id = '%s' ";
     $data = $db->query($sql, $id, $companyId);
     if ($data) {
       $result = $data[0]["value"];
@@ -854,7 +854,7 @@ class BizConfigDAO extends PSIBaseExDAO
 
     $id = "2001-03";
     $sql = "select value from t_config
-				where id = '%s' and company_id = '%s' ";
+            where id = '%s' and company_id = '%s' ";
     $data = $db->query($sql, $id, $companyId);
     if ($data) {
       $result = $data[0]["value"];
@@ -878,7 +878,7 @@ class BizConfigDAO extends PSIBaseExDAO
     $db = $this->db;
 
     $sql = "select value from t_config 
-				where id = '2001-01' and company_id = '%s' ";
+            where id = '2001-01' and company_id = '%s' ";
     $data = $db->query($sql, $companyId);
     if ($data) {
       $warehouseId = $data[0]["value"];
@@ -925,7 +925,7 @@ class BizConfigDAO extends PSIBaseExDAO
 
     $id = "9003-03";
     $sql = "select value from t_config
-				where id = '%s' and company_id = '%s' ";
+            where id = '%s' and company_id = '%s' ";
     $data = $db->query($sql, $id, $companyId);
     if ($data) {
       $result = $data[0]["value"];
@@ -952,7 +952,7 @@ class BizConfigDAO extends PSIBaseExDAO
 
     $id = "9003-08";
     $sql = "select value from t_config
-				where id = '%s' and company_id = '%s' ";
+            where id = '%s' and company_id = '%s' ";
     $data = $db->query($sql, $id, $companyId);
     if ($data) {
       $result = $data[0]["value"];
@@ -979,7 +979,7 @@ class BizConfigDAO extends PSIBaseExDAO
 
     $id = "2002-04";
     $sql = "select value from t_config
-				where id = '%s' and company_id = '%s' ";
+            where id = '%s' and company_id = '%s' ";
     $data = $db->query($sql, $id, $companyId);
     if ($data) {
       $result = $data[0]["value"];
@@ -1006,7 +1006,7 @@ class BizConfigDAO extends PSIBaseExDAO
 
     $id = "9003-04";
     $sql = "select value from t_config
-				where id = '%s' and company_id = '%s' ";
+            where id = '%s' and company_id = '%s' ";
     $data = $db->query($sql, $id, $companyId);
     if ($data) {
       $result = $data[0]["value"];
@@ -1033,7 +1033,7 @@ class BizConfigDAO extends PSIBaseExDAO
 
     $id = "2002-03";
     $sql = "select value from t_config
-				where id = '%s' and company_id = '%s' ";
+            where id = '%s' and company_id = '%s' ";
     $data = $db->query($sql, $id, $companyId);
     if ($data) {
       $result = $data[0]["value"];
@@ -1060,7 +1060,7 @@ class BizConfigDAO extends PSIBaseExDAO
 
     $id = "9003-05";
     $sql = "select value from t_config
-				where id = '%s' and company_id = '%s' ";
+            where id = '%s' and company_id = '%s' ";
     $data = $db->query($sql, $id, $companyId);
     if ($data) {
       $result = $data[0]["value"];
@@ -1087,7 +1087,7 @@ class BizConfigDAO extends PSIBaseExDAO
 
     $id = "9003-06";
     $sql = "select value from t_config
-				where id = '%s' and company_id = '%s' ";
+            where id = '%s' and company_id = '%s' ";
     $data = $db->query($sql, $id, $companyId);
     if ($data) {
       $result = $data[0]["value"];
@@ -1114,7 +1114,7 @@ class BizConfigDAO extends PSIBaseExDAO
 
     $id = "9003-07";
     $sql = "select value from t_config
-				where id = '%s' and company_id = '%s' ";
+            where id = '%s' and company_id = '%s' ";
     $data = $db->query($sql, $id, $companyId);
     if ($data) {
       $result = $data[0]["value"];
@@ -1141,7 +1141,7 @@ class BizConfigDAO extends PSIBaseExDAO
 
     $id = "9003-09";
     $sql = "select value from t_config
-				where id = '%s' and company_id = '%s' ";
+            where id = '%s' and company_id = '%s' ";
     $data = $db->query($sql, $id, $companyId);
     if ($data) {
       $result = $data[0]["value"];
@@ -1168,7 +1168,7 @@ class BizConfigDAO extends PSIBaseExDAO
 
     $id = "9003-10";
     $sql = "select value from t_config
-				where id = '%s' and company_id = '%s' ";
+            where id = '%s' and company_id = '%s' ";
     $data = $db->query($sql, $id, $companyId);
     if ($data) {
       $result = $data[0]["value"];
@@ -1195,7 +1195,7 @@ class BizConfigDAO extends PSIBaseExDAO
 
     $id = "2001-04";
     $sql = "select value from t_config
-				where id = '%s' and company_id = '%s' ";
+            where id = '%s' and company_id = '%s' ";
     $data = $db->query($sql, $id, $companyId);
     if ($data) {
       $result = $data[0]["value"];
@@ -1222,7 +1222,7 @@ class BizConfigDAO extends PSIBaseExDAO
 
     $id = "9002-02";
     $sql = "select value from t_config
-				where id = '%s' and company_id = '%s' ";
+            where id = '%s' and company_id = '%s' ";
     $data = $db->query($sql, $id, $companyId);
     if ($data) {
       $result = $data[0]["value"];
@@ -1249,7 +1249,7 @@ class BizConfigDAO extends PSIBaseExDAO
 
     $id = "2002-05";
     $sql = "select value from t_config
-				where id = '%s' and company_id = '%s' ";
+            where id = '%s' and company_id = '%s' ";
     $data = $db->query($sql, $id, $companyId);
     if ($data) {
       $result = $data[0]["value"];
@@ -1276,7 +1276,7 @@ class BizConfigDAO extends PSIBaseExDAO
 
     $id = "9002-03";
     $sql = "select value from t_config
-				where id = '%s' and company_id = '%s' ";
+            where id = '%s' and company_id = '%s' ";
     $data = $db->query($sql, $id, $companyId);
     if ($data) {
       $result = $data[0]["value"];
@@ -1313,7 +1313,7 @@ class BizConfigDAO extends PSIBaseExDAO
 
     $id = "9003-11";
     $sql = "select value from t_config
-				where id = '%s' and company_id = '%s' ";
+            where id = '%s' and company_id = '%s' ";
     $data = $db->query($sql, $id, $companyId);
     if ($data) {
       $result = $data[0]["value"];
@@ -1340,7 +1340,7 @@ class BizConfigDAO extends PSIBaseExDAO
 
     $id = "9003-12";
     $sql = "select value from t_config
-				where id = '%s' and company_id = '%s' ";
+            where id = '%s' and company_id = '%s' ";
     $data = $db->query($sql, $id, $companyId);
     if ($data) {
       $result = $data[0]["value"];

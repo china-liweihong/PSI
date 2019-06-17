@@ -18,8 +18,8 @@ class CodeTableDAO extends PSIBaseExDAO
     $db = $this->db;
 
     $sql = "select id, code, name
-				from t_code_table_category
-				order by code";
+            from t_code_table_category
+            order by code";
     $data = $db->query($sql);
 
     $result = [];
@@ -70,7 +70,7 @@ class CodeTableDAO extends PSIBaseExDAO
 
     $id = $this->newId();
     $sql = "insert into t_code_table_category (id, code, name, parent_id)
-				values ('%s', '%s', '%s', null)";
+            values ('%s', '%s', '%s', null)";
 
     $rc = $db->execute($sql, $id, $code, $name);
     if ($rc === false) {
@@ -104,7 +104,7 @@ class CodeTableDAO extends PSIBaseExDAO
     // 检查编码是否存在
     if ($code) {
       $sql = "select count(*) as cnt from t_code_table_category 
-					where code = '%s' and id <> '%s' ";
+              where code = '%s' and id <> '%s' ";
       $data = $db->query($sql, $code, $id);
       $cnt = $data[0]["cnt"];
       if ($cnt) {
@@ -116,7 +116,7 @@ class CodeTableDAO extends PSIBaseExDAO
 
     // 检查分类名称是否存在
     $sql = "select count(*) as cnt from t_code_table_category 
-				where name = '%s' and id <> '%s' ";
+            where name = '%s' and id <> '%s' ";
     $data = $db->query($sql, $name, $id);
     $cnt = $data[0]["cnt"];
     if ($cnt) {
@@ -124,8 +124,8 @@ class CodeTableDAO extends PSIBaseExDAO
     }
 
     $sql = "update t_code_table_category
-				set code = '%s', name = '%s'
-				where id = '%s' ";
+            set code = '%s', name = '%s'
+            where id = '%s' ";
 
     $rc = $db->execute($sql, $code, $name, $id);
     if ($rc === false) {
@@ -169,7 +169,7 @@ class CodeTableDAO extends PSIBaseExDAO
 
     // 查询该分类是否被使用了
     $sql = "select count(*) as cnt from t_code_table_md
-				where category_id = '%s' ";
+            where category_id = '%s' ";
     $data = $db->query($sql, $id);
     $cnt = $data[0]["cnt"];
     if ($cnt > 0) {
@@ -197,9 +197,9 @@ class CodeTableDAO extends PSIBaseExDAO
     $categoryId = $params["categoryId"];
 
     $sql = "select id, code, name, table_name, memo, fid, md_version, is_fixed
-				from t_code_table_md
-				where category_id = '%s' 
-				order by code, table_name";
+            from t_code_table_md
+            where category_id = '%s' 
+            order by code, table_name";
     $data = $db->query($sql, $categoryId);
 
     $result = [];
@@ -228,8 +228,8 @@ class CodeTableDAO extends PSIBaseExDAO
     $queryKey = $params["queryKey"] ?? "";
 
     $sql = "select id, code, name
-				from t_code_table_category
-				where code like '%s' or name like '%s' ";
+            from t_code_table_category
+            where code like '%s' or name like '%s' ";
     $queryParams = [];
     $queryParams[] = "%{$queryKey}%";
     $queryParams[] = "%{$queryKey}%";
@@ -508,7 +508,7 @@ class CodeTableDAO extends PSIBaseExDAO
     // 检查编码是否已经存在
     if ($code) {
       $sql = "select count(*) as cnt from t_code_table_md
-					where code = '%s' ";
+              where code = '%s' ";
       $data = $db->query($sql, $code);
       $cnt = $data[0]["cnt"];
       if ($cnt > 0) {
@@ -518,7 +518,7 @@ class CodeTableDAO extends PSIBaseExDAO
 
     // 检查名称是否已经存在
     $sql = "select count(*) as cnt from t_code_table_md
-					where name = '%s' ";
+            where name = '%s' ";
     $data = $db->query($sql, $name);
     $cnt = $data[0]["cnt"];
     if ($cnt > 0) {
@@ -548,7 +548,7 @@ class CodeTableDAO extends PSIBaseExDAO
     $fid = "ct" . date("YmdHis");
 
     $sql = "insert into t_code_table_md (id, category_id, code, name, table_name, py, memo, fid)
-				values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')";
+            values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')";
     $rc = $db->execute($sql, $id, $categoryId, $code, $name, $tableName, $py, $memo, $fid);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -558,13 +558,13 @@ class CodeTableDAO extends PSIBaseExDAO
     $cols = $this->getCodeTableSysCols();
     foreach ($cols as $v) {
       $sql = "insert into t_code_table_cols_md (id, table_id,
-						caption, db_field_name, db_field_type, db_field_length,
-						db_field_decimal, show_order, value_from, value_from_table_name,
-						value_from_col_name, must_input, sys_col, is_visible, width_in_view)
-					values ('%s', '%s',
-						'%s', '%s', '%s', %d,
-						%d, %d, %d, '%s',
-						'%s', %d, %d, %d, %d)";
+                caption, db_field_name, db_field_type, db_field_length,
+                db_field_decimal, show_order, value_from, value_from_table_name,
+                value_from_col_name, must_input, sys_col, is_visible, width_in_view)
+              values ('%s', '%s',
+                '%s', '%s', '%s', %d,
+                %d, %d, %d, '%s',
+                '%s', %d, %d, %d, %d)";
       $rc = $db->execute(
         $sql,
         $this->newId(),
@@ -597,7 +597,7 @@ class CodeTableDAO extends PSIBaseExDAO
 
     // 权限: t_permission_plus
     $sql = "insert into t_permission_plus (id, fid, name, note, category, py, show_order)
-				values ('%s', '%s', '%s', '%s', '%s','%s', %d)";
+            values ('%s', '%s', '%s', '%s', '%s','%s', %d)";
     $rc = $db->execute($sql, $fid, $fid, $name, "模块权限：通过菜单进入{$name}模块的权限", $name, "", 100);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -670,10 +670,10 @@ class CodeTableDAO extends PSIBaseExDAO
     }
 
     $sql = "update t_code_table_md
-				set code = '%s', name = '%s',
-					category_id = '%s', memo = '%s',
-					md_version = md_version + 1
-				where id = '%s' ";
+            set code = '%s', name = '%s',
+              category_id = '%s', memo = '%s',
+              md_version = md_version + 1
+            where id = '%s' ";
     $rc = $db->execute($sql, $code, $name, $categoryId, $memo, $id);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -708,12 +708,12 @@ class CodeTableDAO extends PSIBaseExDAO
     $id = $params["id"];
 
     $sql = "select id, caption, db_field_name, db_field_type, db_field_length,
-						db_field_decimal, show_order, value_from, value_from_table_name,
-						value_from_col_name, must_input, sys_col, is_visible, width_in_view,
-						note
-				from t_code_table_cols_md
-				where table_id = '%s' 
-				order by show_order";
+              db_field_decimal, show_order, value_from, value_from_table_name,
+              value_from_col_name, must_input, sys_col, is_visible, width_in_view,
+              note
+            from t_code_table_cols_md
+            where table_id = '%s' 
+            order by show_order";
     $data = $db->query($sql, $id);
 
     $result = [];
@@ -824,9 +824,9 @@ class CodeTableDAO extends PSIBaseExDAO
     $id = $params["id"];
 
     $sql = "select c.name as category_name, d.code, d.name,
-					d.table_name, d.category_id, d.memo
-				from t_code_table_md d, t_code_table_category c
-				where d.id = '%s' and d.category_id = c.id ";
+              d.table_name, d.category_id, d.memo
+            from t_code_table_md d, t_code_table_category c
+            where d.id = '%s' and d.category_id = c.id ";
     $data = $db->query($sql, $id);
     if ($data) {
       $v = $data[0];
@@ -874,8 +874,8 @@ class CodeTableDAO extends PSIBaseExDAO
     $fid = $params["fid"];
 
     $sql = "select id, name, table_name
-				from t_code_table_md 
-				where fid = '%s' ";
+            from t_code_table_md 
+            where fid = '%s' ";
     $data = $db->query($sql, $fid);
     if (!$data) {
       return null;
@@ -892,12 +892,12 @@ class CodeTableDAO extends PSIBaseExDAO
 
     // 列
     $sql = "select caption, 
-					db_field_name, db_field_type, db_field_length, db_field_decimal,
-					sys_col, is_visible, width_in_view, must_input, value_from,
-					value_from_table_name, value_from_col_name
-				from t_code_table_cols_md
-				where table_id = '%s' 
-				order by show_order";
+              db_field_name, db_field_type, db_field_length, db_field_decimal,
+              sys_col, is_visible, width_in_view, must_input, value_from,
+              value_from_table_name, value_from_col_name
+            from t_code_table_cols_md
+            where table_id = '%s' 
+            order by show_order";
     $data = $db->query($sql, $id);
     $cols = [];
     foreach ($data as $v) {
@@ -909,8 +909,8 @@ class CodeTableDAO extends PSIBaseExDAO
       if ($valueFrom == 2) {
         // 引用系统数据字典
         $sql = "select %s as col_1, name
-						from %s
-						order by show_order";
+                from %s
+                order by show_order";
         $d = $db->query($sql, $valueFromColName, $valueFromTableName);
         foreach ($d as $item) {
           $valueFromExtData[] = [
@@ -991,8 +991,8 @@ class CodeTableDAO extends PSIBaseExDAO
     }
 
     $sql = "insert into %s (id, py, data_org, company_id, 
-					date_created, create_user_id, code, name, 
-					record_status";
+              date_created, create_user_id, code, name, 
+              record_status";
     $sqlParams = [];
     $sqlParams[] = $tableName;
 

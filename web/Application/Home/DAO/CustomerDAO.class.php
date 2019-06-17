@@ -45,7 +45,7 @@ class CustomerDAO extends PSIBaseExDAO
     $queryParam = [];
 
     $sql = "select c.id, c.code, c.name, c.ps_id
-				from t_customer_category c ";
+            from t_customer_category c ";
     $rs = $ds->buildSQL(FIdConst::CUSTOMER_CATEGORY, "c", $loginUserId);
     if ($rs) {
       $sql .= " where " . $rs[0];
@@ -61,8 +61,8 @@ class CustomerDAO extends PSIBaseExDAO
       $id = $v["id"];
       $queryParam = [];
       $sql = "select count(u.id) as cnt
-					from t_customer u 
-					where (u.category_id = '%s') ";
+              from t_customer u 
+              where (u.category_id = '%s') ";
       $queryParam[] = $id;
       if ($code) {
         $sql .= " and (u.code like '%s') ";
@@ -187,7 +187,7 @@ class CustomerDAO extends PSIBaseExDAO
     $params["id"] = $id;
 
     $sql = "insert into t_customer_category (id, code, name, data_org, company_id, ps_id)
-				values ('%s', '%s', '%s', '%s', '%s', '%s') ";
+            values ('%s', '%s', '%s', '%s', '%s', '%s') ";
     $rc = $db->execute($sql, $id, $code, $name, $dataOrg, $companyId, $psId);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -235,8 +235,8 @@ class CustomerDAO extends PSIBaseExDAO
     }
 
     $sql = "update t_customer_category
-				set code = '%s', name = '%s', ps_id = '%s'
-				where id = '%s' ";
+            set code = '%s', name = '%s', ps_id = '%s'
+            where id = '%s' ";
     $rc = $db->execute($sql, $code, $name, $psId, $id);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -370,13 +370,13 @@ class CustomerDAO extends PSIBaseExDAO
     $params["id"] = $id;
 
     $sql = "insert into t_customer (id, category_id, code, name, py, contact01,
-					qq01, tel01, mobile01, contact02, qq02, tel02, mobile02, address, address_receipt,
-					bank_name, bank_account, tax_number, fax, note, data_org, company_id, sales_warehouse_id,
-					record_status)
-				values ('%s', '%s', '%s', '%s', '%s', '%s',
-						'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
-						'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
-						%d)  ";
+              qq01, tel01, mobile01, contact02, qq02, tel02, mobile02, address, address_receipt,
+              bank_name, bank_account, tax_number, fax, note, data_org, company_id, sales_warehouse_id,
+              record_status)
+            values ('%s', '%s', '%s', '%s', '%s', '%s',
+              '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
+              '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
+              %d)  ";
     $rc = $db->execute(
       $sql,
       $id,
@@ -432,9 +432,9 @@ class CustomerDAO extends PSIBaseExDAO
     $initReceivables = floatval($initReceivables);
     if ($initReceivables && $initReceivablesDT) {
       $sql = "select count(*) as cnt
-					from t_receivables_detail
-					where ca_id = '%s' and ca_type = 'customer' and ref_type <> '应收账款期初建账'
-						and company_id = '%s' ";
+              from t_receivables_detail
+              where ca_id = '%s' and ca_type = 'customer' and ref_type <> '应收账款期初建账'
+                and company_id = '%s' ";
       $data = $db->query($sql, $id, $companyId);
       $cnt = $data[0]["cnt"];
       if ($cnt > 0) {
@@ -443,8 +443,8 @@ class CustomerDAO extends PSIBaseExDAO
       }
 
       $sql = "update t_customer
-					set init_receivables = %f, init_receivables_dt = '%s'
-					where id = '%s' ";
+              set init_receivables = %f, init_receivables_dt = '%s'
+              where id = '%s' ";
       $rc = $db->execute($sql, $initReceivables, $initReceivablesDT, $id);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -452,14 +452,14 @@ class CustomerDAO extends PSIBaseExDAO
 
       // 应收明细账
       $sql = "select id from t_receivables_detail
-					where ca_id = '%s' and ca_type = 'customer' and ref_type = '应收账款期初建账'
-						and company_id = '%s' ";
+              where ca_id = '%s' and ca_type = 'customer' and ref_type = '应收账款期初建账'
+                and company_id = '%s' ";
       $data = $db->query($sql, $id, $companyId);
       if ($data) {
         $rvId = $data[0]["id"];
         $sql = "update t_receivables_detail
-						set rv_money = %f, act_money = 0, balance_money = %f, biz_date ='%s', date_created = now()
-						where id = '%s' ";
+                set rv_money = %f, act_money = 0, balance_money = %f, biz_date ='%s', date_created = now()
+                where id = '%s' ";
         $rc = $db->execute(
           $sql,
           $initReceivables,
@@ -473,8 +473,8 @@ class CustomerDAO extends PSIBaseExDAO
       } else {
         $rvId = $this->newId();
         $sql = "insert into t_receivables_detail (id, rv_money, act_money, balance_money,
-						biz_date, date_created, ca_id, ca_type, ref_number, ref_type, data_org, company_id)
-						values ('%s', %f, 0, %f, '%s', now(), '%s', 'customer', '%s', '应收账款期初建账', '%s', '%s') ";
+                  biz_date, date_created, ca_id, ca_type, ref_number, ref_type, data_org, company_id)
+                values ('%s', %f, 0, %f, '%s', now(), '%s', 'customer', '%s', '应收账款期初建账', '%s', '%s') ";
         $rc = $db->execute(
           $sql,
           $rvId,
@@ -493,14 +493,14 @@ class CustomerDAO extends PSIBaseExDAO
 
       // 应收总账
       $sql = "select id from t_receivables
-					where ca_id = '%s' and ca_type = 'customer'
-						and company_id = '%s' ";
+              where ca_id = '%s' and ca_type = 'customer'
+                and company_id = '%s' ";
       $data = $db->query($sql, $id, $companyId);
       if ($data) {
         $rvId = $data[0]["id"];
         $sql = "update t_receivables
-						set rv_money = %f, act_money = 0, balance_money = %f
-						where id = '%s' ";
+                set rv_money = %f, act_money = 0, balance_money = %f
+                where id = '%s' ";
         $rc = $db->execute($sql, $initReceivables, $initReceivables, $rvId);
         if ($rc === false) {
           return $this->sqlError(__METHOD__, __LINE__);
@@ -508,8 +508,8 @@ class CustomerDAO extends PSIBaseExDAO
       } else {
         $rvId = $this->newId();
         $sql = "insert into t_receivables (id, rv_money, act_money, balance_money,
-							ca_id, ca_type, data_org, company_id)
-						values ('%s', %f, 0, %f, '%s', 'customer', '%s', '%s')";
+                  ca_id, ca_type, data_org, company_id)
+                values ('%s', %f, 0, %f, '%s', 'customer', '%s', '%s')";
         $rc = $db->execute(
           $sql,
           $rvId,
@@ -525,8 +525,8 @@ class CustomerDAO extends PSIBaseExDAO
       }
     } else {
       $sql = "update t_customer
-					set init_receivables = null, init_receivables_dt = null
-					where id = '%s' ";
+              set init_receivables = null, init_receivables_dt = null
+              where id = '%s' ";
       $rc = $db->execute($sql, $id);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -534,16 +534,16 @@ class CustomerDAO extends PSIBaseExDAO
 
       // 应收明细账
       $sql = "delete from t_receivables_detail
-					where ca_id = '%s' and ca_type = 'customer' and ref_type = '应收账款期初建账'
-						and company_id = '%s' ";
+              where ca_id = '%s' and ca_type = 'customer' and ref_type = '应收账款期初建账'
+                and company_id = '%s' ";
       $rc = $db->execute($sql, $id, $companyId);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
       }
       // 应收总账
       $sql = "delete from t_receivables
-					where ca_id = '%s' and ca_type = 'customer'
-						and company_id = '%s' ";
+              where ca_id = '%s' and ca_type = 'customer'
+                and company_id = '%s' ";
       $rc = $db->execute($sql, $id, $companyId);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -606,14 +606,14 @@ class CustomerDAO extends PSIBaseExDAO
     }
 
     $sql = "update t_customer
-					set code = '%s', name = '%s', category_id = '%s', py = '%s',
-					contact01 = '%s', qq01 = '%s', tel01 = '%s', mobile01 = '%s',
-					contact02 = '%s', qq02 = '%s', tel02 = '%s', mobile02 = '%s',
-					address = '%s', address_receipt = '%s',
-					bank_name = '%s', bank_account = '%s', tax_number = '%s',
-					fax = '%s', note = '%s', sales_warehouse_id = '%s',
-					record_status = %d
-				where id = '%s'  ";
+            set code = '%s', name = '%s', category_id = '%s', py = '%s',
+              contact01 = '%s', qq01 = '%s', tel01 = '%s', mobile01 = '%s',
+              contact02 = '%s', qq02 = '%s', tel02 = '%s', mobile02 = '%s',
+              address = '%s', address_receipt = '%s',
+              bank_name = '%s', bank_account = '%s', tax_number = '%s',
+              fax = '%s', note = '%s', sales_warehouse_id = '%s',
+              record_status = %d
+            where id = '%s'  ";
 
     $rc = $db->execute(
       $sql,
@@ -679,9 +679,9 @@ class CustomerDAO extends PSIBaseExDAO
     }
 
     $sql = "select count(*) as cnt
-				from t_receivables_detail r, t_receiving v
-				where r.ref_number = v.ref_number and r.ref_type = v.ref_type
-				  and r.ca_id = '%s' and r.ca_type = 'customer' ";
+            from t_receivables_detail r, t_receiving v
+            where r.ref_number = v.ref_number and r.ref_type = v.ref_type
+              and r.ca_id = '%s' and r.ca_type = 'customer' ";
     $data = $db->query($sql, $id);
     $cnt = $data[0]["cnt"];
     if ($cnt > 0) {
@@ -770,10 +770,10 @@ class CustomerDAO extends PSIBaseExDAO
     }
 
     $sql = "select id, category_id, code, name, address, contact01, qq01, tel01, mobile01,
-				 	contact02, qq02, tel02, mobile02, init_receivables, init_receivables_dt,
-					address_receipt, bank_name, bank_account, tax_number, fax, note, data_org,
-					sales_warehouse_id, record_status
-				 from t_customer where (category_id = '%s') ";
+              contact02, qq02, tel02, mobile02, init_receivables, init_receivables_dt,
+              address_receipt, bank_name, bank_account, tax_number, fax, note, data_org,
+              sales_warehouse_id, record_status
+            from t_customer where (category_id = '%s') ";
     $queryParam = [];
     $queryParam[] = $categoryId;
     if ($code) {
@@ -944,11 +944,11 @@ class CustomerDAO extends PSIBaseExDAO
     }
 
     $sql = "select id, code, name, mobile01, tel01, fax, address_receipt, contact01,
-					sales_warehouse_id
-				from t_customer
-				where (record_status = 1000) 
-					and (code like '%s' or name like '%s' or py like '%s'
-							or mobile01 like '%s' or mobile02 like '%s' ) ";
+              sales_warehouse_id
+            from t_customer
+            where (record_status = 1000) 
+              and (code like '%s' or name like '%s' or py like '%s'
+                or mobile01 like '%s' or mobile02 like '%s' ) ";
     $queryParams = [];
     $key = "%{$queryKey}%";
     $queryParams[] = $key;
@@ -1012,12 +1012,12 @@ class CustomerDAO extends PSIBaseExDAO
     $result = [];
 
     $sql = "select category_id, code, name, contact01, qq01, mobile01, tel01,
-					contact02, qq02, mobile02, tel02, address, address_receipt,
-					init_receivables, init_receivables_dt,
-					bank_name, bank_account, tax_number, fax, note, sales_warehouse_id,
-					record_status
-				from t_customer
-				where id = '%s' ";
+              contact02, qq02, mobile02, tel02, address, address_receipt,
+              init_receivables, init_receivables_dt,
+              bank_name, bank_account, tax_number, fax, note, sales_warehouse_id,
+              record_status
+            from t_customer
+            where id = '%s' ";
     $data = $db->query($sql, $id);
     if ($data) {
       $result["categoryId"] = $data[0]["category_id"];
@@ -1072,8 +1072,8 @@ class CustomerDAO extends PSIBaseExDAO
     $id = $params["id"];
 
     $sql = "select id, name 
-				from t_price_system
-				order by name";
+            from t_price_system
+            order by name";
     $data = $db->query($sql);
 
     $result = [

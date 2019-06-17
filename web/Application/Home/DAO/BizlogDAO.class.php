@@ -34,9 +34,9 @@ class BizlogDAO extends PSIBaseExDAO
     $logCategory = $params["logCategory"];
 
     $sql = "select b.id, u.login_name, u.name, b.ip, b.info, b.date_created,
-					b.log_category, b.ip_from
-				from t_biz_log b, t_user u
-				where (b.user_id = u.id) ";
+              b.log_category, b.ip_from
+            from t_biz_log b, t_user u
+            where (b.user_id = u.id) ";
     $queryParams = [];
     $ds = new DataOrgDAO($db);
     $rs = $ds->buildSQL(FIdConst::BIZ_LOG, "b", $loginUserId);
@@ -155,8 +155,8 @@ class BizlogDAO extends PSIBaseExDAO
     $companyId = $params["companyId"];
 
     $sql = "insert into t_biz_log (user_id, info, ip, date_created, log_category, data_org,
-						ip_from, company_id)
-				values ('%s', '%s', '%s',  now(), '%s', '%s', '%s', '%s')";
+              ip_from, company_id)
+            values ('%s', '%s', '%s',  now(), '%s', '%s', '%s', '%s')";
     $rc = $db->execute($sql, $loginUserId, $log, $ip, $category, $dataOrg, $ipFrom, $companyId);
 
     if ($rc === false) {
@@ -181,7 +181,7 @@ class BizlogDAO extends PSIBaseExDAO
     ];
 
     $sql = "select distinct log_category as lc from t_biz_log
-				order by lc";
+            order by lc";
     $data = $db->query($sql);
 
     foreach ($data as $v) {

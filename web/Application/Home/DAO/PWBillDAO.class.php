@@ -106,12 +106,12 @@ class PWBillDAO extends PSIBaseExDAO
 
     $queryParams = [];
     $sql = "select p.id, p.bill_status, p.ref, p.biz_dt, u1.name as biz_user_name, u2.name as input_user_name,
-					p.goods_money, w.name as warehouse_name, s.name as supplier_name,
-					p.date_created, p.payment_type, p.bill_memo, p.expand_by_bom, p.wspbill_id,
-					p.tax, p.money_with_tax
-				from t_pw_bill p, t_warehouse w, t_supplier s, t_user u1, t_user u2
-				where (p.warehouse_id = w.id) and (p.supplier_id = s.id)
-				and (p.biz_user_id = u1.id) and (p.input_user_id = u2.id) ";
+              p.goods_money, w.name as warehouse_name, s.name as supplier_name,
+              p.date_created, p.payment_type, p.bill_memo, p.expand_by_bom, p.wspbill_id,
+              p.tax, p.money_with_tax
+            from t_pw_bill p, t_warehouse w, t_supplier s, t_user u1, t_user u2
+            where (p.warehouse_id = w.id) and (p.supplier_id = s.id)
+            and (p.biz_user_id = u1.id) and (p.input_user_id = u2.id) ";
 
     $ds = new DataOrgDAO($db);
     // 构建数据域SQL
@@ -155,7 +155,7 @@ class PWBillDAO extends PSIBaseExDAO
     }
 
     $sql .= " order by p.biz_dt desc, p.ref desc
-				limit %d, %d";
+              limit %d, %d";
     $queryParams[] = $start;
     $queryParams[] = $limit;
     $data = $db->query($sql, $queryParams);
@@ -193,9 +193,9 @@ class PWBillDAO extends PSIBaseExDAO
     }
 
     $sql = "select count(*) as cnt
-				from t_pw_bill p, t_warehouse w, t_supplier s, t_user u1, t_user u2
-				where (p.warehouse_id = w.id) and (p.supplier_id = s.id)
-				and (p.biz_user_id = u1.id) and (p.input_user_id = u2.id)";
+            from t_pw_bill p, t_warehouse w, t_supplier s, t_user u1, t_user u2
+            where (p.warehouse_id = w.id) and (p.supplier_id = s.id)
+            and (p.biz_user_id = u1.id) and (p.input_user_id = u2.id)";
     $queryParams = [];
     $ds = new DataOrgDAO($db);
     $rs = $ds->buildSQL(FIdConst::PURCHASE_WAREHOUSE, "p", $loginUserId);
@@ -271,12 +271,12 @@ class PWBillDAO extends PSIBaseExDAO
     $pwbillId = $params["id"];
 
     $sql = "select p.id, g.code, g.name, g.spec, u.name as unit_name, 
-					convert(p.goods_count, $fmt) as goods_count, p.goods_price,
-					p.goods_money, p.memo, p.tax_rate, p.tax, p.money_with_tax,
-					p.goods_price_with_tax
-				from t_pw_bill_detail p, t_goods g, t_goods_unit u
-				where p.pwbill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
-				order by p.show_order ";
+              convert(p.goods_count, $fmt) as goods_count, p.goods_price,
+              p.goods_money, p.memo, p.tax_rate, p.tax, p.money_with_tax,
+              p.goods_price_with_tax
+            from t_pw_bill_detail p, t_goods g, t_goods_unit u
+            where p.pwbill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
+            order by p.show_order ";
     $data = $db->query($sql, $pwbillId);
     $result = [];
 
@@ -396,9 +396,9 @@ class PWBillDAO extends PSIBaseExDAO
 
     // 主表
     $sql = "insert into t_pw_bill (id, ref, supplier_id, warehouse_id, biz_dt,
-					biz_user_id, bill_status, date_created, goods_money, input_user_id, payment_type,
-					data_org, company_id, bill_memo, expand_by_bom)
-				values ('%s', '%s', '%s', '%s', '%s', '%s', 0, now(), 0, '%s', %d, '%s', '%s', '%s', %d)";
+              biz_user_id, bill_status, date_created, goods_money, input_user_id, payment_type,
+              data_org, company_id, bill_memo, expand_by_bom)
+            values ('%s', '%s', '%s', '%s', '%s', '%s', 0, now(), 0, '%s', %d, '%s', '%s', '%s', %d)";
 
     $rc = $db->execute(
       $sql,
@@ -470,11 +470,11 @@ class PWBillDAO extends PSIBaseExDAO
       $moneyWithTax = $item["moneyWithTax"];
 
       $sql = "insert into t_pw_bill_detail
-					(id, date_created, goods_id, goods_count, goods_price,
-					goods_money,  pwbill_id, show_order, data_org, memo, company_id,
-					pobilldetail_id, tax_rate, tax, money_with_tax, goods_price_with_tax)
-					values ('%s', now(), '%s', convert(%f, $fmt), %f, %f, '%s', %d, '%s', '%s', '%s', '%s',
-						%d, %f, %f, %f)";
+                (id, date_created, goods_id, goods_count, goods_price,
+                goods_money,  pwbill_id, show_order, data_org, memo, company_id,
+                pobilldetail_id, tax_rate, tax, money_with_tax, goods_price_with_tax)
+              values ('%s', now(), '%s', convert(%f, $fmt), %f, %f, '%s', %d, '%s', '%s', '%s', '%s',
+                %d, %f, %f, %f)";
       $rc = $db->execute(
         $sql,
         $this->newId(),
@@ -500,9 +500,9 @@ class PWBillDAO extends PSIBaseExDAO
 
     // 同步入库单主表中的采购金额合计值
     $sql = "select sum(goods_money) as goods_money,
-					sum(tax) as tax, sum(money_with_tax) as money_with_tax
-				from t_pw_bill_detail
-				where pwbill_id = '%s' ";
+              sum(tax) as tax, sum(money_with_tax) as money_with_tax
+            from t_pw_bill_detail
+            where pwbill_id = '%s' ";
     $data = $db->query($sql, $id);
     $totalMoney = $data[0]["goods_money"];
     if (!$totalMoney) {
@@ -512,8 +512,8 @@ class PWBillDAO extends PSIBaseExDAO
     $totalMoneyWithTax = $data[0]["money_with_tax"];
 
     $sql = "update t_pw_bill
-				set goods_money = %f, tax = %f, money_with_tax = %f
-				where id = '%s' ";
+            set goods_money = %f, tax = %f, money_with_tax = %f
+            where id = '%s' ";
     $rc = $db->execute($sql, $totalMoney, $totalTax, $totalMoneyWithTax, $id);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -531,8 +531,8 @@ class PWBillDAO extends PSIBaseExDAO
       $companyId = $data[0]["company_id"];
 
       $sql = "update t_pw_bill
-					set company_id = '%s'
-					where id = '%s' ";
+              set company_id = '%s'
+              where id = '%s' ";
       $rc = $db->execute($sql, $companyId, $id);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -616,8 +616,8 @@ class PWBillDAO extends PSIBaseExDAO
 
       // 当不能查看采购金额和单价的时候，编辑采购入库单就只能修改数量
       $sql = "update t_pw_bill_detail
-					set goods_count = convert(%f, $fmt), memo = '%s' 
-					where id = '%s' ";
+              set goods_count = convert(%f, $fmt), memo = '%s' 
+              where id = '%s' ";
       $rc = $db->execute($sql, $goodsCount, $memo, $detailId);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -625,7 +625,7 @@ class PWBillDAO extends PSIBaseExDAO
 
       // 修改了数量，同步一下金额
       $sql = "update t_pw_bill_detail set goods_money = goods_count * goods_price
-					where id = '%s' ";
+              where id = '%s' ";
       $rc = $db->execute($sql, $detailId);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -637,7 +637,7 @@ class PWBillDAO extends PSIBaseExDAO
     // 编辑的时候，被用户删除掉的记录，在后台表中同样需要删除
     // TODO: 这样拼接SQL有没有安全漏洞？
     $sql = "delete from t_pw_bill_detail
-				where (pwbill_id = '%s') and id not in (";
+            where (pwbill_id = '%s') and id not in (";
     foreach ($detailIdArray as $i => $detailId) {
       if ($i > 0) {
         $sql .= ",";
@@ -652,18 +652,18 @@ class PWBillDAO extends PSIBaseExDAO
 
     // 同步主表数据
     $sql = "select sum(goods_money) as goods_money from t_pw_bill_detail
-				where pwbill_id = '%s' ";
+            where pwbill_id = '%s' ";
     $data = $db->query($sql, $id);
     $totalMoney = $data[0]["goods_money"];
     if (!$totalMoney) {
       $totalMoney = 0;
     }
     $sql = "update t_pw_bill
-				set goods_money = %f, warehouse_id = '%s',
-					supplier_id = '%s', biz_dt = '%s',
-					biz_user_id = '%s', payment_type = %d,
-					bill_memo = '%s'
-				where id = '%s' ";
+            set goods_money = %f, warehouse_id = '%s',
+              supplier_id = '%s', biz_dt = '%s',
+              biz_user_id = '%s', payment_type = %d,
+              bill_memo = '%s'
+            where id = '%s' ";
     $rc = $db->execute(
       $sql,
       $totalMoney,
@@ -826,10 +826,10 @@ class PWBillDAO extends PSIBaseExDAO
       $moneyWithTax = $item["moneyWithTax"];
 
       $sql = "insert into t_pw_bill_detail (id, date_created, goods_id, goods_count, goods_price,
-						goods_money,  pwbill_id, show_order, data_org, memo, company_id, pobilldetail_id,
-						tax_rate, tax, money_with_tax, goods_price_with_tax)
-					values ('%s', now(), '%s', convert(%f, $fmt), %f, %f, '%s', %d, '%s', '%s', '%s', '%s',
-						%d, %f, %f, %f)";
+                goods_money,  pwbill_id, show_order, data_org, memo, company_id, pobilldetail_id,
+                tax_rate, tax, money_with_tax, goods_price_with_tax)
+              values ('%s', now(), '%s', convert(%f, $fmt), %f, %f, '%s', %d, '%s', '%s', '%s', '%s',
+                %d, %f, %f, %f)";
       $rc = $db->execute(
         $sql,
         $this->newId(),
@@ -855,9 +855,9 @@ class PWBillDAO extends PSIBaseExDAO
 
     // 同步主表数据
     $sql = "select sum(goods_money) as goods_money,
-					sum(tax) as tax, sum(money_with_tax) as money_with_tax
-				from t_pw_bill_detail
-				where pwbill_id = '%s' ";
+              sum(tax) as tax, sum(money_with_tax) as money_with_tax
+            from t_pw_bill_detail
+            where pwbill_id = '%s' ";
     $data = $db->query($sql, $id);
     $totalMoney = $data[0]["goods_money"];
     if (!$totalMoney) {
@@ -867,12 +867,12 @@ class PWBillDAO extends PSIBaseExDAO
     $totalMoneyWithTax = $data[0]["money_with_tax"];
 
     $sql = "update t_pw_bill
-				set goods_money = %f, warehouse_id = '%s',
-					supplier_id = '%s', biz_dt = '%s',
-					biz_user_id = '%s', payment_type = %d,
-					bill_memo = '%s', expand_by_bom = %d,
-					tax = %f, money_with_tax = %f
-				where id = '%s' ";
+            set goods_money = %f, warehouse_id = '%s',
+              supplier_id = '%s', biz_dt = '%s',
+              biz_user_id = '%s', payment_type = %d,
+              bill_memo = '%s', expand_by_bom = %d,
+              tax = %f, money_with_tax = %f
+            where id = '%s' ";
     $rc = $db->execute(
       $sql,
       $totalMoney,
@@ -907,7 +907,7 @@ class PWBillDAO extends PSIBaseExDAO
     $db = $this->db;
 
     $sql = "select ref, bill_status, data_org, company_id, warehouse_id 
-				from t_pw_bill where id = '%s' ";
+            from t_pw_bill where id = '%s' ";
     $data = $db->query($sql, $id);
     if (!$data) {
       return null;
@@ -946,9 +946,9 @@ class PWBillDAO extends PSIBaseExDAO
     $fmt = "decimal(19, " . $dataScale . ")";
 
     $sql = "select goods_id
-				from t_pw_bill_detail
-				where pwbill_id = '%s'
-				order by show_order";
+            from t_pw_bill_detail
+            where pwbill_id = '%s'
+            order by show_order";
     $data = $db->query($sql, $id);
     foreach ($data as $v) {
       $goodsId = $v["goods_id"];
@@ -965,12 +965,12 @@ class PWBillDAO extends PSIBaseExDAO
   private function updateAfloatInventory($db, $warehouseId, $goodsId, $fmt)
   {
     $sql = "select sum(convert(pd.goods_count, $fmt)) as goods_count, 
-						sum(convert(pd.goods_money, $fmt)) as goods_money
-				from t_pw_bill p, t_pw_bill_detail pd
-				where p.id = pd.pwbill_id
-					and p.warehouse_id = '%s'
-					and pd.goods_id = '%s'
-					and p.bill_status = 0 ";
+              sum(convert(pd.goods_money, $fmt)) as goods_money
+            from t_pw_bill p, t_pw_bill_detail pd
+            where p.id = pd.pwbill_id
+              and p.warehouse_id = '%s'
+              and pd.goods_id = '%s'
+              and p.bill_status = 0 ";
 
     $data = $db->query($sql, $warehouseId, $goodsId);
     $count = 0;
@@ -996,13 +996,13 @@ class PWBillDAO extends PSIBaseExDAO
     if (!$data) {
       // 首次有库存记录
       $sql = "insert into t_inventory (warehouse_id, goods_id, afloat_count, afloat_price,
-						afloat_money, balance_count, balance_price, balance_money)
-					values ('%s', '%s', convert(%f, $fmt), %f, %f, 0, 0, 0)";
+                afloat_money, balance_count, balance_price, balance_money)
+              values ('%s', '%s', convert(%f, $fmt), %f, %f, 0, 0, 0)";
       return $db->execute($sql, $warehouseId, $goodsId, $count, $price, $money);
     } else {
       $sql = "update t_inventory
-					set afloat_count = convert(%f, $fmt), afloat_price = %f, afloat_money = %f
-					where warehouse_id = '%s' and goods_id = '%s' ";
+              set afloat_count = convert(%f, $fmt), afloat_price = %f, afloat_money = %f
+              where warehouse_id = '%s' and goods_id = '%s' ";
       return $db->execute($sql, $count, $price, $money, $warehouseId, $goodsId);
     }
 
@@ -1040,12 +1040,12 @@ class PWBillDAO extends PSIBaseExDAO
     ];
 
     $sql = "select p.ref, p.bill_status, p.supplier_id, s.name as supplier_name,
-					p.warehouse_id, w.name as  warehouse_name,
-					p.biz_user_id, u.name as biz_user_name, p.biz_dt, p.payment_type,
-					p.bill_memo, p.expand_by_bom
-				from t_pw_bill p, t_supplier s, t_warehouse w, t_user u
-				where p.id = '%s' and p.supplier_id = s.id and p.warehouse_id = w.id
-				  and p.biz_user_id = u.id";
+              p.warehouse_id, w.name as  warehouse_name,
+              p.biz_user_id, u.name as biz_user_name, p.biz_dt, p.payment_type,
+              p.bill_memo, p.expand_by_bom
+            from t_pw_bill p, t_supplier s, t_warehouse w, t_user u
+            where p.id = '%s' and p.supplier_id = s.id and p.warehouse_id = w.id
+              and p.biz_user_id = u.id";
     $data = $db->query($sql, $id);
     if ($data) {
       $v = $data[0];
@@ -1065,11 +1065,11 @@ class PWBillDAO extends PSIBaseExDAO
       // 采购的商品明细
       $items = [];
       $sql = "select p.id, p.goods_id, g.code, g.name, g.spec, u.name as unit_name,
-						convert(p.goods_count, $fmt) as goods_count, p.goods_price, p.goods_money, p.memo,
-						p.pobilldetail_id, p.tax_rate, p.tax, p.money_with_tax, p.goods_price_with_tax
-					from t_pw_bill_detail p, t_goods g, t_goods_unit u
-					where p.goods_Id = g.id and g.unit_id = u.id and p.pwbill_id = '%s'
-					order by p.show_order";
+                convert(p.goods_count, $fmt) as goods_count, p.goods_price, p.goods_money, p.memo,
+                p.pobilldetail_id, p.tax_rate, p.tax, p.money_with_tax, p.goods_price_with_tax
+              from t_pw_bill_detail p, t_goods g, t_goods_unit u
+              where p.goods_Id = g.id and g.unit_id = u.id and p.pwbill_id = '%s'
+              order by p.show_order";
       $data = $db->query($sql, $id);
       foreach ($data as $v) {
         $goodsPriceWithTax = $v["goods_price_with_tax"];
@@ -1126,9 +1126,9 @@ class PWBillDAO extends PSIBaseExDAO
       if ($pobillRef) {
         // 由采购订单生成采购入库单
         $sql = "select p.id, p.supplier_id, s.name as supplier_name, p.deal_date,
-							p.payment_type, p.bill_memo
-						from t_po_bill p, t_supplier s
-						where p.ref = '%s' and p.supplier_id = s.id ";
+                  p.payment_type, p.bill_memo
+                from t_po_bill p, t_supplier s
+                where p.ref = '%s' and p.supplier_id = s.id ";
         $data = $db->query($sql, $pobillRef);
         if ($data) {
           $v = $data[0];
@@ -1142,13 +1142,13 @@ class PWBillDAO extends PSIBaseExDAO
           // 采购的明细
           $items = [];
           $sql = "select p.id, p.goods_id, g.code, g.name, g.spec, u.name as unit_name,
-								convert(p.goods_count, $fmt) as goods_count, 
-								p.goods_price, p.goods_money, 
-								convert(p.left_count, $fmt) as left_count, p.memo,
-								p.tax_rate, p.tax, p.money_with_tax, p.goods_price_with_tax
-							from t_po_bill_detail p, t_goods g, t_goods_unit u
-							where p.pobill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
-							order by p.show_order ";
+                    convert(p.goods_count, $fmt) as goods_count, 
+                    p.goods_price, p.goods_money, 
+                    convert(p.left_count, $fmt) as left_count, p.memo,
+                  p.tax_rate, p.tax, p.money_with_tax, p.goods_price_with_tax
+                  from t_po_bill_detail p, t_goods g, t_goods_unit u
+                  where p.pobill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
+                  order by p.show_order ";
           $data = $db->query($sql, $pobillId);
           foreach ($data as $v) {
             $items[] = [
@@ -1219,9 +1219,9 @@ class PWBillDAO extends PSIBaseExDAO
     $warehouseId = $bill["warehouseId"];
 
     $sql = "select goods_id
-				from t_pw_bill_detail
-				where pwbill_id = '%s'
-				order by show_order";
+            from t_pw_bill_detail
+            where pwbill_id = '%s'
+            order by show_order";
     $data = $db->query($sql, $id);
     $goodsIdList = array();
     foreach ($data as $v) {
@@ -1296,9 +1296,9 @@ class PWBillDAO extends PSIBaseExDAO
     $fmt = "decimal(19, " . $dataScale . ")";
 
     $sql = "select ref, warehouse_id, bill_status, biz_dt, biz_user_id,  goods_money, supplier_id,
-					payment_type, company_id, money_with_tax
-				from t_pw_bill
-				where id = '%s' ";
+              payment_type, company_id, money_with_tax
+            from t_pw_bill
+            where id = '%s' ";
     $data = $db->query($sql, $id);
 
     if (!$data) {
@@ -1352,9 +1352,9 @@ class PWBillDAO extends PSIBaseExDAO
     }
 
     $sql = "select goods_id, convert(goods_count, $fmt) as goods_count, goods_price, goods_money, id,
-					pobilldetail_id
-				from t_pw_bill_detail
-				where pwbill_id = '%s' order by show_order";
+              pobilldetail_id
+            from t_pw_bill_detail
+            where pwbill_id = '%s' order by show_order";
     $items = $db->query($sql, $id);
     if (!$items) {
       return $this->bad("采购入库单没有采购明细记录，不能入库");
@@ -1365,8 +1365,8 @@ class PWBillDAO extends PSIBaseExDAO
     $countLimit = $bizConfigDAO->getPWCountLimit($companyId) == "1";
     $poId = null;
     $sql = "select po_id
-				from t_po_pw
-				where pw_id = '%s' ";
+            from t_po_pw
+            where pw_id = '%s' ";
     $data = $db->query($sql, $id);
     if ($data) {
       $poId = $data[0]["po_id"];
@@ -1399,8 +1399,8 @@ class PWBillDAO extends PSIBaseExDAO
       // 检查采购入库数量是否超过采购订单上未入库数量
       $pobillDetailId = $v["pobilldetail_id"];
       $sql = "select convert(left_count, $fmt) as left_count
-					from t_po_bill_detail
-					where id = '%s' ";
+              from t_po_bill_detail
+              where id = '%s' ";
       $data = $db->query($sql, $pobillDetailId);
       if (!$data) {
         continue;
@@ -1447,8 +1447,8 @@ class PWBillDAO extends PSIBaseExDAO
       $balancePrice = (float)0;
       // 库存总账
       $sql = "select convert(in_count, $fmt) as in_count, in_money, balance_count, balance_money
-					from t_inventory
-					where warehouse_id = '%s' and goods_id = '%s' ";
+              from t_inventory
+              where warehouse_id = '%s' and goods_id = '%s' ";
       $data = $db->query($sql, $warehouseId, $goodsId);
       if ($data) {
         $inCount = $data[0]["in_count"];
@@ -1465,9 +1465,9 @@ class PWBillDAO extends PSIBaseExDAO
         $balancePrice = $balanceMoney / $balanceCount;
 
         $sql = "update t_inventory
-						set in_count = convert(%f, $fmt), in_price = %f, in_money = %f,
-						balance_count = convert(%f, $fmt), balance_price = %f, balance_money = %f
-						where warehouse_id = '%s' and goods_id = '%s' ";
+                set in_count = convert(%f, $fmt), in_price = %f, in_money = %f,
+                  balance_count = convert(%f, $fmt), balance_price = %f, balance_money = %f
+                where warehouse_id = '%s' and goods_id = '%s' ";
         $rc = $db->execute(
           $sql,
           $inCount,
@@ -1491,8 +1491,8 @@ class PWBillDAO extends PSIBaseExDAO
         $balancePrice = $balanceMoney / $balanceCount;
 
         $sql = "insert into t_inventory (in_count, in_price, in_money, balance_count,
-						balance_price, balance_money, warehouse_id, goods_id)
-						values (convert(%f, $fmt), %f, %f, convert(%f, $fmt), %f, %f, '%s', '%s')";
+                  balance_price, balance_money, warehouse_id, goods_id)
+                values (convert(%f, $fmt), %f, %f, convert(%f, $fmt), %f, %f, '%s', '%s')";
         $rc = $db->execute(
           $sql,
           $inCount,
@@ -1511,10 +1511,10 @@ class PWBillDAO extends PSIBaseExDAO
 
       // 库存明细账
       $sql = "insert into t_inventory_detail (in_count, in_price, in_money, balance_count,
-					balance_price, balance_money, warehouse_id, goods_id, biz_date,
-					biz_user_id, date_created, ref_number, ref_type)
-					values (convert(%f, $fmt), %f, %f, convert(%f, $fmt), %f, %f, '%s', '%s', '%s', '%s', 
-							now(), '%s', '采购入库')";
+                balance_price, balance_money, warehouse_id, goods_id, biz_date,
+                biz_user_id, date_created, ref_number, ref_type)
+              values (convert(%f, $fmt), %f, %f, convert(%f, $fmt), %f, %f, '%s', '%s', '%s', '%s', 
+                now(), '%s', '采购入库')";
       $rc = $db->execute(
         $sql,
         $goodsCount,
@@ -1537,9 +1537,9 @@ class PWBillDAO extends PSIBaseExDAO
       if ($fifo) {
         $dt = date("Y-m-d H:i:s");
         $sql = "insert into t_inventory_fifo (in_count, in_price, in_money, balance_count,
-						balance_price, balance_money, warehouse_id, goods_id, date_created, in_ref,
-						in_ref_type, pwbilldetail_id)
-						values (convert(%f, $fmt), %f, %f, convert(%f, $fmt), %f, %f, '%s', '%s', '%s', '%s', '采购入库', '%s')";
+                  balance_price, balance_money, warehouse_id, goods_id, date_created, in_ref,
+                  in_ref_type, pwbilldetail_id)
+                values (convert(%f, $fmt), %f, %f, convert(%f, $fmt), %f, %f, '%s', '%s', '%s', '%s', '采购入库', '%s')";
         $rc = $db->execute(
           $sql,
           $goodsCount,
@@ -1560,8 +1560,8 @@ class PWBillDAO extends PSIBaseExDAO
 
         // fifo 明细记录
         $sql = "insert into t_inventory_fifo_detail(in_count, in_price, in_money, balance_count,
-						balance_price, balance_money, warehouse_id, goods_id, date_created, pwbilldetail_id)
-						values (convert(%f, $fmt), %f, %f, convert(%f, $fmt), %f, %f, '%s', '%s', '%s', '%s')";
+                  balance_price, balance_money, warehouse_id, goods_id, date_created, pwbilldetail_id)
+                values (convert(%f, $fmt), %f, %f, convert(%f, $fmt), %f, %f, '%s', '%s', '%s', '%s')";
         $rc = $db->execute(
           $sql,
           $goodsCount,
@@ -1582,9 +1582,9 @@ class PWBillDAO extends PSIBaseExDAO
 
       // 同步采购订单中的到货情况
       $sql = "select convert(goods_count, $fmt) as goods_count, 
-						convert(pw_count, $fmt) as pw_count
-					from t_po_bill_detail
-					where id = '%s' ";
+                convert(pw_count, $fmt) as pw_count
+              from t_po_bill_detail
+              where id = '%s' ";
       $poDetail = $db->query($sql, $pobillDetailId);
       if (!$poDetail) {
         // 当前采购入库单不是由采购订单创建的
@@ -1597,8 +1597,8 @@ class PWBillDAO extends PSIBaseExDAO
       $totalLeftCount = $totalGoodsCount - $totalPWCount;
 
       $sql = "update t_po_bill_detail
-					set pw_count = convert(%f, $fmt), left_count = convert(%f, $fmt)
-					where id = '%s' ";
+              set pw_count = convert(%f, $fmt), left_count = convert(%f, $fmt)
+              where id = '%s' ";
       $rc = $db->execute($sql, $totalPWCount, $totalLeftCount, $pobillDetailId);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -1614,14 +1614,14 @@ class PWBillDAO extends PSIBaseExDAO
 
     // 同步采购订单的状态
     $sql = "select po_id
-				from t_po_pw
-				where pw_id = '%s' ";
+            from t_po_pw
+            where pw_id = '%s' ";
     $data = $db->query($sql, $id);
     if ($data) {
       $poBillId = $data[0]["po_id"];
 
       $sql = "select count(*) as cnt from t_po_bill_detail
-					where pobill_id = '%s' and convert(left_count, $fmt) > 0 ";
+              where pobill_id = '%s' and convert(left_count, $fmt) > 0 ";
       $data = $db->query($sql, $poBillId);
       $cnt = $data[0]["cnt"];
       $billStatus = 1000;
@@ -1633,8 +1633,8 @@ class PWBillDAO extends PSIBaseExDAO
         $billStatus = 3000;
       }
       $sql = "update t_po_bill
-					set bill_status = %d
-					where id = '%s' ";
+              set bill_status = %d
+              where id = '%s' ";
       $rc = $db->execute($sql, $billStatus, $poBillId);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -1645,8 +1645,8 @@ class PWBillDAO extends PSIBaseExDAO
       // 记应付账款
       // 应付明细账
       $sql = "insert into t_payables_detail (id, pay_money, act_money, balance_money,
-					ca_id, ca_type, date_created, ref_number, ref_type, biz_date, company_id)
-					values ('%s', %f, 0, %f, '%s', 'supplier', now(), '%s', '采购入库', '%s', '%s')";
+                ca_id, ca_type, date_created, ref_number, ref_type, biz_date, company_id)
+              values ('%s', %f, 0, %f, '%s', 'supplier', now(), '%s', '采购入库', '%s', '%s')";
       $rc = $db->execute(
         $sql,
         $this->newId(),
@@ -1663,8 +1663,8 @@ class PWBillDAO extends PSIBaseExDAO
 
       // 应付总账
       $sql = "select id, pay_money, act_money
-					from t_payables
-					where ca_id = '%s' and ca_type = 'supplier' and company_id = '%s' ";
+              from t_payables
+              where ca_id = '%s' and ca_type = 'supplier' and company_id = '%s' ";
       $data = $db->query($sql, $supplierId, $companyId);
       if ($data) {
         $pId = $data[0]["id"];
@@ -1675,8 +1675,8 @@ class PWBillDAO extends PSIBaseExDAO
         $balanMoney = $payMoney - $actMoney;
 
         $sql = "update t_payables
-						set pay_money = %f, balance_money = %f
-						where id = '%s' ";
+                set pay_money = %f, balance_money = %f
+                where id = '%s' ";
         $rc = $db->execute($sql, $payMoney, $balanMoney, $pId);
         if ($rc === false) {
           return $this->sqlError(__METHOD__, __LINE__);
@@ -1685,8 +1685,8 @@ class PWBillDAO extends PSIBaseExDAO
         $payMoney = $billPayables;
 
         $sql = "insert into t_payables (id, pay_money, act_money, balance_money,
-						ca_id, ca_type, company_id)
-						values ('%s', %f, 0, %f, '%s', 'supplier', '%s')";
+                  ca_id, ca_type, company_id)
+                values ('%s', %f, 0, %f, '%s', 'supplier', '%s')";
         $rc = $db->execute(
           $sql,
           $this->newId(),
@@ -1705,15 +1705,15 @@ class PWBillDAO extends PSIBaseExDAO
       $outCash = $billPayables;
 
       $sql = "select in_money, out_money, balance_money
-					from t_cash
-					where biz_date = '%s' and company_id = '%s' ";
+              from t_cash
+              where biz_date = '%s' and company_id = '%s' ";
       $data = $db->query($sql, $bizDT, $companyId);
       if (!$data) {
         // 当天首次发生现金业务
 
         $sql = "select sum(in_money) as sum_in_money, sum(out_money) as sum_out_money
-							from t_cash
-							where biz_date <= '%s' and company_id = '%s' ";
+                from t_cash
+                where biz_date <= '%s' and company_id = '%s' ";
         $data = $db->query($sql, $bizDT, $companyId);
         $sumInMoney = $data[0]["sum_in_money"];
         $sumOutMoney = $data[0]["sum_out_money"];
@@ -1726,7 +1726,7 @@ class PWBillDAO extends PSIBaseExDAO
 
         $balanceCash = $sumInMoney - $sumOutMoney - $outCash;
         $sql = "insert into t_cash(out_money, balance_money, biz_date, company_id)
-							values (%f, %f, '%s', '%s')";
+                values (%f, %f, '%s', '%s')";
         $rc = $db->execute($sql, $outCash, $balanceCash, $bizDT, $companyId);
         if ($rc === false) {
           return $this->sqlError(__METHOD__, __LINE__);
@@ -1734,8 +1734,8 @@ class PWBillDAO extends PSIBaseExDAO
 
         // 记现金明细账
         $sql = "insert into t_cash_detail(out_money, balance_money, biz_date, ref_type,
-								ref_number, date_created, company_id)
-							values (%f, %f, '%s', '采购入库', '%s', now(), '%s')";
+                  ref_number, date_created, company_id)
+                values (%f, %f, '%s', '采购入库', '%s', now(), '%s')";
         $rc = $db->execute($sql, $outCash, $balanceCash, $bizDT, $ref, $companyId);
         if ($rc === false) {
           return $this->sqlError(__METHOD__, __LINE__);
@@ -1744,8 +1744,8 @@ class PWBillDAO extends PSIBaseExDAO
         $balanceCash = $data[0]["balance_money"] - $outCash;
         $sumOutMoney = $data[0]["out_money"] + $outCash;
         $sql = "update t_cash
-							set out_money = %f, balance_money = %f
-							where biz_date = '%s' and company_id = '%s' ";
+                set out_money = %f, balance_money = %f
+                where biz_date = '%s' and company_id = '%s' ";
         $rc = $db->execute($sql, $sumOutMoney, $balanceCash, $bizDT, $companyId);
         if ($rc === false) {
           return $this->sqlError(__METHOD__, __LINE__);
@@ -1753,8 +1753,8 @@ class PWBillDAO extends PSIBaseExDAO
 
         // 记现金明细账
         $sql = "insert into t_cash_detail(out_money, balance_money, biz_date, ref_type,
-								ref_number, date_created, company_id)
-							values (%f, %f, '%s', '采购入库', '%s', now(), '%s')";
+                  ref_number, date_created, company_id)
+                values (%f, %f, '%s', '采购入库', '%s', now(), '%s')";
         $rc = $db->execute($sql, $outCash, $balanceCash, $bizDT, $ref, $companyId);
         if ($rc === false) {
           return $this->sqlError(__METHOD__, __LINE__);
@@ -1763,16 +1763,16 @@ class PWBillDAO extends PSIBaseExDAO
 
       // 调整业务日期之后的现金总账和明细账的余额
       $sql = "update t_cash
-					set balance_money = balance_money - %f
-					where biz_date > '%s' and company_id = '%s' ";
+              set balance_money = balance_money - %f
+              where biz_date > '%s' and company_id = '%s' ";
       $rc = $db->execute($sql, $outCash, $bizDT, $companyId);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
       }
 
       $sql = "update t_cash_detail
-					set balance_money = balance_money - %f
-					where biz_date > '%s' and company_id = '%s' ";
+              set balance_money = balance_money - %f
+              where biz_date > '%s' and company_id = '%s' ";
       $rc = $db->execute($sql, $outCash, $bizDT, $companyId);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -1783,7 +1783,7 @@ class PWBillDAO extends PSIBaseExDAO
       $outMoney = $billPayables;
 
       $sql = "select out_money, balance_money from t_pre_payment
-					where supplier_id = '%s' and company_id = '%s' ";
+              where supplier_id = '%s' and company_id = '%s' ";
       $data = $db->query($sql, $supplierId, $companyId);
       $totalOutMoney = $data[0]["out_money"];
       $totalBalanceMoney = $data[0]["balance_money"];
@@ -1801,8 +1801,8 @@ class PWBillDAO extends PSIBaseExDAO
 
       // 预付款总账
       $sql = "update t_pre_payment
-					set out_money = %f, balance_money = %f
-					where supplier_id = '%s' and company_id = '%s' ";
+              set out_money = %f, balance_money = %f
+              where supplier_id = '%s' and company_id = '%s' ";
       $totalOutMoney += $outMoney;
       $totalBalanceMoney -= $outMoney;
       $rc = $db->execute($sql, $totalOutMoney, $totalBalanceMoney, $supplierId, $companyId);
@@ -1812,9 +1812,9 @@ class PWBillDAO extends PSIBaseExDAO
 
       // 预付款明细账
       $sql = "insert into t_pre_payment_detail(id, supplier_id, out_money, balance_money,
-						biz_date, date_created, ref_number, ref_type, biz_user_id, input_user_id,
-						company_id)
-					values ('%s', '%s', %f, %f, '%s', now(), '%s', '采购入库', '%s', '%s', '%s')";
+                biz_date, date_created, ref_number, ref_type, biz_user_id, input_user_id,
+                company_id)
+              values ('%s', '%s', %f, %f, '%s', now(), '%s', '采购入库', '%s', '%s', '%s')";
       $rc = $db->execute(
         $sql,
         $this->newId(),
@@ -1834,9 +1834,9 @@ class PWBillDAO extends PSIBaseExDAO
 
     // 同步库存账中的在途库存
     $sql = "select goods_id
-				from t_pw_bill_detail
-				where pwbill_id = '%s'
-				order by show_order";
+            from t_pw_bill_detail
+            where pwbill_id = '%s'
+            order by show_order";
     $data = $db->query($sql, $id);
     foreach ($data as $v) {
       $goodsId = $v["goods_id"];
@@ -1875,12 +1875,12 @@ class PWBillDAO extends PSIBaseExDAO
     $ref = $params["ref"];
 
     $sql = "select p.id, p.bill_status, p.ref, p.biz_dt, u1.name as biz_user_name, u2.name as input_user_name,
-					p.goods_money, w.name as warehouse_name, s.name as supplier_name,
-					p.date_created, p.payment_type, p.company_id
-				from t_pw_bill p, t_warehouse w, t_supplier s, t_user u1, t_user u2
-				where (p.warehouse_id = w.id) and (p.supplier_id = s.id)
-				and (p.biz_user_id = u1.id) and (p.input_user_id = u2.id) 
-				and (p.ref = '%s')";
+              p.goods_money, w.name as warehouse_name, s.name as supplier_name,
+              p.date_created, p.payment_type, p.company_id
+            from t_pw_bill p, t_warehouse w, t_supplier s, t_user u1, t_user u2
+            where (p.warehouse_id = w.id) and (p.supplier_id = s.id)
+            and (p.biz_user_id = u1.id) and (p.input_user_id = u2.id) 
+            and (p.ref = '%s')";
 
     $data = $db->query($sql, $ref);
     if (!$data) {
@@ -1905,11 +1905,11 @@ class PWBillDAO extends PSIBaseExDAO
     $result["bizUserName"] = $v["biz_user_name"];
 
     $sql = "select g.code, g.name, g.spec, u.name as unit_name, 
-					convert(p.goods_count, $fmt) as goods_count, p.goods_price,
-					p.goods_money
-				from t_pw_bill_detail p, t_goods g, t_goods_unit u
-				where p.pwbill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
-				order by p.show_order ";
+              convert(p.goods_count, $fmt) as goods_count, p.goods_price,
+              p.goods_money
+            from t_pw_bill_detail p, t_goods g, t_goods_unit u
+            where p.pwbill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
+            order by p.show_order ";
     $items = [];
     $data = $db->query($sql, $id);
 
@@ -1942,11 +1942,11 @@ class PWBillDAO extends PSIBaseExDAO
     $db = $this->db;
 
     $sql = "select p.id, s.name as supplier_name,
-					w.name as  warehouse_name,
-					u.name as biz_user_name, p.biz_dt, p.company_id
-				from t_pw_bill p, t_supplier s, t_warehouse w, t_user u
-				where p.ref = '%s' and p.supplier_id = s.id and p.warehouse_id = w.id
-				  and p.biz_user_id = u.id";
+              w.name as  warehouse_name,
+              u.name as biz_user_name, p.biz_dt, p.company_id
+            from t_pw_bill p, t_supplier s, t_warehouse w, t_user u
+            where p.ref = '%s' and p.supplier_id = s.id and p.warehouse_id = w.id
+              and p.biz_user_id = u.id";
     $data = $db->query($sql, $ref);
     if (!$data) {
       return NULL;
@@ -1970,11 +1970,11 @@ class PWBillDAO extends PSIBaseExDAO
     // 明细记录
     $items = [];
     $sql = "select p.id, p.goods_id, g.code, g.name, g.spec, u.name as unit_name,
-					convert(p.goods_count, $fmt) as goods_count, p.goods_price, p.goods_money, p.memo,
-					p.tax_rate, p.tax, p.money_with_tax
-				from t_pw_bill_detail p, t_goods g, t_goods_unit u
-				where p.goods_Id = g.id and g.unit_id = u.id and p.pwbill_id = '%s'
-				order by p.show_order";
+              convert(p.goods_count, $fmt) as goods_count, p.goods_price, p.goods_money, p.memo,
+              p.tax_rate, p.tax, p.money_with_tax
+            from t_pw_bill_detail p, t_goods g, t_goods_unit u
+            where p.goods_Id = g.id and g.unit_id = u.id and p.pwbill_id = '%s'
+            order by p.show_order";
     $data = $db->query($sql, $id);
     foreach ($data as $v) {
       $items[] = [
@@ -2023,11 +2023,11 @@ class PWBillDAO extends PSIBaseExDAO
     $canViewPrice = $params["canViewPrice"];
 
     $sql = "select p.id, g.code, g.name, g.spec, u.name as unit_name,
-		convert(p.goods_count, $fmt) as goods_count, p.goods_price,
-		p.goods_money, p.memo
-		from t_pw_bill_detail p, t_goods g, t_goods_unit u
-		where p.pwbill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
-		order by p.show_order ";
+              convert(p.goods_count, $fmt) as goods_count, p.goods_price,
+              p.goods_money, p.memo
+            from t_pw_bill_detail p, t_goods g, t_goods_unit u
+            where p.pwbill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
+            order by p.show_order ";
     $data = $db->query($sql, $pwbillId);
     $result = [];
 
@@ -2062,12 +2062,12 @@ class PWBillDAO extends PSIBaseExDAO
     $canViewPrice = $params["canViewPrice"];
 
     $sql = "select p.ref, p.bill_status, p.ref, p.biz_dt, u1.name as biz_user_name, u2.name as input_user_name,
-					p.goods_money, w.name as warehouse_name, s.name as supplier_name,
-					p.date_created, p.payment_type, p.company_id, p.bill_memo
-				from t_pw_bill p, t_warehouse w, t_supplier s, t_user u1, t_user u2
-				where (p.warehouse_id = w.id) and (p.supplier_id = s.id)
-				and (p.biz_user_id = u1.id) and (p.input_user_id = u2.id)
-				and (p.id = '%s')";
+              p.goods_money, w.name as warehouse_name, s.name as supplier_name,
+              p.date_created, p.payment_type, p.company_id, p.bill_memo
+            from t_pw_bill p, t_warehouse w, t_supplier s, t_user u1, t_user u2
+            where (p.warehouse_id = w.id) and (p.supplier_id = s.id)
+              and (p.biz_user_id = u1.id) and (p.input_user_id = u2.id)
+              and (p.id = '%s')";
 
     $data = $db->query($sql, $id);
     if (!$data) {
@@ -2095,11 +2095,11 @@ class PWBillDAO extends PSIBaseExDAO
     $result["printDT"] = date("Y-m-d H:i:s");
 
     $sql = "select g.code, g.name, g.spec, u.name as unit_name,
-				convert(p.goods_count, $fmt) as goods_count, p.goods_price,
-				p.goods_money, p.memo
-				from t_pw_bill_detail p, t_goods g, t_goods_unit u
-				where p.pwbill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
-				order by p.show_order ";
+              convert(p.goods_count, $fmt) as goods_count, p.goods_price,
+              p.goods_money, p.memo
+            from t_pw_bill_detail p, t_goods g, t_goods_unit u
+            where p.pwbill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
+            order by p.show_order ";
     $items = [];
     $data = $db->query($sql, $id);
 

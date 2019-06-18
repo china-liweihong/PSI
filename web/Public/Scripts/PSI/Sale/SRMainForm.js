@@ -617,7 +617,8 @@ Ext.define("PSI.Sale.SRMainForm", {
       fields: ["id", "goodsCode", "goodsName", "goodsSpec",
         "unitName", "goodsCount", "goodsMoney",
         "goodsPrice", "rejCount", "rejPrice",
-        "rejSaleMoney", "sn", "memo"]
+        "rejSaleMoney", "sn", "memo", "taxRate", "tax",
+        "rejSaleMoneyWithTax", "rejPriceWithTax"]
     });
     var store = Ext.create("Ext.data.Store", {
       autoLoad: false,
@@ -669,7 +670,7 @@ Ext.define("PSI.Sale.SRMainForm", {
         sortable: false,
         width: 60
       }, {
-        header: "退货单价",
+        header: "退货单价(不含税)",
         dataIndex: "rejPrice",
         menuDisabled: true,
         sortable: false,
@@ -677,8 +678,41 @@ Ext.define("PSI.Sale.SRMainForm", {
         xtype: "numbercolumn",
         width: 150
       }, {
-        header: "退货金额",
+        header: "退货金额(不含税)",
         dataIndex: "rejSaleMoney",
+        menuDisabled: true,
+        sortable: false,
+        align: "right",
+        xtype: "numbercolumn",
+        width: 150
+      }, {
+        header: "税率(%)",
+        dataIndex: "taxRate",
+        menuDisabled: true,
+        sortable: false,
+        align: "right",
+        xtype: "numbercolumn",
+        format: "#",
+        width: 80
+      }, {
+        header: "税金(红字)",
+        dataIndex: "tax",
+        menuDisabled: true,
+        sortable: false,
+        align: "right",
+        xtype: "numbercolumn",
+        width: 150
+      }, {
+        header: "价税合计",
+        dataIndex: "rejSaleMoneyWithTax",
+        menuDisabled: true,
+        sortable: false,
+        align: "right",
+        xtype: "numbercolumn",
+        width: 150
+      }, {
+        header: "含税价",
+        dataIndex: "rejPriceWithTax",
         menuDisabled: true,
         sortable: false,
         align: "right",

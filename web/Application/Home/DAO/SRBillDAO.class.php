@@ -244,7 +244,8 @@ class SRBillDAO extends PSIBaseExDAO
     $sql = "select s.id, g.code, g.name, g.spec, u.name as unit_name,
               convert(s.rejection_goods_count, $fmt) as rejection_goods_count, 
               s.rejection_goods_price, s.rejection_sale_money,
-              s.sn_note, s.memo
+              s.sn_note, s.memo, s.tax_rate, s.tax, s.rejection_sale_money_with_tax,
+              s.rejection_goods_price_with_tax
             from t_sr_bill_detail s, t_goods g, t_goods_unit u
             where s.srbill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
               and s.rejection_goods_count > 0
@@ -264,7 +265,11 @@ class SRBillDAO extends PSIBaseExDAO
         "rejPrice" => $v["rejection_goods_price"],
         "rejSaleMoney" => $v["rejection_sale_money"],
         "sn" => $v["sn_note"],
-        "memo" => $v["memo"]
+        "memo" => $v["memo"],
+        "taxRate" => $v["tax_rate"],
+        "tax" => $v["tax"],
+        "rejSaleMoneyWithTax" => $v["rejection_sale_money_with_tax"],
+        "rejPriceWithTax" => $v["rejection_goods_price_with_tax"]
       ];
     }
     return $result;

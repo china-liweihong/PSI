@@ -70,11 +70,12 @@ class SRBillDAO extends PSIBaseExDAO
     $goodsId = $params["goodsId"];
 
     $sql = "select w.id, w.ref, w.bizdt, c.name as customer_name, u.name as biz_user_name,
-				 	user.name as input_user_name, h.name as warehouse_name, w.rejection_sale_money,
-				 	w.bill_status, w.date_created, w.payment_type, w.bill_memo
-				 from t_sr_bill w, t_customer c, t_user u, t_user user, t_warehouse h
-				 where (w.customer_id = c.id) and (w.biz_user_id = u.id)
-				 and (w.input_user_id = user.id) and (w.warehouse_id = h.id) ";
+              user.name as input_user_name, h.name as warehouse_name, w.rejection_sale_money,
+              w.bill_status, w.date_created, w.payment_type, w.bill_memo,
+              w.tax, w.rejection_sale_money_with_tax
+            from t_sr_bill w, t_customer c, t_user u, t_user user, t_warehouse h
+              where (w.customer_id = c.id) and (w.biz_user_id = u.id)
+              and (w.input_user_id = user.id) and (w.warehouse_id = h.id) ";
     $queryParams = [];
 
     $ds = new DataOrgDAO($db);
@@ -147,7 +148,9 @@ class SRBillDAO extends PSIBaseExDAO
         "amount" => $v["rejection_sale_money"],
         "dateCreated" => $v["date_created"],
         "paymentType" => $v["payment_type"],
-        "billMemo" => $v["bill_memo"]
+        "billMemo" => $v["bill_memo"],
+        "tax" => $v["tax"],
+        "moneyWithTax" => $v["rejection_sale_money_with_tax"]
       ];
     }
 

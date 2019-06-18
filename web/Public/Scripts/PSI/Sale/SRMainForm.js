@@ -415,7 +415,7 @@ Ext.define("PSI.Sale.SRMainForm", {
       fields: ["id", "ref", "bizDate", "customerName",
         "warehouseName", "inputUserName", "bizUserName",
         "billStatus", "amount", "dateCreated",
-        "paymentType", "billMemo"]
+        "paymentType", "billMemo", "tax", "moneyWithTax"]
     });
     var store = Ext.create("Ext.data.Store", {
       autoLoad: false,
@@ -483,13 +483,29 @@ Ext.define("PSI.Sale.SRMainForm", {
         menuDisabled: true,
         sortable: false
       }, {
-        header: "退货金额",
+        header: "退货金额(不含税)",
         dataIndex: "amount",
         menuDisabled: true,
         sortable: false,
         align: "right",
         xtype: "numbercolumn",
-        width: 80
+        width: 130
+      }, {
+        header: "税金(红字)",
+        dataIndex: "tax",
+        menuDisabled: true,
+        sortable: false,
+        align: "right",
+        xtype: "numbercolumn",
+        width: 120
+      }, {
+        header: "退货金额(含税)",
+        dataIndex: "moneyWithTax",
+        menuDisabled: true,
+        sortable: false,
+        align: "right",
+        xtype: "numbercolumn",
+        width: 120
       }, {
         header: "付款方式",
         dataIndex: "paymentType",

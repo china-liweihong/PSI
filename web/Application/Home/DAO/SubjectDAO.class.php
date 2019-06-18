@@ -17,8 +17,8 @@ class SubjectDAO extends PSIBaseExDAO
     $db = $this->db;
 
     $sql = "select id, code, name, category, is_leaf from t_subject
-				where parent_id = '%s' and company_id = '%s'
-				order by code ";
+            where parent_id = '%s' and company_id = '%s'
+            order by code ";
     $data = $db->query($sql, $parentId, $companyId);
     $result = [];
     foreach ($data as $v) {
@@ -55,7 +55,7 @@ class SubjectDAO extends PSIBaseExDAO
 
     // 判断$companyId是否是公司id
     $sql = "select count(*) as cnt
-				from t_org where id = '%s' and parent_id is null ";
+            from t_org where id = '%s' and parent_id is null ";
     $data = $db->query($sql, $companyId);
     $cnt = $data[0]["cnt"];
     if ($cnt == 0) {
@@ -65,8 +65,8 @@ class SubjectDAO extends PSIBaseExDAO
     $result = [];
 
     $sql = "select id, code, name, category, is_leaf from t_subject
-				where parent_id is null and company_id = '%s'
-				order by code ";
+            where parent_id is null and company_id = '%s'
+            order by code ";
     $data = $db->query($sql, $companyId);
     foreach ($data as $v) {
       $children = $this->subjectListInternal($v["id"], $companyId);
@@ -101,7 +101,7 @@ class SubjectDAO extends PSIBaseExDAO
     $id = $this->newId();
 
     $sql = "insert into t_subject(id, category, code, name, is_leaf, py, data_org, company_id, parent_id)
-				values ('%s', '%s', '%s', '%s', 0, '%s', '%s', '%s', null)";
+            values ('%s', '%s', '%s', '%s', 0, '%s', '%s', '%s', null)";
     $rc = $db->execute($sql, $id, $category, $code, $name, $py, $dataOrg, $companyId);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -429,8 +429,8 @@ class SubjectDAO extends PSIBaseExDAO
 
     $companyId = $params["id"];
     $sql = "select name 
-				from t_org
-				where id = '%s' and parent_id is null";
+            from t_org
+            where id = '%s' and parent_id is null";
     $data = $db->query($sql, $companyId);
     if (!$data) {
       return $this->badParam("companyId");
@@ -481,11 +481,11 @@ class SubjectDAO extends PSIBaseExDAO
 
     // length(code) < 8 : 只查询一级二级科目
     $sql = "select code, name
-				from t_subject
-				where (code like '%s') and (length(code) < 8) 
-					and (company_id = '%s') 
-				order by code 
-				limit 20 ";
+            from t_subject
+            where (code like '%s') and (length(code) < 8) 
+              and (company_id = '%s') 
+            order by code 
+            limit 20 ";
     $queryParams = [];
     $queryParams[] = "{$queryKey}%";
     $queryParams[] = $companyId;
@@ -527,8 +527,8 @@ class SubjectDAO extends PSIBaseExDAO
 
     $parentCode = $params["parentCode"];
     $sql = "select id, category 
-				from t_subject 
-				where company_id = '%s' and code = '%s' ";
+            from t_subject 
+            where company_id = '%s' and code = '%s' ";
     $data = $db->query($sql, $companyId, $parentCode);
     if (!$data) {
       return $this->bad("上级科目不存在");
@@ -559,7 +559,7 @@ class SubjectDAO extends PSIBaseExDAO
 
     // 判断科目码是否已经存在
     $sql = "select count(*) as cnt from t_subject
-				where company_id = '%s' and code = '%s' ";
+            where company_id = '%s' and code = '%s' ";
     $data = $db->query($sql, $companyId, $code);
     $cnt = $data[0]["cnt"];
     if ($cnt > 0) {
@@ -571,9 +571,9 @@ class SubjectDAO extends PSIBaseExDAO
 
     $id = $this->newId();
     $sql = "insert into t_subject(id, category, code, name, is_leaf, py, data_org,
-					company_id, parent_id)
-				values ('%s', '%s', '%s', '%s', %d, '%s', '%s',
-					'%s', '%s')";
+              company_id, parent_id)
+            values ('%s', '%s', '%s', '%s', %d, '%s', '%s',
+              '%s', '%s')";
     $rc = $db->execute(
       $sql,
       $id,
@@ -618,7 +618,7 @@ class SubjectDAO extends PSIBaseExDAO
     if (!$parentId) {
       // 当前科目是一级科目，一级科目只能编辑“末级科目”
       $sql = "update t_subject set is_leaf = %d
-					where id = '%s' ";
+              where id = '%s' ";
       $rc = $db->execute($sql, $isLeaf, $id);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -628,8 +628,8 @@ class SubjectDAO extends PSIBaseExDAO
       $ps = new PinyinService();
       $py = $ps->toPY($name);
       $sql = "update t_subject
-						set name = '%s', py = '%s', is_leaf = %d
-					where id = '%s' ";
+              set name = '%s', py = '%s', is_leaf = %d
+              where id = '%s' ";
       $rc = $db->execute($sql, $name, $py, $isLeaf, $id);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -653,8 +653,8 @@ class SubjectDAO extends PSIBaseExDAO
     $id = $params["id"];
 
     $sql = "select code, name, is_leaf, parent_id 
-				from t_subject
-				where id = '%s' ";
+            from t_subject
+            where id = '%s' ";
     $data = $db->query($sql, $id);
     if (!$data) {
       return $this->emptyResult();
@@ -671,8 +671,8 @@ class SubjectDAO extends PSIBaseExDAO
 
     $parentId = $v["parent_id"];
     $sql = "select code, name
-					from t_subject
-					where id = '%s' ";
+            from t_subject
+            where id = '%s' ";
     $data = $db->query($sql, $parentId);
     if ($data) {
       $result["parentCode"] = $data[0]["code"];
@@ -719,8 +719,8 @@ class SubjectDAO extends PSIBaseExDAO
 
     // 判断科目是否在账样中使用
     $sql = "select count(*) as cnt 
-				from t_acc_fmt
-				where company_id = '%s' and subject_code = '%s' ";
+            from t_acc_fmt
+            where company_id = '%s' and subject_code = '%s' ";
     $data = $db->query($sql, $companyId, $code);
     $cnt = $data[0]["cnt"];
     if ($cnt > 0) {
@@ -743,9 +743,9 @@ class SubjectDAO extends PSIBaseExDAO
     $db = $this->db;
 
     $sql = "insert into t_acc_fmt_cols (id, fmt_id, db_field_name, db_field_type,
-					db_field_length, db_field_decimal, show_order, caption, sys_col)
-				values ('%s', '%s', '%s', '%s',
-					%d, %d, %d, '%s', 1)";
+              db_field_length, db_field_decimal, show_order, caption, sys_col)
+            values ('%s', '%s', '%s', '%s',
+              %d, %d, %d, '%s', 1)";
     $rc = $db->execute(
       $sql,
       $this->newId(),
@@ -920,7 +920,7 @@ class SubjectDAO extends PSIBaseExDAO
     }
 
     $sql = "select count(*) as cnt from t_acc_fmt 
-				where company_id = '%s' and subject_code = '%s' ";
+            where company_id = '%s' and subject_code = '%s' ";
     $data = $db->query($sql, $companyId, $subjectCode);
     $cnt = $data[0]["cnt"];
     if ($cnt > 0) {
@@ -944,9 +944,9 @@ class SubjectDAO extends PSIBaseExDAO
     $id = $this->newId();
 
     $sql = "insert into t_acc_fmt (id, acc_number, subject_code, memo,
-					date_created, data_org, company_id, in_use, db_table_name_prefix)
-				values ('%s', '%s', '%s', '',
-					now(), '%s', '%s', 1, '%s')";
+              date_created, data_org, company_id, in_use, db_table_name_prefix)
+            values ('%s', '%s', '%s', '',
+              now(), '%s', '%s', 1, '%s')";
     $rc = $db->execute($sql, $id, $accNumber, $subjectCode, $dataOrg, $companyId, $tableName);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -990,8 +990,8 @@ class SubjectDAO extends PSIBaseExDAO
     $companyId = $params["companyId"];
 
     $sql = "select f.acc_number, f.in_use, f.db_table_name_prefix, f.date_created
-				from t_subject s, t_acc_fmt f
-				where s.id = '%s' and  s.code = f.subject_code and f.company_id = '%s' ";
+            from t_subject s, t_acc_fmt f
+            where s.id = '%s' and  s.code = f.subject_code and f.company_id = '%s' ";
 
     $data = $db->query($sql, $id, $companyId);
     if ($data) {
@@ -1035,11 +1035,11 @@ class SubjectDAO extends PSIBaseExDAO
     $companyId = $params["companyId"];
 
     $sql = "select c.id, c.show_order, c.caption, c.db_field_name, c.db_field_type,
-					c.db_field_length, c.db_field_decimal
-				from t_subject s, t_acc_fmt f, t_acc_fmt_cols c
-				where s.id = '%s' and s.code = f.subject_code and f.company_id = '%s'
-					and f.id = c.fmt_id and c.show_order > 0
-				order by c.show_order";
+              c.db_field_length, c.db_field_decimal
+            from t_subject s, t_acc_fmt f, t_acc_fmt_cols c
+            where s.id = '%s' and s.code = f.subject_code and f.company_id = '%s'
+              and f.id = c.fmt_id and c.show_order > 0
+            order by c.show_order";
     $data = $db->query($sql, $id, $companyId);
     foreach ($data as $v) {
       $result[] = [
@@ -1062,9 +1062,9 @@ class SubjectDAO extends PSIBaseExDAO
 
     $dbName = C('DB_NAME');
     $sql = "select count(*) as cnt
-				from information_schema.columns
-				where table_schema = '%s'
-					and table_name = '%s' ";
+            from information_schema.columns
+            where table_schema = '%s'
+              and table_name = '%s' ";
     $data = $db->query($sql, $dbName, $tableName);
     return $data[0]["cnt"] != 0;
   }
@@ -1087,7 +1087,7 @@ class SubjectDAO extends PSIBaseExDAO
     $code = $data[0]["code"];
 
     $sql = "select id, db_table_name_prefix from t_acc_fmt
-				where subject_code = '%s' and company_id = '%s' ";
+            where subject_code = '%s' and company_id = '%s' ";
     $data = $db->query($sql, $code, $companyId);
     if (!$data) {
       return $this->bad("科目[{$code}]还没有初始化标准账样");
@@ -1102,7 +1102,7 @@ class SubjectDAO extends PSIBaseExDAO
 
     // 检查账样是否增加了自定义字段
     $sql = "select count(*) as cnt from t_acc_fmt_cols
-				where fmt_id = '%s' ";
+            where fmt_id = '%s' ";
     $data = $db->query($sql, $fmtId);
     $cnt = $data[0]["cnt"];
     $standardList = $this->getStandardSubjectList();
@@ -1166,7 +1166,7 @@ class SubjectDAO extends PSIBaseExDAO
 
     // 检查账样
     $sql = "select id, db_table_name_prefix as cnt from t_acc_fmt
-				where company_id = '%s' and subject_code = '%s' ";
+            where company_id = '%s' and subject_code = '%s' ";
     $data = $db->query($sql, $companyId, $subjectCode);
     if (!$data) {
       return $this->bad("科目[$subjectCode]的标准账样还没有初始化");
@@ -1187,7 +1187,7 @@ class SubjectDAO extends PSIBaseExDAO
       return $this->bad("数据库字段名需要是小写字母");
     }
     $sql = "select count(*) as cnt from t_acc_fmt_cols 
-				where fmt_id = '%s' and db_field_name = '%s' ";
+            where fmt_id = '%s' and db_field_name = '%s' ";
     $data = $db->query($sql, $fmtId, $fieldName);
     $cnt = $data[0]["cnt"];
     if ($cnt > 0) {
@@ -1218,16 +1218,16 @@ class SubjectDAO extends PSIBaseExDAO
     }
 
     $sql = "select max(show_order) as max_show_order from t_acc_fmt_cols
-				where fmt_id = '%s' and show_order > 0 ";
+            where fmt_id = '%s' and show_order > 0 ";
     $data = $db->query($sql, $fmtId);
     $cnt = $data[0]["max_show_order"];
     $showOrder = $cnt + 1;
 
     $id = $this->newId();
     $sql = "insert into t_acc_fmt_cols (id, fmt_id, caption, db_field_name,
-					db_field_type, db_field_length, db_field_decimal, show_order, sys_col)
-				values ('%s', '%s', '%s', '%s',
-					'%s', %d, %d, %d, 0)";
+              db_field_type, db_field_length, db_field_decimal, show_order, sys_col)
+            values ('%s', '%s', '%s', '%s',
+              '%s', %d, %d, %d, 0)";
     $rc = $db->execute(
       $sql,
       $id,
@@ -1283,8 +1283,8 @@ class SubjectDAO extends PSIBaseExDAO
       // $inited:ture 账样已经创建了数据库表，这个时候就不能修改账样的字段类型了
 
       $sql = "update t_acc_fmt_cols
-						set caption = '%s' 
-					where id = '%s' ";
+              set caption = '%s' 
+              where id = '%s' ";
       $rc = $db->execute($sql, $fieldCaption, $id);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -1293,8 +1293,8 @@ class SubjectDAO extends PSIBaseExDAO
       if ($sysCol) {
         // 系统账样字段，也只能修改标题，不能修改字段类型
         $sql = "update t_acc_fmt_cols
-						set caption = '%s'
-					where id = '%s' ";
+                set caption = '%s'
+                where id = '%s' ";
         $rc = $db->execute($sql, $fieldCaption, $id);
         if ($rc === false) {
           return $this->sqlError(__METHOD__, __LINE__);
@@ -1309,8 +1309,8 @@ class SubjectDAO extends PSIBaseExDAO
           return $this->bad("数据库字段名需要是小写字母");
         }
         $sql = "select count(*) as cnt from t_acc_fmt_cols
-						where fmt_id = '%s' and db_field_name = '%s' 
-							and id <> '%s' ";
+                where fmt_id = '%s' and db_field_name = '%s' 
+                  and id <> '%s' ";
         $data = $db->query($sql, $fmtId, $fieldName, $id);
         $cnt = $data[0]["cnt"];
         if ($cnt > 0) {
@@ -1341,11 +1341,11 @@ class SubjectDAO extends PSIBaseExDAO
         }
 
         $sql = "update t_acc_fmt_cols
-							set caption = '%s', db_field_name = '%s',
-								db_field_type = '%s',
-								db_field_length = %d,
-								db_field_decimal = %d
-						where id = '%s' ";
+                set caption = '%s', db_field_name = '%s',
+                  db_field_type = '%s',
+                  db_field_length = %d,
+                  db_field_decimal = %d
+                where id = '%s' ";
         $rc = $db->execute($sql, $fieldCaption, $fieldName, $type, $length, $dec, $id);
         if ($rc === false) {
           return $this->sqlError(__METHOD__, __LINE__);
@@ -1382,9 +1382,9 @@ class SubjectDAO extends PSIBaseExDAO
     $result = [];
 
     $sql = "select caption, db_field_name, sys_col,
-					db_field_type, fmt_id 
-				from t_acc_fmt_cols 
-				where id = '%s' ";
+              db_field_type, fmt_id 
+            from t_acc_fmt_cols 
+            where id = '%s' ";
     $data = $db->query($sql, $id);
     if ($data) {
       $v = $data[0];
@@ -1420,8 +1420,8 @@ class SubjectDAO extends PSIBaseExDAO
     $id = $params["id"];
 
     $sql = "select fmt_id, caption, sys_col 
-				from t_acc_fmt_cols
-				where id = '%s' ";
+            from t_acc_fmt_cols
+            where id = '%s' ";
     $data = $db->query($sql, $id);
     if (!$data) {
       return $this->bad("要删除的账样字段不存在");
@@ -1435,8 +1435,8 @@ class SubjectDAO extends PSIBaseExDAO
     }
 
     $sql = "select subject_code, acc_number, db_table_name_prefix 
-				from t_acc_fmt 
-				where id = '%s' ";
+            from t_acc_fmt 
+            where id = '%s' ";
     $data = $db->query($sql, $fmtId);
     if (!$data) {
       return $this->bad("账样不存在");
@@ -1473,11 +1473,11 @@ class SubjectDAO extends PSIBaseExDAO
     // id - 科目的id
     $id = $params["id"];
     $sql = "select c.id, c.caption
-				from t_subject s, t_acc_fmt f, t_acc_fmt_cols c
-				where s.id = '%s' 
-					and s.company_id = f.company_id and s.code = f.subject_code
-					and f.id = c.fmt_id and c.show_order > 0
-				order by c.show_order";
+            from t_subject s, t_acc_fmt f, t_acc_fmt_cols c
+            where s.id = '%s' 
+              and s.company_id = f.company_id and s.code = f.subject_code
+              and f.id = c.fmt_id and c.show_order > 0
+            order by c.show_order";
     $result = [];
     $data = $db->query($sql, $id);
     foreach ($data as $v) {
@@ -1517,8 +1517,8 @@ class SubjectDAO extends PSIBaseExDAO
       $showOrder = $i + 1;
 
       $sql = "update t_acc_fmt_cols
-						set show_order = %d
-					where id = '%s' ";
+              set show_order = %d
+              where id = '%s' ";
       $rc = $db->execute($sql, $showOrder, $colId);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -1541,10 +1541,10 @@ class SubjectDAO extends PSIBaseExDAO
     $id = $params["id"];
 
     $sql = "select r.id, c.code, c.full_name
-				from t_supplier_goods_range r, t_goods_category c
-				where r.supplier_id = '%s' and r.g_id_type = 2
-					and r.g_id = c.id
-				order by c.code";
+            from t_supplier_goods_range r, t_goods_category c
+            where r.supplier_id = '%s' and r.g_id_type = 2
+              and r.g_id = c.id
+            order by c.code";
     $data = $db->query($sql, $id);
     $result = [];
 

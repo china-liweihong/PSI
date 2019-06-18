@@ -8,7 +8,7 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
     var me = this;
     Ext.apply(me, {
       title: "选择销售出库单",
-      width: 1000,
+      width: 1200,
       height: 600,
       layout: "border",
       items: [{
@@ -157,7 +157,7 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
       extend: "Ext.data.Model",
       fields: ["id", "ref", "bizDate", "customerName",
         "warehouseName", "inputUserName", "bizUserName",
-        "amount"]
+        "amount", "tax", "moneyWithTax"]
     });
     var storeWSBill = Ext.create("Ext.data.Store", {
       autoLoad: false,
@@ -204,13 +204,29 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
         menuDisabled: true,
         sortable: false
       }, {
-        header: "销售金额",
+        header: "销售金额(不含税)",
         dataIndex: "amount",
         menuDisabled: true,
         sortable: false,
         align: "right",
         xtype: "numbercolumn",
-        width: 80
+        width: 130
+      }, {
+        header: "税金",
+        dataIndex: "tax",
+        menuDisabled: true,
+        sortable: false,
+        align: "right",
+        xtype: "numbercolumn",
+        width: 100
+      }, {
+        header: "价税合计",
+        dataIndex: "moneyWithTax",
+        menuDisabled: true,
+        sortable: false,
+        align: "right",
+        xtype: "numbercolumn",
+        width: 120
       }, {
         header: "出库仓库",
         dataIndex: "warehouseName",
@@ -343,7 +359,8 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
       extend: "Ext.data.Model",
       fields: ["id", "goodsCode", "goodsName", "goodsSpec",
         "unitName", "goodsCount", "goodsMoney",
-        "goodsPrice", "sn", "memo"]
+        "goodsPrice", "sn", "memo", "taxRate", "tax",
+        "moneyWithTax", "goodsPriceWithTax"]
     });
     var store = Ext.create("Ext.data.Store", {
       autoLoad: false,
@@ -392,7 +409,7 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
         sortable: false,
         width: 60
       }, {
-        header: "单价",
+        header: "单价(不含税)",
         dataIndex: "goodsPrice",
         menuDisabled: true,
         sortable: false,
@@ -400,8 +417,41 @@ Ext.define("PSI.Sale.SRSelectWSBillForm", {
         xtype: "numbercolumn",
         width: 150
       }, {
-        header: "销售金额",
+        header: "销售金额(不含税)",
         dataIndex: "goodsMoney",
+        menuDisabled: true,
+        sortable: false,
+        align: "right",
+        xtype: "numbercolumn",
+        width: 150
+      }, {
+        header: "税率(%)",
+        dataIndex: "taxRate",
+        menuDisabled: true,
+        sortable: false,
+        align: "right",
+        xtype: "numbercolumn",
+        format: "#",
+        width: 80
+      }, {
+        header: "税金",
+        dataIndex: "tax",
+        menuDisabled: true,
+        sortable: false,
+        align: "right",
+        xtype: "numbercolumn",
+        width: 150
+      }, {
+        header: "价税合计",
+        dataIndex: "moneyWithTax",
+        menuDisabled: true,
+        sortable: false,
+        align: "right",
+        xtype: "numbercolumn",
+        width: 150
+      }, {
+        header: "含税价",
+        dataIndex: "goodsPriceWithTax",
         menuDisabled: true,
         sortable: false,
         align: "right",

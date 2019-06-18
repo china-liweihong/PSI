@@ -310,11 +310,12 @@ class WSBillDAO extends PSIBaseExDAO
 
     $billId = $params["billId"];
     $sql = "select d.id, g.code, g.name, g.spec, u.name as unit_name,
-		convert(d.goods_count, $fmt) as goods_count,
-		d.goods_price, d.goods_money, d.sn_note, d.memo
-		from t_ws_bill_detail d, t_goods g, t_goods_unit u
-		where d.wsbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id
-		order by d.show_order";
+              convert(d.goods_count, $fmt) as goods_count,
+              d.goods_price, d.goods_money, d.sn_note, d.memo,
+              d.tax_rate, d.tax, d.money_with_tax, d.goods_price_with_tax
+            from t_ws_bill_detail d, t_goods g, t_goods_unit u
+            where d.wsbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id
+            order by d.show_order";
     $data = $db->query($sql, $billId);
     $result = [];
 
@@ -329,7 +330,11 @@ class WSBillDAO extends PSIBaseExDAO
         "goodsPrice" => $v["goods_price"],
         "goodsMoney" => $v["goods_money"],
         "sn" => $v["sn_note"],
-        "memo" => $v["memo"]
+        "memo" => $v["memo"],
+        "taxRate" => $v["tax_rate"],
+        "tax" => $v["tax"],
+        "moneyWithTax" => $v["money_with_tax"],
+        "goodsPriceWithTax" => $v["goods_price_with_tax"]
       ];
     }
 

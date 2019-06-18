@@ -301,7 +301,8 @@ class SRBillDAO extends PSIBaseExDAO
     $sn = $params["sn"];
 
     $sql = "select w.id, w.ref, w.bizdt, c.name as customer_name, u.name as biz_user_name,
-              user.name as input_user_name, h.name as warehouse_name, w.sale_money
+              user.name as input_user_name, h.name as warehouse_name, w.sale_money,
+              w.tax, w.money_with_tax
             from t_ws_bill w, t_customer c, t_user u, t_user user, t_warehouse h
             where (w.customer_id = c.id) and (w.biz_user_id = u.id)
               and (w.input_user_id = user.id) and (w.warehouse_id = h.id)
@@ -359,7 +360,9 @@ class SRBillDAO extends PSIBaseExDAO
         "warehouseName" => $v["warehouse_name"],
         "inputUserName" => $v["input_user_name"],
         "bizUserName" => $v["biz_user_name"],
-        "amount" => $v["sale_money"]
+        "amount" => $v["sale_money"],
+        "tax" => $v["tax"],
+        "moneyWithTax" => $v["money_with_tax"]
       ];
     }
 

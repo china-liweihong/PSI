@@ -19,9 +19,9 @@ class GoodsBrandDAO extends PSIBaseExDAO
   {
     $result = [];
     $sql = "select id, name, full_name, record_status
-				from t_goods_brand b
-				where (parent_id = '%s')
-				";
+            from t_goods_brand b
+            where (parent_id = '%s')
+            ";
     $queryParam = [];
     $queryParam[] = $parentId;
     if ($rs) {
@@ -102,9 +102,9 @@ class GoodsBrandDAO extends PSIBaseExDAO
 
     $result = [];
     $sql = "select id, name, full_name, record_status
-				from t_goods_brand b
-				where (parent_id is null)
-				";
+            from t_goods_brand b
+            where (parent_id is null)
+            ";
     $queryParam = [];
     $ds = new DataOrgDAO($db);
     $rs = $ds->buildSQL(FIdConst::GOODS_BRAND, "b", $loginUserId);
@@ -174,8 +174,8 @@ class GoodsBrandDAO extends PSIBaseExDAO
     $fullName = $name;
     if ($parentId) {
       $sql = "select full_name
-					from t_goods_brand
-					where id = '%s' ";
+              from t_goods_brand
+              where id = '%s' ";
       $data = $db->query($sql, $parentId);
       if (!$data) {
         return $this->bad("所选择的上级商品品牌不存在");
@@ -194,7 +194,7 @@ class GoodsBrandDAO extends PSIBaseExDAO
     $id = $this->newId();
     if ($parentId) {
       $sql = "insert into t_goods_brand(id, name, full_name, parent_id, data_org, company_id, py, record_status)
-					values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', %d)";
+              values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', %d)";
       $rc = $db->execute(
         $sql,
         $id,
@@ -211,7 +211,7 @@ class GoodsBrandDAO extends PSIBaseExDAO
       }
     } else {
       $sql = "insert into t_goods_brand(id, name, full_name, parent_id, data_org, company_id, py, record_status)
-					values ('%s', '%s', '%s', null, '%s', '%s', '%s', %d)";
+              values ('%s', '%s', '%s', null, '%s', '%s', '%s', %d)";
       $rc = $db->execute($sql, $id, $name, $fullName, $dataOrg, $companyId, $py, $recordStatus);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -240,15 +240,15 @@ class GoodsBrandDAO extends PSIBaseExDAO
 
     $parentFullName = $data[0]["full_name"];
     $sql = "select id, name
-				from t_goods_brand
-				where parent_id = '%s' ";
+            from t_goods_brand
+            where parent_id = '%s' ";
     $data = $db->query($sql, $parentId);
     foreach ($data as $v) {
       $id = $v["id"];
       $fullName = $parentFullName . "\\" . $v["name"];
       $sql = "update t_goods_brand
-					set full_name = '%s'
-					where id = '%s' ";
+              set full_name = '%s'
+              where id = '%s' ";
       $db->execute($sql, $fullName, $id);
 
       // 递归调用自身
@@ -281,8 +281,8 @@ class GoodsBrandDAO extends PSIBaseExDAO
     if ($parentId) {
       // 检查上级品牌是否存在
       $sql = "select full_name
-					from t_goods_brand
-					where id = '%s' ";
+              from t_goods_brand
+              where id = '%s' ";
       $data = $db->query($sql, $parentId);
       if (!data) {
         return $this->bad("选择的上级品牌不存在");
@@ -298,8 +298,8 @@ class GoodsBrandDAO extends PSIBaseExDAO
       $tempParentId = $parentId;
       while ($tempParentId != null) {
         $sql = "select parent_id
-							from t_goods_brand
-							where id = '%s' ";
+                from t_goods_brand
+                where id = '%s' ";
         $data = $db->query($sql, $tempParentId);
         if ($data) {
           $tempParentId = $data[0]["parent_id"];
@@ -316,7 +316,7 @@ class GoodsBrandDAO extends PSIBaseExDAO
     // 判断品牌是否已经存在
     $fullName = $parentId ? $parentFullName . "\\" . $name : $name;
     $sql = "select count(*) as cnt from t_goods_brand 
-				where full_name = '%s' and id <> '%s' ";
+            where full_name = '%s' and id <> '%s' ";
     $data = $db->query($sql, $fullName, $id);
     $cnt = $data[0]["cnt"];
     if ($cnt > 0) {
@@ -326,16 +326,16 @@ class GoodsBrandDAO extends PSIBaseExDAO
     if ($parentId) {
       $fullName = $parentFullName . "\\" . $name;
       $sql = "update t_goods_brand
-					set name = '%s', parent_id = '%s', full_name = '%s', py = '%s', record_status = %d
-					where id = '%s' ";
+              set name = '%s', parent_id = '%s', full_name = '%s', py = '%s', record_status = %d
+              where id = '%s' ";
       $rc = $db->execute($sql, $name, $parentId, $fullName, $py, $recordStatus, $id);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
       }
     } else {
       $sql = "update t_goods_brand
-					set name = '%s', parent_id = null, full_name = '%s', py = '%s', record_status = %d
-					where id = '%s' ";
+              set name = '%s', parent_id = null, full_name = '%s', py = '%s', record_status = %d
+              where id = '%s' ";
       $rc = $db->execute($sql, $name, $name, $py, $recordStatus, $id);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -360,8 +360,8 @@ class GoodsBrandDAO extends PSIBaseExDAO
     $db = $this->db;
 
     $sql = "select name, full_name 
-				from t_goods_brand 
-				where id = '%s' ";
+            from t_goods_brand 
+            where id = '%s' ";
     $data = $db->query($sql, $id);
     if ($data) {
       return [
@@ -391,7 +391,7 @@ class GoodsBrandDAO extends PSIBaseExDAO
     $fullName = $brand["fullName"];
 
     $sql = "select count(*) as cnt from t_goods
-				where brand_id = '%s' ";
+            where brand_id = '%s' ";
     $data = $db->query($sql, $id);
     $cnt = $data[0]["cnt"];
     if ($cnt > 0) {
@@ -432,8 +432,8 @@ class GoodsBrandDAO extends PSIBaseExDAO
     $id = $params["id"];
 
     $sql = "select name, parent_id
-				from t_goods_brand
-				where id = '%s' ";
+            from t_goods_brand
+            where id = '%s' ";
     $data = $db->query($sql, $id);
     if (!$data) {
       return $result;
@@ -444,8 +444,8 @@ class GoodsBrandDAO extends PSIBaseExDAO
     $result["parentBrandId"] = $parentId;
     if ($parentId) {
       $sql = "select full_name
-					from t_goods_brand
-					where id = '%s' ";
+              from t_goods_brand
+              where id = '%s' ";
       $data = $db->query($sql, $parentId);
       if ($data) {
         $result["parentBrandName"] = $data[0]["full_name"];
@@ -481,8 +481,8 @@ class GoodsBrandDAO extends PSIBaseExDAO
 
     $result = [];
     $sql = "select id, full_name
-				from t_goods_brand b
-				where (b.record_status = 1) and (b.name like '%s' or b.py like '%s')
+            from t_goods_brand b
+            where (b.record_status = 1) and (b.name like '%s' or b.py like '%s')
 				";
     $queryParams = [];
     $queryParams[] = $key;

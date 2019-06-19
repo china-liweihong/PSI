@@ -20,10 +20,10 @@ class GLPeriodDAO extends PSIBaseExDAO
     $companyId = $params["companyId"];
 
     $sql = "select acc_year, acc_month, acc_gl_kept, acc_gl_closed,
-					acc_detail_kept, acc_detail_closed, period_closed, year_forward
-				from t_acc_period
-				where company_id = '%s' 
-				order by acc_year desc, acc_month asc";
+              acc_detail_kept, acc_detail_closed, period_closed, year_forward
+            from t_acc_period
+            where company_id = '%s' 
+            order by acc_year desc, acc_month asc";
     $data = $db->query($sql, $companyId);
 
     $result = [];
@@ -63,7 +63,7 @@ class GLPeriodDAO extends PSIBaseExDAO
     $year = date("Y");
 
     $sql = "select count(*) as cnt from t_acc_period
-				where company_id = '%s' and acc_year = %d ";
+            where company_id = '%s' and acc_year = %d ";
     $data = $db->query($sql, $companyId, $year);
     $cnt = $data[0]["cnt"];
     if ($cnt > 0) {
@@ -72,11 +72,11 @@ class GLPeriodDAO extends PSIBaseExDAO
 
     for ($month = 1; $month < 13; $month++) {
       $sql = "insert into t_acc_period(id, company_id, acc_year,acc_month,
-						acc_gl_kept, acc_gl_closed, acc_detail_kept, acc_detail_closed,
-						period_closed, year_forward)
-					values ('%s', '%s', %d, %d,
-						0, 0, 0, 0, 
-						0, 0)";
+              acc_gl_kept, acc_gl_closed, acc_detail_kept, acc_detail_closed,
+              period_closed, year_forward)
+            values ('%s', '%s', %d, %d,
+              0, 0, 0, 0, 
+              0, 0)";
       $rc = $db->execute($sql, $this->newId(), $companyId, $year, $month);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);

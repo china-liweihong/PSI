@@ -43,10 +43,10 @@ class GoodsBomDAO extends PSIBaseExDAO
     $sumCostWeight = $data[0]["sum_cost_weight"];
 
     $sql = "select b.id, convert(b.sub_goods_count, $fmt) as sub_goods_count,g.id as goods_id,
-					g.code, g.name, g.spec, u.name as unit_name, b.cost_weight
-				from t_goods_bom b, t_goods g, t_goods_unit u
-				where b.goods_id = '%s' and b.sub_goods_id = g.id and g.unit_id = u.id
-				order by g.code";
+              g.code, g.name, g.spec, u.name as unit_name, b.cost_weight
+            from t_goods_bom b, t_goods g, t_goods_unit u
+            where b.goods_id = '%s' and b.sub_goods_id = g.id and g.unit_id = u.id
+            order by g.code";
     $data = $db->query($sql, $id);
     foreach ($data as $v) {
       $costWeight = $v["cost_weight"];
@@ -95,8 +95,8 @@ class GoodsBomDAO extends PSIBaseExDAO
     // TODO 用递归算法检查
 
     $sql = "select id, sub_goods_id
-				from t_goods_bom
-				where goods_id = '%s' ";
+            from t_goods_bom
+            where goods_id = '%s' ";
     $data = $db->query($sql, $subGoodsId);
     foreach ($data as $v) {
       $sgi = $v["sub_goods_id"];
@@ -161,8 +161,8 @@ class GoodsBomDAO extends PSIBaseExDAO
     }
 
     $sql = "select count(*) as cnt 
-				from t_goods_bom
-				where goods_id = '%s' and sub_goods_id = '%s' ";
+            from t_goods_bom
+            where goods_id = '%s' and sub_goods_id = '%s' ";
     $data = $db->query($sql, $id, $subGoodsId);
     $cnt = $data[0]["cnt"];
     if ($cnt > 0) {
@@ -170,8 +170,8 @@ class GoodsBomDAO extends PSIBaseExDAO
     }
 
     $sql = "insert into t_goods_bom(id, goods_id, sub_goods_id, sub_goods_count, parent_id,
-					cost_weight)
-				values ('%s', '%s', '%s', convert(%f, $fmt), null, %d)";
+              cost_weight)
+            values ('%s', '%s', '%s', convert(%f, $fmt), null, %d)";
     $rc = $db->execute($sql, $this->newId(), $id, $subGoodsId, $subGoodsCount, $costWeight);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -236,8 +236,8 @@ class GoodsBomDAO extends PSIBaseExDAO
     }
 
     $sql = "update t_goods_bom
-				set sub_goods_count = convert(%f, $fmt), cost_weight = %d
-				where goods_id = '%s' and sub_goods_id = '%s' ";
+            set sub_goods_count = convert(%f, $fmt), cost_weight = %d
+            where goods_id = '%s' and sub_goods_id = '%s' ";
 
     $rc = $db->execute($sql, $subGoodsCount, $costWeight, $id, $subGoodsId);
     if ($rc === false) {
@@ -279,8 +279,8 @@ class GoodsBomDAO extends PSIBaseExDAO
     }
 
     $sql = "select sub_goods_count, cost_weight
-				from t_goods_bom
-				where goods_id = '%s' and sub_goods_id = '%s' ";
+            from t_goods_bom
+            where goods_id = '%s' and sub_goods_id = '%s' ";
     $data = $db->query($sql, $goodsId, $subGoodsId);
     $subGoodsCount = 0;
     $costWeight = 1;
@@ -290,8 +290,8 @@ class GoodsBomDAO extends PSIBaseExDAO
     }
 
     $sql = "select u.name
-				from t_goods g, t_goods_unit u
-				where g.unit_id = u.id and g.id = '%s' ";
+            from t_goods g, t_goods_unit u
+            where g.unit_id = u.id and g.id = '%s' ";
     $data = $db->query($sql, $subGoodsId);
     $unitName = "";
     if ($data) {
@@ -322,8 +322,8 @@ class GoodsBomDAO extends PSIBaseExDAO
     $id = $params["id"];
 
     $sql = "select goods_id, sub_goods_id
-				from t_goods_bom
-				where id = '%s' ";
+            from t_goods_bom
+            where id = '%s' ";
     $data = $db->query($sql, $id);
     if (!$data) {
       return $this->bad("要删除的子商品不存在");

@@ -17,8 +17,8 @@ class FormViewDAO extends PSIBaseExDAO
   {
     $db = $this->db;
     $sql = "select id, prop_value from t_fv_md
-				where parent_id is null and prop_name = 'view_name' 
-				order by show_order";
+            where parent_id is null and prop_name = 'view_name' 
+            order by show_order";
     $data = $db->query($sql);
     $result = [];
     foreach ($data as $v) {
@@ -29,7 +29,7 @@ class FormViewDAO extends PSIBaseExDAO
     }
 
     $sql = "select count(*) as cnt from t_fv_md
-				where parent_id is null and prop_name = 'view_name' ";
+            where parent_id is null and prop_name = 'view_name' ";
     $data = $db->query($sql);
     $cnt = $data[0]["cnt"];
     return [
@@ -49,7 +49,7 @@ class FormViewDAO extends PSIBaseExDAO
     $db = $this->db;
 
     $sql = "select prop_value from t_fv_md
-				where parent_id = '%s' and prop_name = 'title' ";
+            where parent_id = '%s' and prop_name = 'title' ";
     $data = $db->query($sql, $viewId);
     if ($data) {
       return $data[0]["prop_value"];
@@ -62,8 +62,8 @@ class FormViewDAO extends PSIBaseExDAO
   {
     $db = $this->db;
     $sql = "select id from t_fv_md
-				where parent_id = '%s' and prop_name = '%s'
-				limit 1";
+            where parent_id = '%s' and prop_name = '%s'
+            limit 1";
     $data = $db->query($sql, $parentId, $propName);
     if ($data) {
       return $data[0]["id"];
@@ -76,8 +76,8 @@ class FormViewDAO extends PSIBaseExDAO
   {
     $db = $this->db;
     $sql = "select prop_value from t_fv_md 
-				where parent_id = '%s' and prop_name = '%s' 
-				limit 1";
+            where parent_id = '%s' and prop_name = '%s' 
+            limit 1";
     $data = $db->query($sql, $parentId, $propName);
     if ($data) {
       return $data[0]["prop_value"];
@@ -90,8 +90,8 @@ class FormViewDAO extends PSIBaseExDAO
   {
     $db = $this->db;
     $sql = "select prop_value from t_fv_md
-				where parent_id = '%s' and prop_name = '%s' 
-				order by show_order";
+            where parent_id = '%s' and prop_name = '%s' 
+            order by show_order";
     return $db->query($sql, $parentId, $propName);
   }
 
@@ -113,7 +113,7 @@ class FormViewDAO extends PSIBaseExDAO
 
     // 使用帮助Id
     $sql = "select prop_value from t_fv_md 
-				where parent_id = '%s' and prop_name = 'help_id' ";
+            where parent_id = '%s' and prop_name = 'help_id' ";
     $data = $db->query($sql, $viewId);
     if ($data) {
       $result["helpId"] = $data[0]["prop_value"];
@@ -121,14 +121,14 @@ class FormViewDAO extends PSIBaseExDAO
 
     // 工具栏按钮
     $sql = "select prop_value from t_fv_md
-				where parent_id = '%s' and prop_name = 'tool_bar_id' ";
+            where parent_id = '%s' and prop_name = 'tool_bar_id' ";
     $data = $db->query($sql, $viewId);
     if ($data) {
       $toolBarId = $data[0]["prop_value"];
 
       $sql = "select id, prop_value from t_fv_md
-					where parent_id = '%s' and prop_name = 'button_text'
-					order by show_order";
+              where parent_id = '%s' and prop_name = 'button_text'
+              order by show_order";
       $data = $db->query($sql, $toolBarId);
       $toolBar = [];
       foreach ($data as $v) {
@@ -138,7 +138,7 @@ class FormViewDAO extends PSIBaseExDAO
         // 获得按钮单击handler
         $handler = null;
         $sql = "select prop_value from t_fv_md
-						where parent_id = '%s' and prop_name = 'button_handler'";
+                where parent_id = '%s' and prop_name = 'button_handler'";
         $d = $db->query($sql, $buttonId);
         if ($d) {
           $handler = $d[0]["prop_value"];
@@ -147,7 +147,7 @@ class FormViewDAO extends PSIBaseExDAO
         // 按钮的icon
         $icon = null;
         $sql = "select prop_value from t_fv_md
-						where parent_id = '%s' and prop_name = 'button_icon'";
+                where parent_id = '%s' and prop_name = 'button_icon'";
         $d = $db->query($sql, $buttonId);
         if ($d) {
           $icon = $d[0]["prop_value"];
@@ -162,14 +162,14 @@ class FormViewDAO extends PSIBaseExDAO
 
         // 子按钮/子菜单
         $sql = "select prop_value from t_fv_md
-						where parent_id = '%s' and prop_name = 'sub_button_id' ";
+                where parent_id = '%s' and prop_name = 'sub_button_id' ";
         $d = $db->query($sql, $buttonId);
         if ($d) {
           $subButtonId = $d[0]["prop_value"];
 
           $sql = "select id, prop_value from t_fv_md
-							where parent_id = '%s' and prop_name = 'button_text' 
-							order by show_order";
+                  where parent_id = '%s' and prop_name = 'button_text' 
+                  order by show_order";
           $subButtons = $db->query($sql, $subButtonId);
           $subButtonList = [];
           foreach ($subButtons as $btn) {
@@ -178,7 +178,7 @@ class FormViewDAO extends PSIBaseExDAO
 
             // 查询该button的Handler
             $sql = "select prop_value from t_fv_md
-								where parent_id = '%s' and prop_name = 'button_handler' ";
+                    where parent_id = '%s' and prop_name = 'button_handler' ";
             $d = $db->query($sql, $btnId);
             $btnHandler = null;
             if ($d) {
@@ -187,7 +187,7 @@ class FormViewDAO extends PSIBaseExDAO
 
             // 按钮的icon
             $sql = "select prop_value from t_fv_md
-								where parent_id = '%s' and prop_name = 'button_icon' ";
+                    where parent_id = '%s' and prop_name = 'button_icon' ";
             $d = $db->query($sql, $btnId);
             $btnIcon = null;
             if ($d) {
@@ -261,8 +261,8 @@ class FormViewDAO extends PSIBaseExDAO
     $id = $params["id"];
 
     $sql = "select id, prop_name, prop_value from t_fv_md
-				where parent_id = '%s'
-				order by prop_name";
+            where parent_id = '%s'
+            order by prop_name";
     $data = $db->query($sql, $id);
     $result = [];
     foreach ($data as $v) {

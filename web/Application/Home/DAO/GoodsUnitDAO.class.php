@@ -20,8 +20,8 @@ class GoodsUnitDAO extends PSIBaseExDAO
     $db = $this->db;
 
     $sql = "select id, name, code, record_status
-				from t_goods_unit
-				order by record_status, code";
+            from t_goods_unit
+            order by record_status, code";
 
     $data = $db->query($sql);
 
@@ -29,14 +29,14 @@ class GoodsUnitDAO extends PSIBaseExDAO
 
     foreach ($data as $v) {
       $sql = "select count(*) as cnt 
-					from t_goods
-					where unit_id = '%s' ";
+              from t_goods
+              where unit_id = '%s' ";
       $d = $db->query($sql, $v["id"]);
       $goodsCount = $d[0]["cnt"];
 
       $sql = "select count(*) as cnt
-					from t_goods
-					where unit_id = '%s' and record_status = 1000";
+              from t_goods
+              where unit_id = '%s' and record_status = 1000";
       $d = $db->query($sql, $v["id"]);
       $goodsEnabledCount = $d[0]["cnt"];
 
@@ -64,9 +64,9 @@ class GoodsUnitDAO extends PSIBaseExDAO
     $db = $this->db;
 
     $sql = "select id, name
-				from t_goods_unit
-				where record_status = 1
-				order by code, name";
+            from t_goods_unit
+            where record_status = 1
+            order by code, name";
     $data = $db->query($sql, $goodsId);
     $result = [];
 
@@ -82,8 +82,8 @@ class GoodsUnitDAO extends PSIBaseExDAO
       // 把它的计量单位也插入到结果中
       // 这个场景用于编辑商品资料界面中，计量单位的数据来源
       $sql = "select u.id, u.name
-					from t_goods g, t_goods_unit u
-					where g.id = '%s' and g.unit_id = u.id and u.record_status = 2";
+              from t_goods g, t_goods_unit u
+              where g.id = '%s' and g.unit_id = u.id and u.record_status = 2";
       $data = $db->query($sql, $goodsId);
       if ($data) {
         $v = $data[0];
@@ -158,7 +158,7 @@ class GoodsUnitDAO extends PSIBaseExDAO
     $params["id"] = $id;
 
     $sql = "insert into t_goods_unit(id, name, data_org, company_id, code, record_status)
-					values ('%s', '%s', '%s', '%s', '%s', %d) ";
+            values ('%s', '%s', '%s', '%s', '%s', %d) ";
     $rc = $db->execute($sql, $id, $name, $dataOrg, $companyId, $code, $recordStatus);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -199,8 +199,8 @@ class GoodsUnitDAO extends PSIBaseExDAO
     if ($recordStatus == 2) {
       // 停用计量单位的时候，需要检查是否有没有停用的商品使用该计量单位
       $sql = "select count(*) as cnt
-					from t_goods
-					where unit_id = '%s' and record_status = 1000";
+              from t_goods
+              where unit_id = '%s' and record_status = 1000";
       $data = $db->query($sql, $id);
       $cnt = $data[0]["cnt"];
       if ($cnt > 0) {
@@ -211,8 +211,8 @@ class GoodsUnitDAO extends PSIBaseExDAO
     }
 
     $sql = "update t_goods_unit 
-				set name = '%s', code = '%s', record_status = %d 
-				where id = '%s' ";
+            set name = '%s', code = '%s', record_status = %d 
+            where id = '%s' ";
     $rc = $db->execute($sql, $name, $code, $recordStatus, $id);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);

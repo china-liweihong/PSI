@@ -41,7 +41,7 @@ class FactoryDAO extends PSIBaseExDAO
     }
 
     $sql = "select c.id, c.code, c.name
-				from t_factory_category c ";
+            from t_factory_category c ";
     $queryParam = [];
     $ds = new DataOrgDAO($db);
     $rs = $ds->buildSQL(FIdConst::FACTORY_CATEGORY, "c", $loginUserId);
@@ -59,8 +59,8 @@ class FactoryDAO extends PSIBaseExDAO
 
       $queryParam = [];
       $sql = "select count(s.id) as cnt
-					from t_factory s
-					where (s.category_id = '%s') ";
+              from t_factory s
+              where (s.category_id = '%s') ";
       $queryParam[] = $id;
       if ($code) {
         $sql .= " and (s.code like '%s') ";
@@ -160,7 +160,7 @@ class FactoryDAO extends PSIBaseExDAO
     $id = $this->newId();
 
     $sql = "insert into t_factory_category (id, code, name, data_org, company_id)
-					values ('%s', '%s', '%s', '%s', '%s') ";
+            values ('%s', '%s', '%s', '%s', '%s') ";
     $rc = $db->execute($sql, $id, $code, $name, $dataOrg, $companyId);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -201,8 +201,8 @@ class FactoryDAO extends PSIBaseExDAO
     }
 
     $sql = "update t_factory_category
-				set code = '%s', name = '%s'
-				where id = '%s' ";
+            set code = '%s', name = '%s'
+            where id = '%s' ";
     $rc = $db->execute($sql, $code, $name, $id);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -256,8 +256,8 @@ class FactoryDAO extends PSIBaseExDAO
     $name = $params["name"];
 
     $sql = "select count(*) as cnt
-				from t_factory
-				where category_id = '%s' ";
+            from t_factory
+            where category_id = '%s' ";
     $query = $db->query($sql, $id);
     $cnt = $query[0]["cnt"];
     if ($cnt > 0) {
@@ -303,11 +303,11 @@ class FactoryDAO extends PSIBaseExDAO
     }
 
     $sql = "select id, category_id, code, name, contact01, tel01, mobile01,
-					contact02, tel02, mobile02, init_payables, init_payables_dt,
-					address, bank_name, bank_account, tax_number, fax, note, 
-					data_org, record_status
-				from t_factory
-				where (category_id = '%s')";
+              contact02, tel02, mobile02, init_payables, init_payables_dt,
+              address, bank_name, bank_account, tax_number, fax, note, 
+              data_org, record_status
+            from t_factory
+            where (category_id = '%s')";
     $queryParam = [];
     $queryParam[] = $categoryId;
     if ($code) {
@@ -354,7 +354,7 @@ class FactoryDAO extends PSIBaseExDAO
     $queryParam[] = $start;
     $queryParam[] = $limit;
     $sql .= " order by code
-				limit %d, %d";
+              limit %d, %d";
     $result = [];
     $data = $db->query($sql, $queryParam);
     foreach ($data as $v) {
@@ -501,13 +501,13 @@ class FactoryDAO extends PSIBaseExDAO
     $params["id"] = $id;
 
     $sql = "insert into t_factory (id, category_id, code, name, py, 
-					contact01, tel01, mobile01, contact02, tel02, mobile02, 
-					address, bank_name, bank_account, tax_number, fax, note, 
-					data_org, company_id, record_status)
-				values ('%s', '%s', '%s', '%s', '%s', 
-						'%s', '%s', '%s', '%s', '%s', '%s',
-						'%s', '%s', '%s', '%s', '%s', '%s', 
-						'%s', '%s', %d)  ";
+              contact01, tel01, mobile01, contact02, tel02, mobile02, 
+              address, bank_name, bank_account, tax_number, fax, note, 
+              data_org, company_id, record_status)
+            values ('%s', '%s', '%s', '%s', '%s', 
+              '%s', '%s', '%s', '%s', '%s', '%s',
+              '%s', '%s', '%s', '%s', '%s', '%s', 
+              '%s', '%s', %d)  ";
     $rc = $db->execute(
       $sql,
       $id,
@@ -578,13 +578,13 @@ class FactoryDAO extends PSIBaseExDAO
     }
 
     $sql = "update t_factory
-				set code = '%s', name = '%s', category_id = '%s', py = '%s',
-					contact01 = '%s', tel01 = '%s', mobile01 = '%s',
-					contact02 = '%s', tel02 = '%s', mobile02 = '%s',
-					address = '%s',
-					bank_name = '%s', bank_account = '%s', tax_number = '%s',
-					fax = '%s', note = '%s', record_status = %d
-				where id = '%s'  ";
+            set code = '%s', name = '%s', category_id = '%s', py = '%s',
+              contact01 = '%s', tel01 = '%s', mobile01 = '%s',
+              contact02 = '%s', tel02 = '%s', mobile02 = '%s',
+              address = '%s',
+              bank_name = '%s', bank_account = '%s', tax_number = '%s',
+              fax = '%s', note = '%s', record_status = %d
+            where id = '%s'  ";
 
     $rc = $db->execute(
       $sql,
@@ -639,9 +639,9 @@ class FactoryDAO extends PSIBaseExDAO
     }
 
     $sql = "select count(*) as cnt
-				from t_payables_detail
-				where ca_id = '%s' and ca_type = 'factory' and ref_type <> '应付账款期初建账'
-					and company_id = '%s' ";
+            from t_payables_detail
+            where ca_id = '%s' and ca_type = 'factory' and ref_type <> '应付账款期初建账'
+              and company_id = '%s' ";
     $data = $db->query($sql, $id, $companyId);
     $cnt = $data[0]["cnt"];
     if ($cnt > 0) {
@@ -652,8 +652,8 @@ class FactoryDAO extends PSIBaseExDAO
     $initPayables = floatval($initPayables);
     if ($initPayables && $initPayablesDT) {
       $sql = "update t_factory
-					set init_payables = %f, init_payables_dt = '%s'
-					where id = '%s' ";
+              set init_payables = %f, init_payables_dt = '%s'
+              where id = '%s' ";
       $rc = $db->execute($sql, $initPayables, $initPayablesDT, $id);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -661,14 +661,14 @@ class FactoryDAO extends PSIBaseExDAO
 
       // 应付明细账
       $sql = "select id from t_payables_detail
-					where ca_id = '%s' and ca_type = 'factory' and ref_type = '应付账款期初建账'
-						and company_id = '%s' ";
+              where ca_id = '%s' and ca_type = 'factory' and ref_type = '应付账款期初建账'
+                and company_id = '%s' ";
       $data = $db->query($sql, $id, $companyId);
       if ($data) {
         $payId = $data[0]["id"];
         $sql = "update t_payables_detail
-						set pay_money = %f ,  balance_money = %f , biz_date = '%s', date_created = now(), act_money = 0
-						where id = '%s' ";
+                set pay_money = %f ,  balance_money = %f , biz_date = '%s', date_created = now(), act_money = 0
+                where id = '%s' ";
         $rc = $db->execute($sql, $initPayables, $initPayables, $initPayablesDT, $payId);
         if ($rc === false) {
           return $this->sqlError(__METHOD__, __LINE__);
@@ -676,8 +676,8 @@ class FactoryDAO extends PSIBaseExDAO
       } else {
         $payId = $this->newId();
         $sql = "insert into t_payables_detail (id, pay_money, act_money, balance_money, ca_id,
-							ca_type, ref_type, ref_number, biz_date, date_created, data_org, company_id)
-						values ('%s', %f, 0, %f, '%s', 'factory', '应付账款期初建账', '%s', '%s', now(), '%s', '%s') ";
+                  ca_type, ref_type, ref_number, biz_date, date_created, data_org, company_id)
+                values ('%s', %f, 0, %f, '%s', 'factory', '应付账款期初建账', '%s', '%s', now(), '%s', '%s') ";
         $rc = $db->execute(
           $sql,
           $payId,
@@ -696,14 +696,14 @@ class FactoryDAO extends PSIBaseExDAO
 
       // 应付总账
       $sql = "select id from t_payables
-					where ca_id = '%s' and ca_type = 'factory'
-						and company_id = '%s' ";
+              where ca_id = '%s' and ca_type = 'factory'
+                and company_id = '%s' ";
       $data = $db->query($sql, $id, $companyId);
       if ($data) {
         $pId = $data[0]["id"];
         $sql = "update t_payables
-						set pay_money = %f ,  balance_money = %f , act_money = 0
-						where id = '%s' ";
+                set pay_money = %f ,  balance_money = %f , act_money = 0
+                where id = '%s' ";
         $rc = $db->execute($sql, $initPayables, $initPayables, $pId);
         if ($rc === false) {
           return $this->sqlError(__METHOD__, __LINE__);
@@ -711,8 +711,8 @@ class FactoryDAO extends PSIBaseExDAO
       } else {
         $pId = $this->newId();
         $sql = "insert into t_payables (id, pay_money, act_money, balance_money, ca_id,
-							ca_type, data_org, company_id)
-						values ('%s', %f, 0, %f, '%s', 'factory', '%s', '%s') ";
+                  ca_type, data_org, company_id)
+                values ('%s', %f, 0, %f, '%s', 'factory', '%s', '%s') ";
         $rc = $db->execute(
           $sql,
           $pId,
@@ -729,8 +729,8 @@ class FactoryDAO extends PSIBaseExDAO
     } else {
       // 清除应付账款初始化数据
       $sql = "update t_factory
-					set init_payables = null, init_payables_dt = null
-					where id = '%s' ";
+              set init_payables = null, init_payables_dt = null
+              where id = '%s' ";
       $rc = $db->execute($sql, $id);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -738,8 +738,8 @@ class FactoryDAO extends PSIBaseExDAO
 
       // 明细账
       $sql = "delete from t_payables_detail
-					where ca_id = '%s' and ca_type = 'factory' and ref_type = '应付账款期初建账'
-						and company_id = '%s' ";
+              where ca_id = '%s' and ca_type = 'factory' and ref_type = '应付账款期初建账'
+                and company_id = '%s' ";
       $rc = $db->execute($sql, $id, $companyId);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -747,8 +747,8 @@ class FactoryDAO extends PSIBaseExDAO
 
       // 总账
       $sql = "delete from t_payables
-					where ca_id = '%s' and ca_type = 'factory'
-						and company_id = '%s' ";
+              where ca_id = '%s' and ca_type = 'factory'
+                and company_id = '%s' ";
       $rc = $db->execute($sql, $id, $companyId);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -774,12 +774,12 @@ class FactoryDAO extends PSIBaseExDAO
     $result = [];
 
     $sql = "select category_id, code, name, contact01, mobile01, tel01,
-					contact02, mobile02, tel02, address,
-					init_payables, init_payables_dt,
-					bank_name, bank_account, tax_number, fax, note,
-					record_status
-				from t_factory
-				where id = '%s' ";
+              contact02, mobile02, tel02, address,
+              init_payables, init_payables_dt,
+              bank_name, bank_account, tax_number, fax, note,
+              record_status
+            from t_factory
+            where id = '%s' ";
     $data = $db->query($sql, $id);
     if ($data) {
       $result["categoryId"] = $data[0]["category_id"];
@@ -893,9 +893,9 @@ class FactoryDAO extends PSIBaseExDAO
     }
 
     $sql = "select id, code, name, tel01, fax, contact01
-				from t_factory
-				where (record_status = 1000)
-					and (code like '%s' or name like '%s' or py like '%s') ";
+            from t_factory
+            where (record_status = 1000)
+              and (code like '%s' or name like '%s' or py like '%s') ";
     $queryParams = array();
     $key = "%{$queryKey}%";
     $queryParams[] = $key;
@@ -910,7 +910,7 @@ class FactoryDAO extends PSIBaseExDAO
     }
 
     $sql .= " order by code
-				limit 20";
+              limit 20";
     $data = $db->query($sql, $queryParams);
 
     $result = [];

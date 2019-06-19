@@ -39,10 +39,10 @@ class GoodsDAO extends PSIBaseExDAO
 
     $result = [];
     $sql = "select g.id, g.code, g.name, g.sale_price, g.spec,  g.unit_id, u.name as unit_name,
-					g.purchase_price, g.bar_code, g.memo, g.data_org, g.brand_id, g.record_status,
-					g.tax_rate
-				from t_goods g, t_goods_unit u
-				where (g.unit_id = u.id) and (g.category_id = '%s') ";
+              g.purchase_price, g.bar_code, g.memo, g.data_org, g.brand_id, g.record_status,
+              g.tax_rate
+            from t_goods g, t_goods_unit u
+            where (g.unit_id = u.id) and (g.category_id = '%s') ";
     $queryParam = [];
     $queryParam[] = $categoryId;
     $ds = new DataOrgDAO($db);
@@ -246,11 +246,11 @@ class GoodsDAO extends PSIBaseExDAO
 
     $id = $this->newId();
     $sql = "insert into t_goods (id, code, name, spec, category_id, unit_id, sale_price,
-					py, purchase_price, bar_code, memo, data_org, company_id, spec_py, brand_id,
-					record_status)
-				values ('%s', '%s', '%s', '%s', '%s', '%s', %f, '%s', %f, '%s', '%s', '%s', '%s', '%s',
-					if('%s' = '', null, '%s'),
-					%d)";
+              py, purchase_price, bar_code, memo, data_org, company_id, spec_py, brand_id,
+              record_status)
+            values ('%s', '%s', '%s', '%s', '%s', '%s', %f, '%s', %f, '%s', '%s', '%s', '%s', '%s',
+              if('%s' = '', null, '%s'),
+              %d)";
     $rc = $db->execute(
       $sql,
       $id,
@@ -384,12 +384,12 @@ class GoodsDAO extends PSIBaseExDAO
     }
 
     $sql = "update t_goods
-				set code = '%s', name = '%s', spec = '%s', category_id = '%s',
-				    unit_id = '%s', sale_price = %f, py = '%s', purchase_price = %f,
-					bar_code = '%s', memo = '%s', spec_py = '%s',
-					brand_id = if('%s' = '', null, '%s'),
-					record_status = %d
-				where id = '%s' ";
+            set code = '%s', name = '%s', spec = '%s', category_id = '%s',
+              unit_id = '%s', sale_price = %f, py = '%s', purchase_price = %f,
+              bar_code = '%s', memo = '%s', spec_py = '%s',
+              brand_id = if('%s' = '', null, '%s'),
+              record_status = %d
+            where id = '%s' ";
 
     $rc = $db->execute(
       $sql,
@@ -555,11 +555,11 @@ class GoodsDAO extends PSIBaseExDAO
     $key = "%{$queryKey}%";
 
     $sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name,
-					g.category_id
-				from t_goods g, t_goods_unit u
-				where (g.unit_id = u.id) and (g.record_status = 1000)
-				and (g.code like '%s' or g.name like '%s' or g.py like '%s'
-					or g.spec like '%s' or g.spec_py like '%s') ";
+              g.category_id
+            from t_goods g, t_goods_unit u
+            where (g.unit_id = u.id) and (g.record_status = 1000)
+              and (g.code like '%s' or g.name like '%s' or g.py like '%s'
+                    or g.spec like '%s' or g.spec_py like '%s') ";
     $queryParams = [];
     $queryParams[] = $key;
     $queryParams[] = $key;
@@ -575,7 +575,7 @@ class GoodsDAO extends PSIBaseExDAO
     }
 
     $sql .= " order by g.code
-				limit 20";
+              limit 20";
     $data = $db->query($sql, $queryParams);
     $result = [];
     foreach ($data as $v) {
@@ -633,11 +633,11 @@ class GoodsDAO extends PSIBaseExDAO
     $key = "%{$queryKey}%";
 
     $sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name
-				from t_goods g, t_goods_unit u
-				where (g.unit_id = u.id) and (g.record_status = 1000)
-				and (g.code like '%s' or g.name like '%s' or g.py like '%s'
-					or g.spec like '%s' or g.spec_py like '%s') 
-				and g.id in (select goods_id as id from t_goods_bom) ";
+            from t_goods g, t_goods_unit u
+            where (g.unit_id = u.id) and (g.record_status = 1000)
+              and (g.code like '%s' or g.name like '%s' or g.py like '%s'
+                    or g.spec like '%s' or g.spec_py like '%s') 
+              and g.id in (select goods_id as id from t_goods_bom) ";
     $queryParams = [];
     $queryParams[] = $key;
     $queryParams[] = $key;
@@ -674,8 +674,8 @@ class GoodsDAO extends PSIBaseExDAO
     $result = null;
     $db = $this->db;
     $sql = "select c.ps_id
-				from t_customer_category c, t_customer u
-				where c.id = u.category_id and u.id = '%s' ";
+            from t_customer_category c, t_customer u
+            where c.id = u.category_id and u.id = '%s' ";
     $data = $db->query($sql, $customerId);
     if ($data) {
       $result = $data[0]["ps_id"];
@@ -717,10 +717,10 @@ class GoodsDAO extends PSIBaseExDAO
     $key = "%{$queryKey}%";
 
     $sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name, g.sale_price, g.memo
-				from t_goods g, t_goods_unit u
-				where (g.unit_id = u.id) and (g.record_status = 1000)
-				and (g.code like '%s' or g.name like '%s' or g.py like '%s'
-					or g.spec like '%s' or g.spec_py like '%s') ";
+            from t_goods g, t_goods_unit u
+            where (g.unit_id = u.id) and (g.record_status = 1000)
+              and (g.code like '%s' or g.name like '%s' or g.py like '%s'
+                    or g.spec like '%s' or g.spec_py like '%s') ";
 
     $queryParams = [];
     $queryParams[] = $key;
@@ -737,7 +737,7 @@ class GoodsDAO extends PSIBaseExDAO
     }
 
     $sql .= " order by g.code
-				limit 20";
+              limit 20";
     $data = $db->query($sql, $queryParams);
     $result = [];
     foreach ($data as $v) {
@@ -749,9 +749,9 @@ class GoodsDAO extends PSIBaseExDAO
       if ($psId) {
         // 取价格体系里面的价格
         $sql = "select g.price, p.name
-						from t_goods_price g, t_price_system p
-						where g.goods_id = '%s' and g.ps_id = '%s'
-							and g.ps_id = p.id";
+                from t_goods_price g, t_price_system p
+                where g.goods_id = '%s' and g.ps_id = '%s'
+                  and g.ps_id = p.id";
         $d = $db->query($sql, $goodsId, $psId);
         if ($d) {
           $priceSystem = $d[0]["name"];
@@ -827,19 +827,19 @@ class GoodsDAO extends PSIBaseExDAO
     $key = "%{$queryKey}%";
 
     $sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name, g.purchase_price, g.memo,
-					g.tax_rate
-				from (
-						select g.*
-						from t_supplier_goods_range r, t_goods g
-						where r.supplier_id = '%s' and r.g_id = g.id and r.g_id_type = 1
-						union
-						select g.*
-						from t_supplier_goods_range r, t_goods_category c, t_goods g
-						where r.supplier_id = '%s' and r.g_id = c.id and c.id = g.category_id
-						) g, t_goods_unit u
-				where (g.unit_id = u.id) and (g.record_status = 1000)
-				and (g.code like '%s' or g.name like '%s' or g.py like '%s'
-					or g.spec like '%s' or g.spec_py like '%s') ";
+            g.tax_rate
+            from (
+              select g.*
+              from t_supplier_goods_range r, t_goods g
+              where r.supplier_id = '%s' and r.g_id = g.id and r.g_id_type = 1
+              union
+              select g.*
+              from t_supplier_goods_range r, t_goods_category c, t_goods g
+              where r.supplier_id = '%s' and r.g_id = c.id and c.id = g.category_id
+            ) g, t_goods_unit u
+            where (g.unit_id = u.id) and (g.record_status = 1000)
+              and (g.code like '%s' or g.name like '%s' or g.py like '%s'
+                    or g.spec like '%s' or g.spec_py like '%s') ";
 
     $queryParams = [];
     $queryParams[] = $supplierId;
@@ -941,11 +941,11 @@ class GoodsDAO extends PSIBaseExDAO
     $key = "%{$queryKey}%";
 
     $sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name, g.purchase_price, g.memo,
-					g.tax_rate
-				from t_goods g, t_goods_unit u
-				where (g.unit_id = u.id) and (g.record_status = 1000)
-				and (g.code like '%s' or g.name like '%s' or g.py like '%s'
-					or g.spec like '%s' or g.spec_py like '%s') ";
+              g.tax_rate
+            from t_goods g, t_goods_unit u
+            where (g.unit_id = u.id) and (g.record_status = 1000)
+              and (g.code like '%s' or g.name like '%s' or g.py like '%s'
+                    or g.spec like '%s' or g.spec_py like '%s') ";
 
     $queryParams = [];
     $queryParams[] = $key;
@@ -1017,9 +1017,9 @@ class GoodsDAO extends PSIBaseExDAO
     $categoryId = $params["categoryId"];
 
     $sql = "select category_id, code, name, spec, unit_id, sale_price, purchase_price,
-					bar_code, memo, brand_id, record_status, tax_rate
-				from t_goods
-				where id = '%s' ";
+              bar_code, memo, brand_id, record_status, tax_rate
+            from t_goods
+            where id = '%s' ";
     $data = $db->query($sql, $id);
     if ($data) {
       $result = array();
@@ -1088,9 +1088,9 @@ class GoodsDAO extends PSIBaseExDAO
     $result = [];
 
     $sql = "select g.id, g.code, g.name, g.spec, g.sale_price, u.name as unit_name,
-					g.category_id
-				from t_goods g, t_goods_unit u
-				where g.bar_code = '%s' and g.unit_id = u.id ";
+              g.category_id
+            from t_goods g, t_goods_unit u
+            where g.bar_code = '%s' and g.unit_id = u.id ";
     $data = $db->query($sql, $barcode);
 
     if (!$data) {
@@ -1146,9 +1146,9 @@ class GoodsDAO extends PSIBaseExDAO
     $result = [];
 
     $sql = "select g.id, g.code, g.name, g.spec, g.purchase_price, u.name as unit_name,
-					g.category_id
-				from t_goods g, t_goods_unit u
-				where g.bar_code = '%s' and g.unit_id = u.id ";
+              g.category_id
+            from t_goods g, t_goods_unit u
+            where g.bar_code = '%s' and g.unit_id = u.id ";
     $data = $db->query($sql, $barcode);
 
     if (!$data) {
@@ -1206,8 +1206,8 @@ class GoodsDAO extends PSIBaseExDAO
     $loginUserId = $params["loginUserId"];
 
     $sql = "select count(*) as cnt
-					from t_goods c
-					where (1 = 1) ";
+            from t_goods c
+            where (1 = 1) ";
     $queryParam = array();
     $ds = new DataOrgDAO($db);
     $rs = $ds->buildSQL(FIdConst::GOODS, "c", $loginUserId);
@@ -1267,11 +1267,11 @@ class GoodsDAO extends PSIBaseExDAO
     $key = "%{$queryKey}%";
 
     $sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name
-				from t_goods g, t_goods_unit u
-				where (g.unit_id = u.id)
-				and (g.code like '%s' or g.name like '%s' or g.py like '%s'
-					or g.spec like '%s' or g.spec_py like '%s') 
-				and (g.id <> '%s')";
+            from t_goods g, t_goods_unit u
+            where (g.unit_id = u.id)
+              and (g.code like '%s' or g.name like '%s' or g.py like '%s'
+                or g.spec like '%s' or g.spec_py like '%s') 
+              and (g.id <> '%s')";
     $queryParams = [];
     $queryParams[] = $key;
     $queryParams[] = $key;
@@ -1288,7 +1288,7 @@ class GoodsDAO extends PSIBaseExDAO
     }
 
     $sql .= " order by g.code
-				limit 20";
+              limit 20";
     $data = $db->query($sql, $queryParams);
     $result = [];
     foreach ($data as $v) {

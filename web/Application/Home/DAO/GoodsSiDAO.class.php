@@ -31,8 +31,8 @@ class GoodsSiDAO extends PSIBaseExDAO
     $result = array();
 
     $sql = "select u.name
-				from t_goods g, t_goods_unit u
-				where g.id = '%s' and g.unit_id = u.id";
+            from t_goods g, t_goods_unit u
+            where g.id = '%s' and g.unit_id = u.id";
     $data = $db->query($sql, $id);
     if (!$data) {
       return $result;
@@ -40,11 +40,11 @@ class GoodsSiDAO extends PSIBaseExDAO
     $goodsUnitName = $data[0]["name"];
 
     $sql = "select w.id as warehouse_id, w.code as warehouse_code, w.name as warehouse_name,
-					s.safety_inventory, s.inventory_upper
-				from t_warehouse w
-				left join t_goods_si s
-				on w.id = s.warehouse_id and s.goods_id = '%s'
-				where w.inited = 1 ";
+              s.safety_inventory, s.inventory_upper
+            from t_warehouse w
+            left join t_goods_si s
+              on w.id = s.warehouse_id and s.goods_id = '%s'
+            where w.inited = 1 ";
     $queryParams = array();
     $queryParams[] = $id;
     $ds = new DataOrgDAO($db);
@@ -67,8 +67,8 @@ class GoodsSiDAO extends PSIBaseExDAO
 
     foreach ($r as $i => $v) {
       $sql = "select balance_count
-					from t_inventory
-					where warehouse_id = '%s' and goods_id = '%s' ";
+              from t_inventory
+              where warehouse_id = '%s' and goods_id = '%s' ";
       $data = $db->query($sql, $v["warehouseId"], $id);
       if (!$data) {
         $result[$i]["inventoryCount"] = 0;
@@ -105,8 +105,8 @@ class GoodsSiDAO extends PSIBaseExDAO
     $result = array();
 
     $sql = "select u.name
-				from t_goods g, t_goods_unit u
-				where g.id = '%s' and g.unit_id = u.id";
+            from t_goods g, t_goods_unit u
+            where g.id = '%s' and g.unit_id = u.id";
     $data = $db->query($sql, $id);
     if (!$data) {
       return $result;
@@ -114,12 +114,12 @@ class GoodsSiDAO extends PSIBaseExDAO
     $goodsUnitName = $data[0]["name"];
 
     $sql = "select w.id as warehouse_id, w.code as warehouse_code,
-					w.name as warehouse_name,
-					s.safety_inventory, s.inventory_upper
-				from t_warehouse w
-				left join t_goods_si s
-				on w.id = s.warehouse_id and s.goods_id = '%s'
-				where w.inited = 1 ";
+              w.name as warehouse_name,
+              s.safety_inventory, s.inventory_upper
+            from t_warehouse w
+            left join t_goods_si s
+              on w.id = s.warehouse_id and s.goods_id = '%s'
+            where w.inited = 1 ";
     $queryParams = array();
     $queryParams[] = $id;
 
@@ -194,7 +194,7 @@ class GoodsSiDAO extends PSIBaseExDAO
       }
 
       $sql = "insert into t_goods_si(id, goods_id, warehouse_id, safety_inventory, inventory_upper)
-					values ('%s', '%s', '%s', %d, %d)";
+              values ('%s', '%s', '%s', %d, %d)";
       $rc = $db->execute($sql, $this->newId(), $id, $warehouseId, $si, $upper);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);

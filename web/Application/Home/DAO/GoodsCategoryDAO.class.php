@@ -16,9 +16,9 @@ class GoodsCategoryDAO extends PSIBaseExDAO
   {
     $result = array();
     $sql = "select id, code, name, full_name, tax_rate
-				from t_goods_category c
-				where (parent_id = '%s')
-				";
+            from t_goods_category c
+            where (parent_id = '%s')
+		    		";
     $queryParam = array();
     $queryParam[] = $parentId;
     if ($rs) {
@@ -65,8 +65,8 @@ class GoodsCategoryDAO extends PSIBaseExDAO
     $brandId = $params["brandId"];
 
     $sql = "select count(*) as cnt 
-					from t_goods c
-					where c.category_id = '%s' ";
+            from t_goods c
+            where c.category_id = '%s' ";
     $queryParam = array();
     $queryParam[] = $categoryId;
     if ($rs) {
@@ -100,9 +100,9 @@ class GoodsCategoryDAO extends PSIBaseExDAO
 
     // 子分类
     $sql = "select id
-				from t_goods_category c
-				where (parent_id = '%s')
-				";
+            from t_goods_category c
+            where (parent_id = '%s')
+    				";
     $queryParam = array();
     $queryParam[] = $categoryId;
     if ($rs) {
@@ -159,9 +159,9 @@ class GoodsCategoryDAO extends PSIBaseExDAO
     }
 
     $sql = "select id, code, name, full_name, tax_rate
-				from t_goods_category c
-				where (parent_id is null)
-				";
+            from t_goods_category c
+            where (parent_id is null)
+            ";
     $queryParam = array();
     $ds = new DataOrgDAO($db);
     $rs = $ds->buildSQL(FIdConst::GOODS_CATEGORY, "c", $loginUserId);
@@ -307,15 +307,15 @@ class GoodsCategoryDAO extends PSIBaseExDAO
       }
 
       $sql = "insert into t_goods_category (id, code, name, data_org, parent_id,
-							full_name, company_id)
-						values ('%s', '%s', '%s', '%s', '%s', '%s', '%s')";
+                full_name, company_id)
+              values ('%s', '%s', '%s', '%s', '%s', '%s', '%s')";
       $rc = $db->execute($sql, $id, $code, $name, $dataOrg, $parentId, $fullName, $companyId);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
       }
     } else {
       $sql = "insert into t_goods_category (id, code, name, data_org, full_name, company_id)
-					values ('%s', '%s', '%s', '%s', '%s', '%s')";
+              values ('%s', '%s', '%s', '%s', '%s', '%s')";
       $rc = $db->execute($sql, $id, $code, $name, $dataOrg, $name, $companyId);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -369,8 +369,8 @@ class GoodsCategoryDAO extends PSIBaseExDAO
 
       $subFullName = $fullName . "\\" . $name;
       $sql = "update t_goods_category
-					set full_name = '%s'
-					where id = '%s' ";
+              set full_name = '%s'
+              where id = '%s' ";
       $rc = $db->execute($sql, $subFullName, $subId);
       if ($rc === false) {
         return false;
@@ -458,16 +458,16 @@ class GoodsCategoryDAO extends PSIBaseExDAO
       }
 
       $sql = "update t_goods_category
-					set code = '%s', name = '%s', parent_id = '%s', full_name = '%s'
-					where id = '%s' ";
+              set code = '%s', name = '%s', parent_id = '%s', full_name = '%s'
+              where id = '%s' ";
       $rc = $db->execute($sql, $code, $name, $parentId, $fullName, $id);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
       }
     } else {
       $sql = "update t_goods_category
-					set code = '%s', name = '%s', parent_id = null, full_name = '%s'
-					where id = '%s' ";
+              set code = '%s', name = '%s', parent_id = null, full_name = '%s'
+              where id = '%s' ";
       $rc = $db->execute($sql, $code, $name, $name, $id);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -535,7 +535,7 @@ class GoodsCategoryDAO extends PSIBaseExDAO
 
     // 判断是否还有子分类
     $sql = "select count(*) as cnt from t_goods_category
-				where parent_id = '%s' ";
+            where parent_id = '%s' ";
     $data = $db->query($sql, $id);
     $cnt = $data[0]["cnt"];
     if ($cnt > 0) {
@@ -570,7 +570,7 @@ class GoodsCategoryDAO extends PSIBaseExDAO
     $result = array();
 
     $sql = "select code, name, parent_id, tax_rate from t_goods_category
-				where id = '%s' ";
+            where id = '%s' ";
     $data = $db->query($sql, $id);
     if ($data) {
       $v = $data[0];

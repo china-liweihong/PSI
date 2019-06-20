@@ -828,7 +828,7 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
   setBillReadonly: function () {
     var me = this;
     me.__readonly = true;
-    me.setTitle("<span style='font-size:160%;'>查看采购订单</span>");
+    me.setTitle("<span style='font-size:160%;'>查看销售订单</span>");
     Ext.getCmp("buttonSave").setDisabled(true);
     Ext.getCmp("buttonCancel").setText("关闭");
     Ext.getCmp("editDealDate").setReadOnly(true);

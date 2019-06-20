@@ -59,12 +59,12 @@ class PreReceivingDAO extends PSIBaseExDAO
     }
 
     $sql = "select in_money, balance_money from t_pre_receiving
-				where customer_id = '%s' and company_id = '%s' ";
+            where customer_id = '%s' and company_id = '%s' ";
     $data = $db->query($sql, $customerId, $companyId);
     if (!$data) {
       // 总账
       $sql = "insert into t_pre_receiving(id, customer_id, in_money, balance_money, company_id)
-					values ('%s', '%s', %f, %f, '%s')";
+              values ('%s', '%s', %f, %f, '%s')";
       $rc = $db->execute($sql, $this->newId(), $customerId, $inMoney, $inMoney, $companyId);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -72,8 +72,8 @@ class PreReceivingDAO extends PSIBaseExDAO
 
       // 明细账
       $sql = "insert into t_pre_receiving_detail(id, customer_id, in_money, balance_money, date_created,
-						ref_number, ref_type, biz_user_id, input_user_id, biz_date, company_id)
-					values('%s', '%s', %f, %f, now(), '', '收预收款', '%s', '%s', '%s', '%s')";
+                ref_number, ref_type, biz_user_id, input_user_id, biz_date, company_id)
+              values('%s', '%s', %f, %f, now(), '', '收预收款', '%s', '%s', '%s', '%s')";
       $rc = $db->execute(
         $sql,
         $this->newId(),
@@ -102,8 +102,8 @@ class PreReceivingDAO extends PSIBaseExDAO
       $totalBalanceMoney += $inMoney;
       // 总账
       $sql = "update t_pre_receiving
-					set in_money = %f, balance_money = %f
-					where customer_id = '%s' and company_id = '%s' ";
+              set in_money = %f, balance_money = %f
+              where customer_id = '%s' and company_id = '%s' ";
       $rc = $db->execute($sql, $totalInMoney, $totalBalanceMoney, $customerId, $companyId);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -111,8 +111,8 @@ class PreReceivingDAO extends PSIBaseExDAO
 
       // 明细账
       $sql = "insert into t_pre_receiving_detail(id, customer_id, in_money, balance_money, date_created,
-						ref_number, ref_type, biz_user_id, input_user_id, biz_date, company_id)
-					values('%s', '%s', %f, %f, now(), '', '收预收款', '%s', '%s', '%s', '%s')";
+                ref_number, ref_type, biz_user_id, input_user_id, biz_date, company_id)
+              values('%s', '%s', %f, %f, now(), '', '收预收款', '%s', '%s', '%s', '%s')";
       $rc = $db->execute(
         $sql,
         $this->newId(),
@@ -186,8 +186,8 @@ class PreReceivingDAO extends PSIBaseExDAO
     $customerName = $customer["name"];
 
     $sql = "select balance_money, out_money
-				from t_pre_receiving
-				where customer_id = '%s' and company_id = '%s' ";
+            from t_pre_receiving
+            where customer_id = '%s' and company_id = '%s' ";
     $data = $db->query($sql, $customerId, $companyId);
     $balanceMoney = $data[0]["balance_money"];
     if (!$balanceMoney) {
@@ -206,8 +206,8 @@ class PreReceivingDAO extends PSIBaseExDAO
 
     // 总账
     $sql = "update t_pre_receiving
-				set out_money = %f, balance_money = %f
-				where customer_id = '%s' and company_id = '%s' ";
+            set out_money = %f, balance_money = %f
+            where customer_id = '%s' and company_id = '%s' ";
     $totalOutMoney += $outMoney;
     $balanceMoney -= $outMoney;
     $rc = $db->execute($sql, $totalOutMoney, $balanceMoney, $customerId, $companyId);
@@ -217,8 +217,8 @@ class PreReceivingDAO extends PSIBaseExDAO
 
     // 明细账
     $sql = "insert into t_pre_receiving_detail(id, customer_id, out_money, balance_money,
-					biz_date, date_created, ref_number, ref_type, biz_user_id, input_user_id, company_id)
-				values ('%s', '%s', %f, %f, '%s', now(), '', '退预收款', '%s', '%s', '%s')";
+              biz_date, date_created, ref_number, ref_type, biz_user_id, input_user_id, company_id)
+            values ('%s', '%s', %f, %f, '%s', now(), '', '退预收款', '%s', '%s', '%s')";
     $rc = $db->execute(
       $sql,
       $this->newId(),
@@ -262,9 +262,9 @@ class PreReceivingDAO extends PSIBaseExDAO
 
     $queryParams = [];
     $sql = "select r.id, c.id as customer_id, c.code, c.name,
-					r.in_money, r.out_money, r.balance_money
-				from t_pre_receiving r, t_customer c
-				where r.customer_id = c.id and r.company_id = '%s' ";
+              r.in_money, r.out_money, r.balance_money
+            from t_pre_receiving r, t_customer c
+            where r.customer_id = c.id and r.company_id = '%s' ";
     $queryParams[] = $companyId;
 
     if ($customerId) {
@@ -295,9 +295,9 @@ class PreReceivingDAO extends PSIBaseExDAO
 
     $queryParams = [];
     $sql = "select count(*) as cnt
-				from t_pre_receiving r, t_customer c
-				where r.customer_id = c.id and r.company_id = '%s'
-				";
+            from t_pre_receiving r, t_customer c
+            where r.customer_id = c.id and r.company_id = '%s'
+            ";
     $queryParams[] = $companyId;
     if ($customerId) {
       $sql .= " and c.id = '%s' ";
@@ -338,15 +338,15 @@ class PreReceivingDAO extends PSIBaseExDAO
     $dtTo = $params["dtTo"];
 
     $sql = "select d.id, d.ref_type, d.ref_number, d.in_money, d.out_money, d.balance_money,
-					d.biz_date, d.date_created,
-					u1.name as biz_user_name, u2.name as input_user_name
-				from t_pre_receiving_detail d, t_user u1, t_user u2
-				where d.customer_id = '%s' and d.biz_user_id = u1.id and d.input_user_id = u2.id
-					and (d.biz_date between '%s' and '%s')
-					and d.company_id = '%s'
-				order by d.date_created
-				limit %d , %d
-				";
+              d.biz_date, d.date_created,
+              u1.name as biz_user_name, u2.name as input_user_name
+            from t_pre_receiving_detail d, t_user u1, t_user u2
+            where d.customer_id = '%s' and d.biz_user_id = u1.id and d.input_user_id = u2.id
+              and (d.biz_date between '%s' and '%s')
+              and d.company_id = '%s'
+            order by d.date_created
+            limit %d , %d
+            ";
     $data = $db->query($sql, $customerId, $dtFrom, $dtTo, $companyId, $start, $limit);
     $result = array();
     foreach ($data as $i => $v) {
@@ -363,11 +363,11 @@ class PreReceivingDAO extends PSIBaseExDAO
     }
 
     $sql = "select count(*) as cnt
-				from t_pre_receiving_detail d, t_user u1, t_user u2
-				where d.customer_id = '%s' and d.biz_user_id = u1.id and d.input_user_id = u2.id
-					and (d.biz_date between '%s' and '%s')
-					and d.company_id = '%s'
-				";
+            from t_pre_receiving_detail d, t_user u1, t_user u2
+            where d.customer_id = '%s' and d.biz_user_id = u1.id and d.input_user_id = u2.id
+              and (d.biz_date between '%s' and '%s')
+              and d.company_id = '%s'
+            ";
 
     $data = $db->query($sql, $customerId, $dtFrom, $dtTo, $companyId);
     $cnt = $data[0]["cnt"];

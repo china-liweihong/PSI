@@ -18,8 +18,8 @@ class SysDictDAO extends PSIBaseExDAO
     $db = $this->db;
 
     $sql = "select id, code, name
-				from t_dict_table_category
-				order by code";
+            from t_dict_table_category
+            order by code";
     $data = $db->query($sql);
 
     $result = [];
@@ -44,9 +44,9 @@ class SysDictDAO extends PSIBaseExDAO
     $categoryId = $params["categoryId"];
 
     $sql = "select id, code, name, table_name, memo
-				from t_dict_table_md
-				where category_id = '%s' 
-				order by code";
+            from t_dict_table_md
+            where category_id = '%s' 
+            order by code";
     $data = $db->query($sql, $categoryId);
 
     $result = [];
@@ -83,8 +83,8 @@ class SysDictDAO extends PSIBaseExDAO
     $tableName = $data[0]["table_name"];
 
     $sql = "select id, code, code_int, name, memo
-				from %s 
-				order by show_order";
+            from %s 
+            order by show_order";
 
     $data = $db->query($sql, $tableName);
 

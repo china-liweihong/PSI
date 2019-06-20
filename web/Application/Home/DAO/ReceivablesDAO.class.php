@@ -96,8 +96,8 @@ class ReceivablesDAO extends PSIBaseExDAO
     if ($caType == "customer") {
       $queryParams = array();
       $sql = "select r.id, r.ca_id, c.code, c.name, r.act_money, r.balance_money, r.rv_money
-					from t_receivables r, t_customer c
-					where (r.ca_type = '%s' and r.ca_id = c.id)";
+              from t_receivables r, t_customer c
+              where (r.ca_type = '%s' and r.ca_id = c.id)";
       $queryParams[] = $caType;
 
       $ds = new DataOrgDAO($db);
@@ -115,7 +115,7 @@ class ReceivablesDAO extends PSIBaseExDAO
         $queryParams[] = $categoryId;
       }
       $sql .= " order by c.code
-					limit %d , %d ";
+                limit %d , %d ";
       $queryParams[] = $start;
       $queryParams[] = $limit;
       $data = $db->query($sql, $queryParams);
@@ -133,8 +133,8 @@ class ReceivablesDAO extends PSIBaseExDAO
 
       $queryParams = array();
       $sql = "select count(*) as cnt
-					from t_receivables r, t_customer c
-					where r.ca_type = '%s'  and r.ca_id = c.id";
+              from t_receivables r, t_customer c
+              where r.ca_type = '%s'  and r.ca_id = c.id";
       $queryParams[] = $caType;
 
       $ds = new DataOrgDAO($db);
@@ -161,8 +161,8 @@ class ReceivablesDAO extends PSIBaseExDAO
     } else {
       $queryParams = array();
       $sql = "select r.id, r.ca_id, c.code, c.name, r.act_money, r.balance_money, r.rv_money
-					from t_receivables r, t_supplier c
-					where r.ca_type = '%s' and r.ca_id = c.id ";
+              from t_receivables r, t_supplier c
+              where r.ca_type = '%s' and r.ca_id = c.id ";
       $queryParams[] = $caType;
       $ds = new DataOrgDAO($db);
       $rs = $ds->buildSQL(FIdConst::RECEIVING, "c", $loginUserId);
@@ -178,7 +178,7 @@ class ReceivablesDAO extends PSIBaseExDAO
         $queryParams[] = $categoryId;
       }
       $sql .= " order by c.code
-					limit %d , %d ";
+                limit %d , %d ";
       $queryParams[] = $start;
       $queryParams[] = $limit;
       $data = $db->query($sql, $queryParams);
@@ -196,8 +196,8 @@ class ReceivablesDAO extends PSIBaseExDAO
 
       $queryParams = array();
       $sql = "select count(*) as cnt
-					from t_receivables r, t_supplier c
-					where r.ca_type = '%s'  and r.ca_id = c.id";
+              from t_receivables r, t_supplier c
+              where r.ca_type = '%s'  and r.ca_id = c.id";
       $queryParams[] = $caType;
       $ds = new DataOrgDAO($db);
       $rs = $ds->buildSQL(FIdConst::RECEIVING, "c", $loginUserId);
@@ -239,10 +239,10 @@ class ReceivablesDAO extends PSIBaseExDAO
     $limit = $params["limit"];
 
     $sql = "select id, rv_money, act_money, balance_money, ref_type, ref_number, date_created, biz_date
-				from t_receivables_detail
-				where ca_type = '%s' and ca_id = '%s'
-				order by biz_date desc, date_created desc
-				limit %d , %d ";
+            from t_receivables_detail
+            where ca_type = '%s' and ca_id = '%s'
+            order by biz_date desc, date_created desc
+            limit %d , %d ";
     $data = $db->query($sql, $caType, $caId, $start, $limit);
     $result = array();
     foreach ($data as $i => $v) {
@@ -257,8 +257,8 @@ class ReceivablesDAO extends PSIBaseExDAO
     }
 
     $sql = "select count(*) as cnt
-				from t_receivables_detail
-				where ca_type = '%s' and ca_id = '%s' ";
+            from t_receivables_detail
+            where ca_type = '%s' and ca_id = '%s' ";
     $data = $db->query($sql, $caType, $caId);
     $cnt = $data[0]["cnt"];
 
@@ -284,12 +284,12 @@ class ReceivablesDAO extends PSIBaseExDAO
     $limit = $params["limit"];
 
     $sql = "select r.id, r.act_money, r.biz_date, r.date_created, r.remark, u.name as rv_user_name,
-				user.name as input_user_name
-				from t_receiving r, t_user u, t_user user
-				where r.rv_user_id = u.id and r.input_user_id = user.id
-				  and r.ref_type = '%s' and r.ref_number = '%s'
-				order by r.date_created desc
-				limit %d , %d ";
+              user.name as input_user_name
+            from t_receiving r, t_user u, t_user user
+            where r.rv_user_id = u.id and r.input_user_id = user.id
+              and r.ref_type = '%s' and r.ref_number = '%s'
+            order by r.date_created desc
+            limit %d , %d ";
     $data = $db->query($sql, $refType, $refNumber, $start, $limit);
     $result = array();
     foreach ($data as $i => $v) {
@@ -303,8 +303,8 @@ class ReceivablesDAO extends PSIBaseExDAO
     }
 
     $sql = "select count(*) as cnt
-				from t_receiving
-				where ref_type = '%s' and ref_number = '%s' ";
+            from t_receiving
+            where ref_type = '%s' and ref_number = '%s' ";
     $data = $db->query($sql, $refType, $refNumber);
     $cnt = $data[0]["cnt"];
 
@@ -370,8 +370,8 @@ class ReceivablesDAO extends PSIBaseExDAO
     }
 
     $sql = "insert into t_receiving (id, act_money, biz_date, date_created, input_user_id,
-				rv_user_id, remark, ref_number, ref_type, bill_id, data_org, company_id)
-				values ('%s', %f, '%s', now(), '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')";
+              rv_user_id, remark, ref_number, ref_type, bill_id, data_org, company_id)
+            values ('%s', %f, '%s', now(), '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')";
 
     $rc = $db->execute(
       $sql,
@@ -393,8 +393,8 @@ class ReceivablesDAO extends PSIBaseExDAO
 
     // 应收明细账
     $sql = "select ca_id, ca_type, act_money, balance_money, company_id
-				from t_receivables_detail
-				where ref_number = '%s' and ref_type = '%s' ";
+            from t_receivables_detail
+            where ref_number = '%s' and ref_type = '%s' ";
     $data = $db->query($sql, $refNumber, $refType);
     if (!$data) {
       return $this->bad("数据库错误，没有应收明细对应，无法收款");
@@ -407,10 +407,10 @@ class ReceivablesDAO extends PSIBaseExDAO
     $actMoneyDetail += $actMoney;
     $balanceMoneyDetail -= $actMoney;
     $sql = "update t_receivables_detail
-				set act_money = %f, balance_money = %f
-				where ref_number = '%s' and ref_type = '%s'
-					and ca_id = '%s' and ca_type = '%s' 
-					and company_id = '%s' ";
+            set act_money = %f, balance_money = %f
+            where ref_number = '%s' and ref_type = '%s'
+              and ca_id = '%s' and ca_type = '%s' 
+              and company_id = '%s' ";
     $rc = $db->execute(
       $sql,
       $actMoneyDetail,
@@ -427,8 +427,8 @@ class ReceivablesDAO extends PSIBaseExDAO
 
     // 应收总账
     $sql = "select sum(rv_money) as sum_rv_money, sum(act_money) as sum_act_money
-				from t_receivables_detail
-				where ca_id = '%s' and ca_type = '%s' and company_id = '%s' ";
+            from t_receivables_detail
+            where ca_id = '%s' and ca_type = '%s' and company_id = '%s' ";
     $data = $db->query($sql, $caId, $caType, $companyId);
     $sumRvMoney = $data[0]["sum_rv_money"];
     if (!$sumRvMoney) {
@@ -441,8 +441,8 @@ class ReceivablesDAO extends PSIBaseExDAO
     $sumBalanceMoney = $sumRvMoney - $sumActMoney;
 
     $sql = "update t_receivables
-				set act_money = %f, balance_money = %f
-				where ca_id = '%s' and ca_type = '%s' and company_id = '%s' ";
+            set act_money = %f, balance_money = %f
+            where ca_id = '%s' and ca_type = '%s' and company_id = '%s' ";
     $rc = $db->execute($sql, $sumActMoney, $sumBalanceMoney, $caId, $caType, $companyId);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);

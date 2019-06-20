@@ -65,8 +65,8 @@ class PriceSystemDAO extends PSIBaseExDAO
 
     // 检查价格是否已经存在
     $sql = "select count(*) as cnt 
-				from t_price_system 
-				where name = '%s' and company_id = '%s' ";
+            from t_price_system 
+            where name = '%s' and company_id = '%s' ";
     $data = $db->query($sql, $name, $companyId);
     $cnt = $data[0]["cnt"];
     if ($cnt > 0) {
@@ -76,7 +76,7 @@ class PriceSystemDAO extends PSIBaseExDAO
     $id = $this->newId($db);
 
     $sql = "insert into t_price_system(id, name, data_org, company_id, factor)
-				values ('%s', '%s', '%s', '%s', %f)";
+            values ('%s', '%s', '%s', '%s', %f)";
     $rc = $db->execute($sql, $id, $name, $dataOrg, $companyId, $factor);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -113,7 +113,7 @@ class PriceSystemDAO extends PSIBaseExDAO
 
     // 检查价格是否已经存在
     $sql = "select count(*) as cnt from t_price_system
-					where name = '%s' and id <> '%s' and company_id = '%s' ";
+            where name = '%s' and id <> '%s' and company_id = '%s' ";
     $data = $db->query($sql, $name, $id, $companyId);
     $cnt = $data[0]["cnt"];
     if ($cnt > 0) {
@@ -121,8 +121,8 @@ class PriceSystemDAO extends PSIBaseExDAO
     }
 
     $sql = "update t_price_system
-				set name = '%s', factor = %f
-				where id = '%s' ";
+            set name = '%s', factor = %f
+            where id = '%s' ";
 
     $rc = $db->execute($sql, $name, $factor, $id);
     if ($rc === false) {
@@ -165,7 +165,7 @@ class PriceSystemDAO extends PSIBaseExDAO
     $name = $priceSystem["name"];
     // 检查该价格是否已经被使用
     $sql = "select count(*) as cnt from t_customer_category
-				where ps_id = '%s' ";
+            where ps_id = '%s' ";
     $data = $db->query($sql, $id);
     $cnt = $data[0]["cnt"];
     if ($cnt > 0) {
@@ -195,10 +195,10 @@ class PriceSystemDAO extends PSIBaseExDAO
     $id = $params["id"];
 
     $sql = "select p.name, g.price
-				from t_price_system p
-				left join  t_goods_price g
-				on p.id = g.ps_id
-				and g.goods_id = '%s' ";
+            from t_price_system p
+            left join  t_goods_price g
+              on p.id = g.ps_id
+                and g.goods_id = '%s' ";
     $data = $db->query($sql, $id);
 
     $result = [];
@@ -224,10 +224,10 @@ class PriceSystemDAO extends PSIBaseExDAO
     $id = $params["id"];
 
     $sql = "select p.id, p.name, p.factor, g.price
-				from t_price_system p
-				left join  t_goods_price g
-				on p.id = g.ps_id
-				and g.goods_id = '%s' ";
+            from t_price_system p
+            left join  t_goods_price g
+              on p.id = g.ps_id
+                and g.goods_id = '%s' ";
     $data = $db->query($sql, $id);
 
     $result = [];
@@ -242,7 +242,7 @@ class PriceSystemDAO extends PSIBaseExDAO
     }
 
     $sql = "select sale_price from t_goods
-				where id = '%s' ";
+            where id = '%s' ";
     $data = $db->query($sql, $id);
     $baseSalePrice = $data[0]["sale_price"];
 
@@ -272,7 +272,7 @@ class PriceSystemDAO extends PSIBaseExDAO
     $baseSalePrice = $bill["basePrice"];
 
     $sql = "select code, name, spec from t_goods
-				where id = '%s' ";
+            where id = '%s' ";
     $data = $db->query($sql, $goodsId);
     if (!$data) {
       return $this->bad("商品不存在");
@@ -283,8 +283,8 @@ class PriceSystemDAO extends PSIBaseExDAO
     $spec = $data[0]["spec"];
 
     $sql = "update t_goods
-				set sale_price = %f
-				where id = '%s' ";
+            set sale_price = %f
+            where id = '%s' ";
     $rc = $db->execute($sql, $baseSalePrice, $goodsId);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -305,7 +305,7 @@ class PriceSystemDAO extends PSIBaseExDAO
       $id = $this->newId($db);
 
       $sql = "insert into t_goods_price (id, goods_id, ps_id, price, data_org, company_id)
-					values ('%s', '%s', '%s', %f, '%s', '%s')";
+              values ('%s', '%s', '%s', %f, '%s', '%s')";
       $rc = $db->execute($sql, $id, $goodsId, $psId, $price, $dataOrg, $companyId);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);

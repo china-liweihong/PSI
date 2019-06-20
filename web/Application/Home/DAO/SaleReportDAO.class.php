@@ -60,12 +60,12 @@ class SaleReportDAO extends PSIBaseExDAO
 
     // 创建临时表保存数据
     $sql = "CREATE TEMPORARY TABLE psi_sale_report (
-					biz_dt datetime,
-					goods_id varchar(255), goods_code varchar(255), goods_name varchar(255), goods_spec varchar(255), 
-					unit_name varchar(255), sale_money decimal(19,2), sale_count decimal(19,8),
-					rej_money decimal(19,2), rej_count decimal(19, 8), m decimal(19,2), c decimal(19,8),
-					profit decimal(19,2), rate decimal(19, 2)
-				)";
+              biz_dt datetime,
+              goods_id varchar(255), goods_code varchar(255), goods_name varchar(255), goods_spec varchar(255), 
+              unit_name varchar(255), sale_money decimal(19,2), sale_count decimal(19,8),
+              rej_money decimal(19,2), rej_count decimal(19, 8), m decimal(19,2), c decimal(19,8),
+              profit decimal(19,2), rate decimal(19, 2)
+            )";
     $db->execute($sql);
 
     $bcDAO = new BizConfigDAO($db);
@@ -73,19 +73,19 @@ class SaleReportDAO extends PSIBaseExDAO
     $fmt = "decimal(19, " . $dataScale . ")";
 
     $sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name
-				from t_goods g, t_goods_unit u
-				where g.unit_id = u.id and g.id in(
-					select distinct d.goods_id
-					from t_ws_bill w, t_ws_bill_detail d
-					where w.id = d.wsbill_id and w.bizdt = '%s' and w.bill_status >= 1000
-						and w.company_id = '%s'
-					union
-					select distinct d.goods_id
-					from t_sr_bill s, t_sr_bill_detail d
-					where s.id = d.srbill_id and s.bizdt = '%s' and s.bill_status = 1000
-						and s.company_id = '%s'
-					)
-					order by g.code";
+            from t_goods g, t_goods_unit u
+            where g.unit_id = u.id and g.id in(
+                select distinct d.goods_id
+                from t_ws_bill w, t_ws_bill_detail d
+                where w.id = d.wsbill_id and w.bizdt = '%s' and w.bill_status >= 1000
+                  and w.company_id = '%s'
+                union
+                select distinct d.goods_id
+                from t_sr_bill s, t_sr_bill_detail d
+                where s.id = d.srbill_id and s.bizdt = '%s' and s.bill_status = 1000
+                  and s.company_id = '%s'
+              )
+            order by g.code";
     $items = $db->query($sql, $dt, $companyId, $dt, $companyId);
 
     foreach ($items as $v) {
@@ -96,10 +96,10 @@ class SaleReportDAO extends PSIBaseExDAO
       $unitName = $v["unit_name"];
 
       $sql = "select sum(d.goods_money) as goods_money, sum(d.inventory_money) as inventory_money,
-						sum(convert(d.goods_count, $fmt)) as goods_count
-					from t_ws_bill w, t_ws_bill_detail d
-					where w.id = d.wsbill_id and w.bizdt = '%s' and d.goods_id = '%s'
-					and w.bill_status >= 1000 and w.company_id = '%s' ";
+                sum(convert(d.goods_count, $fmt)) as goods_count
+              from t_ws_bill w, t_ws_bill_detail d
+              where w.id = d.wsbill_id and w.bizdt = '%s' and d.goods_id = '%s'
+              and w.bill_status >= 1000 and w.company_id = '%s' ";
       $data = $db->query($sql, $dt, $goodsId, $companyId);
       $saleCount = $data[0]["goods_count"];
       if (!$saleCount) {
@@ -115,11 +115,11 @@ class SaleReportDAO extends PSIBaseExDAO
       }
 
       $sql = "select sum(convert(d.rejection_goods_count, $fmt)) as rej_count,
-						sum(d.rejection_sale_money) as rej_money,
-						sum(d.inventory_money) as rej_inventory_money
-					from t_sr_bill s, t_sr_bill_detail d
-					where s.id = d.srbill_id and s.bizdt = '%s' and d.goods_id = '%s'
-						and s.bill_status = 1000 and s.company_id = '%s' ";
+                sum(d.rejection_sale_money) as rej_money,
+                sum(d.inventory_money) as rej_inventory_money
+              from t_sr_bill s, t_sr_bill_detail d
+              where s.id = d.srbill_id and s.bizdt = '%s' and d.goods_id = '%s'
+                and s.bill_status = 1000 and s.company_id = '%s' ";
       $data = $db->query($sql, $dt, $goodsId, $companyId);
       $rejCount = $data[0]["rej_count"];
       if (!$rejCount) {
@@ -144,9 +144,9 @@ class SaleReportDAO extends PSIBaseExDAO
       }
 
       $sql = "insert into psi_sale_report (biz_dt, goods_code, goods_name, goods_spec, unit_name, 
-						sale_money, sale_count, rej_money, rej_count, m, c, profit, rate)
-					values ('%s', '%s', '%s', '%s', '%s', 
-							%f, %f, %f, %f, %f, %f, %f, %f)";
+                sale_money, sale_count, rej_money, rej_count, m, c, profit, rate)
+              values ('%s', '%s', '%s', '%s', '%s', 
+                %f, %f, %f, %f, %f, %f, %f, %f)";
       $db->execute(
         $sql,
         $dt,
@@ -166,10 +166,10 @@ class SaleReportDAO extends PSIBaseExDAO
     }
 
     $sql = "select biz_dt, goods_code, goods_name, goods_spec, unit_name,
-					sale_money, convert(sale_count, $fmt) as sale_count, rej_money, 
-					convert(rej_count, $fmt) as rej_count, m, convert(c, $fmt) as c, profit, rate 
-				from psi_sale_report
-				order by %s %s ";
+              sale_money, convert(sale_count, $fmt) as sale_count, rej_money, 
+              convert(rej_count, $fmt) as rej_count, m, convert(c, $fmt) as c, profit, rate 
+            from psi_sale_report
+            order by %s %s ";
     if (!$showAllData) {
       $sql .= " limit %d, %d";
     }
@@ -254,30 +254,30 @@ class SaleReportDAO extends PSIBaseExDAO
 
     // 创建临时表保存数据
     $sql = "CREATE TEMPORARY TABLE psi_sale_report (
-					biz_dt datetime,
-					customer_code varchar(255), customer_name varchar(255),
-					sale_money decimal(19,2),
-					rej_money decimal(19,2), m decimal(19,2),
-					profit decimal(19,2), rate decimal(19, 2)
-				)";
+              biz_dt datetime,
+              customer_code varchar(255), customer_name varchar(255),
+              sale_money decimal(19,2),
+              rej_money decimal(19,2), m decimal(19,2),
+              profit decimal(19,2), rate decimal(19, 2)
+            )";
     $db->execute($sql);
 
     $result = [];
 
     $sql = "select c.id, c.code, c.name
-				from t_customer c
-				where c.id in(
-					select distinct w.customer_id
-					from t_ws_bill w
-					where w.bizdt = '%s' and w.bill_status >= 1000
-						and w.company_id = '%s'
-					union
-					select distinct s.customer_id
-					from t_sr_bill s
-					where s.bizdt = '%s' and s.bill_status = 1000
-						and s.company_id = '%s'
-					)
-				order by c.code";
+            from t_customer c
+            where c.id in(
+              select distinct w.customer_id
+              from t_ws_bill w
+              where w.bizdt = '%s' and w.bill_status >= 1000
+                and w.company_id = '%s'
+              union
+              select distinct s.customer_id
+              from t_sr_bill s
+              where s.bizdt = '%s' and s.bill_status = 1000
+                and s.company_id = '%s'
+              )
+            order by c.code";
     $items = $db->query($sql, $dt, $companyId, $dt, $companyId);
     foreach ($items as $v) {
       $customerCode = $v["code"];
@@ -285,9 +285,9 @@ class SaleReportDAO extends PSIBaseExDAO
 
       $customerId = $v["id"];
       $sql = "select sum(w.sale_money) as goods_money, sum(w.inventory_money) as inventory_money
-					from t_ws_bill w
-					where w.bizdt = '%s' and w.customer_id = '%s'
-						and w.bill_status >= 1000 and w.company_id = '%s' ";
+              from t_ws_bill w
+              where w.bizdt = '%s' and w.customer_id = '%s'
+                and w.bill_status >= 1000 and w.company_id = '%s' ";
       $data = $db->query($sql, $dt, $customerId, $companyId);
       $saleMoney = $data[0]["goods_money"];
       if (!$saleMoney) {
@@ -299,10 +299,10 @@ class SaleReportDAO extends PSIBaseExDAO
       }
 
       $sql = "select sum(s.rejection_sale_money) as rej_money,
-						sum(s.inventory_money) as rej_inventory_money
-					from t_sr_bill s
-					where s.bizdt = '%s' and s.customer_id = '%s'
-						and s.bill_status = 1000 and s.company_id = '%s' ";
+                sum(s.inventory_money) as rej_inventory_money
+              from t_sr_bill s
+              where s.bizdt = '%s' and s.customer_id = '%s'
+                and s.bill_status = 1000 and s.company_id = '%s' ";
       $data = $db->query($sql, $dt, $customerId, $companyId);
       $rejSaleMoney = $data[0]["rej_money"];
       if (!$rejSaleMoney) {
@@ -321,9 +321,9 @@ class SaleReportDAO extends PSIBaseExDAO
       }
 
       $sql = "insert into psi_sale_report (biz_dt, customer_code, customer_name,
-						sale_money, rej_money, m, profit, rate)
-					values ('%s', '%s', '%s',
-							%f, %f, %f, %f, %f)";
+                sale_money, rej_money, m, profit, rate)
+              values ('%s', '%s', '%s',
+                %f, %f, %f, %f, %f)";
       $db->execute(
         $sql,
         $dt,
@@ -338,10 +338,10 @@ class SaleReportDAO extends PSIBaseExDAO
     }
 
     $sql = "select biz_dt, customer_code, customer_name,
-					sale_money, rej_money,
-					m, profit, rate
-				from psi_sale_report
-				order by %s %s ";
+              sale_money, rej_money,
+              m, profit, rate
+            from psi_sale_report
+            order by %s %s ";
     if (!$showAllData) {
       $sql .= " limit %d, %d";
     }
@@ -366,8 +366,8 @@ class SaleReportDAO extends PSIBaseExDAO
     }
 
     $sql = "select count(*) as cnt
-				from psi_sale_report
-				";
+            from psi_sale_report
+            ";
     $data = $db->query($sql);
     $cnt = $data[0]["cnt"];
 
@@ -427,29 +427,29 @@ class SaleReportDAO extends PSIBaseExDAO
 
     // 创建临时表保存数据
     $sql = "CREATE TEMPORARY TABLE psi_sale_report (
-					biz_dt datetime,
-					warehouse_code varchar(255), warehouse_name varchar(255),
-					sale_money decimal(19,2),
-					rej_money decimal(19,2), m decimal(19,2),
-					profit decimal(19,2), rate decimal(19, 2),
-					sale_area decimal(19,2), sale_area_rate decimal(19, 2)
-				)";
+              biz_dt datetime,
+              warehouse_code varchar(255), warehouse_name varchar(255),
+              sale_money decimal(19,2),
+              rej_money decimal(19,2), m decimal(19,2),
+              profit decimal(19,2), rate decimal(19, 2),
+              sale_area decimal(19,2), sale_area_rate decimal(19, 2)
+            )";
     $db->execute($sql);
 
     $sql = "select w.id, w.code, w.name, w.sale_area
-				from t_warehouse w
-				where w.id in(
-					select distinct w.warehouse_id
-					from t_ws_bill w
-					where w.bizdt = '%s' and w.bill_status >= 1000
-						and w.company_id = '%s'
-					union
-					select distinct s.warehouse_id
-					from t_sr_bill s
-					where s.bizdt = '%s' and s.bill_status = 1000
-						and s.company_id = '%s'
-					)
-				order by w.code ";
+            from t_warehouse w
+            where w.id in(
+              select distinct w.warehouse_id
+              from t_ws_bill w
+              where w.bizdt = '%s' and w.bill_status >= 1000
+                and w.company_id = '%s'
+              union
+              select distinct s.warehouse_id
+              from t_sr_bill s
+              where s.bizdt = '%s' and s.bill_status = 1000
+                and s.company_id = '%s'
+              )
+            order by w.code ";
     $items = $db->query($sql, $dt, $companyId, $dt, $companyId);
     foreach ($items as $v) {
       $warehouseCode = $v["code"];
@@ -458,9 +458,9 @@ class SaleReportDAO extends PSIBaseExDAO
 
       $warehouseId = $v["id"];
       $sql = "select sum(w.sale_money) as goods_money, sum(w.inventory_money) as inventory_money
-					from t_ws_bill w
-					where w.bizdt = '%s' and w.warehouse_id = '%s'
-						and w.bill_status >= 1000 and w.company_id = '%s' ";
+              from t_ws_bill w
+              where w.bizdt = '%s' and w.warehouse_id = '%s'
+                and w.bill_status >= 1000 and w.company_id = '%s' ";
       $data = $db->query($sql, $dt, $warehouseId, $companyId);
       $saleMoney = $data[0]["goods_money"];
       if (!$saleMoney) {
@@ -472,10 +472,10 @@ class SaleReportDAO extends PSIBaseExDAO
       }
 
       $sql = "select sum(s.rejection_sale_money) as rej_money,
-						sum(s.inventory_money) as rej_inventory_money
-					from t_sr_bill s
-					where s.bizdt = '%s' and s.warehouse_id = '%s'
-						and s.bill_status = 1000 and s.company_id = '%s' ";
+                sum(s.inventory_money) as rej_inventory_money
+              from t_sr_bill s
+              where s.bizdt = '%s' and s.warehouse_id = '%s'
+                and s.bill_status = 1000 and s.company_id = '%s' ";
       $data = $db->query($sql, $dt, $warehouseId, $companyId);
       $rejSaleMoney = $data[0]["rej_money"];
       if (!$rejSaleMoney) {
@@ -498,9 +498,9 @@ class SaleReportDAO extends PSIBaseExDAO
       }
 
       $sql = "insert into psi_sale_report (biz_dt, warehouse_code, warehouse_name,
-						sale_money, rej_money, m, profit, rate, sale_area, sale_area_rate)
-					values ('%s', '%s', '%s',
-							%f, %f, %f, %f, %f, %f, %f)";
+                sale_money, rej_money, m, profit, rate, sale_area, sale_area_rate)
+              values ('%s', '%s', '%s',
+                %f, %f, %f, %f, %f, %f, %f)";
       $db->execute(
         $sql,
         $dt,
@@ -518,10 +518,10 @@ class SaleReportDAO extends PSIBaseExDAO
 
     $result = [];
     $sql = "select biz_dt, warehouse_code, warehouse_name,
-					sale_money, rej_money,
-					m, profit, rate, sale_area, sale_area_rate
-				from psi_sale_report
-				order by %s %s ";
+              sale_money, rej_money,
+              m, profit, rate, sale_area, sale_area_rate
+            from psi_sale_report
+            order by %s %s ";
     if (!$showAllData) {
       $sql .= " limit %d, %d ";
     }
@@ -546,8 +546,8 @@ class SaleReportDAO extends PSIBaseExDAO
     }
 
     $sql = "select count(*) as cnt
-				from psi_sale_report
-				";
+            from psi_sale_report
+            ";
     $data = $db->query($sql);
     $cnt = $data[0]["cnt"];
 
@@ -615,12 +615,12 @@ class SaleReportDAO extends PSIBaseExDAO
 
     // 创建临时表保存数据
     $sql = "CREATE TEMPORARY TABLE psi_sale_report (
-					biz_dt varchar(255),
-					goods_id varchar(255), goods_code varchar(255), goods_name varchar(255), goods_spec varchar(255),
-					unit_name varchar(255), sale_money decimal(19,2), sale_count decimal(19,8),
-					rej_money decimal(19,2), rej_count decimal(19, 8), m decimal(19,2), c decimal(19,8),
-					profit decimal(19,2), rate decimal(19, 2)
-				)";
+              biz_dt varchar(255),
+              goods_id varchar(255), goods_code varchar(255), goods_name varchar(255), goods_spec varchar(255),
+              unit_name varchar(255), sale_money decimal(19,2), sale_count decimal(19,8),
+              rej_money decimal(19,2), rej_count decimal(19, 8), m decimal(19,2), c decimal(19,8),
+              profit decimal(19,2), rate decimal(19, 2)
+            )";
     $db->execute($sql);
 
     $bcDAO = new BizConfigDAO($db);
@@ -628,21 +628,21 @@ class SaleReportDAO extends PSIBaseExDAO
     $fmt = "decimal(19, " . $dataScale . ")";
 
     $sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name
-				from t_goods g, t_goods_unit u
-				where g.unit_id = u.id and g.id in(
-					select distinct d.goods_id
-					from t_ws_bill w, t_ws_bill_detail d
-					where w.id = d.wsbill_id and year(w.bizdt) = %d and month(w.bizdt) = %d
-						and w.bill_status >= 1000
-						and w.company_id = '%s'
-					union
-					select distinct d.goods_id
-					from t_sr_bill s, t_sr_bill_detail d
-					where s.id = d.srbill_id and year(s.bizdt) = %d and month(s.bizdt) = %d
-						and s.bill_status = 1000
-						and s.company_id = '%s'
-					)
-				order by g.code ";
+            from t_goods g, t_goods_unit u
+            where g.unit_id = u.id and g.id in(
+              select distinct d.goods_id
+              from t_ws_bill w, t_ws_bill_detail d
+              where w.id = d.wsbill_id and year(w.bizdt) = %d and month(w.bizdt) = %d
+                and w.bill_status >= 1000
+                and w.company_id = '%s'
+              union
+              select distinct d.goods_id
+              from t_sr_bill s, t_sr_bill_detail d
+              where s.id = d.srbill_id and year(s.bizdt) = %d and month(s.bizdt) = %d
+                and s.bill_status = 1000
+                and s.company_id = '%s'
+              )
+            order by g.code ";
     $items = $db->query($sql, $year, $month, $companyId, $year, $month, $companyId);
     foreach ($items as $v) {
       $goodsId = $v["id"];
@@ -652,11 +652,11 @@ class SaleReportDAO extends PSIBaseExDAO
       $unitName = $v["unit_name"];
 
       $sql = "select sum(d.goods_money) as goods_money, sum(d.inventory_money) as inventory_money,
-						sum(convert(d.goods_count, $fmt)) as goods_count
-					from t_ws_bill w, t_ws_bill_detail d
-					where w.id = d.wsbill_id and year(w.bizdt) = %d and month(w.bizdt) = %d
-						and d.goods_id = '%s'
-						and w.bill_status >= 1000 and w.company_id = '%s' ";
+                sum(convert(d.goods_count, $fmt)) as goods_count
+              from t_ws_bill w, t_ws_bill_detail d
+              where w.id = d.wsbill_id and year(w.bizdt) = %d and month(w.bizdt) = %d
+                and d.goods_id = '%s'
+                and w.bill_status >= 1000 and w.company_id = '%s' ";
       $data = $db->query($sql, $year, $month, $goodsId, $companyId);
       $saleCount = $data[0]["goods_count"];
       if (!$saleCount) {
@@ -672,12 +672,12 @@ class SaleReportDAO extends PSIBaseExDAO
       }
 
       $sql = "select sum(convert(d.rejection_goods_count, $fmt)) as rej_count,
-						sum(d.rejection_sale_money) as rej_money,
-						sum(d.inventory_money) as rej_inventory_money
-					from t_sr_bill s, t_sr_bill_detail d
-					where s.id = d.srbill_id and year(s.bizdt) = %d and month(s.bizdt) = %d
-						and d.goods_id = '%s'
-						and s.bill_status = 1000 and s.company_id = '%s' ";
+                sum(d.rejection_sale_money) as rej_money,
+                sum(d.inventory_money) as rej_inventory_money
+              from t_sr_bill s, t_sr_bill_detail d
+              where s.id = d.srbill_id and year(s.bizdt) = %d and month(s.bizdt) = %d
+                and d.goods_id = '%s'
+                and s.bill_status = 1000 and s.company_id = '%s' ";
       $data = $db->query($sql, $year, $month, $goodsId, $companyId);
       $rejCount = $data[0]["rej_count"];
       if (!$rejCount) {
@@ -702,9 +702,9 @@ class SaleReportDAO extends PSIBaseExDAO
       }
 
       $sql = "insert into psi_sale_report (biz_dt, goods_code, goods_name, goods_spec, unit_name,
-						sale_money, sale_count, rej_money, rej_count, m, c, profit, rate)
-					values ('%s', '%s', '%s', '%s', '%s',
-							%f, %f, %f, %f, %f, %f, %f, %f)";
+                sale_money, sale_count, rej_money, rej_count, m, c, profit, rate)
+              values ('%s', '%s', '%s', '%s', '%s',
+                %f, %f, %f, %f, %f, %f, %f, %f)";
       $db->execute(
         $sql,
         $dt,
@@ -724,10 +724,10 @@ class SaleReportDAO extends PSIBaseExDAO
     }
 
     $sql = "select biz_dt, goods_code, goods_name, goods_spec, unit_name,
-					sale_money, convert(sale_count, $fmt) as sale_count, rej_money,
-					convert(rej_count, $fmt) as rej_count, m, convert(c, $fmt) as c, profit, rate
-				from psi_sale_report
-				order by %s %s ";
+              sale_money, convert(sale_count, $fmt) as sale_count, rej_money,
+              convert(rej_count, $fmt) as rej_count, m, convert(c, $fmt) as c, profit, rate
+            from psi_sale_report
+            order by %s %s ";
     if (!$showAllData) {
       $sql .= " limit %d, %d ";
     }
@@ -756,8 +756,8 @@ class SaleReportDAO extends PSIBaseExDAO
     }
 
     $sql = "select count(*) as cnt
-				from psi_sale_report
-				";
+            from psi_sale_report
+            ";
     $data = $db->query($sql);
     $cnt = $data[0]["cnt"];
 
@@ -814,12 +814,12 @@ class SaleReportDAO extends PSIBaseExDAO
 
     // 创建临时表保存数据
     $sql = "CREATE TEMPORARY TABLE psi_sale_report (
-					biz_dt varchar(255),
-					customer_code varchar(255), customer_name varchar(255),
-					sale_money decimal(19,2),
-					rej_money decimal(19,2), m decimal(19,2),
-					profit decimal(19,2), rate decimal(19, 2)
-				)";
+              biz_dt varchar(255),
+              customer_code varchar(255), customer_name varchar(255),
+              sale_money decimal(19,2),
+              rej_money decimal(19,2), m decimal(19,2),
+              profit decimal(19,2), rate decimal(19, 2)
+            )";
     $db->execute($sql);
 
     if ($month < 10) {
@@ -829,19 +829,19 @@ class SaleReportDAO extends PSIBaseExDAO
     }
 
     $sql = "select c.id, c.code, c.name
-				from t_customer c
-				where c.id in(
-					select distinct w.customer_id
-					from t_ws_bill w
-					where year(w.bizdt) = %d and month(w.bizdt) = %d
-						and w.bill_status >= 1000 and w.company_id = '%s'
-					union
-					select distinct s.customer_id
-					from t_sr_bill s
-					where year(s.bizdt) = %d and month(s.bizdt) = %d
-						and s.bill_status = 1000 and s.company_id = '%s'
-					)
-				order by c.code ";
+            from t_customer c
+            where c.id in(
+              select distinct w.customer_id
+              from t_ws_bill w
+              where year(w.bizdt) = %d and month(w.bizdt) = %d
+                and w.bill_status >= 1000 and w.company_id = '%s'
+              union
+              select distinct s.customer_id
+              from t_sr_bill s
+              where year(s.bizdt) = %d and month(s.bizdt) = %d
+                and s.bill_status = 1000 and s.company_id = '%s'
+              )
+            order by c.code ";
     $items = $db->query($sql, $year, $month, $companyId, $year, $month, $companyId);
     foreach ($items as $v) {
 
@@ -850,10 +850,10 @@ class SaleReportDAO extends PSIBaseExDAO
 
       $customerId = $v["id"];
       $sql = "select sum(w.sale_money) as goods_money, sum(w.inventory_money) as inventory_money
-					from t_ws_bill w
-					where year(w.bizdt) = %d and month(w.bizdt) = %d
-						and w.customer_id = '%s'
-						and w.bill_status >= 1000 and w.company_id = '%s' ";
+              from t_ws_bill w
+              where year(w.bizdt) = %d and month(w.bizdt) = %d
+                and w.customer_id = '%s'
+                and w.bill_status >= 1000 and w.company_id = '%s' ";
       $data = $db->query($sql, $year, $month, $customerId, $companyId);
       $saleMoney = $data[0]["goods_money"];
       if (!$saleMoney) {
@@ -865,11 +865,11 @@ class SaleReportDAO extends PSIBaseExDAO
       }
 
       $sql = "select sum(s.rejection_sale_money) as rej_money,
-						sum(s.inventory_money) as rej_inventory_money
-					from t_sr_bill s
-					where year(s.bizdt) = %d and month(s.bizdt) = %d
-						and s.customer_id = '%s'
-						and s.bill_status = 1000 and s.company_id = '%s' ";
+                sum(s.inventory_money) as rej_inventory_money
+              from t_sr_bill s
+              where year(s.bizdt) = %d and month(s.bizdt) = %d
+                and s.customer_id = '%s'
+                and s.bill_status = 1000 and s.company_id = '%s' ";
       $data = $db->query($sql, $year, $month, $customerId, $companyId);
       $rejSaleMoney = $data[0]["rej_money"];
       if (!$rejSaleMoney) {
@@ -888,9 +888,9 @@ class SaleReportDAO extends PSIBaseExDAO
       }
 
       $sql = "insert into psi_sale_report (biz_dt, customer_code, customer_name,
-						sale_money, rej_money, m, profit, rate)
-					values ('%s', '%s', '%s',
-							%f, %f, %f, %f, %f)";
+                sale_money, rej_money, m, profit, rate)
+              values ('%s', '%s', '%s',
+                %f, %f, %f, %f, %f)";
       $db->execute(
         $sql,
         $dt,
@@ -906,10 +906,10 @@ class SaleReportDAO extends PSIBaseExDAO
 
     $result = [];
     $sql = "select biz_dt, customer_code, customer_name,
-					sale_money, rej_money,
-					m, profit, rate
-				from psi_sale_report
-				order by %s %s ";
+              sale_money, rej_money,
+              m, profit, rate
+            from psi_sale_report
+            order by %s %s ";
     if (!$showAllData) {
       $sql .= " limit %d, %d ";
     }
@@ -932,8 +932,8 @@ class SaleReportDAO extends PSIBaseExDAO
     }
 
     $sql = "select count(*) as cnt
-				from psi_sale_report
-				";
+            from psi_sale_report
+            ";
     $data = $db->query($sql);
     $cnt = $data[0]["cnt"];
 
@@ -1000,29 +1000,29 @@ class SaleReportDAO extends PSIBaseExDAO
 
     // 创建临时表保存数据
     $sql = "CREATE TEMPORARY TABLE psi_sale_report (
-					biz_dt varchar(255),
-					warehouse_code varchar(255), warehouse_name varchar(255),
-					sale_money decimal(19,2),
-					rej_money decimal(19,2), m decimal(19,2),
-					profit decimal(19,2), rate decimal(19, 2),
-					sale_area decimal(19,2), sale_area_rate decimal(19, 2)
-				)";
+              biz_dt varchar(255),
+              warehouse_code varchar(255), warehouse_name varchar(255),
+              sale_money decimal(19,2),
+              rej_money decimal(19,2), m decimal(19,2),
+              profit decimal(19,2), rate decimal(19, 2),
+              sale_area decimal(19,2), sale_area_rate decimal(19, 2)
+            )";
     $db->execute($sql);
 
     $sql = "select w.id, w.code, w.name, w.sale_area
-				from t_warehouse w
-				where w.id in(
-					select distinct w.warehouse_id
-					from t_ws_bill w
-					where year(w.bizdt) = %d and month(w.bizdt) = %d
-						and w.bill_status >= 1000 and w.company_id = '%s'
-					union
-					select distinct s.warehouse_id
-					from t_sr_bill s
-					where year(s.bizdt) = %d and month(s.bizdt) = %d
-						and s.bill_status = 1000 and w.company_id = '%s'
-					)
-				order by w.code ";
+            from t_warehouse w
+            where w.id in(
+              select distinct w.warehouse_id
+              from t_ws_bill w
+              where year(w.bizdt) = %d and month(w.bizdt) = %d
+                and w.bill_status >= 1000 and w.company_id = '%s'
+              union
+              select distinct s.warehouse_id
+              from t_sr_bill s
+              where year(s.bizdt) = %d and month(s.bizdt) = %d
+                and s.bill_status = 1000 and w.company_id = '%s'
+              )
+            order by w.code ";
     $items = $db->query($sql, $year, $month, $companyId, $year, $month, $companyId);
     foreach ($items as $v) {
       $warehouseCode = $v["code"];
@@ -1031,10 +1031,10 @@ class SaleReportDAO extends PSIBaseExDAO
 
       $warehouseId = $v["id"];
       $sql = "select sum(w.sale_money) as goods_money, sum(w.inventory_money) as inventory_money
-					from t_ws_bill w
-					where year(w.bizdt) = %d and month(w.bizdt) = %d
-						and w.warehouse_id = '%s'
-						and w.bill_status >= 1000 and w.company_id = '%s' ";
+              from t_ws_bill w
+              where year(w.bizdt) = %d and month(w.bizdt) = %d
+                and w.warehouse_id = '%s'
+                and w.bill_status >= 1000 and w.company_id = '%s' ";
       $data = $db->query($sql, $year, $month, $warehouseId, $companyId);
       $saleMoney = $data[0]["goods_money"];
       if (!$saleMoney) {
@@ -1046,11 +1046,11 @@ class SaleReportDAO extends PSIBaseExDAO
       }
 
       $sql = "select sum(s.rejection_sale_money) as rej_money,
-						sum(s.inventory_money) as rej_inventory_money
-					from t_sr_bill s
-					where year(s.bizdt) = %d and month(s.bizdt) = %d
-						and s.warehouse_id = '%s'
-						and s.bill_status = 1000 and s.company_id = '%s' ";
+                sum(s.inventory_money) as rej_inventory_money
+              from t_sr_bill s
+              where year(s.bizdt) = %d and month(s.bizdt) = %d
+                and s.warehouse_id = '%s'
+                and s.bill_status = 1000 and s.company_id = '%s' ";
       $data = $db->query($sql, $year, $month, $warehouseId, $companyId);
       $rejSaleMoney = $data[0]["rej_money"];
       if (!$rejSaleMoney) {
@@ -1073,9 +1073,9 @@ class SaleReportDAO extends PSIBaseExDAO
       }
 
       $sql = "insert into psi_sale_report (biz_dt, warehouse_code, warehouse_name,
-						sale_money, rej_money, m, profit, rate, sale_area, sale_area_rate)
-					values ('%s', '%s', '%s',
-							%f, %f, %f, %f, %f, %f, %f)";
+                sale_money, rej_money, m, profit, rate, sale_area, sale_area_rate)
+              values ('%s', '%s', '%s',
+                %f, %f, %f, %f, %f, %f, %f)";
       $db->execute(
         $sql,
         $dt,
@@ -1093,10 +1093,10 @@ class SaleReportDAO extends PSIBaseExDAO
 
     $result = [];
     $sql = "select biz_dt, warehouse_code, warehouse_name,
-					sale_money, rej_money,
-					m, profit, rate, sale_area, sale_area_rate
-				from psi_sale_report
-				order by %s %s ";
+              sale_money, rej_money,
+              m, profit, rate, sale_area, sale_area_rate
+            from psi_sale_report
+            order by %s %s ";
     if (!$showAllData) {
       $sql .= " limit %d, %d ";
     }
@@ -1121,8 +1121,8 @@ class SaleReportDAO extends PSIBaseExDAO
     }
 
     $sql = "select count(*) as cnt
-				from psi_sale_report
-				";
+            from psi_sale_report
+            ";
     $data = $db->query($sql);
     $cnt = $data[0]["cnt"];
 
@@ -1178,28 +1178,28 @@ class SaleReportDAO extends PSIBaseExDAO
 
     // 创建临时表保存数据
     $sql = "CREATE TEMPORARY TABLE psi_sale_report (
-					biz_dt datetime,
-					user_code varchar(255), user_name varchar(255),
-					sale_money decimal(19,2),
-					rej_money decimal(19,2), m decimal(19,2),
-					profit decimal(19,2), rate decimal(19, 2)
-				)";
+              biz_dt datetime,
+              user_code varchar(255), user_name varchar(255),
+              sale_money decimal(19,2),
+              rej_money decimal(19,2), m decimal(19,2),
+              profit decimal(19,2), rate decimal(19, 2)
+            )";
     $db->execute($sql);
 
     $sql = "select u.id, u.org_code, u.name
-				from t_user u
-				where u.id in(
-					select distinct w.biz_user_id
-					from t_ws_bill w
-					where w.bizdt = '%s' and w.bill_status >= 1000
-						and w.company_id = '%s'
-					union
-					select distinct s.biz_user_id
-					from t_sr_bill s
-					where s.bizdt = '%s' and s.bill_status = 1000
-						and s.company_id = '%s'
-					)
-				order by u.org_code ";
+            from t_user u
+            where u.id in(
+              select distinct w.biz_user_id
+              from t_ws_bill w
+              where w.bizdt = '%s' and w.bill_status >= 1000
+                and w.company_id = '%s'
+              union
+              select distinct s.biz_user_id
+              from t_sr_bill s
+              where s.bizdt = '%s' and s.bill_status = 1000
+                and s.company_id = '%s'
+              )
+            order by u.org_code ";
     $items = $db->query($sql, $dt, $companyId, $dt, $companyId);
     foreach ($items as $v) {
       $userName = $v["name"];
@@ -1207,9 +1207,9 @@ class SaleReportDAO extends PSIBaseExDAO
 
       $userId = $v["id"];
       $sql = "select sum(w.sale_money) as goods_money, sum(w.inventory_money) as inventory_money
-					from t_ws_bill w
-					where w.bizdt = '%s' and w.biz_user_id = '%s'
-						and w.bill_status >= 1000 and w.company_id = '%s' ";
+              from t_ws_bill w
+              where w.bizdt = '%s' and w.biz_user_id = '%s'
+                and w.bill_status >= 1000 and w.company_id = '%s' ";
       $data = $db->query($sql, $dt, $userId, $companyId);
       $saleMoney = $data[0]["goods_money"];
       if (!$saleMoney) {
@@ -1221,10 +1221,10 @@ class SaleReportDAO extends PSIBaseExDAO
       }
 
       $sql = "select sum(s.rejection_sale_money) as rej_money,
-						sum(s.inventory_money) as rej_inventory_money
-					from t_sr_bill s
-					where s.bizdt = '%s' and s.biz_user_id = '%s'
-						and s.bill_status = 1000 and s.company_id = '%s' ";
+                sum(s.inventory_money) as rej_inventory_money
+              from t_sr_bill s
+              where s.bizdt = '%s' and s.biz_user_id = '%s'
+                and s.bill_status = 1000 and s.company_id = '%s' ";
       $data = $db->query($sql, $dt, $userId, $companyId);
       $rejSaleMoney = $data[0]["rej_money"];
       if (!$rejSaleMoney) {
@@ -1243,9 +1243,9 @@ class SaleReportDAO extends PSIBaseExDAO
         $rate = $profit / $m * 100;
       }
       $sql = "insert into psi_sale_report (biz_dt, user_code, user_name,
-						sale_money, rej_money, m, profit, rate)
-					values ('%s', '%s', '%s',
-							%f, %f, %f, %f, %f)";
+                sale_money, rej_money, m, profit, rate)
+              values ('%s', '%s', '%s',
+                %f, %f, %f, %f, %f)";
       $db->execute(
         $sql,
         $dt,
@@ -1261,10 +1261,10 @@ class SaleReportDAO extends PSIBaseExDAO
 
     $result = [];
     $sql = "select biz_dt, user_code, user_name,
-					sale_money, rej_money,
-					m, profit, rate
-				from psi_sale_report
-				order by %s %s ";
+              sale_money, rej_money,
+              m, profit, rate
+            from psi_sale_report
+            order by %s %s ";
     if (!$showAllData) {
       $sql .= " limit %d, %d ";
     }
@@ -1287,8 +1287,8 @@ class SaleReportDAO extends PSIBaseExDAO
     }
 
     $sql = "select count(*) as cnt
-				from psi_sale_report
-				";
+            from psi_sale_report
+            ";
     $data = $db->query($sql);
     $cnt = $data[0]["cnt"];
 
@@ -1351,28 +1351,28 @@ class SaleReportDAO extends PSIBaseExDAO
 
     // 创建临时表保存数据
     $sql = "CREATE TEMPORARY TABLE psi_sale_report (
-					biz_dt varchar(255),
-					user_code varchar(255), user_name varchar(255),
-					sale_money decimal(19,2),
-					rej_money decimal(19,2), m decimal(19,2),
-					profit decimal(19,2), rate decimal(19, 2)
-				)";
+              biz_dt varchar(255),
+              user_code varchar(255), user_name varchar(255),
+              sale_money decimal(19,2),
+              rej_money decimal(19,2), m decimal(19,2),
+              profit decimal(19,2), rate decimal(19, 2)
+            )";
     $db->execute($sql);
 
     $sql = "select u.id, u.org_code as code, u.name
-				from t_user u
-				where u.id in(
-					select distinct w.biz_user_id
-					from t_ws_bill w
-					where year(w.bizdt) = %d and month(w.bizdt) = %d
-						and w.bill_status >= 1000 and w.company_id = '%s'
-					union
-					select distinct s.biz_user_id
-					from t_sr_bill s
-					where year(s.bizdt) = %d and month(s.bizdt) = %d
-						and s.bill_status = 1000 and s.company_id = '%s'
-					)
-				order by u.org_code ";
+            from t_user u
+            where u.id in(
+              select distinct w.biz_user_id
+              from t_ws_bill w
+              where year(w.bizdt) = %d and month(w.bizdt) = %d
+                and w.bill_status >= 1000 and w.company_id = '%s'
+              union
+              select distinct s.biz_user_id
+              from t_sr_bill s
+              where year(s.bizdt) = %d and month(s.bizdt) = %d
+                and s.bill_status = 1000 and s.company_id = '%s'
+              )
+            order by u.org_code ";
     $items = $db->query($sql, $year, $month, $companyId, $year, $month, $companyId);
     foreach ($items as $v) {
       $userCode = $v["code"];
@@ -1380,10 +1380,10 @@ class SaleReportDAO extends PSIBaseExDAO
 
       $userId = $v["id"];
       $sql = "select sum(w.sale_money) as goods_money, sum(w.inventory_money) as inventory_money
-					from t_ws_bill w
-					where year(w.bizdt) = %d and month(w.bizdt) = %d
-						and w.biz_user_id = '%s'
-						and w.bill_status >= 1000 and w.company_id = '%s' ";
+              from t_ws_bill w
+              where year(w.bizdt) = %d and month(w.bizdt) = %d
+                and w.biz_user_id = '%s'
+                and w.bill_status >= 1000 and w.company_id = '%s' ";
       $data = $db->query($sql, $year, $month, $userId, $companyId);
       $saleMoney = $data[0]["goods_money"];
       if (!$saleMoney) {
@@ -1395,11 +1395,11 @@ class SaleReportDAO extends PSIBaseExDAO
       }
 
       $sql = "select sum(s.rejection_sale_money) as rej_money,
-						sum(s.inventory_money) as rej_inventory_money
-					from t_sr_bill s
-					where year(s.bizdt) = %d and month(s.bizdt) = %d
-						and s.biz_user_id = '%s'
-						and s.bill_status = 1000 and s.company_id = '%s' ";
+              sum(s.inventory_money) as rej_inventory_money
+              from t_sr_bill s
+              where year(s.bizdt) = %d and month(s.bizdt) = %d
+                and s.biz_user_id = '%s'
+                and s.bill_status = 1000 and s.company_id = '%s' ";
       $data = $db->query($sql, $year, $month, $userId, $companyId);
       $rejSaleMoney = $data[0]["rej_money"];
       if (!$rejSaleMoney) {
@@ -1418,9 +1418,9 @@ class SaleReportDAO extends PSIBaseExDAO
       }
 
       $sql = "insert into psi_sale_report (biz_dt, user_code, user_name,
-						sale_money, rej_money, m, profit, rate)
-					values ('%s', '%s', '%s',
-							%f, %f, %f, %f, %f)";
+                sale_money, rej_money, m, profit, rate)
+              values ('%s', '%s', '%s',
+                %f, %f, %f, %f, %f)";
       $db->execute(
         $sql,
         $dt,
@@ -1436,10 +1436,10 @@ class SaleReportDAO extends PSIBaseExDAO
 
     $result = [];
     $sql = "select biz_dt, user_code, user_name,
-					sale_money, rej_money,
-					m, profit, rate
-				from psi_sale_report
-				order by %s %s ";
+              sale_money, rej_money,
+              m, profit, rate
+            from psi_sale_report
+            order by %s %s ";
     if (!$showAllData) {
       $sql .= " limit %d, %d ";
     }
@@ -1464,8 +1464,8 @@ class SaleReportDAO extends PSIBaseExDAO
     }
 
     $sql = "select count(*) as cnt
-				from psi_sale_report
-				";
+            from psi_sale_report
+            ";
     $data = $db->query($sql);
     $cnt = $data[0]["cnt"];
 

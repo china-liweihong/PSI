@@ -59,12 +59,12 @@ class PrePaymentDAO extends PSIBaseExDAO
     }
 
     $sql = "select in_money, balance_money from t_pre_payment
-				where supplier_id = '%s' and company_id = '%s' ";
+            where supplier_id = '%s' and company_id = '%s' ";
     $data = $db->query($sql, $supplierId, $companyId);
     if (!$data) {
       // 总账
       $sql = "insert into t_pre_payment(id, supplier_id, in_money, balance_money, company_id)
-					values ('%s', '%s', %f, %f, '%s')";
+              values ('%s', '%s', %f, %f, '%s')";
       $rc = $db->execute($sql, $this->newId(), $supplierId, $inMoney, $inMoney, $companyId);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -72,8 +72,8 @@ class PrePaymentDAO extends PSIBaseExDAO
 
       // 明细账
       $sql = "insert into t_pre_payment_detail(id, supplier_id, in_money, balance_money, date_created,
-						ref_number, ref_type, biz_user_id, input_user_id, biz_date, company_id)
-					values('%s', '%s', %f, %f, now(), '', '预付供应商采购货款', '%s', '%s', '%s', '%s')";
+                ref_number, ref_type, biz_user_id, input_user_id, biz_date, company_id)
+              values('%s', '%s', %f, %f, now(), '', '预付供应商采购货款', '%s', '%s', '%s', '%s')";
       $rc = $db->execute(
         $sql,
         $this->newId(),
@@ -102,8 +102,8 @@ class PrePaymentDAO extends PSIBaseExDAO
       $totalBalanceMoney += $inMoney;
       // 总账
       $sql = "update t_pre_payment
-					set in_money = %f, balance_money = %f
-					where supplier_id = '%s' and company_id = '%s' ";
+              set in_money = %f, balance_money = %f
+              where supplier_id = '%s' and company_id = '%s' ";
       $rc = $db->execute($sql, $totalInMoney, $totalBalanceMoney, $supplierId, $companyId);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -111,8 +111,8 @@ class PrePaymentDAO extends PSIBaseExDAO
 
       // 明细账
       $sql = "insert into t_pre_payment_detail(id, supplier_id, in_money, balance_money, date_created,
-						ref_number, ref_type, biz_user_id, input_user_id, biz_date, company_id)
-					values('%s', '%s', %f, %f, now(), '', '预付供应商采购货款', '%s', '%s', '%s', '%s')";
+                ref_number, ref_type, biz_user_id, input_user_id, biz_date, company_id)
+              values('%s', '%s', %f, %f, now(), '', '预付供应商采购货款', '%s', '%s', '%s', '%s')";
       $rc = $db->execute(
         $sql,
         $this->newId(),
@@ -186,7 +186,7 @@ class PrePaymentDAO extends PSIBaseExDAO
     $supplierName = $supplier["name"];
 
     $sql = "select balance_money, in_money from t_pre_payment
-				where supplier_id = '%s' and company_id = '%s' ";
+            where supplier_id = '%s' and company_id = '%s' ";
     $data = $db->query($sql, $supplierId, $companyId);
     $balanceMoney = $data[0]["balance_money"];
     if (!$balanceMoney) {
@@ -204,8 +204,8 @@ class PrePaymentDAO extends PSIBaseExDAO
 
     // 总账
     $sql = "update t_pre_payment
-				set in_money = %f, balance_money = %f
-				where supplier_id = '%s' and company_id = '%s' ";
+            set in_money = %f, balance_money = %f
+            where supplier_id = '%s' and company_id = '%s' ";
     $totalInMoney -= $inMoney;
     $balanceMoney -= $inMoney;
     $rc = $db->execute($sql, $totalInMoney, $balanceMoney, $supplierId, $companyId);
@@ -215,9 +215,9 @@ class PrePaymentDAO extends PSIBaseExDAO
 
     // 明细账
     $sql = "insert into t_pre_payment_detail(id, supplier_id, in_money, balance_money,
-					biz_date, date_created, ref_number, ref_type, biz_user_id, input_user_id,
-					company_id)
-				values ('%s', '%s', %f, %f, '%s', now(), '', '供应商退回采购预付款', '%s', '%s', '%s')";
+              biz_date, date_created, ref_number, ref_type, biz_user_id, input_user_id,
+              company_id)
+            values ('%s', '%s', %f, %f, '%s', now(), '', '供应商退回采购预付款', '%s', '%s', '%s')";
     $rc = $db->execute(
       $sql,
       $this->newId(),
@@ -260,9 +260,9 @@ class PrePaymentDAO extends PSIBaseExDAO
 
     $queryParams = [];
     $sql = "select r.id, c.id as supplier_id, c.code, c.name,
-					r.in_money, r.out_money, r.balance_money
-				from t_pre_payment r, t_supplier c
-				where r.supplier_id = c.id and r.company_id = '%s' ";
+              r.in_money, r.out_money, r.balance_money
+            from t_pre_payment r, t_supplier c
+            where r.supplier_id = c.id and r.company_id = '%s' ";
     $queryParams[] = $companyId;
     if ($supplierId) {
       $sql .= " and c.id = '%s' ";
@@ -335,15 +335,15 @@ class PrePaymentDAO extends PSIBaseExDAO
     $dtTo = $params["dtTo"];
 
     $sql = "select d.id, d.ref_type, d.ref_number, d.in_money, d.out_money, d.balance_money,
-					d.biz_date, d.date_created,
-					u1.name as biz_user_name, u2.name as input_user_name
-				from t_pre_payment_detail d, t_user u1, t_user u2
-				where d.supplier_id = '%s' and d.biz_user_id = u1.id and d.input_user_id = u2.id
-					and (d.biz_date between '%s' and '%s')
-					and d.company_id = '%s'
-				order by d.date_created
-				limit %d , %d
-				";
+              d.biz_date, d.date_created,
+              u1.name as biz_user_name, u2.name as input_user_name
+            from t_pre_payment_detail d, t_user u1, t_user u2
+            where d.supplier_id = '%s' and d.biz_user_id = u1.id and d.input_user_id = u2.id
+              and (d.biz_date between '%s' and '%s')
+              and d.company_id = '%s'
+            order by d.date_created
+            limit %d , %d
+            ";
     $data = $db->query($sql, $supplerId, $dtFrom, $dtTo, $companyId, $start, $limit);
     $result = array();
     foreach ($data as $i => $v) {
@@ -360,11 +360,11 @@ class PrePaymentDAO extends PSIBaseExDAO
     }
 
     $sql = "select count(*) as cnt
-				from t_pre_payment_detail d, t_user u1, t_user u2
-				where d.supplier_id = '%s' and d.biz_user_id = u1.id and d.input_user_id = u2.id
-					and (d.biz_date between '%s' and '%s')
-					and d.company_id = '%s'
-				";
+            from t_pre_payment_detail d, t_user u1, t_user u2
+            where d.supplier_id = '%s' and d.biz_user_id = u1.id and d.input_user_id = u2.id
+              and (d.biz_date between '%s' and '%s')
+              and d.company_id = '%s'
+            ";
 
     $data = $db->query($sql, $supplerId, $companyId, $dtFrom, $dtTo);
     $cnt = $data[0]["cnt"];

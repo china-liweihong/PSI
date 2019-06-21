@@ -111,9 +111,9 @@ class SRBillDAO extends PSIBaseExDAO
     }
     if ($sn) {
       $sql .= " and (w.id in (
-					  select d.srbill_id
-					  from t_sr_bill_detail d
-					  where d.sn_note like '%s')) ";
+                      select d.srbill_id
+                      from t_sr_bill_detail d
+                      where d.sn_note like '%s')) ";
       $queryParams[] = "%$sn%";
     }
     if ($paymentType != -1) {
@@ -122,14 +122,14 @@ class SRBillDAO extends PSIBaseExDAO
     }
     if ($goodsId) {
       $sql .= " and (w.id in (
-					  select d.srbill_id
-					  from t_sr_bill_detail d
-					  where d.goods_id = '%s')) ";
+                      select d.srbill_id
+                      from t_sr_bill_detail d
+                      where d.goods_id = '%s')) ";
       $queryParams[] = $goodsId;
     }
 
     $sql .= " order by w.bizdt desc, w.ref desc
-				 limit %d, %d";
+              limit %d, %d";
     $queryParams[] = $start;
     $queryParams[] = $limit;
     $data = $db->query($sql, $queryParams);
@@ -193,9 +193,9 @@ class SRBillDAO extends PSIBaseExDAO
     }
     if ($sn) {
       $sql .= " and (w.id in (
-					  select d.srbill_id
-					  from t_sr_bill_detail d
-					  where d.sn_note like '%s')) ";
+                      select d.srbill_id
+                      from t_sr_bill_detail d
+                      where d.sn_note like '%s')) ";
       $queryParams[] = "%$sn%";
     }
     if ($paymentType != -1) {
@@ -204,9 +204,9 @@ class SRBillDAO extends PSIBaseExDAO
     }
     if ($goodsId) {
       $sql .= " and (w.id in (
-					  select d.srbill_id
-					  from t_sr_bill_detail d
-					  where d.goods_id = '%s')) ";
+                      select d.srbill_id
+                      from t_sr_bill_detail d
+                      where d.goods_id = '%s')) ";
       $queryParams[] = $goodsId;
     }
 
@@ -338,14 +338,14 @@ class SRBillDAO extends PSIBaseExDAO
     }
     if ($sn) {
       $sql .= " and (w.id in (
-						select wsbill_id
-						from t_ws_bill_detail d
-						where d.sn_note like '%s'
-					))";
+                      select wsbill_id
+                      from t_ws_bill_detail d
+                      where d.sn_note like '%s'
+                    ))";
       $queryParamas[] = "%$sn%";
     }
     $sql .= " order by w.ref desc
-				 limit %d, %d";
+              limit %d, %d";
     $queryParamas[] = $start;
     $queryParamas[] = $limit;
     $data = $db->query($sql, $queryParamas);

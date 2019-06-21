@@ -108,8 +108,8 @@ class PayablesDAO extends PSIBaseExDAO
     if ($caType == "supplier") {
       $queryParams = array();
       $sql = "select p.id, p.pay_money, p.act_money, p.balance_money, s.id as ca_id, s.code, s.name
-					from t_payables p, t_supplier s
-					where p.ca_id = s.id and p.ca_type = 'supplier' ";
+              from t_payables p, t_supplier s
+              where p.ca_id = s.id and p.ca_type = 'supplier' ";
       if ($supplierId) {
         $sql .= " and s.id = '%s' ";
         $queryParams[] = $supplierId;
@@ -141,7 +141,7 @@ class PayablesDAO extends PSIBaseExDAO
 
       $queryParams[] = array();
       $sql = "select count(*) as cnt from t_payables p, t_supplier s
-					where p.ca_id = s.id and p.ca_type = 'supplier' ";
+              where p.ca_id = s.id and p.ca_type = 'supplier' ";
       if ($supplierId) {
         $sql .= " and s.id = '%s' ";
         $queryParams[] = $supplierId;
@@ -165,8 +165,8 @@ class PayablesDAO extends PSIBaseExDAO
     } else if ($caType == "factory") {
       $queryParams = array();
       $sql = "select p.id, p.pay_money, p.act_money, p.balance_money, s.id as ca_id, s.code, s.name
-					from t_payables p, t_factory s
-					where p.ca_id = s.id and p.ca_type = 'factory' ";
+              from t_payables p, t_factory s
+              where p.ca_id = s.id and p.ca_type = 'factory' ";
       if ($factoryId) {
         $sql .= " and s.id = '%s' ";
         $queryParams[] = $factoryId;
@@ -181,7 +181,7 @@ class PayablesDAO extends PSIBaseExDAO
         $queryParams = array_merge($queryParams, $rs[1]);
       }
       $sql .= " order by s.code
-					limit %d , %d ";
+                limit %d , %d ";
       $queryParams[] = $start;
       $queryParams[] = $limit;
       $data = $db->query($sql, $queryParams);
@@ -198,7 +198,7 @@ class PayablesDAO extends PSIBaseExDAO
 
       $queryParams[] = array();
       $sql = "select count(*) as cnt from t_payables p, t_supplier s
-					where p.ca_id = s.id and p.ca_type = 'factory' ";
+              where p.ca_id = s.id and p.ca_type = 'factory' ";
       if ($factoryId) {
         $sql .= " and s.id = '%s' ";
         $queryParams[] = $factoryId;
@@ -223,8 +223,8 @@ class PayablesDAO extends PSIBaseExDAO
       // 客户
       $queryParams = array();
       $sql = "select p.id, p.pay_money, p.act_money, p.balance_money, s.id as ca_id, s.code, s.name
-					from t_payables p, t_customer s
-					where p.ca_id = s.id and p.ca_type = 'customer' ";
+              from t_payables p, t_customer s
+              where p.ca_id = s.id and p.ca_type = 'customer' ";
       if ($customerId) {
         $sql .= " and s.id = '%s' ";
         $queryParams[] = $customerId;
@@ -239,7 +239,7 @@ class PayablesDAO extends PSIBaseExDAO
         $queryParams = array_merge($queryParams, $rs[1]);
       }
       $sql .= " order by s.code
-					limit %d , %d";
+                limit %d , %d";
       $queryParams[] = $start;
       $queryParams[] = $limit;
       $data = $db->query($sql, $queryParams);
@@ -256,7 +256,7 @@ class PayablesDAO extends PSIBaseExDAO
 
       $queryParams = array();
       $sql = "select count(*) as cnt from t_payables p, t_customer s
-					where p.ca_id = s.id and p.ca_type = 'customer' ";
+              where p.ca_id = s.id and p.ca_type = 'customer' ";
       if ($customerId) {
         $sql .= " and s.id = '%s' ";
         $queryParams[] = $customerId;
@@ -296,10 +296,10 @@ class PayablesDAO extends PSIBaseExDAO
     $limit = $params["limit"];
 
     $sql = "select id, ref_type, ref_number, pay_money, act_money, balance_money, date_created, biz_date
-				from t_payables_detail
-				where ca_type = '%s' and ca_id = '%s'
-				order by biz_date desc, date_created desc
-				limit %d , %d ";
+            from t_payables_detail
+            where ca_type = '%s' and ca_id = '%s'
+            order by biz_date desc, date_created desc
+            limit %d , %d ";
     $data = $db->query($sql, $caType, $caId, $start, $limit);
     $result = array();
     foreach ($data as $i => $v) {
@@ -314,7 +314,7 @@ class PayablesDAO extends PSIBaseExDAO
     }
 
     $sql = "select count(*) as cnt from t_payables_detail
-				where ca_type = '%s' and ca_id = '%s' ";
+            where ca_type = '%s' and ca_id = '%s' ";
     $data = $db->query($sql, $caType, $caId);
     $cnt = $data[0]["cnt"];
 
@@ -340,12 +340,12 @@ class PayablesDAO extends PSIBaseExDAO
     $limit = $params["limit"];
 
     $sql = "select u.name as biz_user_name, bu.name as input_user_name, p.id,
-				p.act_money, p.biz_date, p.date_created, p.remark
-				from t_payment p, t_user u, t_user bu
-				where p.ref_type = '%s' and p.ref_number = '%s'
-				and  p.pay_user_id = u.id and p.input_user_id = bu.id
-				order by p.date_created desc
-				limit %d, %d ";
+              p.act_money, p.biz_date, p.date_created, p.remark
+            from t_payment p, t_user u, t_user bu
+            where p.ref_type = '%s' and p.ref_number = '%s'
+              and  p.pay_user_id = u.id and p.input_user_id = bu.id
+            order by p.date_created desc
+            limit %d, %d ";
     $data = $db->query($sql, $refType, $refNumber, $start, $limit);
     $result = array();
     foreach ($data as $i => $v) {
@@ -359,7 +359,7 @@ class PayablesDAO extends PSIBaseExDAO
     }
 
     $sql = "select count(*) as cnt from t_payment
-				where ref_type = '%s' and ref_number = '%s' ";
+            where ref_type = '%s' and ref_number = '%s' ";
     $data = $db->query($sql, $refType, $refNumber);
     $cnt = $data[0]["cnt"];
 
@@ -425,8 +425,8 @@ class PayablesDAO extends PSIBaseExDAO
     }
 
     $sql = "insert into t_payment (id, act_money, biz_date, date_created, input_user_id,
-				pay_user_id,  bill_id,  ref_type, ref_number, remark, data_org, company_id)
-				values ('%s', %f, '%s', now(), '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')";
+              pay_user_id,  bill_id,  ref_type, ref_number, remark, data_org, company_id)
+            values ('%s', %f, '%s', now(), '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')";
 
     $rc = $db->execute(
       $sql,
@@ -448,8 +448,8 @@ class PayablesDAO extends PSIBaseExDAO
 
     // 应付明细账
     $sql = "select balance_money, act_money, ca_type, ca_id, company_id
-				from t_payables_detail
-				where ref_type = '%s' and ref_number = '%s' ";
+            from t_payables_detail
+            where ref_type = '%s' and ref_number = '%s' ";
     $data = $db->query($sql, $refType, $refNumber);
     if (!$data) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -462,9 +462,9 @@ class PayablesDAO extends PSIBaseExDAO
     $actMoneyNew += $actMoney;
     $balanceMoney -= $actMoney;
     $sql = "update t_payables_detail
-				set act_money = %f, balance_money = %f
-				where ref_type = '%s' and ref_number = '%s'
-				and ca_id = '%s' and ca_type = '%s' ";
+            set act_money = %f, balance_money = %f
+            where ref_type = '%s' and ref_number = '%s'
+              and ca_id = '%s' and ca_type = '%s' ";
     $rc = $db->execute($sql, $actMoneyNew, $balanceMoney, $refType, $refNumber, $caId, $caType);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -472,8 +472,8 @@ class PayablesDAO extends PSIBaseExDAO
 
     // 应付总账
     $sql = "select sum(pay_money) as sum_pay_money, sum(act_money) as sum_act_money
-				from t_payables_detail
-				where ca_type = '%s' and ca_id = '%s' and company_id = '%s' ";
+            from t_payables_detail
+            where ca_type = '%s' and ca_id = '%s' and company_id = '%s' ";
     $data = $db->query($sql, $caType, $caId, $companyId);
     if (!$data) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -489,8 +489,8 @@ class PayablesDAO extends PSIBaseExDAO
     $sumBalanceMoney = $sumPayMoney - $sumActMoney;
 
     $sql = "update t_payables
-				set act_money = %f, balance_money = %f
-				where ca_type = '%s' and ca_id = '%s' and company_id = '%s' ";
+            set act_money = %f, balance_money = %f
+            where ca_type = '%s' and ca_id = '%s' and company_id = '%s' ";
     $rc = $db->execute($sql, $sumActMoney, $sumBalanceMoney, $caType, $caId, $companyId);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);

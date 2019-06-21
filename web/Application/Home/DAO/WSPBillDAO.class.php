@@ -67,9 +67,9 @@ class WSPBillDAO extends PSIBaseExDAO
     $fmt = "decimal(19, " . $dataScale . ")";
 
     $sql = "select d.goods_id, g.code, g.name, g.spec, u.name as unit_name, 
-					convert(d.goods_count, $fmt) as goods_count 
-				from t_wsp_bill_detail d, t_goods g, t_goods_unit u
-				where d.id = '%s' and d.goods_id = g.id and g.unit_id = u.id";
+              convert(d.goods_count, $fmt) as goods_count 
+            from t_wsp_bill_detail d, t_goods g, t_goods_unit u
+            where d.id = '%s' and d.goods_id = g.id and g.unit_id = u.id";
     $data = $db->query($sql, $id);
     if (!$data) {
       return $result;
@@ -96,8 +96,8 @@ class WSPBillDAO extends PSIBaseExDAO
     $goodsId = $v["goods_id"];
 
     $sql = "select sum(cost_weight) as sum_cost_weight 
-				from t_wsp_bill_detail_bom
-				where wspbilldetail_id = '%s' and goods_id = '%s' ";
+            from t_wsp_bill_detail_bom
+            where wspbilldetail_id = '%s' and goods_id = '%s' ";
     $data = $db->query($sql, $id, $goodsId);
     $sumCostWeight = $data[0]["sum_cost_weight"];
     if (!$sumCostWeight) {
@@ -105,12 +105,12 @@ class WSPBillDAO extends PSIBaseExDAO
     }
 
     $sql = "select b.id, g.code, g.name, g.spec, u.name as unit_name,
-						convert(b.sub_goods_count, $fmt) as sub_goods_count,
-						b.cost_weight
-				from t_wsp_bill_detail_bom b, t_goods g, t_goods_unit u
-				where b.wspbilldetail_id = '%s' and b.goods_id = '%s' 
-					and b.sub_goods_id = g.id and g.unit_id = u.id
-				order by g.code";
+              convert(b.sub_goods_count, $fmt) as sub_goods_count,
+              b.cost_weight
+            from t_wsp_bill_detail_bom b, t_goods g, t_goods_unit u
+            where b.wspbilldetail_id = '%s' and b.goods_id = '%s' 
+              and b.sub_goods_id = g.id and g.unit_id = u.id
+            order by g.code";
     $data = $db->query($sql, $id, $goodsId);
     $children = [];
     foreach ($data as $v) {
@@ -172,18 +172,18 @@ class WSPBillDAO extends PSIBaseExDAO
     if ($id) {
       // 编辑
       $sql = "select w.ref, w.bizdt, w.bill_status,
-						w.from_warehouse_id, w.to_warehouse_id,
-						fw.name as from_warehouse_name,
-						tw.name as to_warehouse_name,
-						w.biz_user_id,
-						u.name as biz_user_name,
-						w.bill_memo
-					from t_wsp_bill w, t_warehouse fw, t_warehouse tw,
-						t_user u
-					where (w.from_warehouse_id = fw.id)
-						and (w.to_warehouse_id = tw.id)
-						and (w.biz_user_id = u.id)
-						and w.id = '%s' ";
+                w.from_warehouse_id, w.to_warehouse_id,
+                fw.name as from_warehouse_name,
+                tw.name as to_warehouse_name,
+                w.biz_user_id,
+                u.name as biz_user_name,
+                w.bill_memo
+              from t_wsp_bill w, t_warehouse fw, t_warehouse tw,
+                t_user u
+              where (w.from_warehouse_id = fw.id)
+                and (w.to_warehouse_id = tw.id)
+                and (w.biz_user_id = u.id)
+                and w.id = '%s' ";
       $data = $db->query($sql, $id);
       if (!$data) {
         return $result;
@@ -206,10 +206,10 @@ class WSPBillDAO extends PSIBaseExDAO
       // 明细记录
 
       $sql = "select w.id, g.id as goods_id, g.code, g.name, g.spec, u.name as unit_name,
-						convert(w.goods_count, $fmt) as goods_count, w.memo
-					from t_wsp_bill_detail w, t_goods g, t_goods_unit u
-						where w.wspbill_id = '%s' and w.goods_id = g.id and g.unit_id = u.id
-						order by w.show_order ";
+                convert(w.goods_count, $fmt) as goods_count, w.memo
+              from t_wsp_bill_detail w, t_goods g, t_goods_unit u
+              where w.wspbill_id = '%s' and w.goods_id = g.id and g.unit_id = u.id
+              order by w.show_order ";
 
       $data = $db->query($sql, $id);
       $items = [];
@@ -298,11 +298,11 @@ class WSPBillDAO extends PSIBaseExDAO
     $id = $this->newId();
     $ref = $this->genNewBillRef($companyId);
     $sql = "insert into t_wsp_bill (id, ref, from_warehouse_id, to_warehouse_id,
-					bill_status, bizdt, biz_user_id, date_created,
-					input_user_id, data_org, company_id, bill_memo)
-				values ('%s', '%s', '%s', '%s',
-					0, '%s', '%s', now(),
-					'%s', '%s', '%s', '%s')";
+            bill_status, bizdt, biz_user_id, date_created,
+            input_user_id, data_org, company_id, bill_memo)
+          values ('%s', '%s', '%s', '%s',
+            0, '%s', '%s', now(),
+            '%s', '%s', '%s', '%s')";
     $rc = $db->execute(
       $sql,
       $id,
@@ -349,9 +349,9 @@ class WSPBillDAO extends PSIBaseExDAO
 
       $detailId = $this->newId();
       $sql = "insert into t_wsp_bill_detail (id, wspbill_id, show_order, goods_id,
-						goods_count, date_created, data_org, company_id, memo)
-					values ('%s', '%s', %d, '%s',
-						convert(%f, $fmt), now(), '%s', '%s', '%s')";
+                goods_count, date_created, data_org, company_id, memo)
+              values ('%s', '%s', %d, '%s',
+                convert(%f, $fmt), now(), '%s', '%s', '%s')";
       $rc = $db->execute(
         $sql,
         $detailId,
@@ -387,9 +387,9 @@ class WSPBillDAO extends PSIBaseExDAO
     $db = $this->db;
 
     $sql = "select sub_goods_id, convert(sub_goods_count, $fmt) as sub_goods_count,
-					cost_weight 
-				from t_goods_bom 
-				where goods_id = '%s'";
+              cost_weight 
+            from t_goods_bom 
+            where goods_id = '%s'";
     $data = $db->query($sql, $goodsId);
     foreach ($data as $v) {
       $subGoodsId = $v["sub_goods_id"];
@@ -397,9 +397,9 @@ class WSPBillDAO extends PSIBaseExDAO
       $costWeight = $v["cost_weight"];
 
       $sql = "insert into t_wsp_bill_detail_bom (id, wspbilldetail_id, goods_id, sub_goods_id,
-						parent_id, sub_goods_count, cost_weight) 
-					values ('%s', '%s', '%s', '%s',
-						null, convert(%f, $fmt), %d)";
+                parent_id, sub_goods_count, cost_weight) 
+              values ('%s', '%s', '%s', '%s',
+                null, convert(%f, $fmt), %d)";
       $rc = $db->execute(
         $sql,
         $this->newId(),
@@ -422,10 +422,10 @@ class WSPBillDAO extends PSIBaseExDAO
     $db = $this->db;
 
     $sql = "select id, goods_id, convert(goods_count, $fmt) as goods_count,
-					data_org, company_id
-				from t_wsp_bill_detail
-				where wspbill_id = '%s'
-				order by show_order";
+              data_org, company_id
+            from t_wsp_bill_detail
+            where wspbill_id = '%s'
+            order by show_order";
     $data = $db->query($sql, $wspbillId);
 
     $showOrder = 0;
@@ -437,8 +437,8 @@ class WSPBillDAO extends PSIBaseExDAO
       $companyId = $v["company_id"];
 
       $sql = "select sub_goods_id, convert(sub_goods_count, $fmt) as sub_goods_count
-					from t_wsp_bill_detail_bom
-					where wspbilldetail_id = '%s' and goods_id = '%s' ";
+              from t_wsp_bill_detail_bom
+              where wspbilldetail_id = '%s' and goods_id = '%s' ";
       $subData = $db->query($sql, $wspbillDetailId, $goodsId);
       foreach ($subData as $sv) {
         $showOrder += 1;
@@ -447,11 +447,11 @@ class WSPBillDAO extends PSIBaseExDAO
         $subGoodsCount = $sv["sub_goods_count"] * $goodsCount;
 
         $sql = "insert into t_wsp_bill_detail_ex (id, wspbill_id, show_order, goods_id,
-							goods_count, date_created, data_org, company_id, from_goods_id,
-							wspbilldetail_id)
-						values ('%s', '%s', %d, '%s',
-							convert(%f, $fmt), now(), '%s', '%s', '%s',
-							'%s')";
+                  goods_count, date_created, data_org, company_id, from_goods_id,
+                  wspbilldetail_id)
+                values ('%s', '%s', %d, '%s',
+                  convert(%f, $fmt), now(), '%s', '%s', '%s',
+                  '%s')";
 
         $rc = $db->execute(
           $sql,
@@ -534,10 +534,10 @@ class WSPBillDAO extends PSIBaseExDAO
 
     // 主表
     $sql = "update t_wsp_bill
-				set bizdt = '%s', from_warehouse_id = '%s',
-					to_warehouse_id = '%s', biz_user_id = '%s',
-					bill_memo = '%s'
-				where id = '%s' ";
+            set bizdt = '%s', from_warehouse_id = '%s',
+              to_warehouse_id = '%s', biz_user_id = '%s',
+              bill_memo = '%s'
+            where id = '%s' ";
     $rc = $db->execute(
       $sql,
       $bizDT,
@@ -609,9 +609,9 @@ class WSPBillDAO extends PSIBaseExDAO
 
       $detailId = $this->newId();
       $sql = "insert into t_wsp_bill_detail (id, wspbill_id, show_order, goods_id,
-						goods_count, date_created, data_org, company_id, memo)
-					values ('%s', '%s', %d, '%s',
-						convert(%f, $fmt), now(), '%s', '%s', '%s')";
+                goods_count, date_created, data_org, company_id, memo)
+              values ('%s', '%s', %d, '%s',
+                convert(%f, $fmt), now(), '%s', '%s', '%s')";
       $rc = $db->execute(
         $sql,
         $detailId,
@@ -663,17 +663,17 @@ class WSPBillDAO extends PSIBaseExDAO
     $goodsId = $params["goodsId"];
 
     $sql = "select w.id, w.ref, w.bizdt, w.bill_status,
-					fw.name as from_warehouse_name,
-					tw.name as to_warehouse_name,
-					u.name as biz_user_name,
-					u1.name as input_user_name,
-					w.date_created, w.bill_memo
-				from t_wsp_bill w, t_warehouse fw, t_warehouse tw,
-				   t_user u, t_user u1
-				where (w.from_warehouse_id = fw.id)
-				  and (w.to_warehouse_id = tw.id)
-				  and (w.biz_user_id = u.id)
-				  and (w.input_user_id = u1.id) ";
+              fw.name as from_warehouse_name,
+              tw.name as to_warehouse_name,
+              u.name as biz_user_name,
+              u1.name as input_user_name,
+              w.date_created, w.bill_memo
+            from t_wsp_bill w, t_warehouse fw, t_warehouse tw,
+              t_user u, t_user u1
+            where (w.from_warehouse_id = fw.id)
+              and (w.to_warehouse_id = tw.id)
+              and (w.biz_user_id = u.id)
+              and (w.input_user_id = u1.id) ";
     $queryParams = [];
 
     $ds = new DataOrgDAO($db);
@@ -736,12 +736,12 @@ class WSPBillDAO extends PSIBaseExDAO
     }
 
     $sql = "select count(*) as cnt
-				from t_wsp_bill w, t_warehouse fw, t_warehouse tw,
-				   t_user u, t_user u1
-				where (w.from_warehouse_id = fw.id)
-				  and (w.to_warehouse_id = tw.id)
-				  and (w.biz_user_id = u.id)
-				  and (w.input_user_id = u1.id) ";
+            from t_wsp_bill w, t_warehouse fw, t_warehouse tw,
+              t_user u, t_user u1
+            where (w.from_warehouse_id = fw.id)
+              and (w.to_warehouse_id = tw.id)
+              and (w.biz_user_id = u.id)
+              and (w.input_user_id = u1.id) ";
     $queryParams = [];
 
     $ds = new DataOrgDAO($db);
@@ -810,10 +810,10 @@ class WSPBillDAO extends PSIBaseExDAO
     $result = [];
 
     $sql = "select w.id, g.code, g.name, g.spec, u.name as unit_name, 
-					convert(w.goods_count, $fmt) as goods_count, w.memo
-				from t_wsp_bill_detail w, t_goods g, t_goods_unit u
-				where w.wspbill_id = '%s' and w.goods_id = g.id and g.unit_id = u.id
-				order by w.show_order ";
+              convert(w.goods_count, $fmt) as goods_count, w.memo
+            from t_wsp_bill_detail w, t_goods g, t_goods_unit u
+            where w.wspbill_id = '%s' and w.goods_id = g.id and g.unit_id = u.id
+            order by w.show_order ";
 
     $data = $db->query($sql, $id);
     foreach ($data as $v) {
@@ -853,10 +853,10 @@ class WSPBillDAO extends PSIBaseExDAO
     $result = [];
 
     $sql = "select w.id, g.code, g.name, g.spec, u.name as unit_name,
-					convert(w.goods_count, $fmt) as goods_count
-				from t_wsp_bill_detail_ex w, t_goods g, t_goods_unit u
-				where w.wspbill_id = '%s' and w.goods_id = g.id and g.unit_id = u.id
-				order by w.show_order ";
+              convert(w.goods_count, $fmt) as goods_count
+            from t_wsp_bill_detail_ex w, t_goods g, t_goods_unit u
+            where w.wspbill_id = '%s' and w.goods_id = g.id and g.unit_id = u.id
+            order by w.show_order ";
 
     $data = $db->query($sql, $id);
     foreach ($data as $v) {
@@ -960,9 +960,9 @@ class WSPBillDAO extends PSIBaseExDAO
     $id = $params["id"];
 
     $sql = "select ref, bill_status , bizdt, from_warehouse_id, to_warehouse_id,
-					company_id, data_org, biz_user_id
-				from t_wsp_bill
-				where id = '%s' ";
+              company_id, data_org, biz_user_id
+            from t_wsp_bill
+            where id = '%s' ";
     $data = $db->query($sql, $id);
     if (!$data) {
       return $this->bad("要提交的拆分单不存在");
@@ -1013,9 +1013,9 @@ class WSPBillDAO extends PSIBaseExDAO
 
     // 取明细
     $sql = "select id, goods_id, convert(goods_count, $fmt) as goods_count
-				from t_wsp_bill_detail
-				where wspbill_id = '%s' 
-				order by show_order";
+            from t_wsp_bill_detail
+            where wspbill_id = '%s' 
+            order by show_order";
     $items = $db->query($sql, $id);
 
     foreach ($items as $showOrder => $v) {
@@ -1027,9 +1027,9 @@ class WSPBillDAO extends PSIBaseExDAO
       // 要拆分的商品出库
       // 确认出库数量足够
       $sql = "select convert(balance_count, $fmt) as balance_count, 
-						balance_money, balance_price, out_count, out_money, out_price 
-					from t_inventory
-					where warehouse_id = '%s' and goods_id = '%s' ";
+                balance_money, balance_price, out_count, out_money, out_price 
+              from t_inventory
+              where warehouse_id = '%s' and goods_id = '%s' ";
       $data = $db->query($sql, $fromWarehouseId, $goodsId);
       if (!$data) {
         return $this->bad("第{$recordIndex}条商品没有库存，无法完成拆分操作");
@@ -1072,9 +1072,9 @@ class WSPBillDAO extends PSIBaseExDAO
       $totalOutPrice = $totalOutMoney / $totalOutCount;
 
       $sql = "update t_inventory
-					set balance_count = convert(%f, $fmt), balance_money = %f,
-						out_count = convert(%f, $fmt), out_money = %f, out_price = %f
-					where warehouse_id = '%s' and goods_id = '%s' ";
+              set balance_count = convert(%f, $fmt), balance_money = %f,
+                out_count = convert(%f, $fmt), out_money = %f, out_price = %f
+              where warehouse_id = '%s' and goods_id = '%s' ";
       $rc = $db->execute(
         $sql,
         $balanceCount,
@@ -1091,11 +1091,11 @@ class WSPBillDAO extends PSIBaseExDAO
 
       // 出库：更新明细账
       $sql = "insert into t_inventory_detail (warehouse_id, goods_id, out_count, out_money, out_price,
-						balance_count, balance_money, balance_price, biz_date, biz_user_id,
-						date_created, ref_number, ref_type, data_org, company_id)
-					values ('%s', '%s', convert(%f, $fmt), %f, %f,
-						convert(%f, $fmt), %f, %f, '%s', '%s',
-						now(), '%s', '存货拆分', '%s', '%s')";
+                balance_count, balance_money, balance_price, biz_date, biz_user_id,
+                date_created, ref_number, ref_type, data_org, company_id)
+              values ('%s', '%s', convert(%f, $fmt), %f, %f,
+                convert(%f, $fmt), %f, %f, '%s', '%s',
+                now(), '%s', '存货拆分', '%s', '%s')";
       $rc = $db->execute(
         $sql,
         $fromWarehouseId,
@@ -1118,8 +1118,8 @@ class WSPBillDAO extends PSIBaseExDAO
 
       // 拆分后的商品入库
       $sql = "select sum(cost_weight) as sum_cost_weight 
-					from t_wsp_bill_detail_bom
-					where wspbilldetail_id = '%s' and goods_id = '%s' ";
+              from t_wsp_bill_detail_bom
+              where wspbilldetail_id = '%s' and goods_id = '%s' ";
       $data = $db->query($sql, $detailId, $goodsId);
       $sumCostWeight = $data[0]["sum_cost_weight"];
       if (!$sumCostWeight || $sumCostWeight < 0) {
@@ -1130,9 +1130,9 @@ class WSPBillDAO extends PSIBaseExDAO
       $sumCost = $outMoney;
 
       $sql = "select sub_goods_id, convert(sub_goods_count, $fmt) as sub_goods_count,
-						cost_weight
-					from t_wsp_bill_detail_bom
-					where wspbilldetail_id = '%s' and goods_id = '%s' ";
+                cost_weight
+              from t_wsp_bill_detail_bom
+              where wspbilldetail_id = '%s' and goods_id = '%s' ";
       $subItems = $db->query($sql, $detailId, $goodsId);
       $subItemsCount = count($subItems);
       foreach ($subItems as $svIndex => $sv) {
@@ -1159,18 +1159,18 @@ class WSPBillDAO extends PSIBaseExDAO
         $balanceMoneySI = $inMoney;
         $balancePriceSI = $inPrice;
         $sql = "select convert(in_count, $fmt) as in_count, in_money, 
-							convert(balance_count, $fmt) as balance_count, balance_money
-						from t_inventory
-						where warehouse_id = '%s' and goods_id = '%s' ";
+                  convert(balance_count, $fmt) as balance_count, balance_money
+                from t_inventory
+                where warehouse_id = '%s' and goods_id = '%s' ";
         $data = $db->query($sql, $toWarehouseId, $subGoodsId);
 
         if (!$data) {
           // 首次入库
 
           $sql = "insert into t_inventory (warehouse_id, goods_id, in_count, in_money, in_price,
-								balance_count, balance_money, balance_price)
-							values ('%s', '%s', convert(%f, $fmt), %f, %f,
-								convert(%f, $fmt), %f, %f)";
+                    balance_count, balance_money, balance_price)
+                  values ('%s', '%s', convert(%f, $fmt), %f, %f,
+                    convert(%f, $fmt), %f, %f)";
           $rc = $db->execute(
             $sql,
             $toWarehouseId,
@@ -1199,9 +1199,9 @@ class WSPBillDAO extends PSIBaseExDAO
           $balancePriceSI = $balanceMoneySI / $balanceCountSI;
 
           $sql = "update t_inventory
-							set in_count = convert(%f, $fmt), in_money = %f, in_price = %f,
-								balance_count = convert(%f, $fmt), balance_money = %f, balance_price = %f
-							where warehouse_id = '%s' and goods_id = '%s' ";
+                  set in_count = convert(%f, $fmt), in_money = %f, in_price = %f,
+                    balance_count = convert(%f, $fmt), balance_money = %f, balance_price = %f
+                  where warehouse_id = '%s' and goods_id = '%s' ";
           $rc = $db->execute(
             $sql,
             $totalInCount,
@@ -1220,11 +1220,11 @@ class WSPBillDAO extends PSIBaseExDAO
 
         // 入库：更新明细账
         $sql = "insert into t_inventory_detail (warehouse_id, goods_id, in_count, in_money, in_price,
-							balance_count, balance_money, balance_price, ref_number, ref_type,
-							biz_date, biz_user_id, date_created, data_org, company_id)
-						values ('%s', '%s', convert(%f, $fmt), %f, %f,
-							convert(%f, $fmt), %f, %f, '%s', '存货拆分',
-							'%s', '%s', now(), '%s', '%s')";
+                  balance_count, balance_money, balance_price, ref_number, ref_type,
+                  biz_date, biz_user_id, date_created, data_org, company_id)
+                values ('%s', '%s', convert(%f, $fmt), %f, %f,
+                  convert(%f, $fmt), %f, %f, '%s', '存货拆分',
+                  '%s', '%s', now(), '%s', '%s')";
         $rc = $db->execute(
           $sql,
           $toWarehouseId,
@@ -1273,16 +1273,16 @@ class WSPBillDAO extends PSIBaseExDAO
     $ref = $params["ref"];
 
     $sql = "select w.id, w.bizdt,
-					fw.name as from_warehouse_name,
-					tw.name as to_warehouse_name,
-					u.name as biz_user_name,
-					w.bill_memo, w.company_id
-				from t_wsp_bill w, t_warehouse fw, t_warehouse tw,
-					t_user u
-				where (w.from_warehouse_id = fw.id)
-					and (w.to_warehouse_id = tw.id)
-					and (w.biz_user_id = u.id)
-					and w.ref = '%s' ";
+              fw.name as from_warehouse_name,
+              tw.name as to_warehouse_name,
+              u.name as biz_user_name,
+              w.bill_memo, w.company_id
+            from t_wsp_bill w, t_warehouse fw, t_warehouse tw,
+              t_user u
+            where (w.from_warehouse_id = fw.id)
+              and (w.to_warehouse_id = tw.id)
+              and (w.biz_user_id = u.id)
+              and w.ref = '%s' ";
     $data = $db->query($sql, $ref);
     if (!$data) {
       return $result;
@@ -1310,10 +1310,10 @@ class WSPBillDAO extends PSIBaseExDAO
 
     // 拆分前明细
     $sql = "select g.code, g.name, g.spec, u.name as unit_name,
-					convert(w.goods_count, $fmt) as goods_count, w.memo
-				from t_wsp_bill_detail w, t_goods g, t_goods_unit u
-				where w.wspbill_id = '%s' and w.goods_id = g.id and g.unit_id = u.id
-				order by w.show_order ";
+              convert(w.goods_count, $fmt) as goods_count, w.memo
+            from t_wsp_bill_detail w, t_goods g, t_goods_unit u
+            where w.wspbill_id = '%s' and w.goods_id = g.id and g.unit_id = u.id
+            order by w.show_order ";
 
     $data = $db->query($sql, $id);
     $items = [];
@@ -1332,10 +1332,10 @@ class WSPBillDAO extends PSIBaseExDAO
 
     // 拆分后明细
     $sql = "select g.code, g.name, g.spec, u.name as unit_name,
-					convert(w.goods_count, $fmt) as goods_count
-				from t_wsp_bill_detail_ex w, t_goods g, t_goods_unit u
-				where w.wspbill_id = '%s' and w.goods_id = g.id and g.unit_id = u.id
-				order by w.show_order ";
+              convert(w.goods_count, $fmt) as goods_count
+            from t_wsp_bill_detail_ex w, t_goods g, t_goods_unit u
+            where w.wspbill_id = '%s' and w.goods_id = g.id and g.unit_id = u.id
+            order by w.show_order ";
 
     $data = $db->query($sql, $id);
     $itemsEx = [];
@@ -1366,16 +1366,16 @@ class WSPBillDAO extends PSIBaseExDAO
     $id = $params["id"];
 
     $sql = "select w.ref, w.bizdt,
-					fw.name as from_warehouse_name,
-					tw.name as to_warehouse_name,
-					u.name as biz_user_name,
-					w.bill_memo, w.company_id
-				from t_wsp_bill w, t_warehouse fw, t_warehouse tw,
-					t_user u
-				where (w.from_warehouse_id = fw.id)
-					and (w.to_warehouse_id = tw.id)
-					and (w.biz_user_id = u.id)
-					and w.id = '%s' ";
+              fw.name as from_warehouse_name,
+              tw.name as to_warehouse_name,
+              u.name as biz_user_name,
+              w.bill_memo, w.company_id
+            from t_wsp_bill w, t_warehouse fw, t_warehouse tw,
+              t_user u
+            where (w.from_warehouse_id = fw.id)
+              and (w.to_warehouse_id = tw.id)
+              and (w.biz_user_id = u.id)
+              and w.id = '%s' ";
     $data = $db->query($sql, $id);
     if (!$data) {
       return null;
@@ -1399,10 +1399,10 @@ class WSPBillDAO extends PSIBaseExDAO
 
     // 拆分前明细
     $sql = "select g.code, g.name, g.spec, u.name as unit_name,
-					convert(w.goods_count, $fmt) as goods_count, w.memo
-				from t_wsp_bill_detail w, t_goods g, t_goods_unit u
-				where w.wspbill_id = '%s' and w.goods_id = g.id and g.unit_id = u.id
-				order by w.show_order ";
+              convert(w.goods_count, $fmt) as goods_count, w.memo
+            from t_wsp_bill_detail w, t_goods g, t_goods_unit u
+            where w.wspbill_id = '%s' and w.goods_id = g.id and g.unit_id = u.id
+            order by w.show_order ";
 
     $data = $db->query($sql, $id);
     $items = [];
@@ -1421,10 +1421,10 @@ class WSPBillDAO extends PSIBaseExDAO
 
     // 拆分后明细
     $sql = "select g.code, g.name, g.spec, u.name as unit_name,
-					convert(w.goods_count, $fmt) as goods_count
-				from t_wsp_bill_detail_ex w, t_goods g, t_goods_unit u
-				where w.wspbill_id = '%s' and w.goods_id = g.id and g.unit_id = u.id
-				order by w.show_order ";
+              convert(w.goods_count, $fmt) as goods_count
+            from t_wsp_bill_detail_ex w, t_goods g, t_goods_unit u
+            where w.wspbill_id = '%s' and w.goods_id = g.id and g.unit_id = u.id
+            order by w.show_order ";
 
     $data = $db->query($sql, $id);
     $itemsEx = [];
@@ -1465,8 +1465,8 @@ class WSPBillDAO extends PSIBaseExDAO
 
     // 检查采购入库单是否存在
     $sql = "select ref, bill_status, expand_by_bom, company_id,
-					data_org, warehouse_id, biz_dt, biz_user_id 
-				from t_pw_bill where id = '%s' ";
+              data_org, warehouse_id, biz_dt, biz_user_id 
+            from t_pw_bill where id = '%s' ";
     $data = $db->query($sql, $pwBillId);
     if (!$data) {
       return $this->bad("采购入库单不存");
@@ -1495,9 +1495,9 @@ class WSPBillDAO extends PSIBaseExDAO
     // 检查采购入库单里面商品有没有子商品
     // 如果所有的商品都没有子商品，即使是expandByBOM == 1也不需要生成拆分单
     $sql = "select goods_id, convert(goods_count, $fmt) as goods_count
-				from t_pw_bill_detail 
-				where pwbill_id = '%s'
-				order by show_order";
+            from t_pw_bill_detail 
+            where pwbill_id = '%s'
+            order by show_order";
     $data = $db->query($sql, $pwBillId);
     $items = [];
     foreach ($data as $v) {
@@ -1527,11 +1527,11 @@ class WSPBillDAO extends PSIBaseExDAO
     $toWarehouseId = $warehouseId;
     $billMemo = "从采购入库单(单号：{$pwBillRef})生成";
     $sql = "insert into t_wsp_bill (id, ref, from_warehouse_id, to_warehouse_id,
-					bill_status, bizdt, biz_user_id, date_created,
-					input_user_id, data_org, company_id, bill_memo)
-				values ('%s', '%s', '%s', '%s',
-					0, '%s', '%s', now(),
-					'%s', '%s', '%s', '%s')";
+              bill_status, bizdt, biz_user_id, date_created,
+              input_user_id, data_org, company_id, bill_memo)
+            values ('%s', '%s', '%s', '%s',
+              0, '%s', '%s', now(),
+              '%s', '%s', '%s', '%s')";
     $rc = $db->execute(
       $sql,
       $id,
@@ -1578,9 +1578,9 @@ class WSPBillDAO extends PSIBaseExDAO
 
       $detailId = $this->newId();
       $sql = "insert into t_wsp_bill_detail (id, wspbill_id, show_order, goods_id,
-						goods_count, date_created, data_org, company_id, memo)
-					values ('%s', '%s', %d, '%s',
-						convert(%f, $fmt), now(), '%s', '%s', '%s')";
+                goods_count, date_created, data_org, company_id, memo)
+              values ('%s', '%s', %d, '%s',
+                convert(%f, $fmt), now(), '%s', '%s', '%s')";
       $rc = $db->execute(
         $sql,
         $detailId,
@@ -1614,8 +1614,8 @@ class WSPBillDAO extends PSIBaseExDAO
 
     // 关联采购入库单和拆分单
     $sql = "update t_pw_bill
-				set wspbill_id = '%s'
-				where id = '%s' ";
+            set wspbill_id = '%s'
+            where id = '%s' ";
     $rc = $db->execute($sql, $id, $pwBillId);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -1638,16 +1638,16 @@ class WSPBillDAO extends PSIBaseExDAO
     $db = $this->db;
 
     $sql = "select w.id, w.bizdt,
-					fw.name as from_warehouse_name,
-					tw.name as to_warehouse_name,
-					u.name as biz_user_name,
-					w.bill_memo, w.company_id
-				from t_wsp_bill w, t_warehouse fw, t_warehouse tw,
-					t_user u
-				where (w.from_warehouse_id = fw.id)
-					and (w.to_warehouse_id = tw.id)
-					and (w.biz_user_id = u.id)
-					and w.ref = '%s' ";
+              fw.name as from_warehouse_name,
+              tw.name as to_warehouse_name,
+              u.name as biz_user_name,
+              w.bill_memo, w.company_id
+            from t_wsp_bill w, t_warehouse fw, t_warehouse tw,
+              t_user u
+            where (w.from_warehouse_id = fw.id)
+              and (w.to_warehouse_id = tw.id)
+              and (w.biz_user_id = u.id)
+              and w.ref = '%s' ";
     $data = $db->query($sql, $ref);
     if (!$data) {
       return null;
@@ -1672,10 +1672,10 @@ class WSPBillDAO extends PSIBaseExDAO
 
     // 拆分前明细
     $sql = "select g.code, g.name, g.spec, u.name as unit_name,
-					convert(w.goods_count, $fmt) as goods_count, w.memo
-				from t_wsp_bill_detail w, t_goods g, t_goods_unit u
-				where w.wspbill_id = '%s' and w.goods_id = g.id and g.unit_id = u.id
-				order by w.show_order ";
+              convert(w.goods_count, $fmt) as goods_count, w.memo
+            from t_wsp_bill_detail w, t_goods g, t_goods_unit u
+            where w.wspbill_id = '%s' and w.goods_id = g.id and g.unit_id = u.id
+            order by w.show_order ";
 
     $data = $db->query($sql, $id);
     $items = [];
@@ -1694,10 +1694,10 @@ class WSPBillDAO extends PSIBaseExDAO
 
     // 拆分后明细
     $sql = "select g.code, g.name, g.spec, u.name as unit_name,
-					convert(w.goods_count, $fmt) as goods_count
-				from t_wsp_bill_detail_ex w, t_goods g, t_goods_unit u
-				where w.wspbill_id = '%s' and w.goods_id = g.id and g.unit_id = u.id
-				order by w.show_order ";
+              convert(w.goods_count, $fmt) as goods_count
+            from t_wsp_bill_detail_ex w, t_goods g, t_goods_unit u
+            where w.wspbill_id = '%s' and w.goods_id = g.id and g.unit_id = u.id
+            order by w.show_order ";
 
     $data = $db->query($sql, $id);
     $itemsEx = [];

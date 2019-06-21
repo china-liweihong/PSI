@@ -29,8 +29,8 @@ class PermissionDAO extends PSIBaseExDAO
     $name = $params["name"];
 
     $sql = "select r.id, r.name, r.code 
-				from t_role r 
-				where (1 = 1) ";
+            from t_role r 
+            where (1 = 1) ";
     $queryParams = [];
 
     $ds = new DataOrgDAO($db);
@@ -42,16 +42,16 @@ class PermissionDAO extends PSIBaseExDAO
 
     if ($loginName) {
       $sql .= " and ( r.id in (
-						select ru.role_id
-						from  t_role_user ru, t_user u
-						where ru.user_id = u.id and u.login_name like '%s') )";
+                        select ru.role_id
+                        from  t_role_user ru, t_user u
+                        where ru.user_id = u.id and u.login_name like '%s') )";
       $queryParams[] = "%$loginName%";
     }
     if ($name) {
       $sql .= " and ( r.id in (
-						select ru.role_id
-						from  t_role_user ru, t_user u
-						where ru.user_id = u.id and (u.name like '%s' or u.py like '%s')) )";
+                        select ru.role_id
+                        from  t_role_user ru, t_user u
+                        where ru.user_id = u.id and (u.name like '%s' or u.py like '%s')) )";
       $queryParams[] = "%$name%";
       $queryParams[] = "%$name%";
     }
@@ -84,10 +84,10 @@ class PermissionDAO extends PSIBaseExDAO
     $roleId = $params["roleId"];
 
     $sql = "select p.id, p.name, p.note
-				from t_role r, t_role_permission rp, 
-					(select * from t_permission union select * from t_permission_plus) p
-				where r.id = rp.role_id and r.id = '%s' and rp.permission_id = p.id
-				order by convert(p.name USING gbk) collate gbk_chinese_ci";
+            from t_role r, t_role_permission rp, 
+              (select * from t_permission union select * from t_permission_plus) p
+            where r.id = rp.role_id and r.id = '%s' and rp.permission_id = p.id
+            order by convert(p.name USING gbk) collate gbk_chinese_ci";
     $data = $db->query($sql, $roleId);
 
     $result = [];
@@ -100,8 +100,8 @@ class PermissionDAO extends PSIBaseExDAO
       ];
 
       $sql = "select data_org
-					from t_role_permission_dataorg
-					where role_id = '%s' and permission_id = '%s' ";
+              from t_role_permission_dataorg
+              where role_id = '%s' and permission_id = '%s' ";
       $od = $db->query($sql, $roleId, $pid);
       if ($od) {
         $dataOrg = "";
@@ -135,8 +135,8 @@ class PermissionDAO extends PSIBaseExDAO
     $roleId = $params["roleId"];
 
     $sql = "select u.id, u.login_name, u.name, org.full_name
-				from t_role r, t_role_user ru, t_user u, t_org org
-				where r.id = ru.role_id and r.id = '%s' and ru.user_id = u.id and u.org_id = org.id ";
+            from t_role r, t_role_user ru, t_user u, t_org org
+            where r.id = ru.role_id and r.id = '%s' and ru.user_id = u.id and u.org_id = org.id ";
 
     $sql .= " order by convert(org.full_name USING gbk) collate gbk_chinese_ci";
     $data = $db->query($sql, $roleId);
@@ -168,8 +168,8 @@ class PermissionDAO extends PSIBaseExDAO
     $permissionId = $params["permissionId"];
 
     $sql = "select data_org
-				from t_role_permission_dataorg
-				where role_id = '%s' and permission_id = '%s' ";
+            from t_role_permission_dataorg
+            where role_id = '%s' and permission_id = '%s' ";
     $data = $db->query($sql, $roleId, $permissionId);
     $result = [];
     if ($data) {
@@ -188,8 +188,8 @@ class PermissionDAO extends PSIBaseExDAO
             $fullName = $data[0]["full_name"];
           } else {
             $sql = "select o.full_name, u.name
-							from t_org o, t_user u
-							where o.id = u.org_id and u.data_org = '%s' ";
+                    from t_org o, t_user u
+                    where o.id = u.org_id and u.data_org = '%s' ";
             $data = $db->query($sql, $dataOrg);
             if ($data) {
               $fullName = $data[0]["full_name"] . "\\" . $data[0]["name"];
@@ -221,7 +221,7 @@ class PermissionDAO extends PSIBaseExDAO
 
     $result = array();
     $sql = "select full_name, data_org
-				from t_org ";
+            from t_org ";
     $queryParams = array();
     $ds = new DataOrgDAO($db);
 
@@ -258,12 +258,12 @@ class PermissionDAO extends PSIBaseExDAO
     $result[0]["name"] = $this->ALL_CATEGORY;
 
     $sql = "select p.category from (
-					select distinct category
-					from t_permission
-					union
-					select distinct category
-					from t_permission_plus ) p
-				order by convert(p.category USING gbk) collate gbk_chinese_ci ";
+              select distinct category
+              from t_permission
+              union
+              select distinct category
+              from t_permission_plus ) p
+            order by convert(p.category USING gbk) collate gbk_chinese_ci ";
     $data = $db->query($sql);
     foreach ($data as $i => $v) {
       $result[$i + 1]["name"] = $v["category"];
@@ -285,12 +285,12 @@ class PermissionDAO extends PSIBaseExDAO
     $category = $params["category"];
 
     $sql = "select p.id, p.name, p.note, p.show_order, p.category from (
-					select id, name, note, show_order, category
-					from t_permission
-					union 
-					select id, name, note, show_order, category
-					from t_permission_plus
-				) p ";
+              select id, name, note, show_order, category
+              from t_permission
+              union 
+              select id, name, note, show_order, category
+              from t_permission_plus
+              ) p ";
 
     $queryParams = [];
     if ($category != $this->ALL_CATEGORY) {
@@ -409,7 +409,7 @@ class PermissionDAO extends PSIBaseExDAO
     $result = array();
 
     $sql = "select id, name from t_permission
-				order by convert(name USING gbk) collate gbk_chinese_ci";
+            order by convert(name USING gbk) collate gbk_chinese_ci";
     $data = $db->query($sql);
 
     $index = 0;
@@ -448,8 +448,8 @@ class PermissionDAO extends PSIBaseExDAO
     $result = [];
 
     $sql = "select u.id, u.name, u.login_name, o.full_name
-				from t_user u, t_org o
-				where (u.org_id = o.id) ";
+            from t_user u, t_org o
+            where (u.org_id = o.id) ";
     $queryParams = [];
     $ds = new DataOrgDAO($db);
     $rs = $ds->buildSQL(FIdConst::PERMISSION_MANAGEMENT, "u", $loginUserId);
@@ -548,7 +548,7 @@ class PermissionDAO extends PSIBaseExDAO
     $uid = explode(",", $userIdList);
 
     $sql = "insert into t_role (id, name, data_org, company_id, code)
-				values ('%s', '%s', '%s', '%s', '%s') ";
+            values ('%s', '%s', '%s', '%s', '%s') ";
     $rc = $db->execute($sql, $id, $name, $loginUserDataOrg, $companyId, $code);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -557,7 +557,7 @@ class PermissionDAO extends PSIBaseExDAO
     if ($pid) {
       foreach ($pid as $i => $v) {
         $sql = "insert into t_role_permission (role_id, permission_id)
-						values ('%s', '%s')";
+                values ('%s', '%s')";
         $rc = $db->execute($sql, $id, $v);
         if ($rc === false) {
           return $this->sqlError(__METHOD__, __LINE__);
@@ -565,7 +565,7 @@ class PermissionDAO extends PSIBaseExDAO
 
         // 权限的数据域
         $sql = "delete from t_role_permission_dataorg
-						where role_id = '%s' and permission_id = '%s' ";
+                where role_id = '%s' and permission_id = '%s' ";
         $rc = $db->execute($sql, $id, $v);
         if ($rc === false) {
           return $this->sqlError(__METHOD__, __LINE__);
@@ -579,7 +579,7 @@ class PermissionDAO extends PSIBaseExDAO
           }
 
           $sql = "insert into t_role_permission_dataorg(role_id, permission_id, data_org)
-							values ('%s', '%s', '%s')";
+                  values ('%s', '%s', '%s')";
           $rc = $db->execute($sql, $id, $v, $item);
           if ($rc === false) {
             return $this->sqlError(__METHOD__, __LINE__);
@@ -591,7 +591,7 @@ class PermissionDAO extends PSIBaseExDAO
     if ($uid) {
       foreach ($uid as $v) {
         $sql = "insert into t_role_user (role_id, user_id)
-						values ('%s', '%s') ";
+                values ('%s', '%s') ";
         $rc = $db->execute($sql, $id, $v);
         if ($rc === false) {
           return $this->sqlError(__METHOD__, __LINE__);
@@ -632,8 +632,8 @@ class PermissionDAO extends PSIBaseExDAO
     $uid = explode(",", $userIdList);
 
     $sql = "update t_role 
-				set name = '%s', code = '%s' 
-				where id = '%s' ";
+            set name = '%s', code = '%s' 
+            where id = '%s' ";
     $rc = $db->execute($sql, $name, $code, $id);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -654,7 +654,7 @@ class PermissionDAO extends PSIBaseExDAO
     if ($pid) {
       foreach ($pid as $i => $v) {
         $sql = "insert into t_role_permission (role_id, permission_id)
-						values ('%s', '%s')";
+                values ('%s', '%s')";
         $rc = $db->execute($sql, $id, $v);
         if ($rc === false) {
           return $this->sqlError(__METHOD__, __LINE__);
@@ -662,7 +662,7 @@ class PermissionDAO extends PSIBaseExDAO
 
         // 权限的数据域
         $sql = "delete from t_role_permission_dataorg
-						where role_id = '%s' and permission_id = '%s' ";
+                where role_id = '%s' and permission_id = '%s' ";
         $rc = $db->execute($sql, $id, $v);
         if ($rc === false) {
           return $this->sqlError(__METHOD__, __LINE__);
@@ -676,7 +676,7 @@ class PermissionDAO extends PSIBaseExDAO
           }
 
           $sql = "insert into t_role_permission_dataorg(role_id, permission_id, data_org)
-							values ('%s', '%s', '%s')";
+                  values ('%s', '%s', '%s')";
           $rc = $db->execute($sql, $id, $v, $item);
           if ($rc === false) {
             return $this->sqlError(__METHOD__, __LINE__);
@@ -688,7 +688,7 @@ class PermissionDAO extends PSIBaseExDAO
     if ($uid) {
       foreach ($uid as $v) {
         $sql = "insert into t_role_user (role_id, user_id)
-						values ('%s', '%s') ";
+                values ('%s', '%s') ";
         $rc = $db->execute($sql, $id, $v);
         if ($rc === false) {
           return $this->sqlError(__METHOD__, __LINE__);

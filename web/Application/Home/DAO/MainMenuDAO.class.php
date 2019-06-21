@@ -18,8 +18,8 @@ class MainMenuDAO extends PSIBaseExDAO
     $db = $this->db;
 
     $sql = "select id, caption, fid, show_order, sys_item 
-				from (select *, 1 as sys_item from t_menu_item union select *, 2 as sys_item from t_menu_item_plus) m
-					where parent_id is null order by show_order";
+            from (select *, 1 as sys_item from t_menu_item union select *, 2 as sys_item from t_menu_item_plus) m
+            where parent_id is null order by show_order";
     $m1 = $db->query($sql);
     $result = [];
 
@@ -31,8 +31,8 @@ class MainMenuDAO extends PSIBaseExDAO
       $children1 = [];
 
       $sql = "select id, caption, fid, show_order, sys_item 
-					from (select *, 1 as sys_item from t_menu_item union select *, 2 as sys_item from t_menu_item_plus) m
-						where parent_id = '%s' order by show_order ";
+              from (select *, 1 as sys_item from t_menu_item union select *, 2 as sys_item from t_menu_item_plus) m
+              where parent_id = '%s' order by show_order ";
       $m2 = $db->query($sql, $menuItem1["id"]);
 
       // 第二级菜单
@@ -40,8 +40,8 @@ class MainMenuDAO extends PSIBaseExDAO
       foreach ($m2 as $menuItem2) {
         $children2 = [];
         $sql = "select id, caption, fid, show_order, sys_item 
-						from (select *, 1 as sys_item from t_menu_item union select *, 2 as sys_item from t_menu_item_plus) m
-							where parent_id = '%s' order by show_order ";
+                from (select *, 1 as sys_item from t_menu_item union select *, 2 as sys_item from t_menu_item_plus) m
+                where parent_id = '%s' order by show_order ";
         $m3 = $db->query($sql, $menuItem2["id"]);
 
         // 第三级菜单
@@ -105,8 +105,8 @@ class MainMenuDAO extends PSIBaseExDAO
     $queryKey = $params["queryKey"] ?? "";
 
     $sql = "select fid, name from t_fid_plus
-				where fid like '%s' or name like '%s' 
-				order by fid limit 20";
+            where fid like '%s' or name like '%s' 
+            order by fid limit 20";
     $queryParams = [];
     $queryParams[] = "%{$queryKey}%";
     $queryParams[] = "%{$queryKey}%";
@@ -134,9 +134,9 @@ class MainMenuDAO extends PSIBaseExDAO
     $queryKey = $params["queryKey"] ?? "";
 
     $sql = "select id, caption, parent_id
-				from t_menu_item
-				where fid is null and caption like '%s' 
-				order by id limit 20";
+            from t_menu_item
+            where fid is null and caption like '%s' 
+            order by id limit 20";
     $queryParams = [];
     $queryParams[] = "%{$queryKey}%";
 
@@ -220,7 +220,7 @@ class MainMenuDAO extends PSIBaseExDAO
     $id = $this->newId();
 
     $sql = "insert into t_menu_item_plus (id, caption, fid, parent_id, show_order)
-				values ('%s', '%s', '%s', '%s', %d)";
+            values ('%s', '%s', '%s', '%s', %d)";
     $rc = $db->execute($sql, $id, $caption, $fid, $parentMenuId, $showOrder);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -277,8 +277,8 @@ class MainMenuDAO extends PSIBaseExDAO
     $id = $params["id"];
 
     $sql = "select fid, caption, parent_id, show_order
-				from t_menu_item_plus
-				where id = '%s' ";
+            from t_menu_item_plus
+            where id = '%s' ";
     $data = $db->query($sql, $id);
     if ($data) {
       $v = $data[0];
@@ -356,9 +356,9 @@ class MainMenuDAO extends PSIBaseExDAO
     }
 
     $sql = "update t_menu_item_plus
-					set caption = '%s', fid = '%s', parent_id = '%s',
-						show_order = %d
-				where id = '%s' ";
+            set caption = '%s', fid = '%s', parent_id = '%s',
+              show_order = %d
+            where id = '%s' ";
     $rc = $db->execute($sql, $caption, $fid, $parentMenuId, $showOrder, $id);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);

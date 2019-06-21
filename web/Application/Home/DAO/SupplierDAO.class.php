@@ -42,7 +42,7 @@ class SupplierDAO extends PSIBaseExDAO
     }
 
     $sql = "select c.id, c.code, c.name
-				from t_supplier_category c ";
+            from t_supplier_category c ";
     $queryParam = [];
     $ds = new DataOrgDAO($db);
     $rs = $ds->buildSQL(FIdConst::SUPPLIER_CATEGORY, "c", $loginUserId);
@@ -60,8 +60,8 @@ class SupplierDAO extends PSIBaseExDAO
 
       $queryParam = [];
       $sql = "select count(s.id) as cnt
-					from t_supplier s
-					where (s.category_id = '%s') ";
+              from t_supplier s
+              where (s.category_id = '%s') ";
       $queryParam[] = $id;
       if ($code) {
         $sql .= " and (s.code like '%s') ";
@@ -155,12 +155,12 @@ class SupplierDAO extends PSIBaseExDAO
     }
 
     $sql = "select id, category_id, code, name, contact01, qq01, tel01, mobile01,
-					contact02, qq02, tel02, mobile02, init_payables, init_payables_dt,
-					address, address_shipping,
-					bank_name, bank_account, tax_number, fax, note, data_org, tax_rate,
-					record_status, goods_range
-				from t_supplier
-				where (category_id = '%s')";
+              contact02, qq02, tel02, mobile02, init_payables, init_payables_dt,
+              address, address_shipping,
+              bank_name, bank_account, tax_number, fax, note, data_org, tax_rate,
+              record_status, goods_range
+            from t_supplier
+            where (category_id = '%s')";
     $queryParam = [];
     $queryParam[] = $categoryId;
     if ($code) {
@@ -212,7 +212,7 @@ class SupplierDAO extends PSIBaseExDAO
     $queryParam[] = $start;
     $queryParam[] = $limit;
     $sql .= " order by code
-				limit %d, %d";
+              limit %d, %d";
     $result = [];
     $data = $db->query($sql, $queryParam);
     foreach ($data as $v) {
@@ -349,7 +349,7 @@ class SupplierDAO extends PSIBaseExDAO
     $params["id"] = $id;
 
     $sql = "insert into t_supplier_category (id, code, name, data_org, company_id)
-					values ('%s', '%s', '%s', '%s', '%s') ";
+            values ('%s', '%s', '%s', '%s', '%s') ";
     $rc = $db->execute($sql, $id, $code, $name, $dataOrg, $companyId);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -389,8 +389,8 @@ class SupplierDAO extends PSIBaseExDAO
     }
 
     $sql = "update t_supplier_category
-				set code = '%s', name = '%s'
-				where id = '%s' ";
+            set code = '%s', name = '%s'
+            where id = '%s' ";
     $rc = $db->execute($sql, $code, $name, $id);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -444,8 +444,8 @@ class SupplierDAO extends PSIBaseExDAO
     $name = $params["name"];
 
     $sql = "select count(*) as cnt 
-				from t_supplier 
-				where category_id = '%s' ";
+            from t_supplier 
+            where category_id = '%s' ";
     $query = $db->query($sql, $id);
     $cnt = $query[0]["cnt"];
     if ($cnt > 0) {
@@ -527,14 +527,14 @@ class SupplierDAO extends PSIBaseExDAO
     $params["id"] = $id;
 
     $sql = "insert into t_supplier (id, category_id, code, name, py, contact01,
-					qq01, tel01, mobile01, contact02, qq02,
-					tel02, mobile02, address, address_shipping,
-					bank_name, bank_account, tax_number, fax, note, data_org, company_id, tax_rate,
-					record_status, goods_range)
-				values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
-						'%s', '%s', '%s', '%s',
-						'%s', '%s', '%s', '%s', '%s', '%s', '%s', %d,
-						%d, %d)  ";
+              qq01, tel01, mobile01, contact02, qq02,
+              tel02, mobile02, address, address_shipping,
+              bank_name, bank_account, tax_number, fax, note, data_org, company_id, tax_rate,
+              record_status, goods_range)
+            values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
+              '%s', '%s', '%s', '%s',
+              '%s', '%s', '%s', '%s', '%s', '%s', '%s', %d,
+              %d, %d)  ";
     $rc = $db->execute(
       $sql,
       $id,
@@ -595,9 +595,9 @@ class SupplierDAO extends PSIBaseExDAO
     }
 
     $sql = "select count(*) as cnt
-				from t_payables_detail
-				where ca_id = '%s' and ca_type = 'supplier' and ref_type <> '应付账款期初建账'
-					and company_id = '%s' ";
+            from t_payables_detail
+            where ca_id = '%s' and ca_type = 'supplier' and ref_type <> '应付账款期初建账'
+              and company_id = '%s' ";
     $data = $db->query($sql, $id, $companyId);
     $cnt = $data[0]["cnt"];
     if ($cnt > 0) {
@@ -608,8 +608,8 @@ class SupplierDAO extends PSIBaseExDAO
     $initPayables = floatval($initPayables);
     if ($initPayables && $initPayablesDT) {
       $sql = "update t_supplier
-					set init_payables = %f, init_payables_dt = '%s'
-					where id = '%s' ";
+              set init_payables = %f, init_payables_dt = '%s'
+              where id = '%s' ";
       $rc = $db->execute($sql, $initPayables, $initPayablesDT, $id);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -617,14 +617,14 @@ class SupplierDAO extends PSIBaseExDAO
 
       // 应付明细账
       $sql = "select id from t_payables_detail
-					where ca_id = '%s' and ca_type = 'supplier' and ref_type = '应付账款期初建账'
-						and company_id = '%s' ";
+              where ca_id = '%s' and ca_type = 'supplier' and ref_type = '应付账款期初建账'
+                and company_id = '%s' ";
       $data = $db->query($sql, $id, $companyId);
       if ($data) {
         $payId = $data[0]["id"];
         $sql = "update t_payables_detail
-						set pay_money = %f ,  balance_money = %f , biz_date = '%s', date_created = now(), act_money = 0
-						where id = '%s' ";
+                set pay_money = %f ,  balance_money = %f , biz_date = '%s', date_created = now(), act_money = 0
+                where id = '%s' ";
         $rc = $db->execute($sql, $initPayables, $initPayables, $initPayablesDT, $payId);
         if ($rc === false) {
           return $this->sqlError(__METHOD__, __LINE__);
@@ -633,8 +633,8 @@ class SupplierDAO extends PSIBaseExDAO
         $idGen = new IdGenDAO($db);
         $payId = $idGen->newId();
         $sql = "insert into t_payables_detail (id, pay_money, act_money, balance_money, ca_id,
-						ca_type, ref_type, ref_number, biz_date, date_created, data_org, company_id)
-						values ('%s', %f, 0, %f, '%s', 'supplier', '应付账款期初建账', '%s', '%s', now(), '%s', '%s') ";
+                  ca_type, ref_type, ref_number, biz_date, date_created, data_org, company_id)
+                values ('%s', %f, 0, %f, '%s', 'supplier', '应付账款期初建账', '%s', '%s', now(), '%s', '%s') ";
         $rc = $db->execute(
           $sql,
           $payId,
@@ -653,14 +653,14 @@ class SupplierDAO extends PSIBaseExDAO
 
       // 应付总账
       $sql = "select id from t_payables
-					where ca_id = '%s' and ca_type = 'supplier'
-						and company_id = '%s' ";
+              where ca_id = '%s' and ca_type = 'supplier'
+                and company_id = '%s' ";
       $data = $db->query($sql, $id, $companyId);
       if ($data) {
         $pId = $data[0]["id"];
         $sql = "update t_payables
-						set pay_money = %f ,  balance_money = %f , act_money = 0
-						where id = '%s' ";
+                set pay_money = %f ,  balance_money = %f , act_money = 0
+                where id = '%s' ";
         $rc = $db->execute($sql, $initPayables, $initPayables, $pId);
         if ($rc === false) {
           return $this->sqlError(__METHOD__, __LINE__);
@@ -669,8 +669,8 @@ class SupplierDAO extends PSIBaseExDAO
         $idGen = new IdGenDAO($db);
         $pId = $idGen->newId();
         $sql = "insert into t_payables (id, pay_money, act_money, balance_money, ca_id,
-							ca_type, data_org, company_id)
-						values ('%s', %f, 0, %f, '%s', 'supplier', '%s', '%s') ";
+                  ca_type, data_org, company_id)
+                values ('%s', %f, 0, %f, '%s', 'supplier', '%s', '%s') ";
         $rc = $db->execute(
           $sql,
           $pId,
@@ -687,8 +687,8 @@ class SupplierDAO extends PSIBaseExDAO
     } else {
       // 清除应付账款初始化数据
       $sql = "update t_supplier
-					set init_payables = null, init_payables_dt = null
-					where id = '%s' ";
+              set init_payables = null, init_payables_dt = null
+              where id = '%s' ";
       $rc = $db->execute($sql, $id);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -696,8 +696,8 @@ class SupplierDAO extends PSIBaseExDAO
 
       // 明细账
       $sql = "delete from t_payables_detail
-					where ca_id = '%s' and ca_type = 'supplier' and ref_type = '应付账款期初建账'
-						and company_id = '%s' ";
+              where ca_id = '%s' and ca_type = 'supplier' and ref_type = '应付账款期初建账'
+                and company_id = '%s' ";
       $rc = $db->execute($sql, $id, $companyId);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -705,8 +705,8 @@ class SupplierDAO extends PSIBaseExDAO
 
       // 总账
       $sql = "delete from t_payables
-					where ca_id = '%s' and ca_type = 'supplier'
-						and company_id = '%s' ";
+              where ca_id = '%s' and ca_type = 'supplier'
+                and company_id = '%s' ";
       $rc = $db->execute($sql, $id, $companyId);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -770,14 +770,14 @@ class SupplierDAO extends PSIBaseExDAO
     }
 
     $sql = "update t_supplier
-				set code = '%s', name = '%s', category_id = '%s', py = '%s',
-					contact01 = '%s', qq01 = '%s', tel01 = '%s', mobile01 = '%s',
-					contact02 = '%s', qq02 = '%s', tel02 = '%s', mobile02 = '%s',
-					address = '%s', address_shipping = '%s',
-					bank_name = '%s', bank_account = '%s', tax_number = '%s',
-					fax = '%s', note = '%s', tax_rate = %d, record_status = %d,
-					goods_range = %d
-				where id = '%s'  ";
+            set code = '%s', name = '%s', category_id = '%s', py = '%s',
+              contact01 = '%s', qq01 = '%s', tel01 = '%s', mobile01 = '%s',
+              contact02 = '%s', qq02 = '%s', tel02 = '%s', mobile02 = '%s',
+              address = '%s', address_shipping = '%s',
+              bank_name = '%s', bank_account = '%s', tax_number = '%s',
+              fax = '%s', note = '%s', tax_rate = %d, record_status = %d,
+              goods_range = %d
+            where id = '%s'  ";
 
     $rc = $db->execute(
       $sql,
@@ -842,9 +842,9 @@ class SupplierDAO extends PSIBaseExDAO
       return $this->bad("供应商档案 [{$code} {$name}] 在采购入库单中已经被使用，不能删除");
     }
     $sql = "select count(*) as cnt
-				from t_payables_detail p, t_payment m
-				where p.ref_type = m.ref_type and p.ref_number = m.ref_number
-				and p.ca_id = '%s' and p.ca_type = 'supplier' ";
+            from t_payables_detail p, t_payment m
+            where p.ref_type = m.ref_type and p.ref_number = m.ref_number
+              and p.ca_id = '%s' and p.ca_type = 'supplier' ";
     $data = $db->query($sql, $id);
     $cnt = $data[0]["cnt"];
     if ($cnt > 0) {
@@ -946,9 +946,9 @@ class SupplierDAO extends PSIBaseExDAO
     }
 
     $sql = "select id, code, name, tel01, fax, address_shipping, contact01, tax_rate
-				from t_supplier
-				where (record_status = 1000)
-					and (code like '%s' or name like '%s' or py like '%s') ";
+            from t_supplier
+            where (record_status = 1000)
+              and (code like '%s' or name like '%s' or py like '%s') ";
     $queryParams = array();
     $key = "%{$queryKey}%";
     $queryParams[] = $key;
@@ -963,7 +963,7 @@ class SupplierDAO extends PSIBaseExDAO
     }
 
     $sql .= " order by code
-				limit 20";
+              limit 20";
     $data = $db->query($sql, $queryParams);
 
     $result = [];
@@ -1004,12 +1004,12 @@ class SupplierDAO extends PSIBaseExDAO
     $result = array();
 
     $sql = "select category_id, code, name, contact01, qq01, mobile01, tel01,
-					contact02, qq02, mobile02, tel02, address, address_shipping,
-					init_payables, init_payables_dt,
-					bank_name, bank_account, tax_number, fax, note, tax_rate,
-					record_status, goods_range
-				from t_supplier
-				where id = '%s' ";
+              contact02, qq02, mobile02, tel02, address, address_shipping,
+              init_payables, init_payables_dt,
+              bank_name, bank_account, tax_number, fax, note, tax_rate,
+              record_status, goods_range
+            from t_supplier
+            where id = '%s' ";
     $data = $db->query($sql, $id);
     if ($data) {
       $result["categoryId"] = $data[0]["category_id"];
@@ -1078,8 +1078,8 @@ class SupplierDAO extends PSIBaseExDAO
 
     // 检查是否已经关联该商品分类了
     $sql = "select count(*) as cnt 
-				from t_supplier_goods_range
-				where supplier_id = '%s' and g_id = '%s' and g_id_type = 2";
+            from t_supplier_goods_range
+            where supplier_id = '%s' and g_id = '%s' and g_id_type = 2";
     $data = $db->query($sql, $id, $categoryId);
     $cnt = $data[0]["cnt"];
     if ($cnt > 0) {
@@ -1087,7 +1087,7 @@ class SupplierDAO extends PSIBaseExDAO
     }
 
     $sql = "insert into t_supplier_goods_range (id, supplier_id, g_id, g_id_type)
-				values ('%s', '%s', '%s', 2)";
+            values ('%s', '%s', '%s', 2)";
     $rc = $db->execute($sql, $this->newId(), $id, $categoryId);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -1125,7 +1125,7 @@ class SupplierDAO extends PSIBaseExDAO
 
     foreach ($idList as $grId) {
       $sql = "delete from t_supplier_goods_range 
-					where supplier_id = '%s' and id = '%s' and g_id_type = 2";
+              where supplier_id = '%s' and id = '%s' and g_id_type = 2";
       $rc = $db->execute($sql, $id, $grId);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -1149,9 +1149,9 @@ class SupplierDAO extends PSIBaseExDAO
     $id = $params["id"];
 
     $sql = "select r.id, g.code, g.name, g.spec
-				from t_supplier_goods_range r, t_goods g
-				where r.supplier_id = '%s' and r.g_id = g.id and r.g_id_type = 1
-				order by g.code";
+            from t_supplier_goods_range r, t_goods g
+            where r.supplier_id = '%s' and r.g_id = g.id and r.g_id_type = 1
+            order by g.code";
 
     $result = [];
 
@@ -1196,8 +1196,8 @@ class SupplierDAO extends PSIBaseExDAO
 
     // 检查是否已经关联过该商品了
     $sql = "select count(*) as cnt
-				from t_supplier_goods_range
-				where supplier_id = '%s' and g_id = '%s' and g_id_type = 1";
+            from t_supplier_goods_range
+            where supplier_id = '%s' and g_id = '%s' and g_id_type = 1";
     $data = $db->query($sql, $id, $goodsId);
     $cnt = $data[0]["cnt"];
     if ($cnt > 0) {
@@ -1205,7 +1205,7 @@ class SupplierDAO extends PSIBaseExDAO
     }
 
     $sql = "insert into t_supplier_goods_range (id, supplier_id, g_id, g_id_type)
-				values ('%s', '%s', '%s', 1)";
+            values ('%s', '%s', '%s', 1)";
     $rc = $db->execute($sql, $this->newId(), $id, $goodsId);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -1242,7 +1242,7 @@ class SupplierDAO extends PSIBaseExDAO
 
     foreach ($idList as $grId) {
       $sql = "delete from t_supplier_goods_range
-					where supplier_id = '%s' and id = '%s' and g_id_type = 1";
+              where supplier_id = '%s' and id = '%s' and g_id_type = 1";
       $rc = $db->execute($sql, $id, $grId);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -1281,9 +1281,9 @@ class SupplierDAO extends PSIBaseExDAO
 
     // 商品分类
     $sql = "select count(*) as cnt
-				from t_supplier_goods_range r, t_goods g, t_goods_category c
-				where r.supplier_id = '%s' and r.g_id = c.id 
-					and c.id  = g.category_id and g.id = '%s' ";
+            from t_supplier_goods_range r, t_goods g, t_goods_category c
+            where r.supplier_id = '%s' and r.g_id = c.id 
+              and c.id  = g.category_id and g.id = '%s' ";
     $data = $db->query($sql, $supplierId, $goodsId);
     $cnt = $data[0]["cnt"];
     if ($cnt > 0) {
@@ -1292,8 +1292,8 @@ class SupplierDAO extends PSIBaseExDAO
 
     // 个别商品
     $sql = "select count(*) as cnt 
-				from t_supplier_goods_range r, t_goods g
-				where r.supplier_id = '%s' and r.g_id = g.id and g.id = '%s' ";
+            from t_supplier_goods_range r, t_goods g
+            where r.supplier_id = '%s' and r.g_id = g.id and g.id = '%s' ";
     $data = $db->query($sql, $supplierId, $goodsId);
     $cnt = $data[0]["cnt"];
     if ($cnt > 0) {

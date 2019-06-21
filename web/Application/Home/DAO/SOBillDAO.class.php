@@ -70,13 +70,13 @@ class SOBillDAO extends PSIBaseExDAO
 
     $result = array();
     $sql = "select s.id, s.ref, s.bill_status, s.goods_money, s.tax, s.money_with_tax,
-					c.name as customer_name, s.contact, s.tel, s.fax, s.deal_address,
-					s.deal_date, s.receiving_type, s.bill_memo, s.date_created,
-					o.full_name as org_name, u1.name as biz_user_name, u2.name as input_user_name,
-					s.confirm_user_id, s.confirm_date
-				from t_so_bill s, t_customer c, t_org o, t_user u1, t_user u2
-				where (s.customer_id = c.id) and (s.org_id = o.id)
-					and (s.biz_user_id = u1.id) and (s.input_user_id = u2.id) ";
+              c.name as customer_name, s.contact, s.tel, s.fax, s.deal_address,
+              s.deal_date, s.receiving_type, s.bill_memo, s.date_created,
+              o.full_name as org_name, u1.name as biz_user_name, u2.name as input_user_name,
+              s.confirm_user_id, s.confirm_date
+            from t_so_bill s, t_customer c, t_org o, t_user u1, t_user u2
+            where (s.customer_id = c.id) and (s.org_id = o.id)
+              and (s.biz_user_id = u1.id) and (s.input_user_id = u2.id) ";
 
     $ds = new DataOrgDAO($db);
     $rs = $ds->buildSQL(FIdConst::SALE_ORDER, "s", $loginUserId);
@@ -119,7 +119,7 @@ class SOBillDAO extends PSIBaseExDAO
       $queryParams[] = $goodsId;
     }
     $sql .= " order by s.deal_date desc, s.ref desc
-				  limit %d , %d";
+              limit %d , %d";
     $queryParams[] = $start;
     $queryParams[] = $limit;
     $data = $db->query($sql, $queryParams);
@@ -155,7 +155,7 @@ class SOBillDAO extends PSIBaseExDAO
 
       // 查询是否生成了销售出库单
       $sql = "select count(*) as cnt from t_so_ws
-					where so_id = '%s' ";
+              where so_id = '%s' ";
       $d = $db->query($sql, $v["id"]);
       $cnt = $d[0]["cnt"];
       $genPWBill = $cnt > 0 ? "▲" : "";
@@ -163,10 +163,10 @@ class SOBillDAO extends PSIBaseExDAO
     }
 
     $sql = "select count(*) as cnt
-				from t_so_bill s, t_customer c, t_org o, t_user u1, t_user u2
-				where (s.customer_id = c.id) and (s.org_id = o.id)
-					and (s.biz_user_id = u1.id) and (s.input_user_id = u2.id)
-				";
+            from t_so_bill s, t_customer c, t_org o, t_user u1, t_user u2
+            where (s.customer_id = c.id) and (s.org_id = o.id)
+              and (s.biz_user_id = u1.id) and (s.input_user_id = u2.id)
+            ";
     $queryParams = array();
     $ds = new DataOrgDAO($db);
     $rs = $ds->buildSQL(FIdConst::SALE_ORDER, "s", $loginUserId);
@@ -239,13 +239,13 @@ class SOBillDAO extends PSIBaseExDAO
     $id = $params["id"];
 
     $sql = "select s.id, g.code, g.name, g.spec, convert(s.goods_count, " . $fmt . ") as goods_count,
-					s.goods_price, s.goods_money,
-					s.tax_rate, s.tax, s.money_with_tax, u.name as unit_name,
-					convert(s.ws_count, " . $fmt . ") as ws_count,
-					convert(s.left_count, " . $fmt . ") as left_count, s.memo, s.goods_price_with_tax
-				from t_so_bill_detail s, t_goods g, t_goods_unit u
-				where s.sobill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
-				order by s.show_order";
+              s.goods_price, s.goods_money,
+              s.tax_rate, s.tax, s.money_with_tax, u.name as unit_name,
+              convert(s.ws_count, " . $fmt . ") as ws_count,
+              convert(s.left_count, " . $fmt . ") as left_count, s.memo, s.goods_price_with_tax
+            from t_so_bill_detail s, t_goods g, t_goods_unit u
+            where s.sobill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
+            order by s.show_order";
     $result = array();
     $data = $db->query($sql, $id);
 
@@ -352,11 +352,11 @@ class SOBillDAO extends PSIBaseExDAO
 
     // 主表
     $sql = "insert into t_so_bill(id, ref, bill_status, deal_date, biz_dt, org_id, biz_user_id,
-					goods_money, tax, money_with_tax, input_user_id, customer_id, contact, tel, fax,
-					deal_address, bill_memo, receiving_type, date_created, data_org, company_id)
-				values ('%s', '%s', 0, '%s', '%s', '%s', '%s',
-					0, 0, 0, '%s', '%s', '%s', '%s', '%s',
-					'%s', '%s', %d, now(), '%s', '%s')";
+              goods_money, tax, money_with_tax, input_user_id, customer_id, contact, tel, fax,
+              deal_address, bill_memo, receiving_type, date_created, data_org, company_id)
+            values ('%s', '%s', 0, '%s', '%s', '%s', '%s',
+              0, 0, 0, '%s', '%s', '%s', '%s', '%s',
+              '%s', '%s', %d, now(), '%s', '%s')";
     $rc = $db->execute(
       $sql,
       $id,
@@ -397,10 +397,10 @@ class SOBillDAO extends PSIBaseExDAO
       $scbillDetailId = $v["scbillDetailId"];
 
       $sql = "insert into t_so_bill_detail(id, date_created, goods_id, goods_count, goods_money,
-						goods_price, sobill_id, tax_rate, tax, money_with_tax, ws_count, left_count,
-						show_order, data_org, company_id, memo, scbilldetail_id, goods_price_with_tax)
-					values ('%s', now(), '%s', convert(%f, $fmt), %f,
-						%f, '%s', %d, %f, %f, 0, convert(%f, $fmt), %d, '%s', '%s', '%s', '%s', %f)";
+                goods_price, sobill_id, tax_rate, tax, money_with_tax, ws_count, left_count,
+                show_order, data_org, company_id, memo, scbilldetail_id, goods_price_with_tax)
+              values ('%s', now(), '%s', convert(%f, $fmt), %f,
+                %f, '%s', %d, %f, %f, 0, convert(%f, $fmt), %d, '%s', '%s', '%s', '%s', %f)";
       $rc = $db->execute(
         $sql,
         $this->newId(),
@@ -427,9 +427,9 @@ class SOBillDAO extends PSIBaseExDAO
 
     // 同步主表的金额合计字段
     $sql = "select sum(goods_money) as sum_goods_money, sum(tax) as sum_tax,
-					sum(money_with_tax) as sum_money_with_tax
-				from t_so_bill_detail
-				where sobill_id = '%s' ";
+              sum(money_with_tax) as sum_money_with_tax
+            from t_so_bill_detail
+            where sobill_id = '%s' ";
     $data = $db->query($sql, $id);
     $sumGoodsMoney = $data[0]["sum_goods_money"];
     if (!$sumGoodsMoney) {
@@ -445,8 +445,8 @@ class SOBillDAO extends PSIBaseExDAO
     }
 
     $sql = "update t_so_bill
-				set goods_money = %f, tax = %f, money_with_tax = %f
-				where id = '%s' ";
+            set goods_money = %f, tax = %f, money_with_tax = %f
+            where id = '%s' ";
     $rc = $db->execute($sql, $sumGoodsMoney, $sumTax, $sumMoneyWithTax, $id);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -589,10 +589,10 @@ class SOBillDAO extends PSIBaseExDAO
       $scbillDetailId = $v["scbillDetailId"];
 
       $sql = "insert into t_so_bill_detail(id, date_created, goods_id, goods_count, goods_money,
-						goods_price, sobill_id, tax_rate, tax, money_with_tax, ws_count, left_count,
-						show_order, data_org, company_id, memo, scbilldetail_id, goods_price_with_tax)
-					values ('%s', now(), '%s', convert(%f, $fmt), %f,
-						%f, '%s', %d, %f, %f, 0, convert(%f, $fmt), %d, '%s', '%s', '%s', '%s', %f)";
+                goods_price, sobill_id, tax_rate, tax, money_with_tax, ws_count, left_count,
+                show_order, data_org, company_id, memo, scbilldetail_id, goods_price_with_tax)
+              values ('%s', now(), '%s', convert(%f, $fmt), %f,
+                %f, '%s', %d, %f, %f, 0, convert(%f, $fmt), %d, '%s', '%s', '%s', '%s', %f)";
       $rc = $db->execute(
         $sql,
         $this->newId(),
@@ -619,9 +619,9 @@ class SOBillDAO extends PSIBaseExDAO
 
     // 同步主表的金额合计字段
     $sql = "select sum(goods_money) as sum_goods_money, sum(tax) as sum_tax,
-					sum(money_with_tax) as sum_money_with_tax
-				from t_so_bill_detail
-				where sobill_id = '%s' ";
+              sum(money_with_tax) as sum_money_with_tax
+            from t_so_bill_detail
+            where sobill_id = '%s' ";
     $data = $db->query($sql, $id);
     $sumGoodsMoney = $data[0]["sum_goods_money"];
     if (!$sumGoodsMoney) {
@@ -637,12 +637,12 @@ class SOBillDAO extends PSIBaseExDAO
     }
 
     $sql = "update t_so_bill
-				set goods_money = %f, tax = %f, money_with_tax = %f,
-					deal_date = '%s', customer_id = '%s',
-					deal_address = '%s', contact = '%s', tel = '%s', fax = '%s',
-					org_id = '%s', biz_user_id = '%s', receiving_type = %d,
-					bill_memo = '%s', input_user_id = '%s', date_created = now()
-				where id = '%s' ";
+            set goods_money = %f, tax = %f, money_with_tax = %f,
+              deal_date = '%s', customer_id = '%s',
+              deal_address = '%s', contact = '%s', tel = '%s', fax = '%s',
+              org_id = '%s', biz_user_id = '%s', receiving_type = %d,
+              bill_memo = '%s', input_user_id = '%s', date_created = now()
+            where id = '%s' ";
     $rc = $db->execute(
       $sql,
       $sumGoodsMoney,
@@ -749,13 +749,13 @@ class SOBillDAO extends PSIBaseExDAO
     if ($id) {
       // 编辑销售订单
       $sql = "select s.ref, s.deal_date, s.deal_address, s.customer_id,
-						c.name as customer_name, s.contact, s.tel, s.fax,
-						s.org_id, o.full_name, s.biz_user_id, u.name as biz_user_name,
-						s.receiving_type, s.bill_memo, s.bill_status
-					from t_so_bill s, t_customer c, t_user u, t_org o
-					where s.id = '%s' and s.customer_Id = c.id
-						and s.biz_user_id = u.id
-						and s.org_id = o.id";
+                c.name as customer_name, s.contact, s.tel, s.fax,
+                s.org_id, o.full_name, s.biz_user_id, u.name as biz_user_name,
+                s.receiving_type, s.bill_memo, s.bill_status
+              from t_so_bill s, t_customer c, t_user u, t_org o
+              where s.id = '%s' and s.customer_Id = c.id
+                and s.biz_user_id = u.id
+                and s.org_id = o.id";
       $data = $db->query($sql, $id);
       if ($data) {
         $v = $data[0];
@@ -777,12 +777,12 @@ class SOBillDAO extends PSIBaseExDAO
 
         // 明细表
         $sql = "select s.id, s.goods_id, g.code, g.name, g.spec, 
-							convert(s.goods_count, " . $fmt . ") as goods_count, s.goods_price, s.goods_money,
-							s.tax_rate, s.tax, s.money_with_tax, u.name as unit_name, s.memo, s.scbilldetail_id,
-							s.goods_price_with_tax
-						from t_so_bill_detail s, t_goods g, t_goods_unit u
-						where s.sobill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
-						order by s.show_order";
+                  convert(s.goods_count, " . $fmt . ") as goods_count, s.goods_price, s.goods_money,
+                  s.tax_rate, s.tax, s.money_with_tax, u.name as unit_name, s.memo, s.scbilldetail_id,
+                  s.goods_price_with_tax
+                from t_so_bill_detail s, t_goods g, t_goods_unit u
+                where s.sobill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
+                order by s.show_order";
         $items = array();
         $data = $db->query($sql, $id);
 
@@ -827,11 +827,11 @@ class SOBillDAO extends PSIBaseExDAO
       if ($scbillRef) {
         // 从销售合同创建销售订单
         $sql = "select s.id, s.deal_date, s.deal_address,
-							s.customer_id, c.name as customer_name,
-							s.org_id, g.full_name as org_full_name
-						from t_sc_bill s, t_customer c, t_org g
-						where s.ref = '%s' and s.customer_id = c.id
-							and s.org_id = g.id";
+                  s.customer_id, c.name as customer_name,
+                  s.org_id, g.full_name as org_full_name
+                from t_sc_bill s, t_customer c, t_org g
+                where s.ref = '%s' and s.customer_id = c.id
+                  and s.org_id = g.id";
         $data = $db->query($sql, $scbillRef);
         if (!$data) {
           // 这个时候多半是参数传递错误了
@@ -849,11 +849,11 @@ class SOBillDAO extends PSIBaseExDAO
         $scBillId = $v["id"];
         // 从销售合同查询商品明细
         $sql = "select s.id, s.goods_id, g.code, g.name, g.spec,
-							convert(s.left_count, " . $fmt . ") as goods_count, s.goods_price,
-							s.tax_rate, u.name as unit_name, s.goods_price_with_tax
-						from t_sc_bill_detail s, t_goods g, t_goods_unit u
-						where s.scbill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
-						order by s.show_order";
+                  convert(s.left_count, " . $fmt . ") as goods_count, s.goods_price,
+                  s.tax_rate, u.name as unit_name, s.goods_price_with_tax
+                from t_sc_bill_detail s, t_goods g, t_goods_unit u
+                where s.scbill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
+                order by s.show_order";
         $items = [];
         $data = $db->query($sql, $scBillId);
 
@@ -896,8 +896,8 @@ class SOBillDAO extends PSIBaseExDAO
         $result["bizUserName"] = $params["loginUserName"];
 
         $sql = "select o.id, o.full_name
-					from t_org o, t_user u
-					where o.id = u.org_id and u.id = '%s' ";
+                from t_org o, t_user u
+                where o.id = u.org_id and u.id = '%s' ";
         $data = $db->query($sql, $loginUserId);
         if ($data) {
           $result["orgId"] = $data[0]["id"];
@@ -942,10 +942,10 @@ class SOBillDAO extends PSIBaseExDAO
     }
 
     $sql = "update t_so_bill
-				set bill_status = 1000,
-					confirm_user_id = '%s',
-					confirm_date = now()
-				where id = '%s' ";
+            set bill_status = 1000,
+              confirm_user_id = '%s',
+              confirm_date = now()
+            where id = '%s' ";
     $rc = $db->execute($sql, $loginUserId, $id);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -987,8 +987,8 @@ class SOBillDAO extends PSIBaseExDAO
     }
 
     $sql = "update t_so_bill
-				set bill_status = 0, confirm_user_id = null, confirm_date = null
-				where id = '%s' ";
+            set bill_status = 0, confirm_user_id = null, confirm_date = null
+            where id = '%s' ";
     $rc = $db->execute($sql, $id);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -1009,14 +1009,14 @@ class SOBillDAO extends PSIBaseExDAO
 
     $db = $this->db;
     $sql = "select s.id, s.bill_status, s.goods_money, s.tax, s.money_with_tax,
-					c.name as customer_name, s.contact, s.tel, s.fax, s.deal_address,
-					s.deal_date, s.receiving_type, s.bill_memo, s.date_created,
-					o.full_name as org_name, u1.name as biz_user_name, u2.name as input_user_name,
-					s.confirm_user_id, s.confirm_date, s.company_id
-				from t_so_bill s, t_customer c, t_org o, t_user u1, t_user u2
-				where (s.customer_id = c.id) and (s.org_id = o.id)
-					and (s.biz_user_id = u1.id) and (s.input_user_id = u2.id) 
-					and (s.ref = '%s')";
+              c.name as customer_name, s.contact, s.tel, s.fax, s.deal_address,
+              s.deal_date, s.receiving_type, s.bill_memo, s.date_created,
+              o.full_name as org_name, u1.name as biz_user_name, u2.name as input_user_name,
+              s.confirm_user_id, s.confirm_date, s.company_id
+            from t_so_bill s, t_customer c, t_org o, t_user u1, t_user u2
+            where (s.customer_id = c.id) and (s.org_id = o.id)
+              and (s.biz_user_id = u1.id) and (s.input_user_id = u2.id) 
+              and (s.ref = '%s')";
     $data = $db->query($sql, $ref);
     if (!$data) {
       return null;
@@ -1039,11 +1039,11 @@ class SOBillDAO extends PSIBaseExDAO
 
     // 明细表
     $sql = "select s.id, g.code, g.name, g.spec, convert(s.goods_count, $fmt) as goods_count, 
-					s.goods_price, s.goods_money,
-					s.tax_rate, s.tax, s.money_with_tax, u.name as unit_name
-				from t_so_bill_detail s, t_goods g, t_goods_unit u
-				where s.sobill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
-				order by s.show_order";
+              s.goods_price, s.goods_money,
+              s.tax_rate, s.tax, s.money_with_tax, u.name as unit_name
+            from t_so_bill_detail s, t_goods g, t_goods_unit u
+            where s.sobill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
+            order by s.show_order";
     $data = $db->query($sql, $id);
     $items = array();
     foreach ($data as $i => $v) {
@@ -1072,14 +1072,14 @@ class SOBillDAO extends PSIBaseExDAO
     $id = $params["id"];
 
     $sql = "select s.ref, s.bill_status, s.goods_money, s.tax, s.money_with_tax,
-					c.name as customer_name, s.contact, s.tel, s.fax, s.deal_address,
-					s.deal_date, s.receiving_type, s.bill_memo, s.date_created,
-					o.full_name as org_name, u1.name as biz_user_name, u2.name as input_user_name,
-					s.confirm_user_id, s.confirm_date, s.company_id, s.deal_date
-				from t_so_bill s, t_customer c, t_org o, t_user u1, t_user u2
-				where (s.customer_id = c.id) and (s.org_id = o.id)
-					and (s.biz_user_id = u1.id) and (s.input_user_id = u2.id)
-					and (s.id = '%s')";
+              c.name as customer_name, s.contact, s.tel, s.fax, s.deal_address,
+              s.deal_date, s.receiving_type, s.bill_memo, s.date_created,
+              o.full_name as org_name, u1.name as biz_user_name, u2.name as input_user_name,
+              s.confirm_user_id, s.confirm_date, s.company_id, s.deal_date
+            from t_so_bill s, t_customer c, t_org o, t_user u1, t_user u2
+            where (s.customer_id = c.id) and (s.org_id = o.id)
+              and (s.biz_user_id = u1.id) and (s.input_user_id = u2.id)
+              and (s.id = '%s')";
     $data = $db->query($sql, $id);
     if (!$data) {
       return null;
@@ -1107,11 +1107,11 @@ class SOBillDAO extends PSIBaseExDAO
 
     // 明细表
     $sql = "select s.id, g.code, g.name, g.spec, convert(s.goods_count, $fmt) as goods_count,
-					s.goods_price, s.goods_money, s.memo,
-					s.tax_rate, s.tax, s.money_with_tax, u.name as unit_name
-				from t_so_bill_detail s, t_goods g, t_goods_unit u
-				where s.sobill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
-				order by s.show_order";
+              s.goods_price, s.goods_money, s.memo,
+              s.tax_rate, s.tax, s.money_with_tax, u.name as unit_name
+            from t_so_bill_detail s, t_goods g, t_goods_unit u
+            where s.sobill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
+            order by s.show_order";
     $data = $db->query($sql, $id);
     $items = array();
     foreach ($data as $i => $v) {
@@ -1153,9 +1153,9 @@ class SOBillDAO extends PSIBaseExDAO
     $goodsPrice = $params["goodsPrice"];
 
     $sql = "select sobill_id, convert(ws_count, $fmt) as ws_count,
-					tax_rate
-				from t_so_bill_detail
-				where id = '%s' ";
+              tax_rate
+            from t_so_bill_detail
+            where id = '%s' ";
     $data = $db->query($sql, $detailId);
     if (!$data) {
       return $this->bad("要变更的明细记录不存在");
@@ -1168,8 +1168,8 @@ class SOBillDAO extends PSIBaseExDAO
     $taxRate = $data[0]["tax_rate"];
 
     $sql = "select ref, bill_status
-				from t_so_bill
-				where id = '%s' ";
+            from t_so_bill
+            where id = '%s' ";
     $data = $db->query($sql, $id);
     if (!$data) {
       return $this->bad("要变更的销售订单不存在");
@@ -1186,10 +1186,10 @@ class SOBillDAO extends PSIBaseExDAO
     $moneyWithTax = $goodsMoney + $tax;
 
     $sql = "update t_so_bill_detail
-				set goods_count = convert(%f, $fmt), goods_price = %f,
-					goods_money = %f, left_count = convert(%f, $fmt),
-					tax = %f, money_with_tax = %f
-				where id = '%s' ";
+            set goods_count = convert(%f, $fmt), goods_price = %f,
+              goods_money = %f, left_count = convert(%f, $fmt),
+              tax = %f, money_with_tax = %f
+            where id = '%s' ";
     $rc = $db->execute(
       $sql,
       $goodsCount,
@@ -1203,9 +1203,9 @@ class SOBillDAO extends PSIBaseExDAO
 
     // 同步主表的金额合计字段
     $sql = "select sum(goods_money) as sum_goods_money, sum(tax) as sum_tax,
-					sum(money_with_tax) as sum_money_with_tax
-				from t_so_bill_detail
-				where sobill_id = '%s' ";
+              sum(money_with_tax) as sum_money_with_tax
+            from t_so_bill_detail
+            where sobill_id = '%s' ";
     $data = $db->query($sql, $id);
     $sumGoodsMoney = $data[0]["sum_goods_money"];
     if (!$sumGoodsMoney) {
@@ -1221,8 +1221,8 @@ class SOBillDAO extends PSIBaseExDAO
     }
 
     $sql = "update t_so_bill
-				set goods_money = %f, tax = %f, money_with_tax = %f
-				where id = '%s' ";
+            set goods_money = %f, tax = %f, money_with_tax = %f
+            where id = '%s' ";
     $rc = $db->execute($sql, $sumGoodsMoney, $sumTax, $sumMoneyWithTax, $id);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -1243,8 +1243,8 @@ class SOBillDAO extends PSIBaseExDAO
     $id = $params["id"];
 
     $sql = "select goods_money, tax, money_with_tax
-				from t_so_bill
-				where id = '%s' ";
+            from t_so_bill
+            where id = '%s' ";
     $data = $db->query($sql, $id);
     if ($data) {
       $v = $data[0];
@@ -1268,8 +1268,8 @@ class SOBillDAO extends PSIBaseExDAO
     $id = $params["id"];
 
     $sql = "select ref, bill_status
-				from t_so_bill
-				where id = '%s' ";
+            from t_so_bill
+            where id = '%s' ";
     $data = $db->query($sql, $id);
 
     if (!$data) {
@@ -1286,9 +1286,9 @@ class SOBillDAO extends PSIBaseExDAO
     // 检查该销售订单是否有生成的销售出库单，并且这些销售出库单是没有提交出库的
     // 如果存在这类销售出库单，那么该销售订单不能关闭。
     $sql = "select count(*) as cnt
-				from t_ws_bill w, t_so_ws s
-				where w.id = s.ws_id and s.so_id = '%s'
-					and w.bill_status = 0 ";
+            from t_ws_bill w, t_so_ws s
+            where w.id = s.ws_id and s.so_id = '%s'
+              and w.bill_status = 0 ";
     $data = $db->query($sql, $id);
     $cnt = $data[0]["cnt"];
     if ($cnt > 0) {
@@ -1317,8 +1317,8 @@ class SOBillDAO extends PSIBaseExDAO
     }
 
     $sql = "update t_so_bill
-				set bill_status = %d
-				where id = '%s' ";
+            set bill_status = %d
+            where id = '%s' ";
     $rc = $db->execute($sql, $newBillStatus, $id);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -1339,8 +1339,8 @@ class SOBillDAO extends PSIBaseExDAO
     $id = $params["id"];
 
     $sql = "select ref, bill_status
-				from t_so_bill
-				where id = '%s' ";
+            from t_so_bill
+            where id = '%s' ";
     $data = $db->query($sql, $id);
 
     if (!$data) {
@@ -1368,8 +1368,8 @@ class SOBillDAO extends PSIBaseExDAO
     }
 
     $sql = "update t_so_bill
-				set bill_status = %d
-				where id = '%s' ";
+            set bill_status = %d
+            where id = '%s' ";
     $rc = $db->execute($sql, $newBillStatus, $id);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);

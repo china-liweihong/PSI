@@ -71,10 +71,10 @@ class UserDAO extends PSIBaseExDAO
   {
     $db = $this->db;
     $sql = "select count(*) as cnt
-				from  t_role_user ru, t_role_permission rp, 
-						(select * from t_permission union select * from t_permission_plus) p
-				where ru.user_id = '%s' and ru.role_id = rp.role_id
-				      and rp.permission_id = p.id and p.fid = '%s' ";
+            from  t_role_user ru, t_role_permission rp, 
+              (select * from t_permission union select * from t_permission_plus) p
+            where ru.user_id = '%s' and ru.role_id = rp.role_id
+              and rp.permission_id = p.id and p.fid = '%s' ";
     $data = $db->query($sql, $userId, $fid);
 
     return $data[0]["cnt"] > 0;
@@ -120,8 +120,8 @@ class UserDAO extends PSIBaseExDAO
     }
 
     $sql = "select o.full_name
-				from t_org o, t_user u
-				where o.id = u.org_id and u.id = '%s' ";
+            from t_org o, t_user u
+            where o.id = u.org_id and u.id = '%s' ";
     $data = $db->query($sql, $userId);
     $orgFullName = "";
     if ($data) {
@@ -168,9 +168,9 @@ class UserDAO extends PSIBaseExDAO
     $enabled = intval($params["enabled"]);
 
     $sql = "select id, login_name,  name, enabled, org_code, gender, birthday, id_card_number, tel,
-				    tel02, address, data_org
-				from t_user
-				where (org_id = '%s') ";
+              tel02, address, data_org
+            from t_user
+            where (org_id = '%s') ";
     $queryParam = [];
     $queryParam[] = $orgId;
 
@@ -189,7 +189,7 @@ class UserDAO extends PSIBaseExDAO
     }
 
     $sql .= " order by org_code
-				limit %d , %d ";
+              limit %d , %d ";
     $queryParam[] = $start;
     $queryParam[] = $limit;
     $data = $db->query($sql, $queryParam);
@@ -200,9 +200,9 @@ class UserDAO extends PSIBaseExDAO
       // 查询用户的权限角色
       $userId = $v["id"];
       $sql = "select r.name
-					from t_role r, t_role_user u
-					where r.id = u.role_id and u.user_id = '%s' 
-					order by r.code";
+              from t_role r, t_role_user u
+              where r.id = u.role_id and u.user_id = '%s' 
+              order by r.code";
       $d = $db->query($sql, $userId);
       $roleName = "";
       foreach ($d as $index => $r) {
@@ -231,8 +231,8 @@ class UserDAO extends PSIBaseExDAO
     }
 
     $sql = "select count(*) as cnt
-				from t_user
-				where (org_id = '%s') ";
+            from t_user
+            where (org_id = '%s') ";
     $queryParam = [];
     $queryParam[] = $orgId;
 
@@ -375,9 +375,9 @@ class UserDAO extends PSIBaseExDAO
     // 生成数据域
     $dataOrg = "";
     $sql = "select data_org
-					from t_user
-					where org_id = '%s'
-					order by data_org desc limit 1";
+            from t_user
+            where org_id = '%s'
+            order by data_org desc limit 1";
     $data = $db->query($sql, $orgId);
     if ($data) {
       $dataOrg = $this->incDataOrgForUser($data[0]["data_org"]);
@@ -392,9 +392,9 @@ class UserDAO extends PSIBaseExDAO
     }
 
     $sql = "insert into t_user (id, login_name, name, org_code, org_id, enabled, password, py,
-					gender, birthday, id_card_number, tel, tel02, address, data_org)
-					values ('%s', '%s', '%s', '%s', '%s', %d, '%s', '%s',
-					'%s', '%s', '%s', '%s', '%s', '%s', '%s') ";
+              gender, birthday, id_card_number, tel, tel02, address, data_org)
+            values ('%s', '%s', '%s', '%s', '%s', %d, '%s', '%s',
+              '%s', '%s', '%s', '%s', '%s', '%s', '%s') ";
     $rc = $db->execute(
       $sql,
       $id,
@@ -479,7 +479,7 @@ class UserDAO extends PSIBaseExDAO
 
     // 检查编码是否存在
     $sql = "select count(*) as cnt from t_user
-					where org_code = '%s' and id <> '%s' ";
+            where org_code = '%s' and id <> '%s' ";
     $data = $db->query($sql, $orgCode, $id);
     $cnt = $data[0]["cnt"];
     if ($cnt > 0) {
@@ -493,8 +493,8 @@ class UserDAO extends PSIBaseExDAO
     if ($oldOrgId != $orgId) {
       // 修改了用户的组织机构， 这个时候要调整数据域
       $sql = "select data_org from t_user
-						where org_id = '%s'
-						order by data_org desc limit 1";
+              where org_id = '%s'
+              order by data_org desc limit 1";
       $data = $db->query($sql, $orgId);
       if ($data) {
         $dataOrg = $this->incDataOrg($data[0]["data_org"]);
@@ -504,11 +504,11 @@ class UserDAO extends PSIBaseExDAO
         $dataOrg = $data[0]["data_org"] . "0001";
       }
       $sql = "update t_user
-					set login_name = '%s', name = '%s', org_code = '%s',
-					    org_id = '%s', enabled = %d, py = '%s',
-					    gender = '%s', birthday = '%s', id_card_number = '%s',
-					    tel = '%s', tel02 = '%s', address = '%s', data_org = '%s'
-					where id = '%s' ";
+              set login_name = '%s', name = '%s', org_code = '%s',
+                org_id = '%s', enabled = %d, py = '%s',
+                gender = '%s', birthday = '%s', id_card_number = '%s',
+                tel = '%s', tel02 = '%s', address = '%s', data_org = '%s'
+              where id = '%s' ";
       $rc = $db->execute(
         $sql,
         $loginName,
@@ -531,11 +531,11 @@ class UserDAO extends PSIBaseExDAO
       }
     } else {
       $sql = "update t_user
-					set login_name = '%s', name = '%s', org_code = '%s',
-					    org_id = '%s', enabled = %d, py = '%s',
-					    gender = '%s', birthday = '%s', id_card_number = '%s',
-					    tel = '%s', tel02 = '%s', address = '%s'
-					where id = '%s' ";
+              set login_name = '%s', name = '%s', org_code = '%s',
+                org_id = '%s', enabled = %d, py = '%s',
+                gender = '%s', birthday = '%s', id_card_number = '%s',
+                tel = '%s', tel02 = '%s', address = '%s'
+              where id = '%s' ";
       $rc = $db->execute(
         $sql,
         $loginName,
@@ -704,8 +704,8 @@ class UserDAO extends PSIBaseExDAO
     }
 
     $sql = "update t_user
-				set password = '%s'
-				where id = '%s' ";
+            set password = '%s'
+            where id = '%s' ";
     $rc = $db->execute($sql, md5($password), $id);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -769,7 +769,7 @@ class UserDAO extends PSIBaseExDAO
     }
 
     $sql = "select id, login_name, name from t_user
-				where (login_name like '%s' or name like '%s' or py like '%s') ";
+            where (login_name like '%s' or name like '%s' or py like '%s') ";
     $key = "%{$queryKey}%";
     $queryParams = array();
     $queryParams[] = $key;
@@ -784,7 +784,7 @@ class UserDAO extends PSIBaseExDAO
     }
 
     $sql .= " order by login_name
-				limit 20";
+              limit 20";
     $data = $db->query($sql, $queryParams);
     $result = array();
     foreach ($data as $v) {
@@ -816,7 +816,7 @@ class UserDAO extends PSIBaseExDAO
     }
 
     $sql = "select id, data_org, name from t_user
-				where (login_name like '%s' or name like '%s' or py like '%s' or data_org like '%s') ";
+            where (login_name like '%s' or name like '%s' or py like '%s' or data_org like '%s') ";
     $key = "%{$queryKey}%";
     $queryParams = array();
     $queryParams[] = $key;
@@ -832,7 +832,7 @@ class UserDAO extends PSIBaseExDAO
     }
 
     $sql .= " order by data_org
-				limit 20";
+              limit 20";
     $data = $db->query($sql, $queryParams);
     $result = array();
     foreach ($data as $v) {
@@ -934,11 +934,11 @@ class UserDAO extends PSIBaseExDAO
     $db = $this->db;
 
     $sql = "select distinct rpd.data_org
-				from t_role_permission rp, t_role_permission_dataorg rpd,
-					t_role_user ru
-				where ru.user_id = '%s' and ru.role_id = rp.role_id
-					and rp.role_id = rpd.role_id and rp.permission_id = rpd.permission_id
-					and rpd.permission_id = '%s' ";
+            from t_role_permission rp, t_role_permission_dataorg rpd,
+              t_role_user ru
+            where ru.user_id = '%s' and ru.role_id = rp.role_id
+              and rp.role_id = rpd.role_id and rp.permission_id = rpd.permission_id
+              and rpd.permission_id = '%s' ";
     $data = $db->query($sql, $loginUserId, $fid);
 
     foreach ($data as $v) {
@@ -955,10 +955,10 @@ class UserDAO extends PSIBaseExDAO
     $id = $params["id"];
 
     $sql = "select login_name, name, org_code, org_id,
-					birthday, id_card_number, tel, tel02,
-					address, gender, enabled 
-				from t_user 
-				where id = '%s' ";
+              birthday, id_card_number, tel, tel02,
+              address, gender, enabled 
+            from t_user 
+            where id = '%s' ";
     $data = $db->query($sql, $id);
     if (!$data) {
       return $this->emptyResult();
@@ -966,8 +966,8 @@ class UserDAO extends PSIBaseExDAO
       $v = $data[0];
 
       $sql = "select full_name 
-					from t_org
-					where id = '%s' ";
+              from t_org
+              where id = '%s' ";
       $data = $db->query($sql, $v["org_id"]);
       $orgFullName = $data[0]["full_name"];
       return [

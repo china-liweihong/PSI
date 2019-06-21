@@ -28,8 +28,8 @@ class WarehouseDAO extends PSIBaseExDAO
     }
 
     $sql = "select id, code, name, inited, data_org, enabled,
-					org_id, sale_area 
-				from t_warehouse ";
+              org_id, sale_area 
+            from t_warehouse ";
     $ds = new DataOrgDAO($db);
     $queryParams = [];
     $rs = $ds->buildSQL(FIdConst::WAREHOUSE, "t_warehouse", $loginUserId);
@@ -127,7 +127,7 @@ class WarehouseDAO extends PSIBaseExDAO
     $params["id"] = $id;
 
     $sql = "insert into t_warehouse(id, code, name, inited, py, data_org, company_id, org_id, sale_area)
-					values ('%s', '%s', '%s', 0, '%s', '%s', '%s', '%s', %f)";
+            values ('%s', '%s', '%s', 0, '%s', '%s', '%s', '%s', %f)";
     $rc = $db->execute($sql, $id, $code, $name, $py, $dataOrg, $companyId, $orgId, $saleArea);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -190,9 +190,9 @@ class WarehouseDAO extends PSIBaseExDAO
     }
 
     $sql = "update t_warehouse
-				set code = '%s', name = '%s', py = '%s',
-					enabled = %d, org_id = '%s', sale_area = %f
-				where id = '%s' ";
+            set code = '%s', name = '%s', py = '%s',
+              enabled = %d, org_id = '%s', sale_area = %f
+            where id = '%s' ";
     $rc = $db->execute($sql, $code, $name, $py, $enabled, $orgId, $saleArea, $id);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -261,7 +261,7 @@ class WarehouseDAO extends PSIBaseExDAO
 
     // 判断仓库是否在调拨单中使用
     $sql = "select count(*) as cnt from t_it_bill
-				where from_warehouse_id = '%s' or to_warehouse_id = '%s' ";
+            where from_warehouse_id = '%s' or to_warehouse_id = '%s' ";
     $data = $db->query($sql, $id, $id);
     $cnt = $data[0]["cnt"];
     if ($cnt > 0) {
@@ -278,9 +278,9 @@ class WarehouseDAO extends PSIBaseExDAO
 
     // 判断仓库是否在业务设置中使用
     $sql = "select o.name
-				from t_config c, t_org o
-				where c.company_id = o.id
-					and c.value = '%s' ";
+            from t_config c, t_org o
+            where c.company_id = o.id
+              and c.value = '%s' ";
     $data = $db->query($sql, $id);
     if ($data) {
       $companyName = $data[0]["name"];
@@ -355,8 +355,8 @@ class WarehouseDAO extends PSIBaseExDAO
     }
 
     $sql = "update t_warehouse
-				set data_org = '%s'
-				where id = '%s' ";
+            set data_org = '%s'
+            where id = '%s' ";
     $rc = $db->execute($sql, $dataOrg, $id);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -387,7 +387,7 @@ class WarehouseDAO extends PSIBaseExDAO
     }
 
     $sql = "select id, code, name from t_warehouse
-					where (enabled = 1) and (code like '%s' or name like '%s' or py like '%s' ) ";
+            where (enabled = 1) and (code like '%s' or name like '%s' or py like '%s' ) ";
     $key = "%{$queryKey}%";
     $queryParams = [];
     $queryParams[] = $key;

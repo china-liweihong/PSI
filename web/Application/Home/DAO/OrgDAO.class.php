@@ -89,15 +89,15 @@ class OrgDAO extends PSIBaseExDAO
     if ($parentId == null) {
       $dataOrg = "01";
       $sql = "select data_org from t_org
-						where parent_id is null
-						order by data_org desc limit 1";
+              where parent_id is null
+              order by data_org desc limit 1";
       $data = $db->query($sql);
       if ($data) {
         $dataOrg = $this->incDataOrg($data[0]["data_org"]);
       }
 
       $sql = "insert into t_org (id, name, full_name, org_code, parent_id, data_org, org_type)
-						values ('%s', '%s', '%s', '%s', null, '%s', %d)";
+              values ('%s', '%s', '%s', '%s', null, '%s', %d)";
 
       $rc = $db->execute($sql, $id, $name, $fullName, $orgCode, $dataOrg, $orgType);
       if ($rc === false) {
@@ -106,8 +106,8 @@ class OrgDAO extends PSIBaseExDAO
     } else {
       $dataOrg = "";
       $sql = "select data_org from t_org
-						where parent_id = '%s'
-						order by data_org desc limit 1";
+              where parent_id = '%s'
+              order by data_org desc limit 1";
       $data = $db->query($sql, $parentId);
       if ($data) {
         $dataOrg = $this->incDataOrg($data[0]["data_org"]);
@@ -121,7 +121,7 @@ class OrgDAO extends PSIBaseExDAO
       }
 
       $sql = "insert into t_org (id, name, full_name, org_code, parent_id, data_org, org_type)
-						values ('%s', '%s', '%s', '%s', '%s', '%s', %d)";
+              values ('%s', '%s', '%s', '%s', '%s', '%s', %d)";
 
       $rc = $db->execute($sql, $id, $name, $fullName, $orgCode, $parentId, $dataOrg, $orgType);
       if ($rc === false) {
@@ -176,9 +176,9 @@ class OrgDAO extends PSIBaseExDAO
     if ($parentId == null) {
       $fullName = $name;
       $sql = "update t_org
-						set name = '%s', full_name = '%s', org_code = '%s', parent_id = null,
-							org_type = %d
-						where id = '%s' ";
+              set name = '%s', full_name = '%s', org_code = '%s', parent_id = null,
+                org_type = %d
+              where id = '%s' ";
       $rc = $db->execute($sql, $name, $fullName, $orgCode, $orgType, $id);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -206,9 +206,9 @@ class OrgDAO extends PSIBaseExDAO
         $fullName = $parentFullName . "\\" . $name;
 
         $sql = "update t_org
-							set name = '%s', full_name = '%s', org_code = '%s', parent_id = '%s',
-								org_type = %d
-							where id = '%s' ";
+                set name = '%s', full_name = '%s', org_code = '%s', parent_id = '%s',
+                  org_type = %d
+                where id = '%s' ";
         $rc = $db->execute($sql, $name, $fullName, $orgCode, $parentId, $orgType, $id);
         if ($rc === false) {
           return $this->sqlError(__METHOD__, __LINE__);
@@ -242,8 +242,8 @@ class OrgDAO extends PSIBaseExDAO
     $dataOrg = "";
     if ($parentId == null) {
       $sql = "select data_org from t_org
-					where parent_id is null and id <> '%s'
-					order by data_org desc limit 1";
+              where parent_id is null and id <> '%s'
+              order by data_org desc limit 1";
       $data = $db->query($sql, $id);
       if (!$data) {
         $dataOrg = "01";
@@ -252,8 +252,8 @@ class OrgDAO extends PSIBaseExDAO
       }
     } else {
       $sql = "select data_org from t_org
-					where parent_id = '%s' and id <> '%s'
-					order by data_org desc limit 1";
+              where parent_id = '%s' and id <> '%s'
+              order by data_org desc limit 1";
       $data = $db->query($sql, $parentId, $id);
       if ($data) {
         $dataOrg = $this->incDataOrg($data[0]["data_org"]);
@@ -265,8 +265,8 @@ class OrgDAO extends PSIBaseExDAO
     }
 
     $sql = "update t_org
-				set data_org = '%s'
-				where id = '%s' ";
+            set data_org = '%s'
+            where id = '%s' ";
     $rc = $db->execute($sql, $dataOrg, $id);
     if ($rc === false) {
       return false;
@@ -274,8 +274,8 @@ class OrgDAO extends PSIBaseExDAO
 
     // 修改 人员的数据域
     $sql = "select id from t_user
-				where org_id = '%s'
-				order by org_code ";
+            where org_id = '%s'
+            order by org_code ";
     $data = $db->query($sql, $id);
     foreach ($data as $i => $v) {
       $userId = $v["id"];
@@ -283,8 +283,8 @@ class OrgDAO extends PSIBaseExDAO
       $udo = $dataOrg . $index;
 
       $sql = "update t_user
-					set data_org = '%s'
-					where id = '%s' ";
+              set data_org = '%s'
+              where id = '%s' ";
       $rc = $db->execute($sql, $udo, $userId);
       if ($rc === false) {
         return false;
@@ -343,14 +343,14 @@ class OrgDAO extends PSIBaseExDAO
       $next = str_pad($i + 1, 2, "0", STR_PAD_LEFT);
       $dataOrg = $parentDataOrg . $next;
       $sql = "update t_org
-					set data_org = '%s'
-					where id = '%s' ";
+              set data_org = '%s'
+              where id = '%s' ";
       $db->execute($sql, $dataOrg, $subId);
 
       // 修改该组织机构的人员的数据域
       $sql = "select id from t_user
-				where org_id = '%s'
-				order by org_code ";
+              where org_id = '%s'
+              order by org_code ";
       $udata = $db->query($sql, $subId);
       foreach ($udata as $j => $u) {
         $userId = $u["id"];
@@ -358,8 +358,8 @@ class OrgDAO extends PSIBaseExDAO
         $udo = $dataOrg . $index;
 
         $sql = "update t_user
-					set data_org = '%s'
-					where id = '%s' ";
+                set data_org = '%s'
+                where id = '%s' ";
         $rc = $db->execute($sql, $udo, $userId);
         if ($rc === false) {
           return false;
@@ -487,8 +487,8 @@ class OrgDAO extends PSIBaseExDAO
     $rs = $ds->buildSQL(FIdConst::USR_MANAGEMENT, "t_org", $loginUserId);
 
     $sql = "select id, name, org_code, full_name, data_org, org_type
-				from t_org
-				where parent_id is null ";
+            from t_org
+            where parent_id is null ";
     if ($rs) {
       $sql .= " and " . $rs[0];
       $queryParams = $rs[1];
@@ -566,8 +566,8 @@ class OrgDAO extends PSIBaseExDAO
     }
 
     $sql = "select count(*) as cnt
-				from t_user u 
-				where (u.org_id = '%s') ";
+            from t_user u 
+            where (u.org_id = '%s') ";
     $ds = new DataOrgDAO($db);
     $queryParam = [];
     $queryParam[] = $org["id"];
@@ -605,9 +605,9 @@ class OrgDAO extends PSIBaseExDAO
   {
     $result = [];
     $sql = "select id, name, org_code, full_name, data_org, org_type
-				from t_org
-				where parent_id = '%s'
-				order by org_code";
+            from t_org
+            where parent_id = '%s'
+            order by org_code";
     $data = $db->query($sql, $parentId);
     foreach ($data as $i => $v) {
       $result[$i]["id"] = $v["id"];
@@ -673,7 +673,7 @@ class OrgDAO extends PSIBaseExDAO
     }
 
     $sql = "select id, full_name
-				from t_org ";
+            from t_org ";
 
     $queryParams = array();
     $ds = new DataOrgDAO($db);
@@ -713,9 +713,9 @@ class OrgDAO extends PSIBaseExDAO
     $fid = $params["fid"];
 
     $sql = "select g.id, g.org_code, g.full_name, g.org_type
-				from t_org g
-				where ((g.parent_id is null and (g.org_type is null or g.org_type = 0)) 
-						or g.org_type = 400) ";
+            from t_org g
+            where ((g.parent_id is null and (g.org_type is null or g.org_type = 0)) 
+              or g.org_type = 400) ";
 
     $ds = new DataOrgDAO($db);
     $queryParams = [];

@@ -253,11 +253,12 @@ class UpdateDBService extends PSIBaseService
     $this->update_20190603_02();
     $this->update_20190603_03();
     $this->update_20190617_01();
+    $this->update_20190622_01();
 
     $sql = "delete from t_psi_db_version";
     $db->execute($sql);
     $sql = "insert into t_psi_db_version (db_version, update_dt) 
-				values ('%s', now())";
+            values ('%s', now())";
     $db->execute($sql, $this->CURRENT_DB_VERSION);
 
     $bl = new BizlogService();
@@ -274,6 +275,25 @@ class UpdateDBService extends PSIBaseService
   // ============================================
   private function notForgot()
   { }
+
+  private function update_20190622_01()
+  {
+    // 本次更新：销售退货入库单增加goods_money_with_tax和goods_price_with_tax字段
+    $db = $this->db;
+
+    // 主表
+    $tableName = "t_sr_bill_detail";
+    $columnName = "goods_money_with_tax";
+    if (!$this->columnExists($db, $tableName, $columnName)) {
+      $sql = "alter table {$tableName} add {$columnName} decimal(19,2) DEFAULT NULL;";
+      $db->execute($sql);
+    }
+    $columnName = "goods_price_with_tax";
+    if (!$this->columnExists($db, $tableName, $columnName)) {
+      $sql = "alter table {$tableName} add {$columnName} decimal(19,2) DEFAULT NULL;";
+      $db->execute($sql);
+    }
+  }
 
   private function update_20190617_01()
   {

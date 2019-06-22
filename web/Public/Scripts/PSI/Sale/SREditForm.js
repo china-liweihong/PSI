@@ -1,5 +1,5 @@
 /**
- * 销售退货入库单
+ * 销售退货入库单 新建或编辑页面
  */
 Ext.define("PSI.Sale.SREditForm", {
   extend: "PSI.AFX.BaseDialogForm",
@@ -371,7 +371,11 @@ Ext.define("PSI.Sale.SREditForm", {
         {
           name: "rejMoney",
           type: "float"
-        }, "sn", "memo"]
+        }, "sn", "memo", "rejPriceWithTax",
+        {
+          name: "rejMoneyWithTax",
+          type: "float"
+        }, "goodsPriceWithTax", "goodsMoneyWithTax", "taxRate"]
     });
     var store = Ext.create("Ext.data.Store", {
       autoLoad: false,
@@ -445,14 +449,14 @@ Ext.define("PSI.Sale.SREditForm", {
         draggable: false,
         width: 60
       }, {
-        header: "退货单价",
-        dataIndex: "rejPrice",
+        header: "退货单价(含税)",
+        dataIndex: "rejPriceWithTax",
         menuDisabled: true,
         draggable: false,
         sortable: false,
         align: "right",
         xtype: "numbercolumn",
-        width: 100,
+        width: 130,
         editor: {
           xtype: "numberfield",
           allowDecimals: true,
@@ -462,20 +466,57 @@ Ext.define("PSI.Sale.SREditForm", {
           return "退货金额合计";
         }
       }, {
-        header: "退货金额",
-        dataIndex: "rejMoney",
+        header: "退货金额(含税)",
+        dataIndex: "rejMoneyWithTax",
         menuDisabled: true,
         draggable: false,
         sortable: false,
         align: "right",
         xtype: "numbercolumn",
-        width: 120,
+        width: 130,
         editor: {
           xtype: "numberfield",
           allowDecimals: true,
           hideTrigger: true
         },
         summaryType: "sum"
+      }, {
+        header: "退货单价(不含税)",
+        dataIndex: "rejPrice",
+        menuDisabled: true,
+        draggable: false,
+        sortable: false,
+        align: "right",
+        xtype: "numbercolumn",
+        width: 130,
+        editor: {
+          xtype: "numberfield",
+          allowDecimals: true,
+          hideTrigger: true
+        }
+      }, {
+        header: "退货金额(不含税)",
+        dataIndex: "rejMoney",
+        menuDisabled: true,
+        draggable: false,
+        sortable: false,
+        align: "right",
+        xtype: "numbercolumn",
+        width: 130,
+        editor: {
+          xtype: "numberfield",
+          allowDecimals: true,
+          hideTrigger: true
+        },
+        summaryType: "sum"
+      }, {
+        header: "税率(%)",
+        dataIndex: "taxRate",
+        menuDisabled: true,
+        draggable: false,
+        sortable: false,
+        align: "right",
+        width: 90
       }, {
         header: "销售数量",
         dataIndex: "goodsCount",
@@ -485,23 +526,41 @@ Ext.define("PSI.Sale.SREditForm", {
         align: "right",
         width: 100
       }, {
-        header: "销售单价",
+        header: "销售单价(不含税)",
         dataIndex: "goodsPrice",
         menuDisabled: true,
         draggable: false,
         sortable: false,
         align: "right",
         xtype: "numbercolumn",
-        width: 100
+        width: 130
       }, {
-        header: "销售金额",
+        header: "销售金额(不含税)",
         dataIndex: "goodsMoney",
         menuDisabled: true,
         draggable: false,
         sortable: false,
         align: "right",
         xtype: "numbercolumn",
-        width: 120
+        width: 130
+      }, {
+        header: "销售单价(含税)",
+        dataIndex: "goodsPriceWithTax",
+        menuDisabled: true,
+        draggable: false,
+        sortable: false,
+        align: "right",
+        xtype: "numbercolumn",
+        width: 130
+      }, {
+        header: "销售金额(含税)",
+        dataIndex: "goodsMoneyWithTax",
+        menuDisabled: true,
+        draggable: false,
+        sortable: false,
+        align: "right",
+        xtype: "numbercolumn",
+        width: 130
       }, {
         header: "序列号",
         dataIndex: "sn",
@@ -549,8 +608,17 @@ Ext.define("PSI.Sale.SREditForm", {
       if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
         me.calcMoney(goods);
       }
+    } else if (fieldName == "rejPriceWithTax") {
+      if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
+        me.calcMoney2(goods);
+      }
+    } else if (fieldName == "rejMoneyWithTax") {
+      if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
+        me.calcPrice(goods);
+      }
     }
   },
+
   calcMoney: function (goods) {
     if (!goods) {
       return;
@@ -565,6 +633,29 @@ Ext.define("PSI.Sale.SREditForm", {
       rejPrice = 0;
     }
     goods.set("rejMoney", rejCount * rejPrice);
+    var taxRate = goods.get("taxRate") / 100;
+    goods.set("rejMoneyWithTax", rejCount * rejPrice * (1 + taxRate));
+  },
+
+  // 含税价变化
+  calcMoney2: function (goods) {
+    if (!goods) {
+      return;
+    }
+
+    var rejCount = goods.get("rejCount");
+    if (!rejCount) {
+      rejCount = 0;
+    }
+    var rejPriceWithTax = goods.get("rejPriceWithTax");
+    if (!rejPriceWithTax) {
+      rejPriceWithTax = 0;
+    }
+    goods.set("rejMoneyWithTax", rejCount * rejPriceWithTax);
+    var taxRate = goods.get("taxRate") / 100;
+
+    goods.set("rejPrice", rejPriceWithTax / (1 + taxRate));
+    goods.set("rejMoney", goods.get("rejPrice") * rejCount);
   },
 
   calcPrice: function (goods) {
@@ -573,9 +664,8 @@ Ext.define("PSI.Sale.SREditForm", {
     }
     var rejCount = goods.get("rejCount");
     if (rejCount && rejCount != 0) {
-      goods
-        .set("rejPrice", goods.get("rejMoney")
-          / goods.get("rejCount"));
+      goods.set("rejPrice", goods.get("rejMoney") / rejCount);
+      goods.set("rejPriceWitTax", goods.get("rejMoneyWithTax") / rejCount);
     }
   },
 

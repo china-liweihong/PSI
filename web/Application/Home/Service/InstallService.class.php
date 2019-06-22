@@ -651,9 +651,11 @@ class InstallService extends PSIBaseExService
               `tax` decimal(19,2) DEFAULT NULL,
               `rejection_sale_money_with_tax` decimal(19,2) DEFAULT NULL,
               `rejection_goods_price_with_tax` decimal(19,2) DEFAULT NULL,
+              `goods_money_with_tax` decimal(19,2) DEFAULT NULL,
+              `goods_price_with_tax` decimal(19,2) DEFAULT NULL,
               PRIMARY KEY (`id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-    ";
+            ";
     $db->execute($sql);
 
     // t_it_bill

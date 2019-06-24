@@ -614,7 +614,7 @@ Ext.define("PSI.Sale.SREditForm", {
       }
     } else if (fieldName == "rejMoneyWithTax") {
       if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
-        me.calcPrice(goods);
+        me.calcPrice2(goods);
       }
     }
   },
@@ -635,6 +635,9 @@ Ext.define("PSI.Sale.SREditForm", {
     goods.set("rejMoney", rejCount * rejPrice);
     var taxRate = goods.get("taxRate") / 100;
     goods.set("rejMoneyWithTax", rejCount * rejPrice * (1 + taxRate));
+    if (rejCount != 0) {
+      goods.set("rejPriceWithTax", goods.get("rejMoneyWithTax") / rejCount);
+    }
   },
 
   // 含税价变化
@@ -658,14 +661,31 @@ Ext.define("PSI.Sale.SREditForm", {
     goods.set("rejMoney", goods.get("rejPrice") * rejCount);
   },
 
+  // 因不含税金额变化
   calcPrice: function (goods) {
     if (!goods) {
       return;
     }
     var rejCount = goods.get("rejCount");
     if (rejCount && rejCount != 0) {
+      var taxRate = goods.get("taxRate") / 100;
       goods.set("rejPrice", goods.get("rejMoney") / rejCount);
-      goods.set("rejPriceWitTax", goods.get("rejMoneyWithTax") / rejCount);
+      goods.set("rejMoneyWithTax", goods.get("rejMoney") * (1 + taxRate));
+      goods.set("rejPriceWithTax", goods.get("rejMoneyWithTax") / rejCount);
+    }
+  },
+
+  // 因含税金额变化
+  calcPrice2: function (goods) {
+    if (!goods) {
+      return;
+    }
+    var rejCount = goods.get("rejCount");
+    if (rejCount && rejCount != 0) {
+      var taxRate = goods.get("taxRate") / 100;
+      goods.set("rejPriceWithTax", goods.get("rejMoneyWithTax") / rejCount);
+      goods.set("rejMoney", goods.get("rejMoneyWithTax") / (1 + taxRate));
+      goods.set("rejPrice", goods.get("rejMoney") / rejCount);
     }
   },
 
@@ -693,6 +713,9 @@ Ext.define("PSI.Sale.SREditForm", {
         rejCount: item.get("rejCount"),
         rejPrice: item.get("rejPrice"),
         rejMoney: item.get("rejMoney"),
+        rejPriceWithTax: item.get("rejPriceWithTax"),
+        rejMoneyWithTax: item.get("rejMoneyWithTax"),
+        taxRate: item.get("taxRate"),
         sn: item.get("sn"),
         memo: item.get("memo")
       });

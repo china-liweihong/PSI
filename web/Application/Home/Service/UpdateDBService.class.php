@@ -25,6 +25,9 @@ class UpdateDBService extends PSIBaseService
       return $this->notOnlineError();
     }
 
+    // 脚本执行最长时间设置为5分钟
+    ini_set("max_execution_time", 60 * 5);
+
     $db = M();
 
     $this->db = $db;
@@ -254,6 +257,7 @@ class UpdateDBService extends PSIBaseService
     $this->update_20190603_03();
     $this->update_20190617_01();
     $this->update_20190622_01();
+    $this->update_20190625_01();
 
     $sql = "delete from t_psi_db_version";
     $db->execute($sql);
@@ -276,12 +280,63 @@ class UpdateDBService extends PSIBaseService
   private function notForgot()
   { }
 
+  private function update_20190625_01()
+  {
+    //本次更新：采购退货出库单增加含税相关字段
+    $db = $this->db;
+
+    // 主表
+    $tableName = "t_pr_bill";
+    $columnName = "tax";
+    if (!$this->columnExists($db, $tableName, $columnName)) {
+      $sql = "alter table {$tableName} add {$columnName} decimal(19,2) DEFAULT NULL;";
+      $db->execute($sql);
+    }
+    $columnName = "rejection_money_with_tax";
+    if (!$this->columnExists($db, $tableName, $columnName)) {
+      $sql = "alter table {$tableName} add {$columnName} decimal(19,2) DEFAULT NULL;";
+      $db->execute($sql);
+    }
+
+    // 明细表
+    $tableName = "t_pr_bill_detail";
+    $columnName = "tax_rate";
+    if (!$this->columnExists($db, $tableName, $columnName)) {
+      $sql = "alter table {$tableName} add {$columnName} decimal(19,2) DEFAULT NULL;";
+      $db->execute($sql);
+    }
+    $columnName = "tax";
+    if (!$this->columnExists($db, $tableName, $columnName)) {
+      $sql = "alter table {$tableName} add {$columnName} decimal(19,2) DEFAULT NULL;";
+      $db->execute($sql);
+    }
+    $columnName = "rejection_money_with_tax";
+    if (!$this->columnExists($db, $tableName, $columnName)) {
+      $sql = "alter table {$tableName} add {$columnName} decimal(19,2) DEFAULT NULL;";
+      $db->execute($sql);
+    }
+    $columnName = "rejection_goods_price_with_tax";
+    if (!$this->columnExists($db, $tableName, $columnName)) {
+      $sql = "alter table {$tableName} add {$columnName} decimal(19,2) DEFAULT NULL;";
+      $db->execute($sql);
+    }
+    $columnName = "goods_money_with_tax";
+    if (!$this->columnExists($db, $tableName, $columnName)) {
+      $sql = "alter table {$tableName} add {$columnName} decimal(19,2) DEFAULT NULL;";
+      $db->execute($sql);
+    }
+    $columnName = "goods_price_with_tax";
+    if (!$this->columnExists($db, $tableName, $columnName)) {
+      $sql = "alter table {$tableName} add {$columnName} decimal(19,2) DEFAULT NULL;";
+      $db->execute($sql);
+    }
+  }
+
   private function update_20190622_01()
   {
     // 本次更新：销售退货入库单增加goods_money_with_tax和goods_price_with_tax字段
     $db = $this->db;
 
-    // 主表
     $tableName = "t_sr_bill_detail";
     $columnName = "goods_money_with_tax";
     if (!$this->columnExists($db, $tableName, $columnName)) {

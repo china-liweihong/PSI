@@ -401,7 +401,7 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
       fields: ["id", "ref", "bizDT", "warehouseName",
         "supplierName", "inputUserName", "bizUserName",
         "billStatus", "rejMoney", "dateCreated",
-        "receivingType", "billMemo"]
+        "receivingType", "billMemo", "tax", "rejMoneyWithTax"]
     });
     var store = Ext.create("Ext.data.Store", {
       autoLoad: false,
@@ -490,8 +490,24 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
         sortable: false,
         width: 150
       }, {
-        header: "退货金额",
+        header: "退货金额(不含税)",
         dataIndex: "rejMoney",
+        menuDisabled: true,
+        sortable: false,
+        align: "right",
+        xtype: "numbercolumn",
+        width: 150
+      }, {
+        header: "税金(红字)",
+        dataIndex: "tax",
+        menuDisabled: true,
+        sortable: false,
+        align: "right",
+        xtype: "numbercolumn",
+        width: 150
+      }, {
+        header: "退货金额(含税)",
+        dataIndex: "rejMoneyWithTax",
         menuDisabled: true,
         sortable: false,
         align: "right",
@@ -585,7 +601,7 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
       extend: "Ext.data.Model",
       fields: ["id", "goodsCode", "goodsName", "goodsSpec",
         "unitName", "rejCount", "rejPrice", "rejMoney",
-        "memo"]
+        "memo", "tax", "taxRate", "rejPriceWithTax", "rejMoneyWithTax"]
     });
     var store = Ext.create("Ext.data.Store", {
       autoLoad: false,
@@ -638,7 +654,7 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
         sortable: false,
         width: 60
       }, {
-        header: "退货单价",
+        header: "退货单价(不含税)",
         dataIndex: "rejPrice",
         menuDisabled: true,
         sortable: false,
@@ -646,8 +662,40 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
         width: 150,
         xtype: "numbercolumn"
       }, {
-        header: "退货金额",
+        header: "退货金额(不含税)",
         dataIndex: "rejMoney",
+        menuDisabled: true,
+        sortable: false,
+        align: "right",
+        width: 150,
+        xtype: "numbercolumn"
+      }, {
+        header: "税率(%)",
+        dataIndex: "taxRate",
+        menuDisabled: true,
+        sortable: false,
+        align: "right",
+        width: 100,
+        xtype: "numbercolumn"
+      }, {
+        header: "税金(红字)",
+        dataIndex: "tax",
+        menuDisabled: true,
+        sortable: false,
+        align: "right",
+        width: 150,
+        xtype: "numbercolumn"
+      }, {
+        header: "退货单价(含税)",
+        dataIndex: "rejPriceWithTax",
+        menuDisabled: true,
+        sortable: false,
+        align: "right",
+        width: 150,
+        xtype: "numbercolumn"
+      }, {
+        header: "退货金额(含税)",
+        dataIndex: "rejMoneyWithTax",
         menuDisabled: true,
         sortable: false,
         align: "right",

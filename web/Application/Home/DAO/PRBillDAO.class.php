@@ -617,7 +617,8 @@ class PRBillDAO extends PSIBaseExDAO
     $queryParams = [];
     $sql = "select p.id, p.ref, p.bill_status, w.name as warehouse_name, p.bizdt,
               p.rejection_money, u1.name as biz_user_name, u2.name as input_user_name,
-              s.name as supplier_name, p.date_created, p.receiving_type, p.bill_memo
+              s.name as supplier_name, p.date_created, p.receiving_type, p.bill_memo,
+              p.tax, p.rejection_money_with_tax
             from t_pr_bill p, t_warehouse w, t_user u1, t_user u2, t_supplier s
             where (p.warehouse_id = w.id)
               and (p.biz_user_id = u1.id)
@@ -682,7 +683,9 @@ class PRBillDAO extends PSIBaseExDAO
         "bizDT" => $this->toYMD($v["bizdt"]),
         "dateCreated" => $v["date_created"],
         "receivingType" => $v["receiving_type"],
-        "billMemo" => $v["bill_memo"]
+        "billMemo" => $v["bill_memo"],
+        "tax" => $v["tax"],
+        "rejMoneyWithTax" => $v["rejection_money_with_tax"]
       ];
     }
 
@@ -766,7 +769,8 @@ class PRBillDAO extends PSIBaseExDAO
 
     $sql = "select g.code, g.name, g.spec, u.name as unit_name,
               convert(p.rejection_goods_count, $fmt) as rej_count, p.rejection_goods_price as rej_price,
-              p.rejection_money as rej_money, p.memo
+              p.rejection_money as rej_money, p.memo, p.tax, p.tax_rate,
+              p.rejection_money_with_tax, p.rejection_goods_price_with_tax
             from t_pr_bill_detail p, t_goods g, t_goods_unit u
             where p.goods_id = g.id and g.unit_id = u.id and p.prbill_id = '%s'
               and p.rejection_goods_count > 0
@@ -782,7 +786,11 @@ class PRBillDAO extends PSIBaseExDAO
         "rejCount" => $v["rej_count"],
         "rejPrice" => $v["rej_price"],
         "rejMoney" => $v["rej_money"],
-        "memo" => $v["memo"]
+        "memo" => $v["memo"],
+        "tax" => $v["tax"],
+        "taxRate" => $v["tax_rate"],
+        "rejPriceWithTax" => $v["rejection_goods_price_with_tax"],
+        "rejMoneyWithTax" => $v["rejection_money_with_tax"]
       ];
     }
 

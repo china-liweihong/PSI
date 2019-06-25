@@ -8,7 +8,7 @@ Ext.define("PSI.PurchaseRej.PRSelectPWBillForm", {
     var me = this;
     Ext.apply(me, {
       title: "选择采购入库单",
-      width: 1000,
+      width: 1200,
       height: 600,
       layout: "border",
       items: [{
@@ -148,7 +148,7 @@ Ext.define("PSI.PurchaseRej.PRSelectPWBillForm", {
       extend: "Ext.data.Model",
       fields: ["id", "ref", "bizDate", "supplierName",
         "warehouseName", "inputUserName", "bizUserName",
-        "amount"]
+        "amount", "tax", "moneyWithTax"]
     });
     var store = Ext.create("Ext.data.Store", {
       autoLoad: false,
@@ -196,13 +196,29 @@ Ext.define("PSI.PurchaseRej.PRSelectPWBillForm", {
         menuDisabled: true,
         sortable: false
       }, {
-        header: "采购金额",
+        header: "采购金额(不含税)",
         dataIndex: "amount",
         menuDisabled: true,
         sortable: false,
         align: "right",
         xtype: "numbercolumn",
+        width: 130
+      }, {
+        header: "税金",
+        dataIndex: "tax",
+        menuDisabled: true,
+        sortable: false,
+        align: "right",
+        xtype: "numbercolumn",
         width: 80
+      }, {
+        header: "采购金额(含税)",
+        dataIndex: "moneyWithTax",
+        menuDisabled: true,
+        sortable: false,
+        align: "right",
+        xtype: "numbercolumn",
+        width: 130
       }, {
         header: "入库仓库",
         dataIndex: "warehouseName",
@@ -283,7 +299,7 @@ Ext.define("PSI.PurchaseRej.PRSelectPWBillForm", {
       extend: "Ext.data.Model",
       fields: ["id", "goodsCode", "goodsName", "goodsSpec",
         "unitName", "goodsCount", "goodsMoney",
-        "goodsPrice", "memo"]
+        "goodsPrice", "memo", "taxRate", "tax", "priceWithTax", "moneyWithTax"]
     });
     var store = Ext.create("Ext.data.Store", {
       autoLoad: false,
@@ -333,7 +349,7 @@ Ext.define("PSI.PurchaseRej.PRSelectPWBillForm", {
         sortable: false,
         width: 60
       }, {
-        header: "采购单价",
+        header: "采购单价(不含税)",
         dataIndex: "goodsPrice",
         menuDisabled: true,
         sortable: false,
@@ -341,8 +357,41 @@ Ext.define("PSI.PurchaseRej.PRSelectPWBillForm", {
         xtype: "numbercolumn",
         width: 150
       }, {
-        header: "采购金额",
+        header: "采购金额(不含税)",
         dataIndex: "goodsMoney",
+        menuDisabled: true,
+        sortable: false,
+        align: "right",
+        xtype: "numbercolumn",
+        width: 150
+      }, {
+        header: "税率(%)",
+        dataIndex: "taxRate",
+        menuDisabled: true,
+        sortable: false,
+        align: "right",
+        xtype: "numbercolumn",
+        width: 80,
+        format: "#"
+      }, {
+        header: "税金",
+        dataIndex: "tax",
+        menuDisabled: true,
+        sortable: false,
+        align: "right",
+        xtype: "numbercolumn",
+        width: 100
+      }, {
+        header: "采购单价(含税)",
+        dataIndex: "priceWithTax",
+        menuDisabled: true,
+        sortable: false,
+        align: "right",
+        xtype: "numbercolumn",
+        width: 150
+      }, {
+        header: "采购金额(含税)",
+        dataIndex: "moneyWithTax",
         menuDisabled: true,
         sortable: false,
         align: "right",

@@ -414,7 +414,8 @@ class PRBillDAO extends PSIBaseExDAO
     $result = [];
 
     $sql = "select p.id, p.ref, p.biz_dt, s.name as supplier_name, p.goods_money,
-              w.name as warehouse_name, u1.name as biz_user_name, u2.name as input_user_name
+              w.name as warehouse_name, u1.name as biz_user_name, u2.name as input_user_name,
+              p.tax, p.money_with_tax
             from t_pw_bill p, t_supplier s, t_warehouse w, t_user u1, t_user u2
             where (p.supplier_id = s.id)
               and (p.warehouse_id = w.id)
@@ -464,7 +465,9 @@ class PRBillDAO extends PSIBaseExDAO
         "amount" => $v["goods_money"],
         "warehouseName" => $v["warehouse_name"],
         "bizUserName" => $v["biz_user_name"],
-        "inputUserName" => $v["input_user_name"]
+        "inputUserName" => $v["input_user_name"],
+        "tax" => $v["tax"],
+        "moneyWithTax" => $v["money_with_tax"]
       ];
     }
 

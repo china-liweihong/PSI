@@ -2,6 +2,6 @@
 
 cd %~dp0
 
-C:\xampp\php\php.exe lines.php
+..\..\..\..\xampp\php\php.exe lines.php
 
 pause

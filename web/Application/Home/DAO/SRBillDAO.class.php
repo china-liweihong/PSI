@@ -1058,7 +1058,7 @@ class SRBillDAO extends PSIBaseExDAO
 
     $sql = "select ref, bill_status, warehouse_id, customer_id, bizdt,
               biz_user_id, rejection_sale_money, payment_type,
-              company_id, ws_bill_id
+              company_id, ws_bill_id, rejection_sale_money_with_tax
             from t_sr_bill where id = '%s' ";
     $data = $db->query($sql, $id);
     if (!$data) {
@@ -1075,7 +1075,9 @@ class SRBillDAO extends PSIBaseExDAO
     $customerId = $data[0]["customer_id"];
     $bizDT = $data[0]["bizdt"];
     $bizUserId = $data[0]["biz_user_id"];
-    $rejectionSaleMoney = $data[0]["rejection_sale_money"];
+    // 取含税金额
+    // 如果是旧数据，则取不含税金额，不过这种情形多半是bug
+    $rejectionSaleMoney = $data[0]["rejection_sale_money_with_tax"] ?? $data[0]["rejection_sale_money"];
     $companyId = $data[0]["company_id"];
     $wsBillId = $data[0]["ws_bill_id"];
 

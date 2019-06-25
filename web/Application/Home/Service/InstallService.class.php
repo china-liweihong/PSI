@@ -730,49 +730,57 @@ class InstallService extends PSIBaseExService
 
     // t_pr_bill
     $sql = "CREATE TABLE IF NOT EXISTS `t_pr_bill` (
-				  `id` varchar(255) NOT NULL,
-				  `bill_status` int(11) NOT NULL,
-				  `bizdt` datetime NOT NULL,
-				  `biz_user_id` varchar(255) NOT NULL,
-				  `supplier_id` varchar(255) NOT NULL,
-				  `date_created` datetime DEFAULT NULL,
-				  `input_user_id` varchar(255) NOT NULL,
-				  `inventory_money` decimal(19,2) DEFAULT NULL,
-				  `ref` varchar(255) NOT NULL,
-				  `rejection_money` decimal(19,2) DEFAULT NULL,
-				  `warehouse_id` varchar(255) NOT NULL,
-				  `pw_bill_id` varchar(255) NOT NULL,
-				  `receiving_type` int(11) NOT NULL DEFAULT 0,
-				  `data_org` varchar(255) DEFAULT NULL,
-				  `company_id` varchar(255) DEFAULT NULL,
-				  `bill_memo` varchar(255) DEFAULT NULL,
-				  PRIMARY KEY (`id`)
-				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-		";
+              `id` varchar(255) NOT NULL,
+              `bill_status` int(11) NOT NULL,
+              `bizdt` datetime NOT NULL,
+              `biz_user_id` varchar(255) NOT NULL,
+              `supplier_id` varchar(255) NOT NULL,
+              `date_created` datetime DEFAULT NULL,
+              `input_user_id` varchar(255) NOT NULL,
+              `inventory_money` decimal(19,2) DEFAULT NULL,
+              `ref` varchar(255) NOT NULL,
+              `rejection_money` decimal(19,2) DEFAULT NULL,
+              `warehouse_id` varchar(255) NOT NULL,
+              `pw_bill_id` varchar(255) NOT NULL,
+              `receiving_type` int(11) NOT NULL DEFAULT 0,
+              `data_org` varchar(255) DEFAULT NULL,
+              `company_id` varchar(255) DEFAULT NULL,
+              `bill_memo` varchar(255) DEFAULT NULL,
+              `tax` decimal(19,2) DEFAULT NULL,
+              `rejection_money_with_tax` decimal(19,2) DEFAULT NULL,
+              PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+            ";
     $db->execute($sql);
 
     // t_pr_bill_detail
     $sql = "CREATE TABLE IF NOT EXISTS `t_pr_bill_detail` (
-				  `id` varchar(255) NOT NULL,
-				  `date_created` datetime DEFAULT NULL,
-				  `goods_id` varchar(255) NOT NULL,
-				  `goods_count` decimal(19,8) NOT NULL,
-				  `goods_money` decimal(19,2) NOT NULL,
-				  `goods_price` decimal(19,2) NOT NULL,
-				  `inventory_money` decimal(19,2) NOT NULL,
-				  `inventory_price` decimal(19,2) NOT NULL,
-				  `rejection_goods_count` decimal(19,8) NOT NULL,
-				  `rejection_goods_price` decimal(19,2) NOT NULL,
-				  `rejection_money` decimal(19,2) NOT NULL,
-				  `show_order` int(11) NOT NULL,
-				  `prbill_id` varchar(255) NOT NULL,
-				  `pwbilldetail_id` varchar(255) NOT NULL,
-				  `data_org` varchar(255) DEFAULT NULL,
-				  `company_id` varchar(255) DEFAULT NULL,
-				  `memo` varchar(255) DEFAULT NULL,
-				  PRIMARY KEY (`id`)
-				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-		";
+              `id` varchar(255) NOT NULL,
+              `date_created` datetime DEFAULT NULL,
+              `goods_id` varchar(255) NOT NULL,
+              `goods_count` decimal(19,8) NOT NULL,
+              `goods_money` decimal(19,2) NOT NULL,
+              `goods_price` decimal(19,2) NOT NULL,
+              `inventory_money` decimal(19,2) NOT NULL,
+              `inventory_price` decimal(19,2) NOT NULL,
+              `rejection_goods_count` decimal(19,8) NOT NULL,
+              `rejection_goods_price` decimal(19,2) NOT NULL,
+              `rejection_money` decimal(19,2) NOT NULL,
+              `show_order` int(11) NOT NULL,
+              `prbill_id` varchar(255) NOT NULL,
+              `pwbilldetail_id` varchar(255) NOT NULL,
+              `data_org` varchar(255) DEFAULT NULL,
+              `company_id` varchar(255) DEFAULT NULL,
+              `memo` varchar(255) DEFAULT NULL,
+              `tax_rate` decimal(19,2) DEFAULT NULL,
+              `tax` decimal(19,2) DEFAULT NULL,
+              `rejection_money_with_tax` decimal(19,2) DEFAULT NULL,
+              `rejection_goods_price_with_tax` decimal(19,2) DEFAULT NULL,
+              `goods_money_with_tax` decimal(19,2) DEFAULT NULL,
+              `goods_price_with_tax` decimal(19,2) DEFAULT NULL,
+              PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+            ";
     $db->execute($sql);
 
     // t_config

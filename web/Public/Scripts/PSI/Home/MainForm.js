@@ -118,7 +118,7 @@ Ext.define("PSI.Home.MainForm", {
         menuDisabled: true,
         sortable: false
       }, {
-        header: "销售额",
+        header: "销售额(不含税)",
         dataIndex: "saleMoney",
         width: 120,
         menuDisabled: true,
@@ -501,7 +501,7 @@ Ext.define("PSI.Home.MainForm", {
       var d = data[i];
       store.add({
         month: d.month,
-        "销售额": d.saleMoney,
+        "不含税销售额": d.saleMoney,
         "毛利": d.profit
       });
     }
@@ -580,7 +580,7 @@ Ext.define("PSI.Home.MainForm", {
     var modelName = "saleChart";
     Ext.define(modelName, {
       extend: "Ext.data.Model",
-      fields: ["销售额", "毛利", "month"]
+      fields: ["不含税销售额", "毛利", "month"]
     });
     var store = Ext.create("Ext.data.Store", {
       model: modelName,
@@ -599,7 +599,7 @@ Ext.define("PSI.Home.MainForm", {
         type: "Numeric",
         position: "left",
         grid: true,
-        fields: ["销售额", "毛利"],
+        fields: ["不含税销售额", "毛利"],
         label: {
           renderer: function (v) {
             return me.formatMoney2(v);
@@ -613,7 +613,7 @@ Ext.define("PSI.Home.MainForm", {
       series: [{
         type: "line",
         xField: "month",
-        yField: "销售额",
+        yField: "不含税销售额",
         highlight: {
           size: 7,
           radius: 7
@@ -623,9 +623,9 @@ Ext.define("PSI.Home.MainForm", {
           width: 120,
           height: 50,
           renderer: function (storeItem, item) {
-            this.setTitle("销售额");
+            this.setTitle("不含税销售额");
             this.update(me
-              .formatMoney(storeItem.get("销售额")));
+              .formatMoney(storeItem.get("不含税销售额")));
           }
         }
       }, {

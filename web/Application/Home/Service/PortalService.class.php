@@ -96,10 +96,10 @@ class PortalService extends PSIBaseExService
       }
 
       $sql = "select sum(w.sale_money) as sale_money, sum(w.profit) as profit
-					from t_ws_bill w
-					where w.bill_status >= 1000
-						and year(w.bizdt) = %d
-						and month(w.bizdt) = %d";
+              from t_ws_bill w
+              where w.bill_status >= 1000
+                and year(w.bizdt) = %d
+                and month(w.bizdt) = %d";
       $queryParams = array();
       $queryParams[] = $year;
       $queryParams[] = $month;
@@ -122,11 +122,11 @@ class PortalService extends PSIBaseExService
 
       // 扣除退货
       $sql = "select sum(s.rejection_sale_money) as rej_sale_money,
-						sum(s.profit) as rej_profit
-					from t_sr_bill s
-					where s.bill_status = 1000
-						and year(s.bizdt) = %d
-						and month(s.bizdt) = %d";
+                sum(s.profit) as rej_profit
+              from t_sr_bill s
+              where s.bill_status = 1000
+                and year(s.bizdt) = %d
+                and month(s.bizdt) = %d";
       $queryParams = array();
       $queryParams[] = $year;
       $queryParams[] = $month;

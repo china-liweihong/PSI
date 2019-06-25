@@ -361,7 +361,10 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
         {
           name: "rejMoney",
           type: "float"
-        }, "memo"]
+        }, "memo", "rejPriceWithTax", {
+          name: "rejMoneyWithTax",
+          type: "float"
+        }, "goodsMoneyWithTax", "goodsPriceWithTax", "taxRate"]
     });
     var store = Ext.create("Ext.data.Store", {
       autoLoad: false,
@@ -598,14 +601,14 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
     form.show();
   },
 
+  // PSI.PurchaseRej.PRSelectPWBillForm中调用本方法
   getPWBillInfo: function (id) {
     var me = this;
     me.__billId = id;
     var el = me.getEl() || Ext.getBody();
     el.mask(PSI.Const.LOADING);
     Ext.Ajax.request({
-      url: PSI.Const.BASE_URL
-        + "Home/PurchaseRej/getPWBillInfoForPRBill",
+      url: PSI.Const.BASE_URL + "Home/PurchaseRej/getPWBillInfoForPRBill",
       params: {
         id: id
       },
@@ -613,15 +616,10 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
       callback: function (options, success, response) {
         if (success) {
           var data = Ext.JSON.decode(response.responseText);
-          Ext.getCmp("editSupplier")
-            .setValue(data.supplierName + " 采购入库单单号: "
-              + data.ref);
-          Ext.getCmp("editSupplierId")
-            .setValue(data.supplierId);
-          Ext.getCmp("editWarehouse")
-            .setIdValue(data.warehouseId);
-          Ext.getCmp("editWarehouse")
-            .setValue(data.warehouseName);
+          Ext.getCmp("editSupplier").setValue(data.supplierName + " 采购入库单单号: " + data.ref);
+          Ext.getCmp("editSupplierId").setValue(data.supplierId);
+          Ext.getCmp("editWarehouse").setIdValue(data.warehouseId);
+          Ext.getCmp("editWarehouse").setValue(data.warehouseName);
 
           var store = me.getGoodsGrid().getStore();
           store.removeAll();

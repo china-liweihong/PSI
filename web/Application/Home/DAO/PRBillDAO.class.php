@@ -560,9 +560,11 @@ class PRBillDAO extends PSIBaseExDAO
 
     $items = [];
 
+    // 明细表
     $sql = "select p.id, g.id as goods_id, g.code as goods_code, g.name as goods_name,
               g.spec as goods_spec, u.name as unit_name,
-              convert(p.goods_count, $fmt) as goods_count, p.goods_price, p.goods_money
+              convert(p.goods_count, $fmt) as goods_count, p.goods_price, p.goods_money,
+              p.tax_rate, p.money_with_tax, p.goods_price_with_tax
             from t_pw_bill_detail p, t_goods g, t_goods_unit u
             where p.goods_id = g.id
               and g.unit_id = u.id
@@ -580,7 +582,11 @@ class PRBillDAO extends PSIBaseExDAO
         "goodsCount" => $v["goods_count"],
         "goodsPrice" => $v["goods_price"],
         "goodsMoney" => $v["goods_money"],
-        "rejPrice" => $v["goods_price"]
+        "rejPrice" => $v["goods_price"],
+        "taxRate" => $v["tax_rate"],
+        "rejPriceWithTax" => $v["goods_price_with_tax"],
+        "goodsMoneyWithTax" => $v["money_with_tax"],
+        "goodsPriceWithTax" => $v["goods_price_with_tax"]
       ];
     }
 

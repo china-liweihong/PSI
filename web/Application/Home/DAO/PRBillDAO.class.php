@@ -1006,7 +1006,7 @@ class PRBillDAO extends PSIBaseExDAO
     $id = $params["id"];
 
     $sql = "select ref, bill_status, warehouse_id, bizdt, biz_user_id, rejection_money,
-              supplier_id, receiving_type, company_id, pw_bill_id
+              supplier_id, receiving_type, company_id, pw_bill_id, rejection_money_with_tax
             from t_pr_bill
             where id = '%s' ";
     $data = $db->query($sql, $id);
@@ -1018,7 +1018,7 @@ class PRBillDAO extends PSIBaseExDAO
     $warehouseId = $data[0]["warehouse_id"];
     $bizDT = $this->toYMD($data[0]["bizdt"]);
     $bizUserId = $data[0]["biz_user_id"];
-    $allRejMoney = $data[0]["rejection_money"];
+    $allRejMoney = $data[0]["rejection_money_with_tax"] ?? $data[0]["rejection_money"];
     $supplierId = $data[0]["supplier_id"];
     $receivingType = $data[0]["receiving_type"];
     $companyId = $data[0]["company_id"];

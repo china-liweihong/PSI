@@ -143,9 +143,13 @@ class PRBillDAO extends PSIBaseExDAO
     // 明细表
     $sql = "insert into t_pr_bill_detail(id, date_created, goods_id, goods_count, goods_price,
               goods_money, rejection_goods_count, rejection_goods_price, rejection_money, show_order,
-              prbill_id, pwbilldetail_id, data_org, company_id, inventory_price, inventory_money, memo)
+              prbill_id, pwbilldetail_id, data_org, company_id, inventory_price, inventory_money, memo,
+              tax_rate, tax, rejection_goods_price_with_tax, rejection_money_with_tax,
+              goods_price_with_tax, goods_money_with_tax)
             values ('%s', now(), '%s', convert(%f, $fmt), %f, %f, convert(%f, $fmt),
-              %f, %f, %d, '%s', '%s', '%s', '%s', 0, 0, '%s')";
+              %f, %f, %d, '%s', '%s', '%s', '%s', 0, 0, '%s',
+              %f, %f, %f, %f,
+              %f, %f)";
     foreach ($items as $i => $v) {
       $pwbillDetailId = $v["id"];
       $goodsId = $v["goodsId"];
@@ -156,6 +160,14 @@ class PRBillDAO extends PSIBaseExDAO
       $rejPrice = $v["rejPrice"];
       $rejMoney = $v["rejMoney"];
       $memo = $v["memo"];
+
+      $taxRate = $v["taxRate"];
+      $rejPriceWithTax = $v["rejPriceWithTax"];
+      $rejMoneyWithTax = $v["rejMoneyWithTax"];
+      // 负数表示红字
+      $tax = -$rejMoney * $taxRate / 100;
+      $goodsPriceWithTax = $v["goodsPriceWithTax"];
+      $goodsMoneyWithTax = $v["goodsMoneyWithTax"];
 
       $rc = $db->execute(
         $sql,
@@ -172,7 +184,13 @@ class PRBillDAO extends PSIBaseExDAO
         $pwbillDetailId,
         $dataOrg,
         $companyId,
-        $memo
+        $memo,
+        $taxRate,
+        $tax,
+        $rejPriceWithTax,
+        $rejMoneyWithTax,
+        $goodsPriceWithTax,
+        $goodsMoneyWithTax
       );
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -180,16 +198,20 @@ class PRBillDAO extends PSIBaseExDAO
     }
 
     // 同步主表退货金额
-    $sql = "select sum(rejection_money) as rej_money
+    $sql = "select sum(rejection_money) as rej_money,
+              sum(tax) as tax,
+              sum(rejection_money_with_tax) as rej_money_with_tax
             from t_pr_bill_detail
             where prbill_id = '%s' ";
     $data = $db->query($sql, $id);
     $rejMoney = $data[0]["rej_money"];
+    $rejMoneyWithTax = $data[0]["rej_money_with_tax"];
+    $tax = $data[0]["tax"];
 
     $sql = "update t_pr_bill
-            set rejection_money = %f
+            set rejection_money = %f, tax = %f, rejection_money_with_tax = %f
             where id = '%s' ";
-    $rc = $db->execute($sql, $rejMoney, $id);
+    $rc = $db->execute($sql, $rejMoney, $tax, $rejMoneyWithTax, $id);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
     }
@@ -313,9 +335,13 @@ class PRBillDAO extends PSIBaseExDAO
 
     $sql = "insert into t_pr_bill_detail(id, date_created, goods_id, goods_count, goods_price,
               goods_money, rejection_goods_count, rejection_goods_price, rejection_money, show_order,
-              prbill_id, pwbilldetail_id, data_org, company_id, inventory_price, inventory_money, memo)
+              prbill_id, pwbilldetail_id, data_org, company_id, inventory_price, inventory_money, memo,
+              tax_rate, tax, rejection_goods_price_with_tax, rejection_money_with_tax,
+              goods_price_with_tax, goods_money_with_tax)
             values ('%s', now(), '%s', convert(%f, $fmt), %f, %f, 
-              convert(%f, $fmt), %f, %f, %d, '%s', '%s', '%s', '%s', 0, 0, '%s')";
+              convert(%f, $fmt), %f, %f, %d, '%s', '%s', '%s', '%s', 0, 0, '%s',
+              %f, %f, %f, %f,
+              %f, %f)";
     foreach ($items as $i => $v) {
       $pwbillDetailId = $v["id"];
       $goodsId = $v["goodsId"];
@@ -326,6 +352,14 @@ class PRBillDAO extends PSIBaseExDAO
       $rejPrice = $v["rejPrice"];
       $rejMoney = $v["rejMoney"];
       $memo = $v["memo"];
+
+      $taxRate = $v["taxRate"];
+      $rejPriceWithTax = $v["rejPriceWithTax"];
+      $rejMoneyWithTax = $v["rejMoneyWithTax"];
+      // 负数表示红字
+      $tax = -$rejMoney * $taxRate / 100;
+      $goodsPriceWithTax = $v["goodsPriceWithTax"];
+      $goodsMoneyWithTax = $v["goodsMoneyWithTax"];
 
       $rc = $db->execute(
         $sql,
@@ -342,7 +376,13 @@ class PRBillDAO extends PSIBaseExDAO
         $pwbillDetailId,
         $dataOrg,
         $companyId,
-        $memo
+        $memo,
+        $taxRate,
+        $tax,
+        $rejPriceWithTax,
+        $rejMoneyWithTax,
+        $goodsPriceWithTax,
+        $goodsMoneyWithTax
       );
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -350,21 +390,23 @@ class PRBillDAO extends PSIBaseExDAO
     }
 
     // 同步主表退货金额
-    $sql = "select sum(rejection_money) as rej_money
+    $sql = "select sum(rejection_money) as rej_money,
+              sum(tax) as tax,
+              sum(rejection_money_with_tax) as rej_money_with_tax
             from t_pr_bill_detail
             where prbill_id = '%s' ";
     $data = $db->query($sql, $id);
-    $rejMoney = $data[0]["rej_money"];
-    if (!$rejMoney) {
-      $rejMoney = 0;
-    }
+    $rejMoney = $data[0]["rej_money"] ?? 0;
+    $rejMoneyWithTax = $data[0]["rej_money_with_tax"] ?? 0;
+    $tax = $data[0]["tax"] ?? 0;
 
     $sql = "update t_pr_bill
             set rejection_money = %f,
               bizdt = '%s', biz_user_id = '%s',
               date_created = now(), input_user_id = '%s',
               warehouse_id = '%s', receiving_type = %d,
-              bill_memo = '%s'
+              bill_memo = '%s',
+              tax = %f, rejection_money_with_tax = %f
             where id = '%s' ";
     $rc = $db->execute(
       $sql,
@@ -375,6 +417,8 @@ class PRBillDAO extends PSIBaseExDAO
       $warehouseId,
       $receivingType,
       $billMemo,
+      $tax,
+      $rejMoneyWithTax,
       $id
     );
     if ($rc === false) {
@@ -865,7 +909,9 @@ class PRBillDAO extends PSIBaseExDAO
       $sql = "select p.pwbilldetail_id as id, p.goods_id, g.code as goods_code, g.name as goods_name,
                 g.spec as goods_spec, u.name as unit_name, convert(p.goods_count, $fmt) as goods_count,
                 p.goods_price, p.goods_money, convert(p.rejection_goods_count, $fmt) as rej_count,
-                p.rejection_goods_price as rej_price, p.rejection_money as rej_money, p.memo
+                p.rejection_goods_price as rej_price, p.rejection_money as rej_money, p.memo,
+                p.tax_rate, p.rejection_goods_price_with_tax, p.rejection_money_with_tax,
+                p.goods_price_with_tax, p.goods_money_with_tax
               from t_pr_bill_detail p, t_goods g, t_goods_unit u
               where p.prbill_id = '%s'
                 and p.goods_id = g.id
@@ -886,7 +932,12 @@ class PRBillDAO extends PSIBaseExDAO
           "rejCount" => $v["rej_count"],
           "rejPrice" => $v["rej_price"],
           "rejMoney" => $v["rej_money"],
-          "memo" => $v["memo"]
+          "memo" => $v["memo"],
+          "taxRate" => $v["tax_rate"],
+          "rejPriceWithTax" => $v["rejection_goods_price_with_tax"],
+          "rejMoneyWithTax" => $v["rejection_money_with_tax"],
+          "goodsPriceWithTax" => $v["goods_price_with_tax"],
+          "goodsMoneyWithTax" => $v["goods_money_with_tax"]
         ];
       }
 

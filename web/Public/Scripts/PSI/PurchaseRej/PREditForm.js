@@ -438,14 +438,14 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
         draggable: false,
         width: 60
       }, {
-        header: "退货单价",
-        dataIndex: "rejPrice",
+        header: "退货单价(含税)",
+        dataIndex: "rejPriceWithTax",
         menuDisabled: true,
         sortable: false,
         draggable: false,
         align: "right",
         xtype: "numbercolumn",
-        width: 100,
+        width: 130,
         editor: {
           xtype: "numberfield",
           hideTrigger: true
@@ -454,19 +454,56 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
           return "退货金额合计";
         }
       }, {
-        header: "退货金额",
+        header: "退货金额(含税)",
+        dataIndex: "rejMoneyWithTax",
+        menuDisabled: true,
+        sortable: false,
+        draggable: false,
+        align: "right",
+        xtype: "numbercolumn",
+        width: 130,
+        editor: {
+          xtype: "numberfield",
+          hideTrigger: true
+        },
+        summaryType: "sum"
+      }, {
+        header: "退货单价(不含税)",
+        dataIndex: "rejPrice",
+        menuDisabled: true,
+        sortable: false,
+        draggable: false,
+        align: "right",
+        xtype: "numbercolumn",
+        width: 130,
+        editor: {
+          xtype: "numberfield",
+          hideTrigger: true
+        }
+      }, {
+        header: "退货金额(不含税)",
         dataIndex: "rejMoney",
         menuDisabled: true,
         sortable: false,
         draggable: false,
         align: "right",
         xtype: "numbercolumn",
-        width: 120,
+        width: 130,
         editor: {
           xtype: "numberfield",
           hideTrigger: true
         },
         summaryType: "sum"
+      }, {
+        header: "税率(%)",
+        dataIndex: "taxRate",
+        menuDisabled: true,
+        sortable: false,
+        draggable: false,
+        align: "right",
+        xtype: "numbercolumn",
+        format: "#",
+        width: 90
       }, {
         header: "原采购数量",
         dataIndex: "goodsCount",
@@ -476,23 +513,41 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
         align: "right",
         width: 120
       }, {
-        header: "原采购单价",
+        header: "原采购单价(不含税)",
         dataIndex: "goodsPrice",
         menuDisabled: true,
         sortable: false,
         draggable: false,
         align: "right",
         xtype: "numbercolumn",
-        width: 120
+        width: 140
       }, {
-        header: "原采购金额",
+        header: "原采购金额(不含税)",
         dataIndex: "goodsMoney",
         menuDisabled: true,
         sortable: false,
         draggable: false,
         align: "right",
         xtype: "numbercolumn",
-        width: 120
+        width: 140
+      }, {
+        header: "原采购单价(含税)",
+        dataIndex: "goodsPriceWithTax",
+        menuDisabled: true,
+        sortable: false,
+        draggable: false,
+        align: "right",
+        xtype: "numbercolumn",
+        width: 140
+      }, {
+        header: "原采购金额(含税)",
+        dataIndex: "goodsMoneyWithTax",
+        menuDisabled: true,
+        sortable: false,
+        draggable: false,
+        align: "right",
+        xtype: "numbercolumn",
+        width: 140
       }, {
         header: "备注",
         dataIndex: "memo",
@@ -541,12 +596,19 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
     }
   },
 
+  // 因为退货数量或不含税单价变化
   calcMoney: function (goods) {
     if (!goods) {
       return;
     }
 
-    goods.set("rejMoney", goods.get("rejCount") * goods.get("rejPrice"));
+    var rejCount = goods.get("rejCount");
+    var rejPrice = goods.get("rejPrice");
+    var taxRate = goods.get("taxRate") / 100;
+    goods.set("rejMoney", rejCount * rejPrice);
+    rejPriceWithTax = rejPrice * (1 + taxRate);
+    goods.set("rejPriceWithTax", rejPriceWithTax);
+    goods.set("rejMoneyWithTax", rejCount * rejPriceWithTax);
   },
 
   calcPrice: function (goods) {
@@ -587,7 +649,12 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
         rejCount: item.get("rejCount"),
         rejPrice: item.get("rejPrice"),
         rejMoney: item.get("rejMoney"),
-        memo: item.get("memo")
+        memo: item.get("memo"),
+        taxRate: item.get("taxRate"),
+        rejPriceWithTax: item.get("rejPriceWithTax"),
+        rejMoneyWithTax: item.get("rejMoneyWithTax"),
+        goodsPriceWithTax: item.get("goodsPriceWithTax"),
+        goodsMoneyWithTax: item.get("goodsMoneyWithTax")
       });
     }
 

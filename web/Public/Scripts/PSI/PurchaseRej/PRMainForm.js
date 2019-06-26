@@ -676,7 +676,8 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
         sortable: false,
         align: "right",
         width: 100,
-        xtype: "numbercolumn"
+        xtype: "numbercolumn",
+        format: "#"
       }, {
         header: "税金(红字)",
         dataIndex: "tax",

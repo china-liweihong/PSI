@@ -593,6 +593,14 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
       if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
         me.calcMoney(goods);
       }
+    } else if (fieldName == "rejPriceWithTax") {
+      if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
+        me.calcMoney2(goods);
+      }
+    } else if (fieldName == "rejMoneyWithTax") {
+      if (goods.get(fieldName) != (new Number(oldValue)).toFixed(2)) {
+        me.calcPrice2(goods);
+      }
     }
   },
 
@@ -611,15 +619,52 @@ Ext.define("PSI.PurchaseRej.PREditForm", {
     goods.set("rejMoneyWithTax", rejCount * rejPriceWithTax);
   },
 
+  // 因为含税单价变化
+  calcMoney2: function (goods) {
+    if (!goods) {
+      return;
+    }
+
+    var rejCount = goods.get("rejCount");
+    var rejPriceWithTax = goods.get("rejPriceWithTax");
+    var taxRate = goods.get("taxRate") / 100;
+
+    goods.set("rejMoneyWithTax", rejCount * rejPriceWithTax);
+    rejPrice = rejPriceWithTax / (1 + taxRate);
+    goods.set("rejPrice", rejPrice);
+    goods.set("rejMoney", rejCount * rejPrice);
+  },
+
+  // 因不含税金额变化
   calcPrice: function (goods) {
     if (!goods) {
       return;
     }
     var rejCount = goods.get("rejCount");
+    var rejMoney = goods.get("rejMoney");
+    var taxRate = goods.get("taxRate") / 100;
+    var rejMoneyWithTax = rejMoney * (1 + taxRate);
+    goods.set("rejMoneyWithTax", rejMoneyWithTax);
     if (rejCount && rejCount != 0) {
-      goods
-        .set("rejPrice", goods.get("rejMoney")
-          / goods.get("rejCount"));
+      goods.set("rejPrice", rejMoney / rejCount);
+      goods.set("rejPriceWithTax", rejMoneyWithTax / rejCount);
+    }
+  },
+
+  // 因含税金额变化
+  calcPrice2: function (goods) {
+    if (!goods) {
+      return;
+    }
+    var rejCount = goods.get("rejCount");
+    var rejMoneyWithTax = goods.get("rejMoneyWithTax");
+    var taxRate = goods.get("taxRate") / 100;
+
+    var rejMoney = rejMoneyWithTax / (1 + taxRate);
+    goods.set("rejMoney", rejMoney);
+    if (rejCount && rejCount != 0) {
+      goods.set("rejPrice", rejMoney / rejCount);
+      goods.set("rejPriceWithTax", rejMoneyWithTax / rejCount);
     }
   },
 

@@ -223,7 +223,7 @@ Ext.define("PSI.CodeTable.MainForm", {
         menuDisabled: true,
         sortable: false,
         renderer: function (value) {
-          return value == 1 ? "是" : "否";
+          return parseInt(value) == 1 ? "是" : "否";
         }
       }, {
         header: "层级数据",
@@ -232,7 +232,7 @@ Ext.define("PSI.CodeTable.MainForm", {
         menuDisabled: true,
         sortable: false,
         renderer: function (value) {
-          return value == 1 ? "是" : "否";
+          return parseInt(value) == 1 ? "是" : "否";
         }
       }],
       store: Ext.create("Ext.data.Store", {

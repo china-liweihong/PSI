@@ -214,7 +214,7 @@ class CodeTableDAO extends PSIBaseExDAO
         "memo" => $v["memo"],
         "mdVersion" => $v["md_version"],
         "isFixed" => $v["is_fixed"],
-        "enableParetnId" => $v["enable_parent_id"]
+        "enableParentId" => $v["enable_parent_id"]
       ];
     }
     return $result;
@@ -507,7 +507,7 @@ class CodeTableDAO extends PSIBaseExDAO
     $py = $params["py"];
     $tableName = strtolower($params["tableName"]);
     $enableParetnId = intval($params["enableParentId"] ?? 0);
-    if ($enableParetnId != 0 || $enableParetnId != 1) {
+    if ($enableParetnId != 0 && $enableParetnId != 1) {
       //$enableParentId只能取值0或1
       $enableParetnId = 0;
     }

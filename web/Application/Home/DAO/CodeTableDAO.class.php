@@ -506,6 +506,11 @@ class CodeTableDAO extends PSIBaseExDAO
     $memo = $params["memo"] ?? "";
     $py = $params["py"];
     $tableName = strtolower($params["tableName"]);
+    $enableParetnId = intval($params["enableParentId"] ?? 0);
+    if ($enableParetnId != 0 || $enableParetnId != 1) {
+      //$enableParentId只能取值0或1
+      $enableParetnId = 0;
+    }
 
     // 检查编码是否已经存在
     if ($code) {
@@ -549,15 +554,36 @@ class CodeTableDAO extends PSIBaseExDAO
     $id = $this->newId();
     $fid = "ct" . date("YmdHis");
 
-    $sql = "insert into t_code_table_md (id, category_id, code, name, table_name, py, memo, fid)
-            values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')";
-    $rc = $db->execute($sql, $id, $categoryId, $code, $name, $tableName, $py, $memo, $fid);
+    $sql = "insert into t_code_table_md (id, category_id, code, name, table_name, py, memo, fid,
+              enable_parent_id)
+            values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
+              %d)";
+    $rc = $db->execute($sql, $id, $categoryId, $code, $name, $tableName, $py, $memo, $fid, $enableParetnId);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
     }
 
     // 码表标准列
     $cols = $this->getCodeTableSysCols();
+    if ($enableParetnId == 1) {
+      // 启用层级数据，则创建新列parent_id和full_name
+      $cols[] = [
+        "caption" => "上级id",
+        "fieldName" => "parent_id",
+        "fieldType" => "varchar",
+        "fieldLength" => 255,
+        "fieldDecimal" => 0,
+        "valueFrom" => 4,
+        "valueFromTableName" => $tableName,
+        "valueFromColName" => "id",
+        "mustInput" => 0,
+        "showOrder" => -1000,
+        "sysCol" => 1,
+        "isVisible" => 2,
+        "widthInView" => 0
+      ];
+    }
+
     foreach ($cols as $v) {
       $sql = "insert into t_code_table_cols_md (id, table_id,
                 caption, db_field_name, db_field_type, db_field_length,

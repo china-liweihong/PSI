@@ -582,6 +582,22 @@ class CodeTableDAO extends PSIBaseExDAO
         "isVisible" => 2,
         "widthInView" => 0
       ];
+
+      $cols[] = [
+        "caption" => "全名",
+        "fieldName" => "full_name",
+        "fieldType" => "varchar",
+        "fieldLength" => 1000,
+        "fieldDecimal" => 0,
+        "valueFrom" => 5,
+        "valueFromTableName" => "",
+        "valueFromColName" => "",
+        "mustInput" => 0,
+        "showOrder" => -1000,
+        "sysCol" => 1,
+        "isVisible" => 1,
+        "widthInView" => 300
+      ];
     }
 
     foreach ($cols as $v) {

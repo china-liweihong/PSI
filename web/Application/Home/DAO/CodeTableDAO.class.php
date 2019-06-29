@@ -1112,6 +1112,27 @@ class CodeTableDAO extends PSIBaseExDAO
    */
   public function addCodeTableCol(&$params)
   {
+    $db = $this->db;
+
+    $codeTableId = $params["codeTableId"];
+    $caption = $params["caption"];
+    $fieldName = $params["fieldName"];
+    $fieldType = $params["fieldType"];
+    $fieldLength = $params["fieldLength"];
+    $valueFrom = $params["valueFrom"];
+    $valueFromTableName = $params["valueFromTableName"];
+    $valueFromColName = $params["valueFromColName"];
+    $mustInput = $params["mustInput"];
+    $widthInView = $params["widthInView"];
+    $showOrder = $params["showOrder"];
+    $memo = $params["memo"];
+
+    // 检查码表是否存在
+    $codeTable = $this->getCodeTableById($codeTableId);
+    if (!$codeTable) {
+      return $this->bad("要新增列的码表不存在");
+    }
+
     return $this->todo();
   }
 }

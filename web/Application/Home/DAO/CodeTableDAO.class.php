@@ -196,7 +196,8 @@ class CodeTableDAO extends PSIBaseExDAO
 
     $categoryId = $params["categoryId"];
 
-    $sql = "select id, code, name, table_name, memo, fid, md_version, is_fixed
+    $sql = "select id, code, name, table_name, memo, fid, md_version, is_fixed,
+              enable_parent_id
             from t_code_table_md
             where category_id = '%s' 
             order by code, table_name";
@@ -212,7 +213,8 @@ class CodeTableDAO extends PSIBaseExDAO
         "fid" => $v["fid"],
         "memo" => $v["memo"],
         "mdVersion" => $v["md_version"],
-        "isFixed" => $v["is_fixed"]
+        "isFixed" => $v["is_fixed"],
+        "enableParetnId" => $v["enable_parent_id"]
       ];
     }
     return $result;

@@ -51,7 +51,7 @@ Ext.define("PSI.CodeTable.CodeTableEditForm", {
         height: 40
       },
       width: 550,
-      height: 300,
+      height: 330,
       layout: "border",
       items: [{
         region: "north",
@@ -141,6 +141,21 @@ Ext.define("PSI.CodeTable.CodeTableEditForm", {
           colspan: 2,
           width: 510
         }, {
+          id: "PSI_CodeTable_CodeTableEditForm_editEnableParentId",
+          xtype: "combo",
+          queryMode: "local",
+          editable: false,
+          valueField: "id",
+          fieldLabel: "层级数据",
+          beforeLabelTextTpl: PSI.Const.REQUIRED,
+          store: Ext.create("Ext.data.ArrayStore", {
+            fields: ["id", "text"],
+            data: [[0, "否"], [1, "是"]]
+          }),
+          value: 0,
+          colspan: 2,
+          name: "enableParentId"
+        }, {
           id: "PSI_CodeTable_CodeTableEditForm_editMemo",
           fieldLabel: "备注",
           name: "memo",
@@ -173,14 +188,12 @@ Ext.define("PSI.CodeTable.CodeTableEditForm", {
 
     me.editForm = Ext.getCmp("PSI_CodeTable_CodeTableEditForm_editForm");
 
-    me.editCategoryId = Ext
-      .getCmp("PSI_CodeTable_CodeTableEditForm_editCategoryId");
-    me.editCategory = Ext
-      .getCmp("PSI_CodeTable_CodeTableEditForm_editCategory");
+    me.editCategoryId = Ext.getCmp("PSI_CodeTable_CodeTableEditForm_editCategoryId");
+    me.editCategory = Ext.getCmp("PSI_CodeTable_CodeTableEditForm_editCategory");
     me.editCode = Ext.getCmp("PSI_CodeTable_CodeTableEditForm_editCode");
     me.editName = Ext.getCmp("PSI_CodeTable_CodeTableEditForm_editName");
-    me.editTableName = Ext
-      .getCmp("PSI_CodeTable_CodeTableEditForm_editTableName");
+    me.editTableName = Ext.getCmp("PSI_CodeTable_CodeTableEditForm_editTableName");
+    me.editEnableParentId = Ext.getCmp("PSI_CodeTable_CodeTableEditForm_editEnableParentId");
     me.editMemo = Ext.getCmp("PSI_CodeTable_CodeTableEditForm_editMemo");
 
     me.__editorList = [me.editCategory, me.editCode, me.editName,
@@ -220,6 +233,8 @@ Ext.define("PSI.CodeTable.CodeTableEditForm", {
             me.editCode.setValue(data.code);
             me.editName.setValue(data.name);
             me.editTableName.setValue(data.tableName);
+            me.editEnableParentId.setValue(parseInt(data.enableParentId));
+            me.editEnableParentId.setReadOnly(true);
             me.editTableName.setReadOnly(true);
             me.editMemo.setValue(data.memo);
           }

@@ -591,7 +591,7 @@ class CodeTableDAO extends PSIBaseExDAO
         "showOrder" => 4,
         "showOrderInView" => -1000,
         "sysCol" => 1,
-        "isVisible" => 2,
+        "isVisible" => 1,
         "widthInView" => 0
       ];
 
@@ -608,7 +608,7 @@ class CodeTableDAO extends PSIBaseExDAO
         "showOrder" => -1000,
         "showOrderInView" => 3,
         "sysCol" => 1,
-        "isVisible" => 1,
+        "isVisible" => 2,
         "widthInView" => 300
       ];
     }
@@ -995,6 +995,21 @@ class CodeTableDAO extends PSIBaseExDAO
       ];
     }
     $result["cols"] = $cols;
+
+    $sql = "select caption, db_field_name, width_in_view
+            from t_code_table_cols_md
+            where table_id = '%s' and show_order_in_view >= 0
+            order by show_order_in_view";
+    $data = $db->query($sql, $id);
+    $colsForView = [];
+    foreach ($data as $v) {
+      $colsForView[] = [
+        "caption" => $v["caption"],
+        "fieldName" => $v["db_field_name"],
+        "widthInView" => $v["width_in_view"] ?? 100,
+      ];
+    }
+    $result["colsForView"] = $colsForView;
 
     return $result;
   }

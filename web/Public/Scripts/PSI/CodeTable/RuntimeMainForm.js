@@ -46,15 +46,13 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
     var el = me.getEl();
     el && el.mask(PSI.Const.LOADING);
     me.ajax({
-      url: me
-        .URL("Home/CodeTable/getMetaDataForRuntime"),
+      url: me.URL("Home/CodeTable/getMetaDataForRuntime"),
       params: {
         fid: me.getFid()
       },
       callback: function (options, success, response) {
         if (success) {
-          var data = me
-            .decodeJSON(response.responseText);
+          var data = me.decodeJSON(response.responseText);
 
           me.__md = data;
 
@@ -108,20 +106,19 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
 
     var fields = [];
     var cols = [];
-    var colsLength = md.cols.length;
+    var colsLength = md.colsForView.length;
     for (var i = 0; i < colsLength; i++) {
-      var mdCol = md.cols[i];
+      var mdCol = md.colsForView[i];
 
       fields.push(mdCol.fieldName);
-      if (mdCol.isVisible) {
-        cols.push({
-          header: mdCol.caption,
-          dataIndex: mdCol.fieldName,
-          width: parseInt(mdCol.widthInView),
-          menuDisabled: true,
-          sortable: false
-        });
-      }
+
+      cols.push({
+        header: mdCol.caption,
+        dataIndex: mdCol.fieldName,
+        width: parseInt(mdCol.widthInView),
+        menuDisabled: true,
+        sortable: false
+      });
     }
 
     Ext.define(modelName, {

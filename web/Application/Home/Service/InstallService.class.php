@@ -1613,25 +1613,26 @@ class InstallService extends PSIBaseExService
 
     // t_code_table_cols_md
     $sql = "CREATE TABLE IF NOT EXISTS `t_code_table_cols_md` (
-				  `id` varchar(255) NOT NULL,
-				  `table_id` varchar(255) NOT NULL,
-				  `caption` varchar(255) NOT NULL,
-				  `db_field_name` varchar(255) NOT NULL,
-				  `db_field_type` varchar(255) NOT NULL,
-				  `db_field_length` int(11) NOT NULL,
-				  `db_field_decimal` int(11) NOT NULL,
-				  `show_order` int(11) NOT NULL,
-				  `value_from` int(11) DEFAULT NULL,
-				  `value_from_table_name` varchar(255) DEFAULT NULL,
-				  `value_from_col_name` varchar(255) DEFAULT NULL,
-				  `must_input` int(11) DEFAULT 1,
-				  `sys_col` int(11) DEFAULT 1,
-				  `is_visible` int(11) DEFAULT 1,
-				  `width_in_view` int(11) DEFAULT NULL,
-				  `note` varchar(1000) DEFAULT NULL,
-				  PRIMARY KEY (`id`)
-				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-		";
+              `id` varchar(255) NOT NULL,
+              `table_id` varchar(255) NOT NULL,
+              `caption` varchar(255) NOT NULL,
+              `db_field_name` varchar(255) NOT NULL,
+              `db_field_type` varchar(255) NOT NULL,
+              `db_field_length` int(11) NOT NULL,
+              `db_field_decimal` int(11) NOT NULL,
+              `show_order` int(11) NOT NULL,
+              `value_from` int(11) DEFAULT NULL,
+              `value_from_table_name` varchar(255) DEFAULT NULL,
+              `value_from_col_name` varchar(255) DEFAULT NULL,
+              `must_input` int(11) DEFAULT 1,
+              `sys_col` int(11) DEFAULT 1,
+              `is_visible` int(11) DEFAULT 1,
+              `width_in_view` int(11) DEFAULT NULL,
+              `note` varchar(1000) DEFAULT NULL,
+              `show_order_in_view` int(11) NOT NULL DEFAULT -1,
+              PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+            ";
     $db->execute($sql);
 
     // t_fid_plus

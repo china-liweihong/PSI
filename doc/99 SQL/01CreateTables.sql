@@ -1426,6 +1426,7 @@ CREATE TABLE IF NOT EXISTS `t_code_table_cols_md` (
   `is_visible` int(11) DEFAULT 1,
   `width_in_view` int(11) DEFAULT NULL,
   `note` varchar(1000) DEFAULT NULL,
+  `show_order_in_view` int(11) NOT NULL DEFAULT -1,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

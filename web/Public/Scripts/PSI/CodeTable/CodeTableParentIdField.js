@@ -5,6 +5,11 @@ Ext.define("PSI.CodeTable.CodeTableParentIdField", {
   extend: "Ext.form.field.Trigger",
   alias: "widget.psi_codetable_parentidfield",
 
+  config: {
+    // 当前码表的完整元数据
+    metadata: null
+  },
+
   initComponent: function () {
     var me = this;
 

@@ -190,6 +190,7 @@ Ext.define("PSI.Bizlog.MainForm", {
       id: "comboCategory",
       queryMode: "local",
       editable: false,
+      matchFieldWidth: false,
       labelWidth: 60,
       labelAlign: "right",
       labelSeparator: "",

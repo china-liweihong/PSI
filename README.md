@@ -60,3 +60,5 @@ PSI商业计划见：<a href="https://gitee.com/crm8000/PSI/tree/master/doc/00%2
 2. PSI技术设计的深度解析：技术培训
 3. 研发管理指导：PSI实施方法论的具体讲解
 4. 法律服务：PSI二开合同文本、合同审查、专利申请、软件著作权申请
+
+> 说明：上面这些服务，也通过issue( https://gitee.com/crm8000/PSI/issues )的方式向所有人**免费**开放，只是通过issue的方式，只保证回复的准确性，不保证回复的及时性。

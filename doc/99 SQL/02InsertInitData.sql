@@ -548,7 +548,8 @@ INSERT INTO `t_dict_table_category` (`id`, `code`, `name`, `parent_id`) VALUES
 
 TRUNCATE TABLE `t_dict_table_md`;
 INSERT INTO `t_dict_table_md` (`id`, `code`, `name`, `table_name`, `category_id`, `memo`, `py`) VALUES
-('01', '01', '码表记录状态', 't_sysdict_record_status', '01', '用于码表', 'MBJLZT');
+('0101', '0101', '码表记录状态', 't_sysdict_record_status', '01', '码表记录的状态', 'MBJLZT'),
+('0102', '0102', '码表字段编辑器类型', 't_sysdict_editor_xtype', '01', '码表字段编辑器的类型', 'MBZDBJQLX');
 
 TRUNCATE TABLE `t_sysdict_record_status`;
 INSERT INTO `t_sysdict_record_status` (`id`, `code`, `code_int`, `name`, `py`, `memo`, `show_order`) VALUES
@@ -563,7 +564,7 @@ INSERT INTO `t_sysdict_editor_xtype` (`id`, `code`, `code_int`, `name`, `py`, `m
 
 TRUNCATE TABLE `t_psi_db_version`;
 INSERT INTO `t_psi_db_version` (`db_version`, `update_dt`) VALUES
-('20190706-01', now());
+('20190706-02', now());
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

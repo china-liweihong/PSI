@@ -261,6 +261,7 @@ class UpdateDBService extends PSIBaseService
     $this->update_20190629_01();
     $this->update_20190630_01();
     $this->update_20190706_01();
+    $this->update_20190706_02();
 
     $sql = "delete from t_psi_db_version";
     $db->execute($sql);
@@ -282,6 +283,43 @@ class UpdateDBService extends PSIBaseService
   // ============================================
   private function notForgot()
   { }
+
+  private function update_20190706_02(){
+    // 本次更新：新增系统数据字典t_sysdict_editor_xtype并初始化其数据
+    $db = $this->db;
+    $tableName = "t_sysdict_editor_xtype";
+    if (!$this->tableExists($db, $tableName)){
+      $sql = "CREATE TABLE IF NOT EXISTS `t_sysdict_editor_xtype` (
+                `id` varchar(255) NOT NULL,
+                `code` varchar(255) NOT NULL,
+                `code_int` int(11) NOT NULL,
+                `name` varchar(255) NOT NULL,
+                `py` varchar(255) NOT NULL,
+                `memo` varchar(255) NOT NULL,
+                `show_order` int(11) DEFAULT NULL,
+                PRIMARY KEY (`id`)
+              ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+              ";
+      $db->execute($sql);
+    }
+
+    // 初始t_sysdict_editor_xtype的数据
+    $sql = "TRUNCATE TABLE `t_sysdict_editor_xtype`;
+            INSERT INTO `t_sysdict_editor_xtype` (`id`, `code`, `code_int`, `name`, `py`, `memo`, `show_order`) VALUES
+            ('5104A62E-9F97-11E9-9BDF-F0BF9790E21F', '1', 1, 'textfield', 'textfield', '字符串编辑器', 1),
+            ('7B795BEF-9F97-11E9-9BDF-F0BF9790E21F', '2', 2, 'numberfield', 'numberfield', '数值编辑器', 2),
+            ('FD1F4CF4-9F97-11E9-9BDF-F0BF9790E21F', '3', 3, 'psi_codetable_parentidfield', 'psi_codetable_parentidfield', '上级记录编辑器', 3);
+            ";
+    $db->execute($sql);
+
+    // 系统数据字典元数据
+    $sql = "TRUNCATE TABLE `t_dict_table_md`;
+            INSERT INTO `t_dict_table_md` (`id`, `code`, `name`, `table_name`, `category_id`, `memo`, `py`) VALUES
+            ('0101', '0101', '码表记录状态', 't_sysdict_record_status', '01', '码表记录的状态', 'MBJLZT'),
+            ('0102', '0102', '码表字段编辑器类型', 't_sysdict_editor_xtype', '01', '码表字段编辑器的类型', 'MBZDBJQLX');
+            ";
+    $db->execute($sql);
+  }
 
   private function update_20190706_01(){
     // 本次更新：t_code_table_cols_md新增字段editor_xtype

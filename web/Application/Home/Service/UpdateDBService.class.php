@@ -262,6 +262,7 @@ class UpdateDBService extends PSIBaseService
     $this->update_20190630_01();
     $this->update_20190706_01();
     $this->update_20190706_02();
+    $this->update_20190706_03();
 
     $sql = "delete from t_psi_db_version";
     $db->execute($sql);
@@ -284,11 +285,24 @@ class UpdateDBService extends PSIBaseService
   private function notForgot()
   { }
 
-  private function update_20190706_02(){
+  private function update_20190706_03()
+  {
+    // 本次更新：t_code_table_md新增字段handler_class_name
+    $db = $this->db;
+    $tableName = "t_code_table_md";
+    $columnName = "handler_class_name";
+    if (!$this->columnExists($db, $tableName, $columnName)) {
+      $sql = "alter table {$tableName} add {$columnName} varchar(255) DEFAULT NULL;";
+      $db->execute($sql);
+    }
+  }
+
+  private function update_20190706_02()
+  {
     // 本次更新：新增系统数据字典t_sysdict_editor_xtype并初始化其数据
     $db = $this->db;
     $tableName = "t_sysdict_editor_xtype";
-    if (!$this->tableExists($db, $tableName)){
+    if (!$this->tableExists($db, $tableName)) {
       $sql = "CREATE TABLE IF NOT EXISTS `t_sysdict_editor_xtype` (
                 `id` varchar(255) NOT NULL,
                 `code` varchar(255) NOT NULL,
@@ -321,7 +335,8 @@ class UpdateDBService extends PSIBaseService
     $db->execute($sql);
   }
 
-  private function update_20190706_01(){
+  private function update_20190706_01()
+  {
     // 本次更新：t_code_table_cols_md新增字段editor_xtype
     $db = $this->db;
     $tableName = "t_code_table_cols_md";
@@ -332,7 +347,8 @@ class UpdateDBService extends PSIBaseService
     }
   }
 
-  private function update_20190630_01(){
+  private function update_20190630_01()
+  {
     //本次更新：t_code_table_cols_md新增字段show_order_in_view
     $db = $this->db;
     $tableName = "t_code_table_cols_md";

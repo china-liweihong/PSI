@@ -1595,20 +1595,21 @@ class InstallService extends PSIBaseExService
 
     // t_code_table_md
     $sql = "CREATE TABLE IF NOT EXISTS `t_code_table_md` (
-            `id` varchar(255) NOT NULL,
-            `code` varchar(255) NOT NULL,
-            `name` varchar(255) NOT NULL,
-            `table_name` varchar(255) NOT NULL,
-            `category_id` varchar(255) NOT NULL,
-            `memo` varchar(1000) DEFAULT NULL,
-            `py` varchar(255) DEFAULT NULL,
-            `fid` varchar(255) DEFAULT NULL,
-            `md_version` int(11) NOT NULL DEFAULT 1,
-            `is_fixed` int(11) NOT NULL DEFAULT 2,
-            `enable_parent_id` int(11) NOT NULL DEFAULT 0,
-            PRIMARY KEY (`id`)
-          ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-          ";
+              `id` varchar(255) NOT NULL,
+              `code` varchar(255) NOT NULL,
+              `name` varchar(255) NOT NULL,
+              `table_name` varchar(255) NOT NULL,
+              `category_id` varchar(255) NOT NULL,
+              `memo` varchar(1000) DEFAULT NULL,
+              `py` varchar(255) DEFAULT NULL,
+              `fid` varchar(255) DEFAULT NULL,
+              `md_version` int(11) NOT NULL DEFAULT 1,
+              `is_fixed` int(11) NOT NULL DEFAULT 2,
+              `enable_parent_id` int(11) NOT NULL DEFAULT 0,
+              `handler_class_name` varchar(255) DEFAULT NULL,
+              PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+            ";
     $db->execute($sql);
 
     // t_code_table_cols_md

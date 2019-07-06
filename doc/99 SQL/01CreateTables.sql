@@ -1405,6 +1405,7 @@ CREATE TABLE IF NOT EXISTS `t_code_table_md` (
   `md_version` int(11) NOT NULL DEFAULT 1,
   `is_fixed` int(11) NOT NULL DEFAULT 2,
   `enable_parent_id` int(11) NOT NULL DEFAULT 0,
+  `handler_class_name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

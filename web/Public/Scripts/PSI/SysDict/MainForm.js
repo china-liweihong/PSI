@@ -236,7 +236,7 @@ Ext.define("PSI.SysDict.MainForm", {
         }, {
           header: "值",
           dataIndex: "name",
-          width: 150
+          width: 250
         }, {
           header: "备注",
           dataIndex: "memo",

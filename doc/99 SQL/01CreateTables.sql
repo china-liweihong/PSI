@@ -20,7 +20,9 @@ CREATE TABLE IF NOT EXISTS `t_biz_log` (
 DROP TABLE IF EXISTS `t_fid`;
 CREATE TABLE IF NOT EXISTS `t_fid` (
   `fid` varchar(255) NOT NULL,
-  `name` varchar(255) NOT NULL
+  `name` varchar(255) NOT NULL,
+  `py` varchar(255) DEFAULT NULL,
+  `memo` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `t_menu_item`;
@@ -1435,7 +1437,9 @@ CREATE TABLE IF NOT EXISTS `t_code_table_cols_md` (
 DROP TABLE IF EXISTS `t_fid_plus`;
 CREATE TABLE IF NOT EXISTS `t_fid_plus` (
   `fid` varchar(255) NOT NULL,
-  `name` varchar(255) NOT NULL
+  `name` varchar(255) NOT NULL,
+  `py` varchar(255) DEFAULT NULL,
+  `memo` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `t_menu_item_plus`;

@@ -69,9 +69,11 @@ class InstallService extends PSIBaseExService
     // t_fid
     $sql = "CREATE TABLE IF NOT EXISTS `t_fid` (
               `fid` varchar(255) NOT NULL,
-              `name` varchar(255) NOT NULL
+              `name` varchar(255) NOT NULL,
+              `py` varchar(255) DEFAULT NULL,
+              `memo` varchar(255) DEFAULT NULL
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-				";
+            ";
     $db->execute($sql);
 
     // t_menu_item
@@ -1639,10 +1641,12 @@ class InstallService extends PSIBaseExService
 
     // t_fid_plus
     $sql = "CREATE TABLE IF NOT EXISTS `t_fid_plus` (
-				  `fid` varchar(255) NOT NULL,
-				  `name` varchar(255) NOT NULL
-				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-		";
+              `fid` varchar(255) NOT NULL,
+              `name` varchar(255) NOT NULL,
+              `py` varchar(255) DEFAULT NULL,
+              `memo` varchar(255) DEFAULT NULL
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+            ";
     $db->execute($sql);
 
     // t_menu_item_plus

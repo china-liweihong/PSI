@@ -139,6 +139,8 @@ class MainMenuService extends PSIBaseExService
       return $this->emptyResult();
     }
 
+    $params["loginUserId"] = $this->getLoginUserId();
+
     $dao = new MainMenuDAO($this->db());
     return $dao->queryDataForShortcut($params);
   }

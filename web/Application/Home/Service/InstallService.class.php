@@ -78,14 +78,16 @@ class InstallService extends PSIBaseExService
 
     // t_menu_item
     $sql = "CREATE TABLE IF NOT EXISTS `t_menu_item` (
-				  `id` varchar(255) NOT NULL,
-				  `caption` varchar(255) NOT NULL,
-				  `fid` varchar(255) DEFAULT NULL,
-				  `parent_id` varchar(255) DEFAULT NULL,
-				  `show_order` int(11) NOT NULL,
-				  PRIMARY KEY (`id`)
-				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-		";
+              `id` varchar(255) NOT NULL,
+              `caption` varchar(255) NOT NULL,
+              `fid` varchar(255) DEFAULT NULL,
+              `parent_id` varchar(255) DEFAULT NULL,
+              `show_order` int(11) NOT NULL,
+              `py` varchar(255) DEFAULT NULL,
+              `memo` varchar(255) DEFAULT NULL,
+              PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+            ";
     $db->execute($sql);
 
     // t_org
@@ -1651,14 +1653,16 @@ class InstallService extends PSIBaseExService
 
     // t_menu_item_plus
     $sql = "CREATE TABLE IF NOT EXISTS `t_menu_item_plus` (
-				  `id` varchar(255) NOT NULL,
-				  `caption` varchar(255) NOT NULL,
-				  `fid` varchar(255) DEFAULT NULL,
-				  `parent_id` varchar(255) DEFAULT NULL,
-				  `show_order` int(11) NOT NULL,
-				  PRIMARY KEY (`id`)
-				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-		";
+              `id` varchar(255) NOT NULL,
+              `caption` varchar(255) NOT NULL,
+              `fid` varchar(255) DEFAULT NULL,
+              `parent_id` varchar(255) DEFAULT NULL,
+              `show_order` int(11) NOT NULL,
+              `py` varchar(255) DEFAULT NULL,
+              `memo` varchar(255) DEFAULT NULL,
+              PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+            ";
     $db->execute($sql);
 
     // t_permission_plus

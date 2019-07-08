@@ -73,11 +73,22 @@ Ext.define("PSI.App", {
             + "' style='vertical-align: middle;margin:0px 5px 0px 5px'></img><span style='vertical-align: middle'>"
             + value + "</span></a>";
         }
+      }, {
+        dataIndex: "name",
+        menuDisabled: true,
+        menuDisabled: true,
+        sortable: false,
+        width: 30,
+        hidden: PSI.Const.MOT != "0",
+        renderer: function (v) {
+          var fileName = PSI.Const.BASE_URL + "Public/Images/icons/open_in_new_window.png";
+          return "<a href='#'><img src='" + fileName + "' style='vertical-align: middle' title='新窗口打开'></img></a>";
+        }
       }],
       store: storeRecentFid
     });
 
-    me.gridRecentFid.on("itemclick", function (v, r) {
+    me.gridRecentFid.on("cellclick", function (me, td, cellIndex, r, tr, rowIndex, e, eOpts) {
       var fid = r.get("fid");
 
       var url = PSI.Const.BASE_URL + "Home/MainMenu/navigateTo/fid/" + fid + "/t/1";
@@ -88,8 +99,12 @@ Ext.define("PSI.App", {
         });
       } else {
         if (PSI.Const.MOT == "0") {
-          location.replace(url);
-
+          if (cellIndex == 1) {
+            window.open(url);
+          }
+          else {
+            location.replace(url);
+          }
         } else {
           window.open(url);
         }

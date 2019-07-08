@@ -36,6 +36,10 @@ class IPService
 
     $result = "";
     foreach ($regionArray as $i => $v) {
+      if ($v == "内网IP") {
+        return "内网IP";
+      }
+
       if ($v == "0") {
         continue;
       }

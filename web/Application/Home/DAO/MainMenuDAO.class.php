@@ -172,13 +172,13 @@ class MainMenuDAO extends PSIBaseExDAO
 
     $queryKey = $params["queryKey"] ?? "";
 
-    $sql = "select id, fid, caption
+    $sql = "select id, fid, caption, py
             from (select * from t_menu_item 
                   union 
                   select * from t_menu_item_plus) m
             where (fid is not null) and (caption like '%s' or py like '%s')  
               and (py <> '')
-            order by caption limit 20";
+            order by py limit 20";
     $queryParams = [];
     $queryParams[] = "%{$queryKey}%";
     $queryParams[] = "%{$queryKey}%";
@@ -200,7 +200,8 @@ class MainMenuDAO extends PSIBaseExDAO
       $result[] = [
         "id" => $v["id"],
         "fid" => $v["fid"],
-        "caption" => $caption
+        "caption" => $caption,
+        "py" => $v["py"]
       ];
     }
 

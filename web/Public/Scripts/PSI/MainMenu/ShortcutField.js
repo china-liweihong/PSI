@@ -50,7 +50,7 @@ Ext.define("PSI.MainMenu.ShortcutField", {
     var modelName = "PSIMenuShortcutField";
     Ext.define(modelName, {
       extend: "Ext.data.Model",
-      fields: ["id", "fid", "caption"]
+      fields: ["id", "fid", "caption", "py"]
     });
 
     var store = Ext.create("Ext.data.Store", {
@@ -64,6 +64,11 @@ Ext.define("PSI.MainMenu.ShortcutField", {
       border: 0,
       store: store,
       columns: [{
+        header: "拼音字头",
+        dataIndex: "py",
+        menuDisabled: true,
+        width: 100
+      }, {
         header: "菜单",
         dataIndex: "caption",
         menuDisabled: true,

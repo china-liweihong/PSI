@@ -32,6 +32,8 @@ CREATE TABLE IF NOT EXISTS `t_menu_item` (
   `fid` varchar(255) DEFAULT NULL,
   `parent_id` varchar(255) DEFAULT NULL,
   `show_order` int(11) NOT NULL,
+  `py` varchar(255) DEFAULT NULL,
+  `memo` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -1449,6 +1451,8 @@ CREATE TABLE IF NOT EXISTS `t_menu_item_plus` (
   `fid` varchar(255) DEFAULT NULL,
   `parent_id` varchar(255) DEFAULT NULL,
   `show_order` int(11) NOT NULL,
+  `py` varchar(255) DEFAULT NULL,
+  `memo` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

@@ -41,13 +41,9 @@ Ext.define("PSI.App", {
 
     me.gridRecentFid = Ext.create("Ext.grid.Panel", {
       header: {
-        title: "常用功能",
+        title: "常用功能 - 根据使用频率自动生成",
         height: 28
       },
-      bbar: [" ", " ", " ", " ", " ", {
-        xtype: 'displayfield',
-        value: "常用功能根据使用频率自动生成"
-      }],
       titleAlign: "center",
       cls: "PSI-recent-fid",
       forceFit: true,
@@ -131,8 +127,27 @@ Ext.define("PSI.App", {
           collapsed: me.getRecentFidPanelCollapsed(),
           header: false,
           border: 0,
-          layout: "fit",
-          items: [me.gridRecentFid],
+          layout: "border",
+          items: [{
+            region: "center",
+            layout: "fit",
+            border: 0,
+            items: me.gridRecentFid
+          }, {
+            region: "south",
+            height: 30,
+            border: 0,
+            layout: "form",
+            items: [{
+              fieldLabel: "快捷访问",
+              labelSeparator: "",
+              margin: 5,
+              labelAlign: "right",
+              labelWidth: 60,
+              emptyText: "双击此处弹出选择框",
+              xtype: "psi_mainmenushortcutfield"
+            }]
+          }],
           listeners: {
             collapse: {
               fn: me.onRecentFidPanelCollapse,

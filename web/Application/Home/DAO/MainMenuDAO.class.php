@@ -164,6 +164,50 @@ class MainMenuDAO extends PSIBaseExDAO
   }
 
   /**
+   * 菜单项快捷访问自定义字段 - 查询数据
+   */
+  public function queryDataForShortcut($params)
+  {
+    $db = $this->db;
+
+    $queryKey = $params["queryKey"] ?? "";
+
+    $sql = "select id, fid, caption
+            from (select * from t_menu_item 
+                  union 
+                  select * from t_menu_item_plus) m
+            where (fid is not null) and (caption like '%s' or py like '%s')  
+              and (py <> '')
+            order by caption limit 20";
+    $queryParams = [];
+    $queryParams[] = "%{$queryKey}%";
+    $queryParams[] = "%{$queryKey}%";
+
+    $data = $db->query($sql, $queryParams);
+
+    $result = [];
+    foreach ($data as $v) {
+      $caption = $v["caption"];
+      $parentId = $v["parent_id"];
+      if ($parentId) {
+        $sql = "select caption from t_menu_item where id = '%s' ";
+        $d = $db->query($sql, $parentId);
+        if ($d) {
+          $caption = $d[0]["caption"] . "\\" . $caption;
+        }
+      }
+
+      $result[] = [
+        "id" => $v["id"],
+        "fid" => $v["fid"],
+        "caption" => $caption
+      ];
+    }
+
+    return $result;
+  }
+
+  /**
    * 新增主菜单项
    *
    * @param array $params        	

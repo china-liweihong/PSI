@@ -131,6 +131,19 @@ class MainMenuService extends PSIBaseExService
   }
 
   /**
+   * 菜单项快捷访问自定义字段 - 查询数据
+   */
+  public function queryDataForShortcut($params)
+  {
+    if ($this->isNotOnline()) {
+      return $this->emptyResult();
+    }
+
+    $dao = new MainMenuDAO($this->db());
+    return $dao->queryDataForShortcut($params);
+  }
+
+  /**
    * 主菜单维护 - 新增或编辑菜单项
    */
   public function editMenuItem($params)

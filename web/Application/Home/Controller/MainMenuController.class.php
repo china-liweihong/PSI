@@ -27,6 +27,7 @@ class MainMenuController extends PSIBaseController
     $fid = I("get.fid");
 
     // $t == 1的时候，是从常用功能链接点击而来的
+    // $t == 2的时候，是从快捷访问而来
     $t = I("get.t");
 
     $fidService = new FIdService();
@@ -39,6 +40,8 @@ class MainMenuController extends PSIBaseController
 
       if ($t == "1") {
         $bizLogService->insertBizlog("通过常用功能进入模块：" . $fidName, "常用功能");
+      } else if ($t == "2") {
+        $bizLogService->insertBizlog("通过快捷访问进入模块：" . $fidName, "快捷访问");
       } else {
         $bizLogService->insertBizlog("通过主菜单进入模块：" . $fidName);
       }
@@ -359,6 +362,21 @@ class MainMenuController extends PSIBaseController
 
       $service = new MainMenuService();
       $this->ajaxReturn($service->queryDataForMenuItem($params));
+    }
+  }
+
+  /**
+   * 菜单项快捷访问自定义字段 - 查询数据
+   */
+  public function queryDataForShortcut()
+  {
+    if (IS_POST) {
+      $params = [
+        "queryKey" => I("post.queryKey")
+      ];
+
+      $service = new MainMenuService();
+      $this->ajaxReturn($service->queryDataForShortcut($params));
     }
   }
 

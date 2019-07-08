@@ -649,8 +649,8 @@ class CodeTableDAO extends PSIBaseExDAO
     }
 
     // fid: t_fid_plus
-    $sql = "insert into t_fid_plus (fid, name) values ('%s', '%s')";
-    $rc = $db->execute($sql, $fid, $name);
+    $sql = "insert into t_fid_plus (fid, name, py, memo) values ('%s', '%s', '%s', '')";
+    $rc = $db->execute($sql, $fid, $name, $py);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
     }

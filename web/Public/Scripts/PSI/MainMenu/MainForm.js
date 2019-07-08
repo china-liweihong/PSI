@@ -45,8 +45,7 @@ Ext.define("PSI.MainMenu.MainForm", {
     }, "-", {
       text: "帮助",
       handler: function () {
-        var url = me
-          .URL("/Home/Help/index?t=mainMenuMaintain")
+        var url = me.URL("/Home/Help/index?t=mainMenuMaintain")
         window.open(url);
       }
     }, "-", {
@@ -121,9 +120,9 @@ Ext.define("PSI.MainMenu.MainForm", {
           width: 120,
           renderer: function (value) {
             if (parseInt(value) == 1) {
-              return "系统菜单";
+              return "系统模块";
             } else {
-              return "自定义模块菜单";
+              return "<span style='color:blue;'>自定义模块</span>";
             }
           }
         }]

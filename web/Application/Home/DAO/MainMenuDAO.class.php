@@ -178,6 +178,7 @@ class MainMenuDAO extends PSIBaseExDAO
     $parentMenuId = $params["parentMenuId"];
     $showOrder = intval($params["showOrder"]);
     $isDemo = $params["isDemo"];
+    $py = $params["py"];
 
     // 检查fid
     $sql = "select count(*) as cnt from t_fid_plus where fid = '%s' ";
@@ -219,9 +220,9 @@ class MainMenuDAO extends PSIBaseExDAO
 
     $id = $this->newId();
 
-    $sql = "insert into t_menu_item_plus (id, caption, fid, parent_id, show_order)
-            values ('%s', '%s', '%s', '%s', %d)";
-    $rc = $db->execute($sql, $id, $caption, $fid, $parentMenuId, $showOrder);
+    $sql = "insert into t_menu_item_plus (id, caption, fid, parent_id, show_order, py, memo)
+            values ('%s', '%s', '%s', '%s', %d, '%s', '%s')";
+    $rc = $db->execute($sql, $id, $caption, $fid, $parentMenuId, $showOrder, $py, '');
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
     }
@@ -324,6 +325,7 @@ class MainMenuDAO extends PSIBaseExDAO
     $parentMenuId = $params["parentMenuId"];
     $showOrder = intval($params["showOrder"]);
     $isDemo = $params["isDemo"];
+    $py = $params["py"];
 
     // 检查fid
     $sql = "select count(*) as cnt from t_fid_plus where fid = '%s' ";
@@ -357,9 +359,9 @@ class MainMenuDAO extends PSIBaseExDAO
 
     $sql = "update t_menu_item_plus
             set caption = '%s', fid = '%s', parent_id = '%s',
-              show_order = %d
+              show_order = %d, py = '%s'
             where id = '%s' ";
-    $rc = $db->execute($sql, $caption, $fid, $parentMenuId, $showOrder, $id);
+    $rc = $db->execute($sql, $caption, $fid, $parentMenuId, $showOrder, $py, $id);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
     }

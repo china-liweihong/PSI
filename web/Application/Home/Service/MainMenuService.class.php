@@ -141,11 +141,16 @@ class MainMenuService extends PSIBaseExService
 
     $params["isDemo"] = $this->isDemo();
 
+    $pyService = new PinyinService();
+
+
     $db = $this->db();
     $db->startTrans();
 
     $id = $params["id"];
     $caption = $params["caption"];
+    $py = $pyService->toPY($caption);
+    $params["py"] = $py;
 
     $log = null;
     $dao = new MainMenuDAO($db);

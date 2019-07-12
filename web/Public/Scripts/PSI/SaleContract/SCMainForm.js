@@ -688,7 +688,8 @@ Ext.define("PSI.SaleContract.SCMainForm", {
     var me = this;
 
     var form = Ext.create("PSI.SaleContract.SCEditForm", {
-      parentForm: me
+      parentForm: me,
+      showAddGoodsButton: me.getPermission().showAddGoodsButton
     });
     form.show();
   },
@@ -704,6 +705,7 @@ Ext.define("PSI.SaleContract.SCMainForm", {
 
     var form = Ext.create("PSI.SaleContract.SCEditForm", {
       parentForm: me,
+      showAddGoodsButton: me.getPermission().showAddGoodsButton,
       entity: bill
     });
     form.show();

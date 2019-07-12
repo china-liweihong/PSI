@@ -4,6 +4,10 @@
 Ext.define("PSI.SaleContract.SCEditForm", {
   extend: "PSI.AFX.BaseDialogForm",
 
+  config: {
+    showAddGoodsButton: false
+  },
+
   mixins: ["PSI.Mix.GoodsPrice"],
 
   initComponent: function () {
@@ -561,6 +565,7 @@ Ext.define("PSI.SaleContract.SCEditForm", {
         draggable: false,
         editor: {
           xtype: "psi_goods_with_saleprice_field",
+          showAddButton: me.getShowAddGoodsButton() == "1",
           parentCmp: me,
           editCustomerName: "editCustomer"
         }

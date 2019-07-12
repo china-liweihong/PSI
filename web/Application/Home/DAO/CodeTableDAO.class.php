@@ -752,6 +752,10 @@ class CodeTableDAO extends PSIBaseExDAO
         return "引用系统数据字典";
       case 3:
         return "引用其他码表";
+      case 4:
+        return "引用自身数据";
+      case 5:
+        return "自动生成";
       default:
         return "";
     }

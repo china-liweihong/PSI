@@ -939,7 +939,7 @@ class CodeTableDAO extends PSIBaseExDAO
 
     $fid = $params["fid"];
 
-    $sql = "select id, name, table_name
+    $sql = "select id, name, table_name, enable_parent_id
             from t_code_table_md 
             where fid = '%s' ";
     $data = $db->query($sql, $fid);
@@ -953,7 +953,8 @@ class CodeTableDAO extends PSIBaseExDAO
     $result = [
       "fid" => $fid,
       "tableName" => $v["table_name"],
-      "name" => $v["name"]
+      "name" => $v["name"],
+      "treeView" => $v["enable_parent_id"] == 1
     ];
 
     // 列

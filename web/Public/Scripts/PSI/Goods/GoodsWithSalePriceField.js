@@ -7,7 +7,8 @@ Ext.define("PSI.Goods.GoodsWithSalePriceField", {
 
   config: {
     parentCmp: null,
-    editCustomerName: null
+    editCustomerName: null,
+    showAddButton: false
   },
 
 	/**
@@ -105,6 +106,26 @@ Ext.define("PSI.Goods.GoodsWithSalePriceField", {
     me.lookupGrid = lookupGrid;
     me.lookupGrid.on("itemdblclick", me.onOK, me);
 
+    var buttons = [];
+    if (me.getShowAddButton()) {
+      buttons.push({
+        text: "新增商品",
+        handler: me.onAddGoods,
+        iconCls: "PSI-button-add",
+        scope: me
+      });
+    }
+    buttons.push({
+      text: "确定",
+      handler: me.onOK,
+      scope: me
+    }, {
+        text: "取消",
+        handler: function () {
+          wnd.close();
+        }
+      });
+
     var wnd = Ext.create("Ext.window.Window", {
       title: "选择 - 商品",
       header: false,
@@ -152,16 +173,7 @@ Ext.define("PSI.Goods.GoodsWithSalePriceField", {
           }]
         }]
       }],
-      buttons: [{
-        text: "确定",
-        handler: me.onOK,
-        scope: me
-      }, {
-        text: "取消",
-        handler: function () {
-          wnd.close();
-        }
-      }]
+      buttons: buttons
     });
 
     var customerId = null;
@@ -272,5 +284,11 @@ Ext.define("PSI.Goods.GoodsWithSalePriceField", {
     if (me.getParentCmp() && me.getParentCmp().__setGoodsInfo) {
       me.getParentCmp().__setGoodsInfo(data)
     }
+  },
+
+  onAddGoods: function () {
+    var form = Ext.create("PSI.Goods.GoodsEditForm");
+
+    form.show();
   }
 });

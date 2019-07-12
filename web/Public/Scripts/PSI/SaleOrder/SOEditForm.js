@@ -9,7 +9,8 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
   config: {
     // genBill - true的时候，是从销售合同生成销售订单
     genBill: false,
-    scbillRef: null
+    scbillRef: null,
+    showAddGoodsButton: false
   },
 
   mixins: ["PSI.Mix.GoodsPrice"],
@@ -517,6 +518,7 @@ Ext.define("PSI.SaleOrder.SOEditForm", {
         draggable: false,
         editor: {
           xtype: "psi_goods_with_saleprice_field",
+          showAddButton: me.getShowAddGoodsButton() == "1",
           parentCmp: me,
           editCustomerName: "editCustomer"
         }

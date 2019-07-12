@@ -737,7 +737,8 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
     var me = this;
 
     var form = Ext.create("PSI.SaleOrder.SOEditForm", {
-      parentForm: me
+      parentForm: me,
+      showAddGoodsButton: me.getPermission().showAddGoodsButton
     });
     form.show();
   },
@@ -756,6 +757,7 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
 
     var form = Ext.create("PSI.SaleOrder.SOEditForm", {
       parentForm: me,
+      showAddGoodsButton: me.getPermission().showAddGoodsButton,
       entity: bill
     });
     form.show();

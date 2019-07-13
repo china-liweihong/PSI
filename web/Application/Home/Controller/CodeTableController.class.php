@@ -287,4 +287,20 @@ class CodeTableController extends PSIBaseController
       $this->ajaxReturn($service->codeTableRecordList($params));
     }
   }
+
+
+  /**
+   * 码表记录 - 树状结构
+   */
+  public function codeTableRecordListForTreeView()
+  {
+    if (IS_POST) {
+      $params = [
+        "fid" => I("post.fid")
+      ];
+
+      $service = new CodeTableService();
+      $this->ajaxReturn($service->codeTableRecordListForTreeView($params));
+    }
+  }
 }

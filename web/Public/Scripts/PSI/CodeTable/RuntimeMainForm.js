@@ -102,6 +102,17 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
     }]);
 
     // MainGrid
+    me.__mainGrid = md.treeView ? me.createMainTreeGrid(md) : me.createMainGrid(md);
+    me.__panelMain.add(me.__mainGrid);
+
+    if (me.treeView) {
+      // TODO
+    } else {
+      me.refreshMainGrid();
+    }
+  },
+
+  createMainGrid: function (md) {
     var modelName = "PSICodeTableRuntime_" + md.tableName;
 
     var fields = [];
@@ -126,7 +137,7 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
       fields: fields
     });
 
-    me.__mainGrid = Ext.create("Ext.grid.Panel", {
+    return Ext.create("Ext.grid.Panel", {
       cls: "PSI",
       viewConfig: {
         enableTextSelection: true
@@ -140,9 +151,76 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
         data: []
       })
     });
-    me.__panelMain.add(me.__mainGrid);
+  },
 
-    me.refreshMainGrid();
+  createMainTreeGrid: function (md) {
+    var me = this;
+    var modelName = "PSICodeTableRuntime_" + md.tableName;
+
+    var fields = ["id", "leaf", "children"];
+    var cols = [];
+    var colsLength = md.colsForView.length;
+    for (var i = 0; i < colsLength; i++) {
+      var mdCol = md.colsForView[i];
+
+      fields.push(mdCol.fieldName);
+
+      if (i == 0) {
+        cols.push({
+          xtype: "treecolumn",
+          header: mdCol.caption,
+          dataIndex: mdCol.fieldName,
+          width: parseInt(mdCol.widthInView),
+          menuDisabled: true,
+          sortable: false
+        });
+      } else {
+        cols.push({
+          header: mdCol.caption,
+          dataIndex: mdCol.fieldName,
+          width: parseInt(mdCol.widthInView),
+          menuDisabled: true,
+          sortable: false
+        });
+      }
+    }
+
+    Ext.define(modelName, {
+      extend: "Ext.data.Model",
+      fields: fields
+    });
+
+    var store = Ext.create("Ext.data.TreeStore", {
+      model: modelName,
+      proxy: {
+        type: "ajax",
+        actionMethods: {
+          read: "POST"
+        },
+        url: me.URL("Home/CodeTable/codeTableRecordListForTreeView")
+      },
+      listeners: {
+        beforeload: {
+          fn: function () {
+            store.proxy.extraParams = { fid: me.getFid() };
+          },
+          scope: me
+        }
+      }
+    });
+
+    return Ext.create("Ext.tree.Panel", {
+      cls: "PSI",
+      rootVisible: false,
+      useArrows: true,
+      viewConfig: {
+        loadMask: true
+      },
+      columnLines: true,
+      border: 0,
+      columns: cols,
+      store: store
+    });
   },
 
   onAddCodeTableRecord: function () {
@@ -172,6 +250,11 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
 
   refreshMainGrid: function (id) {
     var me = this;
+
+    var md = me.getMetaData();
+    if (md.treeView) {
+      return;
+    }
 
     var grid = me.getMainGrid();
     var el = grid.getEl() || Ext.getBody();

@@ -330,6 +330,20 @@ class CodeTableService extends PSIBaseExService
   }
 
   /**
+   * 码表记录 - 树状结构
+   */
+  public function codeTableRecordListForTreeView($params)
+  {
+    if ($this->isNotOnline()) {
+      return $this->emptyResult();
+    }
+
+    $params["loginUserId"] = $this->getLoginUserId();
+    $dao = new CodeTableDAO($this->db());
+    return $dao->codeTableRecordListForTreeView($params);
+  }
+
+  /**
    * 新增或编辑码表列
    */
   public function editCodeTableCol($params)

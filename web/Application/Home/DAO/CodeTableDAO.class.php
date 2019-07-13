@@ -1187,6 +1187,15 @@ class CodeTableDAO extends PSIBaseExDAO
   }
 
   /**
+   * 码表记录 - 树状结构
+   */
+  public function codeTableRecordListForTreeView($params)
+  {
+    $db = $this->db;
+    return [];
+  }
+
+  /**
    * 新增码表列
    *
    * @param array $params

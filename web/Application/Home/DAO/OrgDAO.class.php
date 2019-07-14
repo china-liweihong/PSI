@@ -415,6 +415,14 @@ class OrgDAO extends PSIBaseExDAO
       return $this->bad("当前组织机构在销售订单中使用了，不能删除");
     }
 
+    // 检查当前组织机构在是否是仓库核算组织机构
+    $sql = "select count(*) as cnt from t_warehouse where org_id = '%s' ";
+    $data = $db->query($sql, $id);
+    $cnt = $data[0]["cnt"];
+    if ($cnt > 0) {
+      return $this->bad("当前组织机构在仓库的核算组织机构中使用了，不能删除");
+    }
+
     $sql = "delete from t_org where id = '%s' ";
     $rc = $db->execute($sql, $id);
     if ($rc === false) {

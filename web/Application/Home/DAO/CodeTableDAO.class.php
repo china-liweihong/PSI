@@ -311,7 +311,8 @@ class CodeTableDAO extends PSIBaseExDAO
       "showOrderInView" => -1000,
       "sysCol" => 1,
       "isVisible" => 2,
-      "widthInView" => 0
+      "widthInView" => 0,
+      "editorXtype" => "textfield"
     ];
 
     // code
@@ -329,7 +330,8 @@ class CodeTableDAO extends PSIBaseExDAO
       "showOrderInView" => 0,
       "sysCol" => 1,
       "isVisible" => 1,
-      "widthInView" => 120
+      "widthInView" => 120,
+      "editorXtype" => "textfield"
     ];
 
     // name
@@ -347,7 +349,8 @@ class CodeTableDAO extends PSIBaseExDAO
       "showOrderInView" => 1,
       "sysCol" => 1,
       "isVisible" => 1,
-      "widthInView" => 200
+      "widthInView" => 200,
+      "editorXtype" => "textfield"
     ];
 
     // 拼音字头
@@ -365,7 +368,8 @@ class CodeTableDAO extends PSIBaseExDAO
       "showOrderInView" => -1000,
       "sysCol" => 1,
       "isVisible" => 2,
-      "widthInView" => 0
+      "widthInView" => 0,
+      "editorXtype" => "textfield"
     ];
 
     // 数据域data_org
@@ -383,7 +387,8 @@ class CodeTableDAO extends PSIBaseExDAO
       "showOrderInView" => -1000,
       "sysCol" => 1,
       "isVisible" => 2,
-      "widthInView" => 0
+      "widthInView" => 0,
+      "editorXtype" => "textfield"
     ];
 
     // company_id
@@ -401,7 +406,8 @@ class CodeTableDAO extends PSIBaseExDAO
       "showOrderInView" => -1000,
       "sysCol" => 1,
       "isVisible" => 2,
-      "widthInView" => 0
+      "widthInView" => 0,
+      "editorXtype" => "textfield"
     ];
 
     // 记录创建时间
@@ -419,7 +425,8 @@ class CodeTableDAO extends PSIBaseExDAO
       "showOrderInView" => -1000,
       "sysCol" => 1,
       "isVisible" => 2,
-      "widthInView" => 0
+      "widthInView" => 0,
+      "editorXtype" => "textfield"
     ];
 
     // 记录创建人id
@@ -437,7 +444,8 @@ class CodeTableDAO extends PSIBaseExDAO
       "showOrderInView" => -1000,
       "sysCol" => 1,
       "isVisible" => 2,
-      "widthInView" => 0
+      "widthInView" => 0,
+      "editorXtype" => "textfield"
     ];
 
     // 记录最后一次编辑时间
@@ -455,7 +463,8 @@ class CodeTableDAO extends PSIBaseExDAO
       "showOrderInView" => -1000,
       "sysCol" => 1,
       "isVisible" => 2,
-      "widthInView" => 0
+      "widthInView" => 0,
+      "editorXtype" => "textfield"
     ];
 
     // 记录最后一次编辑人id
@@ -473,7 +482,8 @@ class CodeTableDAO extends PSIBaseExDAO
       "showOrderInView" => -1000,
       "sysCol" => 1,
       "isVisible" => 2,
-      "widthInView" => 0
+      "widthInView" => 0,
+      "editorXtype" => "textfield"
     ];
 
     // 状态
@@ -491,7 +501,8 @@ class CodeTableDAO extends PSIBaseExDAO
       "showOrderInView" => 2,
       "sysCol" => 1,
       "isVisible" => 1,
-      "widthInView" => 80
+      "widthInView" => 80,
+      "editorXtype" => "textfield"
     ];
 
     return $result;
@@ -592,7 +603,8 @@ class CodeTableDAO extends PSIBaseExDAO
         "showOrderInView" => -1000,
         "sysCol" => 1,
         "isVisible" => 1,
-        "widthInView" => 0
+        "widthInView" => 0,
+        "editorXtype" => "psi_codetable_parentidfield"
       ];
 
       $cols[] = [
@@ -609,7 +621,8 @@ class CodeTableDAO extends PSIBaseExDAO
         "showOrderInView" => 3,
         "sysCol" => 1,
         "isVisible" => 2,
-        "widthInView" => 300
+        "widthInView" => 300,
+        "editorXtype" => "textfield"
       ];
     }
 
@@ -618,12 +631,12 @@ class CodeTableDAO extends PSIBaseExDAO
                 caption, db_field_name, db_field_type, db_field_length,
                 db_field_decimal, show_order, value_from, value_from_table_name,
                 value_from_col_name, must_input, sys_col, is_visible, width_in_view,
-                show_order_in_view)
+                show_order_in_view, editor_xtype)
               values ('%s', '%s',
                 '%s', '%s', '%s', %d,
                 %d, %d, %d, '%s',
                 '%s', %d, %d, %d, %d,
-                %d)";
+                %d, '%s')";
       $rc = $db->execute(
         $sql,
         $this->newId(),
@@ -641,7 +654,8 @@ class CodeTableDAO extends PSIBaseExDAO
         $v["sysCol"],
         $v["isVisible"],
         $v["widthInView"],
-        $v["showOrderInView"]
+        $v["showOrderInView"],
+        $v["editorXtype"]
       );
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -800,7 +814,7 @@ class CodeTableDAO extends PSIBaseExDAO
         "widthInView" => $isVisible ? ($v["width_in_view"] ?? 100) : null,
         "note" => $v["note"],
         "showOrderInView" => $v["show_order_in_view"],
-        "editorXtype"=>$v["editor_xtype"]
+        "editorXtype" => $v["editor_xtype"]
       ];
     }
 

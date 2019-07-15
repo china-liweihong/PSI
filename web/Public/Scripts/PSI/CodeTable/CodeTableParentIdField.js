@@ -88,11 +88,11 @@ Ext.define("PSI.CodeTable.CodeTableParentIdField", {
         }]
       }
     });
-    orgTree.on("itemdblclick", this.onOK, this);
-    this.tree = orgTree;
+    tree.on("itemdblclick", this.onOK, this);
+    this.tree = tree;
 
     var wnd = Ext.create("Ext.window.Window", {
-      title: "选择组织机构",
+      title: "选择上级",
       modal: true,
       width: 400,
       height: 300,

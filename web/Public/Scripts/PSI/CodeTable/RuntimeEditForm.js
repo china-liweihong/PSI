@@ -168,6 +168,20 @@ Ext.define("PSI.CodeTable.RuntimeEditForm", {
           }
         };
 
+        if (md.treeView && colMd.fieldName == "parent_id") {
+          // hiddenParentId用来在提交Form的时候向后台传递上级id
+          var hiddenParentId = {
+            xtype: "hidden",
+            name: "parent_id"
+          };
+          result.push(hiddenParentId);
+
+          Ext.apply(item, {
+            idCmp: hiddenParentId,
+            name: "parent_id_value"
+          });
+        }
+
         if (parseInt(colMd.valueFrom) == 2) {
           // 引用系统数据字典
           // TODO 当前是用combo来展示数据，当字典数据量大的时候是不合适的，需要进一步优化

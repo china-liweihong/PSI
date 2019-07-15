@@ -7,7 +7,8 @@ Ext.define("PSI.CodeTable.CodeTableParentIdField", {
 
   config: {
     // 当前码表的完整元数据
-    metadata: null
+    metadata: null,
+    idCmp: null
   },
 
   initComponent: function () {
@@ -130,12 +131,19 @@ Ext.define("PSI.CodeTable.CodeTableParentIdField", {
 
     me.setIdValue(data.get("id"));
     me.setValue(data.get("fullName"));
+
     me.wnd.close();
     me.focus();
   },
 
   setIdValue: function (id) {
-    this.__idValue = id;
+    var me = this;
+    me.__idValue = id;
+
+    var idCmp = me.getIdCmp();
+    if (idCmp) {
+      idCmp.setValue(id);
+    }
   },
 
   getIdValue: function () {

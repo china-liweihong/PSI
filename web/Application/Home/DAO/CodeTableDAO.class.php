@@ -1069,6 +1069,9 @@ class CodeTableDAO extends PSIBaseExDAO
 
     $codeTableName = $md["name"];
 
+    // true: 层级数据
+    $treeView = $md["treeView"];
+
     $code = $params["code"];
     $name = $params["name"];
     $recordStatus = $params["record_status"];
@@ -1105,6 +1108,11 @@ class CodeTableDAO extends PSIBaseExDAO
       $sql .= ", %s";
       $sqlParams[] = $fieldName;
     }
+
+    if ($treeView) {
+      $sql .= ", parent_id, full_name";
+    }
+
     $sql .= ") values ('%s', '%s', '%s', '%s', 
 						now(), '%s', '%s', '%s', 
 						%d";
@@ -1134,11 +1142,44 @@ class CodeTableDAO extends PSIBaseExDAO
       }
       $sqlParams[] = $params[$fieldName];
     }
+
+    if ($treeView) {
+      $sql .= ", '%s', '%s'";
+      $parentId = $params["parent_id"];
+      $sqlParams[] = $parentId;
+      $fullName = $name;
+
+      $foundParentId = false;
+      if ($parentId) {
+        $q = [];
+        $sqlQuery = "select full_name from %s where id = '%s' ";
+        $q[] = $tableName;
+        $q[] = $parentId;
+        $d = $db->query($sqlQuery, $q);
+        if ($d) {
+          $foundParentId = true;
+          $fullName = $d[0]["full_name"];
+        }
+      }
+      $sqlParams[] = $fullName;
+    }
     $sql .= ")";
 
     $rc = $db->execute($sql, $sqlParams);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
+    }
+
+    if ($treeView && !$foundParentId) {
+      // 保证顶级数据的parent_id值为null
+      $q = [];
+      $sql = "update %s set parent_id = null where id = '%s' ";
+      $q[] = $tableName;
+      $q[] = $id;
+      $rc = $db->execute($sql, $q);
+      if ($rc === false) {
+        return $this->sqlError(__METHOD__, __LINE__);
+      }
     }
 
     // 操作成功

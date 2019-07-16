@@ -44,10 +44,11 @@ Ext.define("PSI.CodeTable.CodeTableParentIdField", {
   },
 
   onTriggerClick: function (e) {
+    var me = this;
     var modelName = "PSICodeTableParentIdField";
     Ext.define(modelName, {
       extend: "Ext.data.Model",
-      fields: ["id", "text", "fullName", "code",
+      fields: ["id", "name", "full_name", "code",
         "leaf", "children"]
     });
 
@@ -56,11 +57,12 @@ Ext.define("PSI.CodeTable.CodeTableParentIdField", {
       proxy: {
         type: "ajax",
         extraParams: {
+          fid: me.getMetadata().fid
         },
         actionMethods: {
           read: "POST"
         },
-        url: PSI.Const.BASE_URL + "Home/CodeTable/getDataForParentIdField"
+        url: PSI.Const.BASE_URL + "Home/CodeTable/codeTableRecordListForTreeView"
       }
     });
 
@@ -82,7 +84,7 @@ Ext.define("PSI.CodeTable.CodeTableParentIdField", {
         items: [{
           xtype: "treecolumn",
           text: "名称",
-          dataIndex: "text"
+          dataIndex: "name"
         }, {
           text: "编码",
           dataIndex: "code"
@@ -130,7 +132,7 @@ Ext.define("PSI.CodeTable.CodeTableParentIdField", {
     var data = item[0];
 
     me.setIdValue(data.get("id"));
-    me.setValue(data.get("fullName"));
+    me.setValue(data.get("full_name"));
 
     me.wnd.close();
     me.focus();
@@ -141,6 +143,7 @@ Ext.define("PSI.CodeTable.CodeTableParentIdField", {
     me.__idValue = id;
 
     var idCmp = me.getIdCmp();
+    debugger;
     if (idCmp) {
       idCmp.setValue(id);
     }

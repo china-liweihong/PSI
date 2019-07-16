@@ -393,7 +393,7 @@ class CodeTableDAO extends PSIBaseExDAO
 
     // company_id
     $result[] = [
-      "caption" => "公司Id",
+      "caption" => "公司id",
       "fieldName" => "company_id",
       "fieldType" => "varchar",
       "fieldLength" => 255,
@@ -431,7 +431,7 @@ class CodeTableDAO extends PSIBaseExDAO
 
     // 记录创建人id
     $result[] = [
-      "caption" => "记录创建人Id",
+      "caption" => "记录创建人id",
       "fieldName" => "create_user_id",
       "fieldType" => "varchar",
       "fieldLength" => 255,

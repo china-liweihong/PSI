@@ -1158,7 +1158,7 @@ class CodeTableDAO extends PSIBaseExDAO
         $d = $db->query($sqlQuery, $q);
         if ($d) {
           $foundParentId = true;
-          $fullName = $d[0]["full_name"];
+          $fullName = $d[0]["full_name"] . "\\" . $name;
         }
       }
       $sqlParams[] = $fullName;

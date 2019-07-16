@@ -1243,6 +1243,52 @@ class CodeTableDAO extends PSIBaseExDAO
     return $data;
   }
 
+  private function codeTableRecordListForTreeViewInternal($db, $id, $md, $rs)
+  {
+    $tableName = $md["tableName"];
+
+    $sql = "select cr.id, cr.code, cr.name, cr.full_name, u.name as create_user_name, r.name as record_status";
+
+    foreach ($md["cols"] as $colMd) {
+      if ($colMd["isSysCol"]) {
+        continue;
+      }
+
+      if ($colMd["isVisible"]) {
+        $sql .= ", cr." . $colMd["fieldName"];
+      }
+    }
+
+    $sql .= " from %s cr, t_user u, t_sysdict_record_status r ";
+    $queryParams = [];
+    $queryParams[] = $tableName;
+
+    $sql .= " where (cr.parent_id = '%s') and (cr.create_user_id = u.id) and (cr.record_status = r.code_int)";
+    $queryParams[] = $id;
+    // 数据域
+    if ($rs) {
+      $sql .= " and " . $rs[0];
+      $queryParams = array_merge($queryParams, $rs[1]);
+    }
+
+    $sql .= " order by code";
+
+    $data = $db->query($sql, $queryParams);
+    $result = [];
+    foreach ($data as $v) {
+      // 递归调用自身
+      $children = $this->codeTableRecordListForTreeViewInternal($db, $v["id"], $md, $rs);
+      $v["children"] = $children;
+      $v["leaf"] = count($children) == 0;
+      $v["expanded"] = true;
+      $v["iconCls"] = "PSI-CodeTable-DataCategory";
+
+      $result[] = $v;
+    }
+
+    return $result;
+  }
+
   /**
    * 码表记录 - 树状结构
    */
@@ -1292,8 +1338,9 @@ class CodeTableDAO extends PSIBaseExDAO
     $data = $db->query($sql, $queryParams);
     $result = [];
     foreach ($data as $v) {
-      $v["children"] = [];
-      $v["leaf"] = true;
+      $children = $this->codeTableRecordListForTreeViewInternal($db, $v["id"], $md, $rs);
+      $v["children"] = $children;
+      $v["leaf"] = count($children) == 0;
       $v["expanded"] = true;
       $v["iconCls"] = "PSI-CodeTable-DataCategory";
 

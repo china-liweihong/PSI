@@ -421,3 +421,7 @@
 .PSI-Subject {
     background-image:url(../Images/icons/gl_subject.png) !important;
 }
+
+.PSI-CodeTable-DataCategory {
+  background-image:url(../Images/icons/codetable_datacategory.png) !important;
+}

@@ -80,9 +80,10 @@ Ext.define("PSI.App", {
         sortable: false,
         width: 30,
         hidden: PSI.Const.MOT != "0",
-        renderer: function (v) {
+        renderer: function (v, m, r) {
           var fileName = PSI.Const.BASE_URL + "Public/Images/icons/open_in_new_window.png";
-          return "<a href='#'><img src='" + fileName + "' style='vertical-align: middle' title='新窗口打开'></img></a>";
+          var name = r.get("name");
+          return "<a href='#'><img src='" + fileName + "' style='vertical-align: middle' title='新窗口打开【" + name + "】'></img></a>";
         }
       }],
       store: storeRecentFid

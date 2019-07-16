@@ -105,11 +105,7 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
     me.__mainGrid = md.treeView ? me.createMainTreeGrid(md) : me.createMainGrid(md);
     me.__panelMain.add(me.__mainGrid);
 
-    if (me.treeView) {
-      // TODO
-    } else {
-      me.refreshMainGrid();
-    }
+    me.refreshMainGrid();
   },
 
   createMainGrid: function (md) {
@@ -190,21 +186,20 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
       fields: fields
     });
 
-    var store = Ext.create("Ext.data.TreeStore", {
+    var store = new Ext.data.TreeStore({
       model: modelName,
+      autoLoad: false,
+      root: {
+        expanded: false
+      },
       proxy: {
         type: "ajax",
         actionMethods: {
           read: "POST"
         },
-        url: me.URL("Home/CodeTable/codeTableRecordListForTreeView")
-      },
-      listeners: {
-        beforeload: {
-          fn: function () {
-            store.proxy.extraParams = { fid: me.getFid() };
-          },
-          scope: me
+        url: me.URL("Home/CodeTable/codeTableRecordListForTreeView"),
+        extraParams: {
+          fid: me.getFid()
         }
       }
     });
@@ -253,6 +248,11 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
 
     var md = me.getMetaData();
     if (md.treeView) {
+      var store = me.getMainGrid().getStore();
+      store.reload();
+      store.setRootNode({
+        expanded: true
+      });
       return;
     }
 

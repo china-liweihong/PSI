@@ -860,6 +860,20 @@ class CodeTableDAO extends PSIBaseExDAO
       return $this->bad("码表[$name]是系统固有码表，不能删除");
     }
 
+    // 检查fid是否在菜单中使用了
+    $sql = "select count(*) as cnt from t_menu_item where fid = '%s' ";
+    $data = $db->query($sql, $fid);
+    $cnt = $data[0]["cnt"];
+    if ($cnt > 0) {
+      return $this->bad("当前码表已经挂接在主菜单中了<br/>在菜单项没有从主菜单中删除之前，码表也不能删除");
+    }
+    $sql = "select count(*) as cnt from t_menu_item_plus where fid = '%s' ";
+    $data = $db->query($sql, $fid);
+    $cnt = $data[0]["cnt"];
+    if ($cnt > 0) {
+      return $this->bad("当前码表已经挂接在主菜单中了<br/>在菜单项没有从主菜单中删除之前，码表也不能删除");
+    }
+
     // 列
     $sql = "delete from t_code_table_cols_md where table_id = '%s' ";
     $rc = $db->execute($sql, $id);

@@ -1174,7 +1174,10 @@ Ext.define("PSI.Goods.MainForm", {
     if (root) {
       var node = root.firstChild;
       if (node) {
-        // me.onOrgTreeNodeSelect(node);
+        var m = tree.getSelectionModel();
+        if (!m.hasSelection()) {
+          m.select(node);
+        }
       }
     }
   },

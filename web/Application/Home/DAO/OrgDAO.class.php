@@ -550,6 +550,9 @@ class OrgDAO extends PSIBaseExDAO
         if (count($newChildren) > 0) {
           $v["children"] = $newChildren;
           $data[] = $v;
+        } else if (intval($v["userCount"]) > 0) {
+          // 下级组织机构没有要查询的用户，但是顶级组织机构(公司)中还有查询的用户
+          $data[] = $v;
         }
       }
 

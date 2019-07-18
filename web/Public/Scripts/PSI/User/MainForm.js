@@ -691,7 +691,7 @@ Ext.define("PSI.User.MainForm", {
     if (root) {
       var node = root.firstChild;
       if (node) {
-        me.onOrgTreeNodeSelect(node);
+        tree.getSelectionModel().select(node);
       }
     }
   },

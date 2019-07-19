@@ -44,6 +44,7 @@ Ext.define("PSI.App", {
         title: "常用功能 - 根据使用频率自动生成",
         height: 28
       },
+      border: 0,
       titleAlign: "center",
       cls: "PSI-recent-fid",
       forceFit: true,
@@ -142,7 +143,7 @@ Ext.define("PSI.App", {
           collapseMode: "mini",
           collapsed: me.getRecentFidPanelCollapsed(),
           header: false,
-          border: 0,
+          border: 1,
           layout: "border",
           items: [{
             region: "center",

@@ -296,11 +296,33 @@ Ext.define("PSI.CodeTable.RuntimeEditForm", {
 
   onWndShow: function () {
     var me = this;
+    var md = me.getMetaData();
 
     Ext.get(window).on('beforeunload', me.onWindowBeforeUnload);
 
     me.focusOnFirstEdit();
+
+    var el = me.getEl();
+    el && el.mask(PSI.Const.LOADING);
+    Ext.Ajax.request({
+      url: me.URL("/Home/CodeTable/recordInfo"),
+      params: {
+        id: me.adding ? null : me.getEntity().get("id"),
+        fid: md.fid
+      },
+      method: "POST",
+      callback: function (options, success, response) {
+        if (success) {
+          var data = Ext.JSON.decode(response.responseText);
+          me.setDataForEdit(data);
+        }
+
+        el && el.unmask();
+      }
+    });
   },
+
+  setDataForEdit: function (data) { },
 
   focusOnFirstEdit: function () {
     var me = this;

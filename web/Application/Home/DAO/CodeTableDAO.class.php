@@ -1395,4 +1395,25 @@ class CodeTableDAO extends PSIBaseExDAO
 
     return $this->todo();
   }
+
+  /**
+   * 查询码表记录的详情
+   */
+  public function recordInfo($params)
+  {
+    $db = $this->db;
+    $id = $params["id"];
+    $fid = $params["fid"];
+    if (!$id) {
+      return $this->emptyResult();
+    }
+
+    $md = $this->getMetaDataForRuntime($params);
+    if (!$md) {
+      // 传入了错误的fid值
+      return $this->emptyResult();
+    }
+
+    return $this->emptyResult();
+  }
 }

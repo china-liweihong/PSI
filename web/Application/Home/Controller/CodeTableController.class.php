@@ -303,4 +303,20 @@ class CodeTableController extends PSIBaseController
       $this->ajaxReturn($service->codeTableRecordListForTreeView($params));
     }
   }
+
+  /**
+   * 查询码表记录的详情
+   */
+  public function recordInfo()
+  {
+    if (IS_POST) {
+      $params = [
+        "id" => I("post.id"),
+        "fid" => I("post.fid")
+      ];
+
+      $service = new CodeTableService();
+      $this->ajaxReturn($service->recordInfo($params));
+    }
+  }
 }

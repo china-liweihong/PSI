@@ -1205,6 +1205,13 @@ class CodeTableDAO extends PSIBaseExDAO
     return null;
   }
 
+  public function updateRecord(&$params, $pyService)
+  { 
+    $db = $this->db;
+
+    return $this->todo();
+  }
+
   /**
    * 码表记录列表
    */
@@ -1414,6 +1421,48 @@ class CodeTableDAO extends PSIBaseExDAO
       return $this->emptyResult();
     }
 
-    return $this->emptyResult();
+    $tableName = $md["tableName"];
+    $treeView = $md["treeView"];
+    $sql = "select cr.code, cr.name, cr.record_status";
+    if ($treeView) {
+      $sql .= ",parent_id";
+    }
+
+    foreach ($md["cols"] as $colMd) {
+      if ($colMd["isSysCol"]) {
+        continue;
+      }
+
+      if ($colMd["isVisible"]) {
+        $sql .= ", cr." . $colMd["fieldName"];
+      }
+    }
+
+    $sql .= " from %s cr 
+              where (cr.id = '%s')";
+    $queryParams = [];
+    $queryParams[] = $tableName;
+    $queryParams[] = $id;
+
+    $data = $db->query($sql, $queryParams);
+    if (!$data) {
+      return $this->emptyResult();
+    }
+
+    $result = $data[0];
+
+    if ($treeView) {
+      $parentId = $data[0]["parent_id"];
+      if ($parentId) {
+        $sql = "select full_name from %s where id = '%s' ";
+        $d = $db->query($sql, $tableName, $parentId);
+        if ($d) {
+          $result["parent_id_value"] = $d[0]["full_name"];
+        }
+      }
+    }
+
+
+    return $result;
   }
 }

@@ -322,7 +322,36 @@ Ext.define("PSI.CodeTable.RuntimeEditForm", {
     });
   },
 
-  setDataForEdit: function (data) { },
+  setDataForEdit: function (data) {
+    var me = this;
+    if (!data) {
+      return;
+    }
+
+    var md = me.getMetaData();
+    for (var i = 0; i < md.cols.length; i++) {
+      var colMd = md.cols[i];
+      if (colMd.isVisible) {
+        var fieldName = colMd.fieldName;
+        var id = me.buildEditId(fieldName);
+        var edit = Ext.getCmp(id);
+        if (edit) {
+          if (fieldName == "parent_id") {
+            id = me.buildEditId("parent_id_value");
+            edit = Ext.getCmp(id);
+            if (edit) {
+              edit.setValue(data["parent_id_value"]);
+              edit.setIdValue(data["parent_id"]);
+            }
+          } else {
+            edit.setValue(data[fieldName]);
+          }
+        }
+      }
+    }
+
+    me.focusOnFirstEdit();
+  },
 
   focusOnFirstEdit: function () {
     var me = this;

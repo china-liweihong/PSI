@@ -288,7 +288,7 @@ class CodeTableService extends PSIBaseExService
     $dao = new CodeTableDAO($db);
     if ($id) {
       // 编辑
-      $rc = $dao->updateRecord($params);
+      $rc = $dao->updateRecord($params, new PinyinService());
       if ($rc) {
         $db->rollback();
         return $rc;

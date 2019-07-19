@@ -264,7 +264,20 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
 
   onEditCodeTableRecord: function () {
     var me = this;
-    me.showInfo("TODO");
+    var item = me.getMainGrid().getSelectionModel().getSelection();
+    if (item == null || item.length != 1) {
+      me.showInfo("请选择要编辑的码表记录");
+      return;
+    }
+
+    var entity = item[0];
+    var form = Ext.create("PSI.CodeTable.RuntimeEditForm", {
+      parentForm: me,
+      entity: entity,
+      metaData: me.getMetaData()
+    });
+
+    form.show();
   },
 
   onDeleteCodeTableRecord: function () {

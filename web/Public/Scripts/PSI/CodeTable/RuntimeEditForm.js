@@ -320,7 +320,9 @@ Ext.define("PSI.CodeTable.RuntimeEditForm", {
   },
 
   buildEditId: function (fieldName) {
-    return "PSI_CodeTable_RuntimeEditForm_edit" + fieldName;
+    var me = this;
+    var md = me.getMetaData();
+    return "PSI_CodeTable_RuntimeEditForm_edit_" + md.fid + "_" + fieldName;
   },
 
   onEditSpecialKey: function (field, e) {

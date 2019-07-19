@@ -171,6 +171,7 @@ Ext.define("PSI.CodeTable.RuntimeEditForm", {
         if (md.treeView && colMd.fieldName == "parent_id") {
           // hiddenParentId用来在提交Form的时候向后台传递上级id
           var hiddenParentId = Ext.create("Ext.form.field.Hidden", {
+            id: me.buildEditId("parent_id"),
             name: "parent_id"
           });
           result.push(hiddenParentId);
@@ -178,6 +179,7 @@ Ext.define("PSI.CodeTable.RuntimeEditForm", {
           Ext.apply(item, {
             idCmp: hiddenParentId,
             metadata: md,
+            id: me.buildEditId("parent_id_value"),
             name: "parent_id_value"
           });
         }

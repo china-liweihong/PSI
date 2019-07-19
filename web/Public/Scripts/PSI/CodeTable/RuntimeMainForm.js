@@ -201,6 +201,12 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
         extraParams: {
           fid: me.getFid()
         }
+      },
+      listeners: {
+        load: {
+          fn: me.onTreeStoreLoad,
+          scope: me
+        }
       }
     });
 
@@ -216,6 +222,33 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
       columns: cols,
       store: store
     });
+  },
+
+  onTreeStoreLoad: function () {
+    var me = this;
+    var md = me.getMetaData();
+    if (!md.treeView) {
+      return;
+    }
+
+    var id = me.__lastRecordId;
+    var grid = me.getMainGrid();
+    if (id) {
+      // 编辑后刷新记录，然后定位到该记录
+      var node = grid.getStore().getNodeById(id);
+      if (node) {
+        grid.getSelectionModel().select(node);
+      }
+    } else {
+      // 首次进入模块
+      var root = grid.getRootNode();
+      if (root) {
+        var node = root.firstChild;
+        if (node) {
+          grid.getSelectionModel().select(node);
+        }
+      }
+    }
   },
 
   onAddCodeTableRecord: function () {
@@ -253,6 +286,7 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
       store.setRootNode({
         expanded: true
       });
+      me.__lastRecordId = id;
       return;
     }
 

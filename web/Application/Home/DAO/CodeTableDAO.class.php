@@ -1371,6 +1371,15 @@ class CodeTableDAO extends PSIBaseExDAO
   }
 
   /**
+   * 删除码表记录
+   */
+  public function deleteRecord(&$params){
+    $db = $this->db;
+
+    return $this->todo();
+  }
+
+  /**
    * 码表记录列表
    */
   public function codeTableRecordList($params)

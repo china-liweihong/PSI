@@ -406,4 +406,36 @@ class CodeTableService extends PSIBaseExService
     $dao = new CodeTableDAO($this->db());
     return $dao->recordInfo($params);
   }
+
+
+  /**
+   * 删除码表记录
+   */
+  public function deleteCodeTableRecord($params)
+  {
+    if ($this->isNotOnline()) {
+      return $this->notOnlineError();
+    }
+
+    $db = $this->db();
+    $db->startTrans();
+
+    $dao = new CodeTableDAO($db);
+    $rc = $dao->deleteRecord($params);
+    if ($rc) {
+      $db->rollback();
+      return $rc;
+    }
+
+    $log = $params["log"];
+    $logCategory = $params["logCategory"];
+
+    // 记录业务日志
+    $bs = new BizlogService($db);
+    $bs->insertBizlog($log, $logCategory);
+
+    $db->commit();
+
+    return $this->ok();
+  }
 }

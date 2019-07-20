@@ -286,7 +286,50 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
 
   onDeleteCodeTableRecord: function () {
     var me = this;
-    me.showInfo("TODO");
+    var md = me.getMetaData();
+    var name = md.name;
+    var item = me.getMainGrid().getSelectionModel().getSelection();
+    if (item == null || item.length != 1) {
+      me.showInfo("请选择要删除的" + name);
+      return;
+    }
+
+    var entity = item[0];
+    var info = "请确认是否删除" + name + " <span style='color:red'>" + entity.get("name")
+      + "</span> ?";
+
+    var preIndex = null;
+
+    var funcConfirm = function () {
+      var el = Ext.getBody();
+      el && el.mask(PSI.Const.LOADING);
+      var r = {
+        url: me.URL("Home/CodeTable/deleteCodeTableRecord"),
+        params: {
+          id: entity.get("id"),
+          fid: md.fid
+        },
+        method: "POST",
+        callback: function (options, success, response) {
+          el && el.unmask();
+          if (success) {
+            var data = me.decodeJSON(response.responseText);
+            if (data.success) {
+              me.tip("成功完成删除操作");
+              me.refreshMainGrid(preIndex);
+            } else {
+              me.showInfo(data.msg);
+            }
+          } else {
+            me.showInfo("网络错误");
+          }
+        }
+      };
+
+      me.ajax(r);
+    };
+
+    me.confirm(info, funcConfirm);
   },
 
   onRefreshCodeTableRecord: function () {

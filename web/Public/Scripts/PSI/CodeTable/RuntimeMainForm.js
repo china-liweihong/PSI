@@ -94,6 +94,10 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
       id: "buttonDeleteCodeTableRecord",
       handler: me.onDeleteCodeTableRecord,
       scope: me
+    }, "-", , {
+      text: "刷新",
+      handler: me.onRefresh,
+      scope: me
     }, "-", {
       text: "关闭",
       handler: function () {
@@ -283,6 +287,20 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
   onDeleteCodeTableRecord: function () {
     var me = this;
     me.showInfo("TODO");
+  },
+
+  onRefresh: function () {
+    var me = this;
+    var item = me.getMainGrid().getSelectionModel().getSelection();
+    var id = null;
+    if (item == null || item.length != 1) {
+      id = me.__lastRecrodId;
+    } else {
+      var entity = item[0];
+      id = entity.get("id");
+    }
+
+    me.refreshMainGrid(id);
   },
 
   getMainGrid: function () {

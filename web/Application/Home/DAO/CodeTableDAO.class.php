@@ -1206,7 +1206,7 @@ class CodeTableDAO extends PSIBaseExDAO
     $code = $params["code"];
     $name = $params["name"];
     $params["id"] = $id;
-    $params["log"] = "新增{$codeTableName}记录:{$code}-{$name}";
+    $params["log"] = "新增{$codeTableName}记录 ：{$code}-{$name}";
     $params["logCategory"] = $codeTableName;
     return null;
   }
@@ -1365,7 +1365,7 @@ class CodeTableDAO extends PSIBaseExDAO
     $code = $params["code"];
     $name = $params["name"];
     $params["id"] = $id;
-    $params["log"] = "新增{$codeTableName}记录:{$code}-{$name}";
+    $params["log"] = "编辑{$codeTableName}记录 ：{$code}-{$name}";
     $params["logCategory"] = $codeTableName;
     return null;
   }
@@ -1373,10 +1373,61 @@ class CodeTableDAO extends PSIBaseExDAO
   /**
    * 删除码表记录
    */
-  public function deleteRecord(&$params){
+  public function deleteRecord(&$params)
+  {
     $db = $this->db;
+    $fid = $params["fid"];
+    $md = $this->getMetaDataForRuntime([
+      "fid" => $fid,
+      "forBackend" => true
+    ]);
 
-    return $this->todo();
+    if (!$md) {
+      return $this->badParam("fid");
+    }
+
+    $codeTableName = $md["name"];
+
+    // true: 层级数据
+    $treeView = $md["treeView"];
+
+    $code = $params["code"];
+    $name = $params["name"];
+    $recordStatus = $params["record_status"];
+
+    $id = $params["id"];
+
+    $tableName = $md["tableName"];
+
+    // 检查记录是否存在
+    $sql = "select code, name from %s where id = '%s' ";
+    $data = $db->query($sql, $tableName, $id);
+    if (!$data) {
+      return $this->bad("要删除的记录不存在");
+    }
+    $code = $data[0]["code"];
+    $name = $data[0]["name"];
+
+    if ($treeView) {
+      // 检查是否有下级
+      $sql = "select count(*) as cnt from %s where parent_id = '%s' ";
+      $data = $db->query($sql, $tableName, $id);
+      $cnt = $data[0]["cnt"];
+      if ($cnt > 0) {
+        return $this->bad("当前记录还有下级，不能删除");
+      }
+    }
+
+    $sql = "delete from %s where id = '%s' ";
+    $rc = $db->execute($sql, $tableName, $id);
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+
+    // 操作成功
+    $params["log"] = "删除{$codeTableName}记录 ：{$code}-{$name}";
+    $params["logCategory"] = $codeTableName;
+    return null;
   }
 
   /**

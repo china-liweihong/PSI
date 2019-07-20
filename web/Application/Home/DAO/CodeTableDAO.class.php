@@ -972,11 +972,15 @@ class CodeTableDAO extends PSIBaseExDAO
   {
     $db = $this->db;
 
+    $forBackend = $params["forBackend"] ?? false;
+
     $fid = $params["fid"];
 
-    $sql = "select id, name, table_name, enable_parent_id
-            from t_code_table_md 
-            where fid = '%s' ";
+    $sql = "select id, name, table_name, enable_parent_id";
+    if ($forBackend) {
+      $sql .= ",handler_class_name ";
+    }
+    $sql .=  " from t_code_table_md where fid = '%s' ";
     $data = $db->query($sql, $fid);
     if (!$data) {
       return null;
@@ -991,6 +995,9 @@ class CodeTableDAO extends PSIBaseExDAO
       "name" => $v["name"],
       "treeView" => $v["enable_parent_id"] == 1
     ];
+    if ($forBackend) {
+      $result["handlerClassName"] = $v["handler_class_name"];
+    }
 
     // 列
     $sql = "select caption, 
@@ -1415,6 +1422,20 @@ class CodeTableDAO extends PSIBaseExDAO
       $cnt = $data[0]["cnt"];
       if ($cnt > 0) {
         return $this->bad("当前记录还有下级，不能删除");
+      }
+    }
+
+    $handlerClassName = $md["handlerClassName"];
+    if ($handlerClassName){
+      // 处理自定义业务逻辑
+      if (!class_exists($handlerClassName)){
+        return $this->bad("后台业务逻辑类[{$handlerClassName}]不存");
+      }
+        
+      $hc = new $handlerClassName;
+      $rc = $hc->beforeDelete($db, $fid, $id);
+      if ($rc){
+        return $this->bad($rc);
       }
     }
 

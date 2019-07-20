@@ -236,7 +236,7 @@ Ext.define("PSI.CodeTable.MainForm", {
           return parseInt(value) == 1 ? "是" : "否";
         }
       }, {
-        header: "后台业务逻辑类名",
+        header: "业务逻辑类名",
         dataIndex: "handlerClassName",
         width: 300,
         menuDisabled: true,

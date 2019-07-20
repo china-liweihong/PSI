@@ -51,7 +51,7 @@ Ext.define("PSI.CodeTable.CodeTableEditForm", {
         height: 40
       },
       width: 550,
-      height: 330,
+      height: 340,
       layout: "border",
       items: [{
         region: "north",
@@ -156,6 +156,20 @@ Ext.define("PSI.CodeTable.CodeTableEditForm", {
           colspan: 2,
           name: "enableParentId"
         }, {
+          id: "PSI_CodeTable_CodeTableEditForm_editHandlerClassName",
+          fieldLabel: "业务逻辑类名",
+          name: "handlerClassName",
+          value: entity == null ? null : entity
+            .get("handlerClassName"),
+          listeners: {
+            specialkey: {
+              fn: me.onEditSpecialKey,
+              scope: me
+            }
+          },
+          width: 510,
+          colspan: 2
+        }, {
           id: "PSI_CodeTable_CodeTableEditForm_editMemo",
           fieldLabel: "备注",
           name: "memo",
@@ -194,10 +208,10 @@ Ext.define("PSI.CodeTable.CodeTableEditForm", {
     me.editName = Ext.getCmp("PSI_CodeTable_CodeTableEditForm_editName");
     me.editTableName = Ext.getCmp("PSI_CodeTable_CodeTableEditForm_editTableName");
     me.editEnableParentId = Ext.getCmp("PSI_CodeTable_CodeTableEditForm_editEnableParentId");
+    me.editHandlerClassName = Ext.getCmp("PSI_CodeTable_CodeTableEditForm_editHandlerClassName");
     me.editMemo = Ext.getCmp("PSI_CodeTable_CodeTableEditForm_editMemo");
 
-    me.__editorList = [me.editCategory, me.editCode, me.editName,
-    me.editTableName, me.editMemo];
+    me.__editorList = [me.editCategory, me.editCode, me.editName, me.editTableName, me.editHandlerClassName, me.editMemo];
 
     var c = me.getCategory();
     if (c) {
@@ -236,6 +250,7 @@ Ext.define("PSI.CodeTable.CodeTableEditForm", {
             me.editEnableParentId.setValue(parseInt(data.enableParentId));
             me.editEnableParentId.setReadOnly(true);
             me.editTableName.setReadOnly(true);
+            me.editHandlerClassName.setValue(data.handlerClassName);
             me.editMemo.setValue(data.memo);
           }
 

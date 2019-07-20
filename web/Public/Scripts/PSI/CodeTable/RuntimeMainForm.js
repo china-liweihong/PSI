@@ -96,7 +96,7 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
       scope: me
     }, "-", , {
       text: "刷新",
-      handler: me.onRefresh,
+      handler: me.onRefreshCodeTableRecord,
       scope: me
     }, "-", {
       text: "关闭",
@@ -289,7 +289,7 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
     me.showInfo("TODO");
   },
 
-  onRefresh: function () {
+  onRefreshCodeTableRecord: function () {
     var me = this;
     var item = me.getMainGrid().getSelectionModel().getSelection();
     var id = null;

@@ -1205,11 +1205,163 @@ class CodeTableDAO extends PSIBaseExDAO
     return null;
   }
 
+  /**
+   * 编辑码表记录
+   */
   public function updateRecord(&$params, $pyService)
-  { 
+  {
     $db = $this->db;
 
-    return $this->todo();
+    $loginUserId = $params["loginUserId"];
+    if ($this->loginUserIdNotExists($loginUserId)) {
+      return $this->badParam("loginUserId");
+    }
+
+    $fid = $params["fid"];
+    $md = $this->getMetaDataForRuntime([
+      "fid" => $fid
+    ]);
+
+    if (!$md) {
+      return $this->badParam("fid");
+    }
+
+    $codeTableName = $md["name"];
+
+    // true: 层级数据
+    $treeView = $md["treeView"];
+
+    $code = $params["code"];
+    $name = $params["name"];
+    $recordStatus = $params["record_status"];
+
+    $id = $params["id"];
+
+    $tableName = $md["tableName"];
+
+    // 检查记录是否存在
+    $sql = "select count(*) as cnt from %s where id = '%s' ";
+    $data = $db->query($sql, $tableName, $id);
+    $cnt = $data[0]["cnt"];
+    if ($cnt == 0) {
+      return $this->bad("要编辑的记录不存在");
+    }
+
+    // 检查编码是否重复
+    $sql = "select count(*) as cnt from %s where code = '%s' and id <> '%s' ";
+    $queryParams = [];
+    $queryParams[] = $tableName;
+    $queryParams[] = $code;
+    $queryParams[] = $id;
+    $data = $db->query($sql, $queryParams);
+    $cnt = $data[0]["cnt"];
+    if ($cnt > 0) {
+      return $this->bad("编码为[$code]的记录已经存在");
+    }
+
+    if ($treeView) {
+      // 检查上级id
+      $parentId = $params["parent_id"];
+      if ($parentId) {
+        $sql = "select count(*) as cnt from %s where id = '%s' ";
+        $data = $db->query($sql, $tableName, $parentId);
+        if ($data) {
+          // 检查上级id是否构成了循环引用
+          if ($id == $parentId) {
+            return $this->bad("不能把自身设置为上级");
+          }
+
+          while ($parentId) {
+            $sql = "select parent_id from %s where id = '%s' ";
+            $data = $db->query($sql, $tableName, $parentId);
+            if ($data) {
+              $parentId = $data[0]["parent_id"];
+              if ($parentId == $id) {
+                return $this->bad("不能选用当前记录的下级作为上级");
+              }
+            } else {
+              $parentId = null;
+            }
+          }
+        } else {
+          // 传入的parent_id在数据库中不存在
+          $params["parent_id"] = null;
+        }
+      }
+    }
+
+    $sql = "update %s 
+            set code = '%s', name = '%s', update_dt = now(), update_user_id = '%s',
+              record_status = %d, py = '%s' ";
+    $queryParams = [];
+    $queryParams[] = $tableName;
+    $queryParams[] = $code;
+    $queryParams[] = $name;
+    $queryParams[] = $loginUserId;
+    $queryParams[] = $recordStatus;
+    $queryParams[] = $pyService->toPY($name);
+    foreach ($md["cols"] as $colMd) {
+      if ($colMd["isSysCol"]) {
+        continue;
+      }
+
+      // 非系统字段
+      $fieldName = $colMd["fieldName"];
+
+      $sql .= ", %s = ";
+      $queryParams[] = $fieldName;
+
+      $fieldType = $colMd["fieldType"];
+      if ($fieldType == "int") {
+        $sql .= "%d";
+      } else if ($fieldType == "decimal") {
+        $sql .= "%f";
+      } else {
+        $sql .= "'%s'";
+      }
+      $queryParams[] = $params[$fieldName];
+    }
+
+    $sql .= " where id = '%s' ";
+    $queryParams[] = $id;
+    $rc = $db->execute($sql, $queryParams);
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+
+    if ($treeView) {
+      $parentId = $params["parent_id"];
+      if ($parentId) {
+        $sql = "select full_name from %s where id = '%s' ";
+        $data = $db->query($sql, $tableName, $parentId);
+        if ($data) {
+          $fullName = $data[0]["full_name"] . "\\" . $name;
+          $sql = "update %s set parent_id = '%s', full_name = '%s' where id = '%s' ";
+          $rc = $db->execute($sql, $tableName, $parentId, $fullName, $id);
+          if ($rc === false) {
+            return $this->sqlError(__METHOD__, __LINE__);
+          }
+        } else {
+          $parentId = null;
+        }
+      }
+
+      if ($parentId == null) {
+        $sql = "update %s set parent_id = null, full_name = '%s' where id = '%s' ";
+        $rc = $db->execute($sql, $tableName, $name, $id);
+        if ($rc === false) {
+          return $this->sqlError(__METHOD__, __LINE__);
+        }
+      }
+    }
+
+    // 操作成功
+    $code = $params["code"];
+    $name = $params["name"];
+    $params["id"] = $id;
+    $params["log"] = "新增{$codeTableName}记录:{$code}-{$name}";
+    $params["logCategory"] = $codeTableName;
+    return null;
   }
 
   /**

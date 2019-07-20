@@ -167,7 +167,8 @@ Ext.define("PSI.CodeTable.MainForm", {
     Ext.define(modelName, {
       extend: "Ext.data.Model",
       fields: ["id", "code", "name", "tableName",
-        "memo", "fid", "mdVersion", "isFixed", "enableParentId"]
+        "memo", "fid", "mdVersion", "isFixed", "enableParentId",
+        "handlerClassName"]
     });
 
     me.__mainGrid = Ext.create("Ext.grid.Panel", {
@@ -234,6 +235,12 @@ Ext.define("PSI.CodeTable.MainForm", {
         renderer: function (value) {
           return parseInt(value) == 1 ? "是" : "否";
         }
+      }, {
+        header: "后台业务逻辑类名",
+        dataIndex: "handlerClassName",
+        width: 300,
+        menuDisabled: true,
+        sortable: false
       }],
       store: Ext.create("Ext.data.Store", {
         model: modelName,

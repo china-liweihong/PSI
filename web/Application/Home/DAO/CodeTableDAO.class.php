@@ -534,6 +534,7 @@ class CodeTableDAO extends PSIBaseExDAO
       //$enableParentId只能取值0或1
       $enableParetnId = 0;
     }
+    $handlerClassName = $params["handlerClassName"];
 
     // 检查编码是否已经存在
     if ($code) {
@@ -578,10 +579,10 @@ class CodeTableDAO extends PSIBaseExDAO
     $fid = "ct" . date("YmdHis");
 
     $sql = "insert into t_code_table_md (id, category_id, code, name, table_name, py, memo, fid,
-              enable_parent_id)
+              enable_parent_id, handler_class_name)
             values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
-              %d)";
-    $rc = $db->execute($sql, $id, $categoryId, $code, $name, $tableName, $py, $memo, $fid, $enableParetnId);
+              %d, '%s')";
+    $rc = $db->execute($sql, $id, $categoryId, $code, $name, $tableName, $py, $memo, $fid, $enableParetnId, $handlerClassName);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
     }
@@ -733,6 +734,7 @@ class CodeTableDAO extends PSIBaseExDAO
     $code = strtoupper($params["code"]) ?? "";
     $name = $params["name"];
     $categoryId = $params["categoryId"];
+    $handlerClassName = $params["handlerClassName"];
     $memo = $params["memo"] ?? "";
 
     if (!$this->getCodeTableCategoryById($categoryId)) {
@@ -747,9 +749,10 @@ class CodeTableDAO extends PSIBaseExDAO
     $sql = "update t_code_table_md
             set code = '%s', name = '%s',
               category_id = '%s', memo = '%s',
+              handler_class_name = '%s',
               md_version = md_version + 1
             where id = '%s' ";
-    $rc = $db->execute($sql, $code, $name, $categoryId, $memo, $id);
+    $rc = $db->execute($sql, $code, $name, $categoryId, $memo, $handlerClassName, $id);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
     }

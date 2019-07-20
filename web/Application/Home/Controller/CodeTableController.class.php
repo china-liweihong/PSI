@@ -150,6 +150,7 @@ class CodeTableController extends PSIBaseController
         "name" => I("post.name"),
         "tableName" => I("post.tableName"),
         "enableParentId" => I("post.enableParentId"),
+        "handlerClassName" => I("post.handlerClassName"),
         "memo" => I("post.memo")
       ];
 

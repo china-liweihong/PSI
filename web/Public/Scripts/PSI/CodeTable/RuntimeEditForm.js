@@ -300,8 +300,6 @@ Ext.define("PSI.CodeTable.RuntimeEditForm", {
 
     Ext.get(window).on('beforeunload', me.onWindowBeforeUnload);
 
-    me.focusOnFirstEdit();
-
     var el = me.getEl();
     el && el.mask(PSI.Const.LOADING);
     Ext.Ajax.request({
@@ -324,6 +322,12 @@ Ext.define("PSI.CodeTable.RuntimeEditForm", {
 
   setDataForEdit: function (data) {
     var me = this;
+
+    if (me.adding) {
+      me.focusOnFirstEdit();
+      return;
+    }
+
     if (!data) {
       return;
     }

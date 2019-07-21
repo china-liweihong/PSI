@@ -1425,6 +1425,29 @@ class CodeTableDAO extends PSIBaseExDAO
       }
     }
 
+    // 判断其他码表是否引用了当前记录
+    // 这里处理的通过id引用来引用的场景，这类似处理数据库外键
+    // 如果是通过其他字段的引用，需要通过handlerClassName来判断
+    $sql = "select distinct t.name, t.table_name, c.db_field_name
+            from t_code_table_md t, t_code_table_cols_md c
+            where t.id = c.table_id and c.value_from = 3
+              and c.value_from_table_name = '%s' 
+              and c.value_from_col_name = 'id' ";
+    $data = $db->query($sql, $tableName);
+    foreach($data as $v){
+      $foreignName = $v["name"];
+      $foreignTableName = $v["table_name"];
+      $foreignFieldName = $v["db_field_name"];
+      $sql = "select count(*) as cnt from %s where %s = '%s'";
+      $d = $db->query($sql, $foreignTableName, $foreignFieldName, $id);
+      $cnt = $d[0]["cnt"];
+      if ($cnt >0){
+        return $this->bad("码表[{$foreignName}]中引用了当前记录，所以不能删除当前记录");
+      }
+    }
+
+    //TODO 表单引用了当前记录也需要处理，这个需要以后再补充进来
+
     $handlerClassName = $md["handlerClassName"];
     if ($handlerClassName){
       // 处理自定义业务逻辑

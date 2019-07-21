@@ -19,6 +19,8 @@ class DemoBLL
    */
   public function beforeDelete($db, $fid, $id)
   {
+    // 在本方法中使用$db的时候不要启动事务，因为当前已经处于事务中
+
     // 用法1：
     // 下面是返回信息给用户，同时不执行删除
     $m = __METHOD__;

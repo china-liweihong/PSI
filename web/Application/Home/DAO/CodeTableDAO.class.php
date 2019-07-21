@@ -575,6 +575,13 @@ class CodeTableDAO extends PSIBaseExDAO
       return $this->bad("表[{$tableName}]已经在数据库中存在了");
     }
 
+    if ($handlerClassName) {
+      // 判断后台业务处理类是否已经存在
+      if (!class_exists($handlerClassName)) {
+        return $this->bad("后台业务逻辑处理类[{$handlerClassName}]不存在");
+      }
+    }
+
     $id = $this->newId();
     $fid = "ct" . date("YmdHis");
 
@@ -745,6 +752,14 @@ class CodeTableDAO extends PSIBaseExDAO
     if (!$codeTable) {
       return $this->bad("要编辑的码表不存在");
     }
+
+    if ($handlerClassName) {
+      // 判断后台业务处理类是否已经存在
+      if (!class_exists($handlerClassName)) {
+        return $this->bad("后台业务逻辑处理类[{$handlerClassName}]不存在");
+      }
+    }
+
 
     $sql = "update t_code_table_md
             set code = '%s', name = '%s',
@@ -1434,14 +1449,14 @@ class CodeTableDAO extends PSIBaseExDAO
               and c.value_from_table_name = '%s' 
               and c.value_from_col_name = 'id' ";
     $data = $db->query($sql, $tableName);
-    foreach($data as $v){
+    foreach ($data as $v) {
       $foreignName = $v["name"];
       $foreignTableName = $v["table_name"];
       $foreignFieldName = $v["db_field_name"];
       $sql = "select count(*) as cnt from %s where %s = '%s'";
       $d = $db->query($sql, $foreignTableName, $foreignFieldName, $id);
       $cnt = $d[0]["cnt"];
-      if ($cnt >0){
+      if ($cnt > 0) {
         return $this->bad("码表[{$foreignName}]中引用了当前记录，所以不能删除当前记录");
       }
     }
@@ -1449,19 +1464,19 @@ class CodeTableDAO extends PSIBaseExDAO
     //TODO 表单引用了当前记录也需要处理，这个需要以后再补充进来
 
     $handlerClassName = $md["handlerClassName"];
-    if ($handlerClassName){
+    if ($handlerClassName) {
       // 处理自定义业务逻辑
-      if (!class_exists($handlerClassName)){
+      if (!class_exists($handlerClassName)) {
         return $this->bad("后台业务逻辑类[{$handlerClassName}]不存");
       }
-        
+
       $hc = new $handlerClassName;
-      if (!method_exists($hc, "beforeDelete")){
+      if (!method_exists($hc, "beforeDelete")) {
         return $this->bad("[{$handlerClassName}]没有方法beforeDelete");
       }
 
       $rc = $hc->beforeDelete($db, $fid, $id);
-      if ($rc){
+      if ($rc) {
         return $this->bad($rc);
       }
     }

@@ -1433,6 +1433,10 @@ class CodeTableDAO extends PSIBaseExDAO
       }
         
       $hc = new $handlerClassName;
+      if (!method_exists($hc, "beforeDelete")){
+        return $this->bad("[{$handlerClassName}]没有方法beforeDelete");
+      }
+
       $rc = $hc->beforeDelete($db, $fid, $id);
       if ($rc){
         return $this->bad($rc);

@@ -1746,4 +1746,35 @@ class CodeTableDAO extends PSIBaseExDAO
 
     return $result;
   }
+
+  /**
+   * 码表某列的详细信息
+   */
+  public function codeTableColInfo($params)
+  {
+    $db = $this->db;
+    $tableId = $params["tableId"];
+
+    // col id
+    $id = $params["id"];
+
+    $result = [];
+
+    $sql = "select name, memo from t_sysdict_editor_xtype order by code";
+    $data = $db->query($sql);
+    $xtype = [];
+    foreach ($data as $v) {
+      $xtype[] = [
+        "id" => $v["name"],
+        "text" => $v["name"] . " - " . $v["memo"]
+      ];
+    }
+
+    $result["editorXtype"] = $xtype;
+
+    if ($id) {
+      // 编辑
+    }
+    return $result;
+  }
 }

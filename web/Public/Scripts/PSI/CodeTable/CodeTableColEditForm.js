@@ -51,7 +51,7 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
         height: 40
       },
       width: 800,
-      height: 350,
+      height: 370,
       layout: "border",
       items: [{
         region: "north",
@@ -79,8 +79,7 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
         items: [{
           xtype: "hidden",
           name: "id",
-          value: entity == null ? null : entity
-            .get("id")
+          value: entity == null ? null : entity.get("id")
         }, {
           xtype: "hidden",
           name: "codeTableId",
@@ -277,6 +276,9 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
         }, {
           id: "PSI_CodeTable_CodeTableColEditForm_editShowOrder",
           fieldLabel: "显示次序",
+          allowBlank: false,
+          blankText: "没有输入显示次序",
+          beforeLabelTextTpl: PSI.Const.REQUIRED,
           xtype: "numberfield",
           hideTrigger: true,
           allowDecimal: false,
@@ -287,6 +289,26 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
               scope: me
             }
           }
+        }, {
+          id: "PSI_CodeTable_CodeTableColEditForm_editEditorXtype",
+          xtype: "combo",
+          queryMode: "local",
+          editable: false,
+          valueField: "id",
+          labelAlign: "right",
+          labelSeparator: "",
+          fieldLabel: "编辑器类型",
+          allowBlank: false,
+          blankText: "没有输入编辑器类型",
+          beforeLabelTextTpl: PSI.Const.REQUIRED,
+          store: Ext.create("Ext.data.ArrayStore", {
+            fields: ["id", "text"],
+            data: []
+          }),
+          value: "textfield",
+          name: "editorXtype",
+          colspan: 2,
+          width: 510
         }, {
           id: "PSI_CodeTable_CodeTableColEditForm_editMemo",
           fieldLabel: "备注",
@@ -299,8 +321,8 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
               scope: me
             }
           },
-          width: 510, // 770,
-          colspan: 2
+          width: 770,
+          colspan: 3
         }],
         buttons: buttons
       }],
@@ -321,32 +343,21 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
     me.editForm = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editForm");
 
     me.editName = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editName");
-    me.editTableName = Ext
-      .getCmp("PSI_CodeTable_CodeTableColEditForm_editTableName");
-    me.editCaption = Ext
-      .getCmp("PSI_CodeTable_CodeTableColEditForm_editCaption");
-    me.editFieldName = Ext
-      .getCmp("PSI_CodeTable_CodeTableColEditForm_editFieldName");
-    me.editFieldType = Ext
-      .getCmp("PSI_CodeTable_CodeTableColEditForm_editFieldType");
-    me.editFieldLength = Ext
-      .getCmp("PSI_CodeTable_CodeTableColEditForm_editFieldLength");
-    me.editFieldDec = Ext
-      .getCmp("PSI_CodeTable_CodeTableColEditForm_editFieldDec");
-    me.editValueFrom = Ext
-      .getCmp("PSI_CodeTable_CodeTableColEditForm_editValueFrom");
-    me.editValueFromTableName = Ext
-      .getCmp("PSI_CodeTable_CodeTableColEditForm_editValueFromTableName");
-    me.editValueFromColName = Ext
-      .getCmp("PSI_CodeTable_CodeTableColEditForm_editValueFromColName");
-    me.editWidthInView = Ext
-      .getCmp("PSI_CodeTable_CodeTableColEditForm_editWidthInView");
-    me.editShowOrder = Ext
-      .getCmp("PSI_CodeTable_CodeTableColEditForm_editShowOrder");
+    me.editTableName = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editTableName");
+    me.editCaption = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editCaption");
+    me.editFieldName = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editFieldName");
+    me.editFieldType = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editFieldType");
+    me.editFieldLength = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editFieldLength");
+    me.editFieldDec = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editFieldDec");
+    me.editValueFrom = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editValueFrom");
+    me.editValueFromTableName = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editValueFromTableName");
+    me.editValueFromColName = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editValueFromColName");
+    me.editWidthInView = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editWidthInView");
+    me.editShowOrder = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editShowOrder");
+    me.editEditorXtype = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editEditorXtype");
     me.editMemo = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editMemo");
 
-    me.__editorList = [me.editCaption, me.editFieldName,
-    me.editWidthInView, me.editShowOrder, me.editMemo];
+    me.__editorList = [me.editCaption, me.editFieldName, me.editWidthInView, me.editShowOrder, me.editMemo];
   },
 
   onWndShow: function () {
@@ -354,35 +365,42 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
 
     Ext.get(window).on('beforeunload', me.onWindowBeforeUnload);
 
-    if (me.adding) {
-      // 新建
-      me.editCaption.focus();
-    } else {
-      // 编辑
-      var el = me.getEl();
-      el && el.mask(PSI.Const.LOADING);
-      Ext.Ajax.request({
-        url: me.URL("/Home/CodeTable/codeTableColInfo"),
-        params: {
-          id: me.getEntity().get("id")
-        },
-        method: "POST",
-        callback: function (options, success, response) {
-          if (success) {
-            var data = Ext.JSON
-              .decode(response.responseText);
+    var el = me.getEl();
+    el && el.mask(PSI.Const.LOADING);
+    Ext.Ajax.request({
+      url: me.URL("/Home/CodeTable/codeTableColInfo"),
+      params: {
+        id: me.adding ? null : me.getEntity().get("id"),
+        tableId: me.getCodeTable().get("id")
+      },
+      method: "POST",
+      callback: function (options, success, response) {
+        if (success) {
+          el && el.unmask();
+
+          var data = Ext.JSON.decode(response.responseText);
+          if (data.editorXtype) {
+            var store = me.editEditorXtype.getStore();
+            store.removeAll();
+            store.add(data.editorXtype);
+          }
+
+          if (me.adding) {
+            // 新建
+            var store = me.editEditorXtype.getStore();
+            me.editEditorXtype.setValue(store.getAt(0));
+          } else {
+            // 编辑
             me.editName.setValue(data.name);
             me.editTableName.setValue(data.tableName);
             me.editTableName.setReadOnly(true);
             me.editMemo.setValue(data.memo);
-
-            me.editCaption.focus();
           }
 
-          el && el.unmask();
+          me.editCaption.focus();
         }
-      });
-    }
+      }
+    });
   },
 
   onOK: function () {

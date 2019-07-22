@@ -441,6 +441,10 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
         me.focus();
         me.__lastId = action.result.id;
         me.close();
+        var parentForm = me.getParentForm();
+        if (parentForm) {
+          parentForm.refreshColsGrid(me.__lastId);
+        }
       },
       failure: function (form, action) {
         el && el.unmask();
@@ -497,14 +501,20 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
     var me = this;
     var v = me.editFieldType.getValue();
     if (v == "varchar") {
+      me.editFieldLength.setValue(255);
       me.editFieldLength.setDisabled(false);
       me.editFieldDec.setDisabled(true);
+      me.editFieldDec.setValue(null);
     } else if (v == "int") {
+      me.editFieldLength.setValue(11);
       me.editFieldLength.setDisabled(true);
       me.editFieldDec.setDisabled(true);
+      me.editFieldDec.setValue(null);
     } else if (v == "decimal") {
-      me.editFieldLength.setDisabled(false);
+      me.editFieldLength.setValue(19);
+      me.editFieldLength.setDisabled(true);
       me.editFieldDec.setDisabled(false);
+      me.editFieldDec.setValue(2);
     }
   },
 

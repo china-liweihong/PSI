@@ -721,7 +721,8 @@ Ext.define("PSI.CodeTable.MainForm", {
     var codeTable = item[0];
 
     var form = Ext.create("PSI.CodeTable.CodeTableColEditForm", {
-      codeTable: codeTable
+      codeTable: codeTable,
+      parentForm: me
     });
     form.show();
   },

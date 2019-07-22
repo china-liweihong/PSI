@@ -192,6 +192,7 @@ class CodeTableController extends PSIBaseController
         "mustInput" => I("post.mustInput"),
         "widthInView" => I("post.widthInView"),
         "showOrder" => I("post.showOrder"),
+        "editorXtype" => I("post.editorXtype"),
         "memo" => I("post.memo")
       ];
 

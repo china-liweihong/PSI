@@ -284,6 +284,45 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
     form.show();
   },
 
+  // 根据当前id查找之前的id，用于删除后定位
+  getPreIndexById: function (id) {
+    var me = this;
+    var md = me.getMetaData();
+    if (md.treeView) {
+      var store = me.getMainGrid().getStore();
+      var currentNode = store.getNodeById(id);
+      if (currentNode) {
+        var preNode = currentNode.previousSibling;
+        if (preNode) {
+          return preNode.data.id;
+        } else {
+          // 没有同级node，就找上级
+          var parentNode = currentNode.parentNode;
+          if (parentNode) {
+            return parentNode.data.id;
+          } else {
+            // 什么也没有找到
+            return null;
+          }
+        }
+      }
+    } else {
+      var store = me.getMainGrid().getStore();
+      var index = store.findExact("id", id) - 1;
+
+      var result = null;
+      var preEntity = store.getAt(index);
+      if (preEntity) {
+        result = preEntity.get("id");
+      }
+
+      return result;
+    }
+
+    // 没有找到，或者是bug
+    return null;
+  },
+
   onDeleteCodeTableRecord: function () {
     var me = this;
     var md = me.getMetaData();
@@ -298,7 +337,7 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
     var info = "请确认是否删除" + name + " <span style='color:red'>" + entity.get("name")
       + "</span> ?";
 
-    var preIndex = null;
+    var preIndex = me.getPreIndexById(entity.get("id"));
 
     var funcConfirm = function () {
       var el = Ext.getBody();

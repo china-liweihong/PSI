@@ -186,12 +186,15 @@ class CodeTableController extends PSIBaseController
         "fieldName" => I("post.fieldName"),
         "fieldType" => I("post.fieldType"),
         "fieldLength" => I("post.fieldLength"),
+        "fieldDecimal" => I("post.fieldDecimal"),
         "valueFrom" => I("post.valueFrom"),
         "valueFromTableName" => I("post.valueFromTableName"),
         "valueFromColName" => I("post.valueFromColName"),
         "mustInput" => I("post.mustInput"),
         "widthInView" => I("post.widthInView"),
         "showOrder" => I("post.showOrder"),
+        "showOrderInView" => I("post.showOrderInView"),
+        "isVisible" => I("post.isVisible"),
         "editorXtype" => I("post.editorXtype"),
         "memo" => I("post.memo")
       ];

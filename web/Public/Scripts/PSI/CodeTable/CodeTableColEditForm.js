@@ -373,10 +373,14 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
     me.editValueFromColName = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editValueFromColName");
     me.editWidthInView = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editWidthInView");
     me.editShowOrder = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editShowOrder");
+    me.editShowOrderInView = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editShowOrderInView");
     me.editEditorXtype = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editEditorXtype");
     me.editMemo = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editMemo");
 
-    me.__editorList = [me.editCaption, me.editFieldName, me.editWidthInView, me.editShowOrder, me.editMemo];
+    me.__editorList = [
+      me.editCaption, me.editFieldName, me.editWidthInView, me.editShowOrder,
+      me.editShowOrderInView, me.editMemo
+    ];
   },
 
   onWndShow: function () {

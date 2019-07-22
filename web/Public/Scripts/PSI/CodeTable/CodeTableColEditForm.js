@@ -45,13 +45,15 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
       + "</h2>"
       + "<p style='color:#196d83'>标记 <span style='color:red;font-weight:bold'>*</span>的是必须录入数据的字段</p>";
 
+    var col2Width = 550;
+    var col3Width = 820;
     Ext.apply(me, {
       header: {
         title: me.formatTitle(PSI.Const.PROD_NAME),
         height: 40
       },
-      width: 800,
-      height: 370,
+      width: 870,
+      height: 400,
       layout: "border",
       items: [{
         region: "north",
@@ -71,7 +73,7 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
         bodyPadding: 5,
         defaultType: 'textfield',
         fieldDefaults: {
-          labelWidth: 100,
+          labelWidth: 120,
           labelAlign: "right",
           labelSeparator: "",
           msgTarget: 'side'
@@ -94,7 +96,7 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
           fieldLabel: "数据库表名",
           readOnly: true,
           colspan: 2,
-          width: 510,
+          width: col2Width,
           value: me.getCodeTable().get("tableName")
         }, {
           id: "PSI_CodeTable_CodeTableColEditForm_editCaption",
@@ -122,7 +124,7 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
             }
           },
           colspan: 2,
-          width: 510,
+          width: col2Width,
           name: "fieldName"
         }, {
           id: "PSI_CodeTable_CodeTableColEditForm_editFieldType",
@@ -275,9 +277,9 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
           }
         }, {
           id: "PSI_CodeTable_CodeTableColEditForm_editShowOrder",
-          fieldLabel: "显示次序",
+          fieldLabel: "编辑界面显示次序",
           allowBlank: false,
-          blankText: "没有输入显示次序",
+          blankText: "没有输入编辑界面显示次序",
           beforeLabelTextTpl: PSI.Const.REQUIRED,
           xtype: "numberfield",
           hideTrigger: true,
@@ -289,6 +291,23 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
               scope: me
             }
           }
+        }, {
+          id: "PSI_CodeTable_CodeTableColEditForm_editShowOrderInView",
+          fieldLabel: "视图界面显示次序",
+          allowBlank: false,
+          blankText: "没有输入视图界面显示次序",
+          beforeLabelTextTpl: PSI.Const.REQUIRED,
+          xtype: "numberfield",
+          hideTrigger: true,
+          allowDecimal: false,
+          name: "showOrderInView",
+          listeners: {
+            specialkey: {
+              fn: me.onEditSpecialKey,
+              scope: me
+            }
+          },
+          colspan: 2
         }, {
           id: "PSI_CodeTable_CodeTableColEditForm_editEditorXtype",
           xtype: "combo",
@@ -307,8 +326,8 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
           }),
           value: "textfield",
           name: "editorXtype",
-          colspan: 2,
-          width: 510
+          colspan: 3,
+          width: col2Width
         }, {
           id: "PSI_CodeTable_CodeTableColEditForm_editMemo",
           fieldLabel: "备注",
@@ -321,7 +340,7 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
               scope: me
             }
           },
-          width: 770,
+          width: col3Width,
           colspan: 3
         }],
         buttons: buttons

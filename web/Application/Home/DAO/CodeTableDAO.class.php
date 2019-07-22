@@ -1696,7 +1696,7 @@ class CodeTableDAO extends PSIBaseExDAO
     $codeTableId = $params["codeTableId"];
     $caption = $params["caption"];
     $fieldName = strtolower($params["fieldName"]);
-    $fieldType = $params["fieldType"];
+    $fieldType = strtolower($params["fieldType"]);
     $fieldLength = $params["fieldLength"];
     $fieldDecimal = $params["fieldDecimal"];
     $valueFrom = $params["valueFrom"];
@@ -1727,6 +1727,27 @@ class CodeTableDAO extends PSIBaseExDAO
     $dbUtilDAO = new DBUtilDAO($db);
     if ($dbUtilDAO->columnExists($tableName, $fieldName)) {
       return $this->bad("在表[{$tableName}]中已经存在字段[{$fieldName}]了");
+    }
+
+    // 检查字段类型
+    if ($fieldType == "varchar") {
+      $fieldLength = intval($fieldLength);
+      if ($fieldLength <= 0) {
+        $fieldLength = 255;
+      }
+    } else if ($fieldType == "int") {
+      $fieldLength = 11;
+    } else if ($fieldType == "decimal") {
+      $fieldLength = 19;
+      $fieldDecimal = intval($fieldDecimal);
+      if ($fieldDecimal < 0) {
+        $fieldDecimal = 0;
+      }
+      if ($fieldDecimal > 8) {
+        return $this->bad("字段类型[decimal]的小数位数不能超过8位");
+      }
+    } else {
+      return $this->bad("字段类型[{$fieldType}]目前还不支持");
     }
 
     // 写入字段元数据

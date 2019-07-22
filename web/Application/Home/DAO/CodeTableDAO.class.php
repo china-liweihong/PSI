@@ -1698,12 +1698,16 @@ class CodeTableDAO extends PSIBaseExDAO
     $fieldName = strtolower($params["fieldName"]);
     $fieldType = $params["fieldType"];
     $fieldLength = $params["fieldLength"];
+    $fieldDecimal = $params["fieldDecimal"];
     $valueFrom = $params["valueFrom"];
     $valueFromTableName = $params["valueFromTableName"];
     $valueFromColName = $params["valueFromColName"];
     $mustInput = $params["mustInput"];
     $widthInView = $params["widthInView"];
     $showOrder = $params["showOrder"];
+    $showOrderInView = $params["showOrderInView"];
+    $isVisible = $params["isVisible"];
+    $editorXtype = $params["editorXtype"];
     $memo = $params["memo"];
 
     // 检查码表是否存在
@@ -1719,12 +1723,50 @@ class CodeTableDAO extends PSIBaseExDAO
       return $rc;
     }
 
-     // 检查数据库中码表是否已经存在该字段了
-     $dbUtilDAO = new DBUtilDAO($db);
-     if ($dbUtilDAO->columnExists($tableName, $fieldName)) {
-       return $this->bad("在表[{$tableName}]中已经存在字段[{$fieldName}]了");
-     }
+    // 检查数据库中码表是否已经存在该字段了
+    $dbUtilDAO = new DBUtilDAO($db);
+    if ($dbUtilDAO->columnExists($tableName, $fieldName)) {
+      return $this->bad("在表[{$tableName}]中已经存在字段[{$fieldName}]了");
+    }
 
+    // 写入字段元数据
+    $id = $this->newId();
+    $sql = "insert into t_code_table_cols_md (id, table_id, caption, 
+              db_field_name, db_field_type, db_field_length, db_field_decimal,
+              show_order, value_from, value_from_table_name, value_from_col_name,
+              must_input, sys_col, is_visible, width_in_view, note, 
+              show_order_in_view, editor_xtype)
+            values ('%s', '%s', '%s',
+              '%s', '%s', %d, %d,
+              %d, %d, '%s', '%s',
+              %d, %d, %d, %d, '%s',
+              %d, '%s')";
+    $rc = $db->execute(
+      $sql,
+      $id,
+      $codeTableId,
+      $caption,
+      $fieldName,
+      $fieldType,
+      $fieldLength,
+      $fieldDecimal,
+      $showOrder,
+      $valueFrom,
+      $valueFromTableName,
+      $valueFromColName,
+      $mustInput,
+      0,
+      $isVisible,
+      $widthInView,
+      $memo,
+      $showOrderInView,
+      $editorXtype
+    );
+
+    // 在数据库表中创建字段
+
+    //操作成功
+    $params["id"] = $id;
     return $this->todo();
   }
 

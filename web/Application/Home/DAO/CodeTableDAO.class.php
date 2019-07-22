@@ -355,7 +355,7 @@ class CodeTableDAO extends PSIBaseExDAO
       "valueFrom" => 1,
       "valueFromTableName" => "",
       "valueFromColName" => "",
-      "mustInput" => 1,
+      "mustInput" => 2,
       "showOrder" => 0,
       "showOrderInView" => 0,
       "sysCol" => 1,
@@ -374,7 +374,7 @@ class CodeTableDAO extends PSIBaseExDAO
       "valueFrom" => 1,
       "valueFromTableName" => "",
       "valueFromColName" => "",
-      "mustInput" => 1,
+      "mustInput" => 2,
       "showOrder" => 1,
       "showOrderInView" => 1,
       "sysCol" => 1,
@@ -393,7 +393,7 @@ class CodeTableDAO extends PSIBaseExDAO
       "valueFrom" => 1,
       "valueFromTableName" => "",
       "valueFromColName" => "",
-      "mustInput" => 0,
+      "mustInput" => 1,
       "showOrder" => -900,
       "showOrderInView" => -1000,
       "sysCol" => 1,
@@ -412,7 +412,7 @@ class CodeTableDAO extends PSIBaseExDAO
       "valueFrom" => 1,
       "valueFromTableName" => "",
       "valueFromColName" => "",
-      "mustInput" => 0,
+      "mustInput" => 1,
       "showOrder" => -800,
       "showOrderInView" => -1000,
       "sysCol" => 1,
@@ -431,7 +431,7 @@ class CodeTableDAO extends PSIBaseExDAO
       "valueFrom" => 1,
       "valueFromTableName" => "",
       "valueFromColName" => "",
-      "mustInput" => 0,
+      "mustInput" => 1,
       "showOrder" => -700,
       "showOrderInView" => -1000,
       "sysCol" => 1,
@@ -450,7 +450,7 @@ class CodeTableDAO extends PSIBaseExDAO
       "valueFrom" => 1,
       "valueFromTableName" => "",
       "valueFromColName" => "",
-      "mustInput" => 0,
+      "mustInput" => 1,
       "showOrder" => -699,
       "showOrderInView" => -1000,
       "sysCol" => 1,
@@ -469,7 +469,7 @@ class CodeTableDAO extends PSIBaseExDAO
       "valueFrom" => 1,
       "valueFromTableName" => "",
       "valueFromColName" => "",
-      "mustInput" => 0,
+      "mustInput" => 1,
       "showOrder" => -698,
       "showOrderInView" => -1000,
       "sysCol" => 1,
@@ -488,7 +488,7 @@ class CodeTableDAO extends PSIBaseExDAO
       "valueFrom" => 1,
       "valueFromTableName" => "",
       "valueFromColName" => "",
-      "mustInput" => 0,
+      "mustInput" => 1,
       "showOrder" => -697,
       "showOrderInView" => -1000,
       "sysCol" => 1,
@@ -507,7 +507,7 @@ class CodeTableDAO extends PSIBaseExDAO
       "valueFrom" => 1,
       "valueFromTableName" => "",
       "valueFromColName" => "",
-      "mustInput" => 0,
+      "mustInput" => 1,
       "showOrder" => -696,
       "showOrderInView" => -1000,
       "sysCol" => 1,
@@ -526,7 +526,7 @@ class CodeTableDAO extends PSIBaseExDAO
       "valueFrom" => 2,
       "valueFromTableName" => "t_sysdict_record_status",
       "valueFromColName" => "code_int",
-      "mustInput" => 1,
+      "mustInput" => 2,
       "showOrder" => 2,
       "showOrderInView" => 2,
       "sysCol" => 1,
@@ -856,7 +856,7 @@ class CodeTableDAO extends PSIBaseExDAO
         "valueFrom" => $this->valueFromCodeToName($v["value_from"]),
         "valueFromTableName" => $v["value_from_table_name"],
         "valueFromColName" => $v["value_from_col_name"],
-        "mustInput" => $v["must_input"] == 1 ? "必录项" : "",
+        "mustInput" => $v["must_input"] == 2 ? "必录项" : "",
         "sysCol" => $v["sys_col"] == 1 ? "系统列" : "",
         "isVisible" => $isVisible ? "可见" : "不可见",
         "widthInView" => $isVisible ? ($v["width_in_view"] ?? 100) : null,
@@ -1080,7 +1080,7 @@ class CodeTableDAO extends PSIBaseExDAO
         "fieldName" => $v["db_field_name"],
         "isVisible" => $isVisible,
         "widthInView" => $isVisible ? ($v["width_in_view"] ?? 100) : null,
-        "mustInput" => $v["must_input"] == 1,
+        "mustInput" => $v["must_input"] == 2,
         "valueFromExtData" => $valueFromExtData,
         "valueFrom" => $v["value_from"],
         "valueFromColName" => $v["value_from_col_name"],
@@ -1755,19 +1755,37 @@ class CodeTableDAO extends PSIBaseExDAO
       $valueFromTableName,
       $valueFromColName,
       $mustInput,
-      0,
+      2,
       $isVisible,
       $widthInView,
       $memo,
       $showOrderInView,
       $editorXtype
     );
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
 
     // 在数据库表中创建字段
+    $sql = "alter table {$tableName} add {$fieldName} ";
+    if ($fieldType == "varchar") {
+      $sql .= " varchar({$fieldLength}) ";
+    } else if ($fieldType == "int") {
+      $sql .= " int(11) ";
+    } else if ($fieldType = "decimal") {
+      $sql .= " decimal({$fieldLength}, {$fieldDecimal}) ";
+    } else {
+      return $this->bad("字段类型[{$fieldType}]还不支持");
+    }
+    $sql .= " default null;";
+    $rc = $db->execute($sql);
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
 
     //操作成功
     $params["id"] = $id;
-    return $this->todo();
+    return null;
   }
 
   /**

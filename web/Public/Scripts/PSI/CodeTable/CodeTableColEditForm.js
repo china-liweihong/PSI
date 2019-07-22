@@ -181,7 +181,7 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
           allowDecimal: false,
           minValue: 0,
           value: 0,
-          name: "fieldDec",
+          name: "fieldDecimal",
           disabled: true
         }, {
           id: "PSI_CodeTable_CodeTableColEditForm_editValueFrom",

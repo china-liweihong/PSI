@@ -289,6 +289,35 @@ class CodeTableDAO extends PSIBaseExDAO
   }
 
   /**
+   * 检查字段名是否合法
+   */
+  private function checkFieldName($fieldName)
+  {
+    $c = ord($fieldName{
+      0});
+    $isABC = ord('a') <= $c && ord('z') >= $c;
+    if (!$isABC) {
+      return $this->bad("数据库字段名需要以字符开头");
+    }
+
+    $len = strlen($fieldName);
+    for ($i = 1; $i < $len; $i++) {
+      $c = ord($fieldName{
+        $i});
+      $isABC = ord('a') <= $c && ord('z') >= $c;
+      $isNumber = ord('0') <= $c && ord('9') >= $c;
+      $isOK = $isABC || $isNumber || ord('_') == $c;
+      if (!$isOK) {
+        $index = $i + 1;
+        return $this->bad("数据库字段名的第{$index}个字符非法");
+      }
+    }
+
+    // 字段名正确
+    return null;
+  }
+
+  /**
    * 返回码表的系统固有列
    *
    * @return array
@@ -844,14 +873,16 @@ class CodeTableDAO extends PSIBaseExDAO
   {
     $db = $this->db;
 
-    $sql = "select code, name, fid, is_fixed from t_code_table_md where id = '%s' ";
+    $sql = "select code, name, fid, is_fixed, table_name 
+            from t_code_table_md where id = '%s' ";
     $data = $db->query($sql, $id);
     if ($data) {
       return [
         "code" => $data[0]["code"],
         "name" => $data[0]["name"],
         "fid" => $data[0]["fid"],
-        "isFixed" => $data[0]["is_fixed"]
+        "isFixed" => $data[0]["is_fixed"],
+        "tableName" => $data[0]["table_name"]
       ];
     } else {
       return null;
@@ -1664,7 +1695,7 @@ class CodeTableDAO extends PSIBaseExDAO
 
     $codeTableId = $params["codeTableId"];
     $caption = $params["caption"];
-    $fieldName = $params["fieldName"];
+    $fieldName = strtolower($params["fieldName"]);
     $fieldType = $params["fieldType"];
     $fieldLength = $params["fieldLength"];
     $valueFrom = $params["valueFrom"];
@@ -1680,6 +1711,19 @@ class CodeTableDAO extends PSIBaseExDAO
     if (!$codeTable) {
       return $this->bad("要新增列的码表不存在");
     }
+    $tableName = $codeTable["tableName"];
+
+    // 检查字段名是否合法
+    $rc = $this->checkFieldName($fieldName);
+    if ($rc) {
+      return $rc;
+    }
+
+     // 检查数据库中码表是否已经存在该字段了
+     $dbUtilDAO = new DBUtilDAO($db);
+     if ($dbUtilDAO->columnExists($tableName, $fieldName)) {
+       return $this->bad("在表[{$tableName}]中已经存在字段[{$fieldName}]了");
+     }
 
     return $this->todo();
   }

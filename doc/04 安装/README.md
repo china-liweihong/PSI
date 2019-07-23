@@ -2,7 +2,7 @@
 
 PSI作为一款SaaS软件，官方支持的部署环境是：MoPaaS ( https://www.mopaas.com/ )
 
-安装步骤详见：https://psi.sturgeon.mopaasapp.com/help/01.html
+安装步骤详见：https://psi.butterfly.mopaasapp.com/help/01.html
 
 ----------
 

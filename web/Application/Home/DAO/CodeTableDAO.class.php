@@ -1699,7 +1699,7 @@ class CodeTableDAO extends PSIBaseExDAO
     $fieldType = strtolower($params["fieldType"]);
     $fieldLength = $params["fieldLength"];
     $fieldDecimal = $params["fieldDecimal"];
-    $valueFrom = $params["valueFrom"];
+    $valueFrom = intval($params["valueFrom"]);
     $valueFromTableName = $params["valueFromTableName"];
     $valueFromColName = $params["valueFromColName"];
     $mustInput = $params["mustInput"];
@@ -1748,6 +1748,53 @@ class CodeTableDAO extends PSIBaseExDAO
       }
     } else {
       return $this->bad("字段类型[{$fieldType}]目前还不支持");
+    }
+
+    if ($valueFrom < 1 || $valueFrom > 5) {
+      return $this->bad("字段值来源没有正确设置");
+    }
+    if ($valueFrom == 2) {
+      // 引用系统数据字典
+      // 检查系统数据字典是否存在
+      $sql = "select count(*) as cnt from t_dict_table_md where table_name = '%s' ";
+      $data = $db->query($sql, $valueFromTableName);
+      $cnt = $data[0]["cnt"];
+      if ($cnt == 0) {
+        return $this->bad("系统数据字典[{$valueFromTableName}]的元数据不存在");
+      }
+      if (!$dbUtilDAO->tableExists($valueFromTableName)) {
+        return $this->bad("系统数据字典[{$valueFromTableName}]在数据库中不存在");
+      }
+      if (!$dbUtilDAO->columnExists($valueFromTableName, $valueFromColName)) {
+        return $this->bad("系统数据字典[{$valueFromTableName}]中不存在列[{$valueFromColName}]");
+      }
+    }
+    if ($valueFrom == 3) {
+      // 引用其他码表
+      if ($tableName == $valueFromTableName) {
+        // TODO 这个限制是否合理，待定
+        return $this->bad("字段值来源不能引用自身");
+      }
+
+      // 检查码表是否存在
+      $sql = "select id from t_code_table_md where table_name = '%s' ";
+      $data = $db->query($sql, $valueFromTableName);
+      if (!$data) {
+        return $this->bad("码表[{$valueFromTableName}]的元数据不存在");
+      }
+      $valueFromTableId = $data[0]["id"];
+      $sql = "select count(*) as cnt from t_code_table_cols_md where table_id = '%s' and db_field_name = '%s' ";
+      $data = $db->query($sql, $valueFromTableId, $valueFromColName);
+      $cnt = $data[0]["cnt"];
+      if ($cnt == 0) {
+        return $this->bad("码表[$valueFromTableName]的列[{$valueFromColName}]的元数据不存在");
+      }
+      if (!$dbUtilDAO->tableExists($valueFromTableName)) {
+        return $this->bad("码表[{$valueFromTableName}]在数据库中不存在");
+      }
+      if (!$dbUtilDAO->columnExists($valueFromTableName, $valueFromColName)) {
+        return $this->bad("码表[{$valueFromTableName}]中不存在列[{$valueFromColName}]");
+      }
     }
 
     // 写入字段元数据

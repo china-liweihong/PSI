@@ -265,6 +265,7 @@ class UpdateDBService extends PSIBaseService
     $this->update_20190706_03();
     $this->update_20190707_01();
     $this->update_20190708_01();
+    $this->update_20190723_01();
 
     $sql = "delete from t_psi_db_version";
     $db->execute($sql);
@@ -286,6 +287,21 @@ class UpdateDBService extends PSIBaseService
   // ============================================
   private function notForgot()
   { }
+
+  private function update_20190723_01()
+  {
+    // 本次更新：t_sysdcit_editor_xtype增加记录引用字段
+    $db = $this->db;
+
+    $sql = "TRUNCATE TABLE `t_sysdict_editor_xtype`;
+            INSERT INTO `t_sysdict_editor_xtype` (`id`, `code`, `code_int`, `name`, `py`, `memo`, `show_order`) VALUES
+            ('5104A62E-9F97-11E9-9BDF-F0BF9790E21F', '1', 1, 'textfield', 'textfield', '字符串编辑器', 1),
+            ('7B795BEF-9F97-11E9-9BDF-F0BF9790E21F', '2', 2, 'numberfield', 'numberfield', '数值编辑器', 2),
+            ('FD1F4CF4-9F97-11E9-9BDF-F0BF9790E21F', '3', 3, 'psi_codetable_parentidfield', 'psi_codetable_parentidfield', '上级记录编辑器', 3),
+            ('9929B6FA-AD1A-11E9-B2D3-F0BF9790E21F', '4', 4, 'psi_codetable_recordreffield', 'psi_codetable_recordreffield', '码表记录引用字段编辑器', 4);
+            ";
+    $db->execute($sql);
+  }
 
   private function update_20190708_01()
   {

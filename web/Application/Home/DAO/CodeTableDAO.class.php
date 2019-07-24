@@ -1956,7 +1956,55 @@ class CodeTableDAO extends PSIBaseExDAO
   public function deleteCodeTableCol(&$params)
   {
     $db = $this->db;
+    // 码表id
+    $tableId = $params["tableId"];
+    // 列id
+    $id = $params["id"];
 
-    return $this->todo();
+    $sql = "select table_name, name from t_code_table_md where id = '%s' ";
+    $data = $db->query($sql, $tableId);
+    if (!$data){
+      return $this->bad("码表不存在");
+    }
+    $tableName = $data[0]["table_name"];
+    $name = $data[0]["name"];
+
+    $sql = "select caption, sys_col, db_field_name 
+            from t_code_table_cols_md 
+            where id = '%s' and table_id = '%s' ";
+    $data = $db->query($sql, $id, $tableId);
+    if (!$data){
+      return $this->bad("要删除的列不存在");
+    }
+    $caption = $data[0]["caption"];
+    $sysCol = $data[0]["sys_col"];
+    if ($sysCol == 1){
+      return $this->bad("列[{$caption}]是系统固有列，不能删除");
+    }
+    $colName = $data[0]["db_field_name"];
+
+    // 检查该字段是否被其他码表使用
+    $sql = "select t.name, c.caption
+            from t_code_table_md t, t_code_table_cols_md c
+            where t.id = c.table_id and c.value_from = 3
+              and c.value_from_table_name = '%s'
+              and c.value_from_col_name = '%s' ";
+    $data = $db->query($sql, $tableName, $colName);
+    if ($data){
+      $n = $data[0]["name"];
+      $c = $data[0]["caption"];
+      return $this->bad("码表[{$n}]的列[{$c}]引用当前字段，所以不能删除当前字段");
+    }
+
+    // 执行删除操作
+    $sql = "delete from t_code_table_cols_md where id = '%s' and table_id = '%s' ";
+    $rc = $db->execute($sql, $id, $tableId);
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+
+    // 操作成功
+    $params["log"]="删除码表[{$name}]列[{$caption}]的元数据";
+    return null;
   }
 }

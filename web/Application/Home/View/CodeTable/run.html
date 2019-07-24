@@ -9,6 +9,13 @@
 -->
 <script src="{$uri}Public/Scripts/PSI/CodeTable/CodeTableParentIdField.js?dt={$dtFlag}" type="text/javascript"></script>
 
+<!--
+  码表记录引用字段
+    TODO：这个地方需要优化一下JS的冗余引用
+-->
+<script src="{$uri}Public/Scripts/PSI/CodeTable/CodeTableRecordRefField.js?dt={$dtFlag}"
+  type="text/javascript"></script>
+
 <script>
   Ext.onReady(function () {
     PSI.Const.PROD_NAME = "{$productionName}";

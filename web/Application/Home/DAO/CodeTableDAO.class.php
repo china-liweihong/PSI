@@ -1716,6 +1716,7 @@ class CodeTableDAO extends PSIBaseExDAO
       return $this->bad("要新增列的码表不存在");
     }
     $tableName = $codeTable["tableName"];
+    $codeTableName = $codeTable["name"];
 
     // 检查字段名是否合法
     $rc = $this->checkFieldName($fieldName);
@@ -1852,6 +1853,7 @@ class CodeTableDAO extends PSIBaseExDAO
     }
 
     //操作成功
+    $params["log"]= "新增码表[{$codeTableName}]列 ：{$caption}";
     $params["id"] = $id;
     return null;
   }

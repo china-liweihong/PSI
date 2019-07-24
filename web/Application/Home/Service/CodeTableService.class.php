@@ -371,8 +371,6 @@ class CodeTableService extends PSIBaseExService
         $db->rollback();
         return $rc;
       }
-
-      $log = "编辑码表列[{$name}]的元数据";
     } else {
       // 新增
       $rc = $dao->addCodeTableCol($params);
@@ -382,10 +380,10 @@ class CodeTableService extends PSIBaseExService
       }
 
       $id = $params["id"];
-      $log = "新增码表列：{$name}";
     }
 
     // 记录业务日志
+    $log = $params["log"];
     $bs = new BizlogService($db);
     $bs->insertBizlog($log, $this->LOG_CATEGORY);
 

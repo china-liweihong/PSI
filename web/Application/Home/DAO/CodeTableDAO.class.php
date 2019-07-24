@@ -336,6 +336,7 @@ class CodeTableDAO extends PSIBaseExDAO
       "valueFrom" => 1,
       "valueFromTableName" => "",
       "valueFromColName" => "",
+      "valueFromColNameDisplay" => "",
       "mustInput" => 1,
       "showOrder" => -1000,
       "showOrderInView" => -1000,
@@ -355,6 +356,7 @@ class CodeTableDAO extends PSIBaseExDAO
       "valueFrom" => 1,
       "valueFromTableName" => "",
       "valueFromColName" => "",
+      "valueFromColNameDisplay" => "",
       "mustInput" => 2,
       "showOrder" => 0,
       "showOrderInView" => 0,
@@ -374,6 +376,7 @@ class CodeTableDAO extends PSIBaseExDAO
       "valueFrom" => 1,
       "valueFromTableName" => "",
       "valueFromColName" => "",
+      "valueFromColNameDisplay" => "",
       "mustInput" => 2,
       "showOrder" => 1,
       "showOrderInView" => 1,
@@ -393,6 +396,7 @@ class CodeTableDAO extends PSIBaseExDAO
       "valueFrom" => 1,
       "valueFromTableName" => "",
       "valueFromColName" => "",
+      "valueFromColNameDisplay" => "",
       "mustInput" => 1,
       "showOrder" => -900,
       "showOrderInView" => -1000,
@@ -412,6 +416,7 @@ class CodeTableDAO extends PSIBaseExDAO
       "valueFrom" => 1,
       "valueFromTableName" => "",
       "valueFromColName" => "",
+      "valueFromColNameDisplay" => "",
       "mustInput" => 1,
       "showOrder" => -800,
       "showOrderInView" => -1000,
@@ -431,6 +436,7 @@ class CodeTableDAO extends PSIBaseExDAO
       "valueFrom" => 1,
       "valueFromTableName" => "",
       "valueFromColName" => "",
+      "valueFromColNameDisplay" => "",
       "mustInput" => 1,
       "showOrder" => -700,
       "showOrderInView" => -1000,
@@ -450,6 +456,7 @@ class CodeTableDAO extends PSIBaseExDAO
       "valueFrom" => 1,
       "valueFromTableName" => "",
       "valueFromColName" => "",
+      "valueFromColNameDisplay" => "",
       "mustInput" => 1,
       "showOrder" => -699,
       "showOrderInView" => -1000,
@@ -469,6 +476,7 @@ class CodeTableDAO extends PSIBaseExDAO
       "valueFrom" => 1,
       "valueFromTableName" => "",
       "valueFromColName" => "",
+      "valueFromColNameDisplay" => "",
       "mustInput" => 1,
       "showOrder" => -698,
       "showOrderInView" => -1000,
@@ -488,6 +496,7 @@ class CodeTableDAO extends PSIBaseExDAO
       "valueFrom" => 1,
       "valueFromTableName" => "",
       "valueFromColName" => "",
+      "valueFromColNameDisplay" => "",
       "mustInput" => 1,
       "showOrder" => -697,
       "showOrderInView" => -1000,
@@ -507,6 +516,7 @@ class CodeTableDAO extends PSIBaseExDAO
       "valueFrom" => 1,
       "valueFromTableName" => "",
       "valueFromColName" => "",
+      "valueFromColNameDisplay" => "",
       "mustInput" => 1,
       "showOrder" => -696,
       "showOrderInView" => -1000,
@@ -526,6 +536,7 @@ class CodeTableDAO extends PSIBaseExDAO
       "valueFrom" => 2,
       "valueFromTableName" => "t_sysdict_record_status",
       "valueFromColName" => "code_int",
+      "valueFromColNameDisplay" => "name",
       "mustInput" => 2,
       "showOrder" => 2,
       "showOrderInView" => 2,
@@ -636,6 +647,7 @@ class CodeTableDAO extends PSIBaseExDAO
         "valueFrom" => 4,
         "valueFromTableName" => $tableName,
         "valueFromColName" => "id",
+        "valueFromColNameDisplay" => "full_name",
         "mustInput" => 0,
         "showOrder" => 4,
         "showOrderInView" => -1000,
@@ -654,6 +666,7 @@ class CodeTableDAO extends PSIBaseExDAO
         "valueFrom" => 5,
         "valueFromTableName" => "",
         "valueFromColName" => "",
+        "valueFromColNameDisplay" => "",
         "mustInput" => 0,
         "showOrder" => -1000,
         "showOrderInView" => 3,
@@ -669,12 +682,12 @@ class CodeTableDAO extends PSIBaseExDAO
                 caption, db_field_name, db_field_type, db_field_length,
                 db_field_decimal, show_order, value_from, value_from_table_name,
                 value_from_col_name, must_input, sys_col, is_visible, width_in_view,
-                show_order_in_view, editor_xtype)
+                show_order_in_view, editor_xtype, value_from_col_name_display)
               values ('%s', '%s',
                 '%s', '%s', '%s', %d,
                 %d, %d, %d, '%s',
                 '%s', %d, %d, %d, %d,
-                %d, '%s')";
+                %d, '%s', '%s')";
       $rc = $db->execute(
         $sql,
         $this->newId(),
@@ -693,7 +706,8 @@ class CodeTableDAO extends PSIBaseExDAO
         $v["isVisible"],
         $v["widthInView"],
         $v["showOrderInView"],
-        $v["editorXtype"]
+        $v["editorXtype"],
+        $v["valueFromColNameDisplay"]
       );
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);

@@ -272,7 +272,7 @@ Ext.define("PSI.CodeTable.MainForm", {
       fields: ["id", "caption", "fieldName",
         "fieldType", "fieldLength", "fieldDecimal",
         "valueFrom", "valueFromTableName",
-        "valueFromColName", "mustInput",
+        "valueFromColName", "valueFromColNameDisplay", "mustInput",
         "showOrder", "sysCol", "isVisible",
         "widthInView", "note", "showOrderInView", "editorXtype"]
     });
@@ -335,11 +335,15 @@ Ext.define("PSI.CodeTable.MainForm", {
         }, {
           header: "值来源表",
           dataIndex: "valueFromTableName",
-          width: 120
+          width: 150
         }, {
-          header: "值来源字段",
+          header: "值来源字段(关联用)",
           dataIndex: "valueFromColName",
-          width: 100
+          width: 150
+        }, {
+          header: "值来源字段(显示用)",
+          dataIndex: "valueFromColNameDisplay",
+          width: 150
         }, {
           header: "系统字段",
           dataIndex: "sysCol",

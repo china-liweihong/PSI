@@ -1949,4 +1949,14 @@ class CodeTableDAO extends PSIBaseExDAO
     }
     return $result;
   }
+
+  /**
+   * 删除码表列
+   */
+  public function deleteCodeTableCol(&$params)
+  {
+    $db = $this->db;
+
+    return $this->todo();
+  }
 }

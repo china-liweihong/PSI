@@ -732,8 +732,66 @@ Ext.define("PSI.CodeTable.MainForm", {
     me.showInfo("TODO");
   },
 
+  // 删除码表列
   onDeleteCol: function () {
     var me = this;
-    me.showInfo("TODO");
+    var item = me.getMainGrid().getSelectionModel().getSelection();
+    if (item == null || item.length != 1) {
+      me.showInfo("请选择码表");
+      return;
+    }
+    var codeTable = item[0];
+
+    var item = me.getColsGrid().getSelectionModel().getSelection();
+    if (item == null || item.length != 1) {
+      me.showInfo("请选择要删除的列");
+      return;
+    }
+    var col = item[0];
+
+    var store = me.getColsGrid().getStore();
+    var index = store.findExact("id", col.get("id"));
+    index--;
+    var preIndex = null;
+    var preItem = store.getAt(index);
+    if (preItem) {
+      preIndex = preItem.get("id");
+    }
+
+    var info = "请确认是否删除码表列: <span style='color:red'>"
+      + col.get("caption")
+      + "</span><br /><br />当前操作只删除码表列的元数据，数据库表的字段不会删除";
+
+    var funcConfirm = function () {
+      var el = Ext.getBody();
+      el.mask("正在删除中...");
+
+      var r = {
+        url: me.URL("Home/CodeTable/deleteCodeTableCol"),
+        params: {
+          tableId: codeTable.get("id"),
+          id: col.get("id")
+        },
+        callback: function (options, success, response) {
+          el.unmask();
+
+          if (success) {
+            var data = me.decodeJSON(response.responseText);
+            if (data.success) {
+              me.tip("成功完成删除操作");
+              me.refreshMainGrid(preIndex);
+            } else {
+              me.showInfo(data.msg);
+            }
+          } else {
+            me.showInfo("网络错误");
+          }
+        }
+      };
+
+      me.ajax(r);
+    };
+
+    me.confirm(info, funcConfirm);
   }
 });

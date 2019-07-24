@@ -205,6 +205,22 @@ class CodeTableController extends PSIBaseController
   }
 
   /**
+   * 删除码表列
+   */
+  public function deleteCodeTableCol()
+  {
+    if (IS_POST) {
+      $params = [
+        "tableId" => I("post.tableId"),
+        "id" => I("post.id")
+      ];
+
+      $service = new CodeTableService();
+      $this->ajaxReturn($service->deleteCodeTableCol($params));
+    }
+  }
+
+  /**
    * 删除码表
    */
   public function deleteCodeTable()

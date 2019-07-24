@@ -451,4 +451,35 @@ class CodeTableService extends PSIBaseExService
     $dao = new CodeTableDAO($this->db());
     return $dao->codeTableColInfo($params);
   }
+
+  /**
+   * 删除码表列
+   */
+  public function deleteCodeTableCol($params)
+  {
+    if ($this->isNotOnline()) {
+      return $this->notOnlineError();
+    }
+
+    $db = $this->db();
+    $db->startTrans();
+
+    $dao = new CodeTableDAO($db);
+    $rc = $dao->deleteCodeTableCol($params);
+    if ($rc) {
+      $db->rollback();
+      return $rc;
+    }
+
+    $caption = $params["caption"];
+    $log = "删除码表列[{$caption}]的元数据";
+
+    // 记录业务日志
+    $bs = new BizlogService($db);
+    $bs->insertBizlog($log, $this->LOG_CATEGORY);
+
+    $db->commit();
+
+    return $this->ok();
+  }
 }

@@ -1426,6 +1426,7 @@ CREATE TABLE IF NOT EXISTS `t_code_table_cols_md` (
   `value_from` int(11) DEFAULT NULL,
   `value_from_table_name` varchar(255) DEFAULT NULL,
   `value_from_col_name` varchar(255) DEFAULT NULL,
+  `value_from_col_name_display` varchar(255) DEFAULT NULL,
   `must_input` int(11) DEFAULT 1,
   `sys_col` int(11) DEFAULT 1,
   `is_visible` int(11) DEFAULT 1,

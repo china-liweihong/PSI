@@ -157,7 +157,7 @@ Ext.define("PSI.CodeTable.CodeTableRecordRefField", {
     editName.on("change", function () {
       var store = me.lookupGrid.getStore();
       Ext.Ajax.request({
-        url: PSI.Const.BASE_URL + "Home/CodeTabel/queryDataForRecordRef",
+        url: PSI.Const.BASE_URL + "Home/CodeTable/queryDataForRecordRef",
         params: {
           queryKey: editName.getValue(),
           fid: me.getFid()

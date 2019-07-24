@@ -1853,7 +1853,7 @@ class CodeTableDAO extends PSIBaseExDAO
     }
 
     //操作成功
-    $params["log"]= "新增码表[{$codeTableName}]列 ：{$caption}";
+    $params["log"] = "新增码表[{$codeTableName}]列 ：{$caption}";
     $params["id"] = $id;
     return null;
   }
@@ -1965,7 +1965,7 @@ class CodeTableDAO extends PSIBaseExDAO
 
     $sql = "select table_name, name from t_code_table_md where id = '%s' ";
     $data = $db->query($sql, $tableId);
-    if (!$data){
+    if (!$data) {
       return $this->bad("码表不存在");
     }
     $tableName = $data[0]["table_name"];
@@ -1975,12 +1975,12 @@ class CodeTableDAO extends PSIBaseExDAO
             from t_code_table_cols_md 
             where id = '%s' and table_id = '%s' ";
     $data = $db->query($sql, $id, $tableId);
-    if (!$data){
+    if (!$data) {
       return $this->bad("要删除的列不存在");
     }
     $caption = $data[0]["caption"];
     $sysCol = $data[0]["sys_col"];
-    if ($sysCol == 1){
+    if ($sysCol == 1) {
       return $this->bad("列[{$caption}]是系统固有列，不能删除");
     }
     $colName = $data[0]["db_field_name"];
@@ -1992,7 +1992,7 @@ class CodeTableDAO extends PSIBaseExDAO
               and c.value_from_table_name = '%s'
               and c.value_from_col_name = '%s' ";
     $data = $db->query($sql, $tableName, $colName);
-    if ($data){
+    if ($data) {
       $n = $data[0]["name"];
       $c = $data[0]["caption"];
       return $this->bad("码表[{$n}]的列[{$c}]引用当前字段，所以不能删除当前字段");
@@ -2006,7 +2006,17 @@ class CodeTableDAO extends PSIBaseExDAO
     }
 
     // 操作成功
-    $params["log"]="删除码表[{$name}]列[{$caption}]的元数据";
+    $params["log"] = "删除码表[{$name}]列[{$caption}]的元数据";
     return null;
+  }
+
+  /**
+   * 码表记录引用字段 - 查询数据
+   */
+  public function queryDataForRecordRef($params)
+  {
+    $db = $this->db;
+
+    return $this->emptyResult();
   }
 }

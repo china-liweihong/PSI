@@ -479,4 +479,17 @@ class CodeTableService extends PSIBaseExService
 
     return $this->ok();
   }
+
+  /**
+   * 码表记录引用字段 - 查询数据
+   */
+  public function queryDataForRecordRef($params)
+  {
+    if ($this->isNotOnline()) {
+      return $this->emptyResult();
+    }
+
+    $dao = new CodeTableDAO($this->db());
+    return $dao->queryDataForRecordRef($params);
+  }
 }

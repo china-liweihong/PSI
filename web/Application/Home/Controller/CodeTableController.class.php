@@ -372,4 +372,20 @@ class CodeTableController extends PSIBaseController
       $this->ajaxReturn($service->codeTableColInfo($params));
     }
   }
+
+  /**
+   * 码表记录引用字段 - 查询数据
+   */
+  public function queryDataForRecordRef()
+  {
+    if (IS_POST) {
+      $params = [
+        "queryKey" => I("post.queryKey"),
+        "fid" => I("post.fid")
+      ];
+
+      $service = new CodeTableService();
+      $this->ajaxReturn($service->queryDataForRecordRef($params));
+    }
+  }
 }

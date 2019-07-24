@@ -190,6 +190,7 @@ class CodeTableController extends PSIBaseController
         "valueFrom" => I("post.valueFrom"),
         "valueFromTableName" => I("post.valueFromTableName"),
         "valueFromColName" => I("post.valueFromColName"),
+        "valueFromColNameDisplay" => I("post.valueFromColNameDisplay"),
         "mustInput" => I("post.mustInput"),
         "widthInView" => I("post.widthInView"),
         "showOrder" => I("post.showOrder"),

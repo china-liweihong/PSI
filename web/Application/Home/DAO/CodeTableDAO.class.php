@@ -1702,6 +1702,7 @@ class CodeTableDAO extends PSIBaseExDAO
     $valueFrom = intval($params["valueFrom"]);
     $valueFromTableName = $params["valueFromTableName"];
     $valueFromColName = $params["valueFromColName"];
+    $valueFromColNameDisplay = $params["valueFromColNameDisplay"];
     $mustInput = $params["mustInput"];
     $widthInView = $params["widthInView"];
     $showOrder = $params["showOrder"];
@@ -1769,6 +1770,14 @@ class CodeTableDAO extends PSIBaseExDAO
       if (!$dbUtilDAO->columnExists($valueFromTableName, $valueFromColName)) {
         return $this->bad("系统数据字典[{$valueFromTableName}]中不存在列[{$valueFromColName}]");
       }
+      if (!$valueFromColNameDisplay) {
+        // 没有设置显示字段，就默认取关联字段
+        $valueFromColNameDisplay = $valueFromColName;
+      } else {
+        if (!$dbUtilDAO->columnExists($valueFromTableName, $valueFromColNameDisplay)) {
+          return $this->bad("系统数据字典[{$valueFromTableName}]中不存在列[{$valueFromColNameDisplay}]");
+        }
+      }
     }
     if ($valueFrom == 3) {
       // 引用其他码表
@@ -1796,6 +1805,14 @@ class CodeTableDAO extends PSIBaseExDAO
       if (!$dbUtilDAO->columnExists($valueFromTableName, $valueFromColName)) {
         return $this->bad("码表[{$valueFromTableName}]中不存在列[{$valueFromColName}]");
       }
+      if (!$valueFromColNameDisplay) {
+        // 没有设置显示字段，就默认取关联字段
+        $valueFromColNameDisplay = $valueFromColName;
+      } else {
+        if (!$dbUtilDAO->columnExists($valueFromTableName, $valueFromColNameDisplay)) {
+          return $this->bad("码表[{$valueFromTableName}]中不存在列[{$valueFromColNameDisplay}]");
+        }
+      }
     }
 
     // 写入字段元数据
@@ -1804,12 +1821,12 @@ class CodeTableDAO extends PSIBaseExDAO
               db_field_name, db_field_type, db_field_length, db_field_decimal,
               show_order, value_from, value_from_table_name, value_from_col_name,
               must_input, sys_col, is_visible, width_in_view, note, 
-              show_order_in_view, editor_xtype)
+              show_order_in_view, editor_xtype, value_from_col_name_display)
             values ('%s', '%s', '%s',
               '%s', '%s', %d, %d,
               %d, %d, '%s', '%s',
               %d, %d, %d, %d, '%s',
-              %d, '%s')";
+              %d, '%s', '%s')";
     $rc = $db->execute(
       $sql,
       $id,
@@ -1829,7 +1846,8 @@ class CodeTableDAO extends PSIBaseExDAO
       $widthInView,
       $memo,
       $showOrderInView,
-      $editorXtype
+      $editorXtype,
+      $valueFromColNameDisplay
     );
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);

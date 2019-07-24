@@ -53,7 +53,7 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
         height: 40
       },
       width: 870,
-      height: 400,
+      height: 430,
       layout: "border",
       items: [{
         region: "north",
@@ -208,7 +208,8 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
               fn: me.onValueFromChange,
               scope: me
             }
-          }
+          },
+          colspan: 3
         }, {
           id: "PSI_CodeTable_CodeTableColEditForm_editValueFromTableName",
           fieldLabel: "引用表名",
@@ -216,9 +217,14 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
           name: "valueFromTableName"
         }, {
           id: "PSI_CodeTable_CodeTableColEditForm_editValueFromColName",
-          fieldLabel: "引用列名",
+          fieldLabel: "引用列名(关联用)",
           disabled: true,
           name: "valueFromColName"
+        }, {
+          id: "PSI_CodeTable_CodeTableColEditForm_editValueFromColNameDisplay",
+          fieldLabel: "引用列名(显示用)",
+          disabled: true,
+          name: "valueFromColNameDisplay"
         }, {
           id: "PSI_CodeTable_CodeTableColEditForm_editIsVisible",
           xtype: "combo",
@@ -371,6 +377,7 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
     me.editValueFrom = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editValueFrom");
     me.editValueFromTableName = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editValueFromTableName");
     me.editValueFromColName = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editValueFromColName");
+    me.editValueFromColNameDisplay = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editValueFromColNameDisplay");
     me.editWidthInView = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editWidthInView");
     me.editShowOrder = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editShowOrder");
     me.editShowOrderInView = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editShowOrderInView");
@@ -524,12 +531,15 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
     if (v == 1) {
       me.editValueFromTableName.setDisabled(true);
       me.editValueFromColName.setDisabled(true);
+      me.editValueFromColNameDisplay.setDisabled(true);
     } else if (v == 2) {
       me.editValueFromTableName.setDisabled(false);
       me.editValueFromColName.setDisabled(false);
+      me.editValueFromColNameDisplay.setDisabled(false);
     } else if (v == 3) {
       me.editValueFromTableName.setDisabled(false);
       me.editValueFromColName.setDisabled(false);
+      me.editValueFromColNameDisplay.setDisabled(false);
     }
   }
 });

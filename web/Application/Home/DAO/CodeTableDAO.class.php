@@ -1981,6 +1981,36 @@ class CodeTableDAO extends PSIBaseExDAO
 
     if ($id) {
       // 编辑
+      $sql = "select caption, db_field_name, db_field_type, db_field_length,
+                db_field_decimal, note, show_order, value_from, 
+                value_from_table_name, value_from_col_name, value_from_col_name_display,
+                must_input, sys_col, is_visible, width_in_view, show_order_in_view,
+                editor_xtype
+              from t_code_table_cols_md
+              where id = '%s' ";
+      $data = $db->query($sql, $id);
+      if ($data) {
+        $v = $data[0];
+        $result["col"] = [
+          "caption" => $v["caption"],
+          "fieldName" => $v["db_field_name"],
+          "fieldType" => $v["db_field_type"],
+          "fieldLength" => $v["db_field_length"],
+          "fieldDecimal" => $v["db_field_decimal"],
+          "memo" => $v["note"],
+          "showOrder" => $v["show_order"],
+          "valueFrom" => $v["value_from"],
+          "valueFromTableName" => $v["value_from_table_name"],
+          "valueFromColName" => $v["value_from_col_name"],
+          "valueFromColNameDisplay" => $v["value_from_col_name_display"],
+          "mustInput" => $v["must_input"],
+          "sysCol" => $v["sys_col"],
+          "isVisible" => $v["is_visible"],
+          "widthInView" => $v["width_in_view"],
+          "showOrderInView" => $v["show_order_in_view"],
+          "editorXtype" => $v["editor_xtype"]
+        ];
+      }
     }
     return $result;
   }

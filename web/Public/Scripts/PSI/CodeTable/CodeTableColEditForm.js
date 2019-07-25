@@ -199,7 +199,8 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
             fields: ["id", "text"],
             data: [[1, "直接录入"],
             [2, "引用系统数据字典"],
-            [3, "引用其他码表"]]
+            [3, "引用其他码表"],
+            [4, "引用自身数据"]]
           }),
           value: 1,
           name: "valueFrom",
@@ -383,6 +384,8 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
     me.editShowOrderInView = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editShowOrderInView");
     me.editEditorXtype = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editEditorXtype");
     me.editMemo = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editMemo");
+    me.editIsVisible = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editIsVisible");
+    me.editMustInput = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editMustInput");
 
     me.__editorList = [
       me.editCaption, me.editFieldName, me.editWidthInView, me.editShowOrder,
@@ -421,15 +424,44 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
             me.editEditorXtype.setValue(store.getAt(0));
           } else {
             // 编辑
-            me.editName.setValue(data.name);
-            me.editTableName.setValue(data.tableName);
             me.editTableName.setReadOnly(true);
             me.editCaption.setReadOnly(true);
             me.editFieldName.setReadOnly(true);
             me.editFieldType.setReadOnly(true);
             me.editFieldLength.setReadOnly(true);
+            me.editFieldLength.setDisabled(false);
             me.editFieldDec.setReadOnly(true);
-            me.editMemo.setValue(data.memo);
+            me.editFieldDec.setDisabled(false);
+
+            var col = data.col;
+            if (col) {
+              me.editCaption.setValue(col.caption);
+              me.editFieldName.setValue(col.fieldName);
+              me.editFieldType.setValue(col.fieldType);
+              me.editFieldDec.setValue(col.fieldDecimal);
+              var valueFrom = parseInt(col.valueFrom);
+              me.editValueFrom.setValue(valueFrom);
+              me.editValueFromTableName.setValue(col.valueFromTableName);
+              me.editValueFromColName.setValue(col.valueFromColName);
+              me.editValueFromColNameDisplay.setValue(col.valueFromColNameDisplay);
+
+              if (valueFrom == 4) {
+                // 引用自身数据
+                me.editValueFrom.setReadOnly(true);
+                me.editValueFromTableName.setReadOnly(true);
+                me.editValueFromTableName.setDisabled(false);
+                me.editValueFromColName.setDisabled(false);
+                me.editValueFromColNameDisplay.setDisabled(false);
+              }
+
+              me.editIsVisible.setValue(parseInt(col.isVisible));
+              me.editMustInput.setValue(parseInt(col.mustInput));
+              me.editWidthInView.setValue(col.widthInView);
+              me.editShowOrder.setValue(col.showOrder);
+              me.editShowOrderInView.setValue(col.showOrderInView);
+              me.editEditorXtype.setValue(col.editorXtype);
+              me.editMemo.setValue(col.memo);
+            }
           }
 
           me.editCaption.focus();

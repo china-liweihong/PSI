@@ -1892,6 +1892,16 @@ class CodeTableDAO extends PSIBaseExDAO
   }
 
   /**
+   * 编辑码表列
+   */
+  public function updateCodeTableCol(&$params)
+  {
+    $db = $this->db;
+
+    return $this->todo();
+  }
+
+  /**
    * 查询码表记录的详情
    */
   public function recordInfo($params)

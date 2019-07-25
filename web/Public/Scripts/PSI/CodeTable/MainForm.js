@@ -733,7 +733,28 @@ Ext.define("PSI.CodeTable.MainForm", {
 
   onEditCol: function () {
     var me = this;
-    me.showInfo("TODO");
+
+    var item = me.getMainGrid().getSelectionModel().getSelection();
+    if (item == null || item.length != 1) {
+      me.showInfo("请选择要编辑列的码表");
+      return;
+    }
+
+    var codeTable = item[0];
+
+    var item = me.getColsGrid().getSelectionModel().getSelection();
+    if (item == null || item.length != 1) {
+      me.showInfo("请选择要编辑的列");
+      return;
+    }
+    var col = item[0];
+
+    var form = Ext.create("PSI.CodeTable.CodeTableColEditForm", {
+      codeTable: codeTable,
+      entity: col,
+      parentForm: me
+    });
+    form.show();
   },
 
   // 删除码表列

@@ -424,6 +424,11 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
             me.editName.setValue(data.name);
             me.editTableName.setValue(data.tableName);
             me.editTableName.setReadOnly(true);
+            me.editCaption.setReadOnly(true);
+            me.editFieldName.setReadOnly(true);
+            me.editFieldType.setReadOnly(true);
+            me.editFieldLength.setReadOnly(true);
+            me.editFieldDec.setReadOnly(true);
             me.editMemo.setValue(data.memo);
           }
 

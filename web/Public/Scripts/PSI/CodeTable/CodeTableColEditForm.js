@@ -577,6 +577,10 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
       me.editValueFromTableName.setDisabled(false);
       me.editValueFromColName.setDisabled(false);
       me.editValueFromColNameDisplay.setDisabled(false);
+    } else if (v == 4) {
+      me.editValueFromTableName.setDisabled(true);
+      me.editValueFromColName.setDisabled(false);
+      me.editValueFromColNameDisplay.setDisabled(false);
     }
   }
 });

@@ -1829,6 +1829,27 @@ class CodeTableDAO extends PSIBaseExDAO
         }
       }
     }
+    if ($valueFrom == 4) {
+      // 引用自身
+      $valueFromTableName = $tableName;
+      $sql = "select count(*) as cnt from t_code_table_cols_md where table_id = '%s' and db_field_name = '%s' ";
+      $data = $db->query($sql, $codeTableId, $valueFromColName);
+      $cnt = $data[0]["cnt"];
+      if ($cnt == 0) {
+        return $this->bad("码表[$valueFromTableName]的列[{$valueFromColName}]的元数据不存在");
+      }
+      if (!$dbUtilDAO->columnExists($valueFromTableName, $valueFromColName)) {
+        return $this->bad("码表[{$valueFromTableName}]中不存在列[{$valueFromColName}]");
+      }
+      if (!$valueFromColNameDisplay) {
+        // 没有设置显示字段，就默认取关联字段
+        $valueFromColNameDisplay = $valueFromColName;
+      } else {
+        if (!$dbUtilDAO->columnExists($valueFromTableName, $valueFromColNameDisplay)) {
+          return $this->bad("码表[{$valueFromTableName}]中不存在列[{$valueFromColNameDisplay}]");
+        }
+      }
+    }
 
     // 写入字段元数据
     $id = $this->newId();

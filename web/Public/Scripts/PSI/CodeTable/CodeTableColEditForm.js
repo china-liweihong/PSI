@@ -461,6 +461,22 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
               me.editShowOrderInView.setValue(col.showOrderInView);
               me.editEditorXtype.setValue(col.editorXtype);
               me.editMemo.setValue(col.memo);
+
+              if (col.sysCol == 1) {
+                // 系统列的时候，进一步限制字段的修改
+                me.editValueFrom.setReadOnly(true);
+                me.editIsVisible.setReadOnly(true);
+                me.editMustInput.setReadOnly(true);
+                me.editWidthInView.setReadOnly(true);
+                me.editWidthInView.clearInvalid();
+                me.editWidthInView.setMinValue(0);
+                me.editEditorXtype.setReadOnly(true);
+              }
+
+              if (col.isVisible == 1) {
+                // 可见的字段，也能设置在视图中的宽度
+                me.editWidthInView.setReadOnly(false);
+              }
             }
           }
 

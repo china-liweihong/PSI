@@ -471,6 +471,9 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
                 me.editWidthInView.clearInvalid();
                 me.editWidthInView.setMinValue(0);
                 me.editEditorXtype.setReadOnly(true);
+              } else {
+                me.editCaption.setDisabled(false);
+                me.editCaption.setReadOnly(false);
               }
 
               if (col.isVisible == 1) {

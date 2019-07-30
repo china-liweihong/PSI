@@ -1918,8 +1918,55 @@ class CodeTableDAO extends PSIBaseExDAO
   public function updateCodeTableCol(&$params)
   {
     $db = $this->db;
+    $id = $params["id"];
+    $codeTableId = $params["codeTableId"];
+    $codeTable = $this->getCodeTableById($codeTableId);
+    if (!$codeTable) {
+      return $this->badParam("codeTableId");
+    }
+    $codeTableName = $codeTable["name"];
 
-    return $this->todo();
+    // 检查码表列元数据是否存在
+    $sql = "select sys_col from t_code_table_cols_md 
+            where id = '%s' ";
+    $data = $db->query($sql, $id);
+    if (!$data) {
+      return $this->bad("要编辑的码表列的元数据不存在");
+    }
+
+    $sysCol = $data[0]["sys_col"];
+
+    $caption = $params["caption"];
+    $widthInView = $params["widthInView"];
+    $showOrder = $params["showOrder"];
+    $showOrderInView = $params["showOrderInView"];
+    $note = $params["memo"];
+    if ($sysCol == 1) {
+      // 系统列
+      $sql = "update t_code_table_cols_md
+              set caption = '%s', width_in_view = %d, show_order = %d,
+                show_order_in_view = %d, note = '%s'
+              where id = '%s' ";
+      $rc = $db->execute($sql, $caption, $widthInView, $showOrder, $showOrderInView, $note, $id);
+      if ($rc === false) {
+        return $this->sqlError(__METHOD__, __LINE__);
+      }
+    } else {
+      // 用户自定义列
+      // TODO 未完成
+      $sql = "update t_code_table_cols_md
+              set caption = '%s', width_in_view = %d, show_order = %d,
+                show_order_in_view = %d, note = '%s'
+              where id = '%s' ";
+      $rc = $db->execute($sql, $caption, $widthInView, $showOrder, $showOrderInView, $note, $id);
+      if ($rc === false) {
+        return $this->sqlError(__METHOD__, __LINE__);
+      }
+    }
+
+    // 操作成功
+    $params["log"] = "编辑码表[{$codeTableName}]的列[{$caption}]的元数据";
+    return null;
   }
 
   /**

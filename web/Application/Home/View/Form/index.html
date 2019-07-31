@@ -1,5 +1,7 @@
 <layout name="layout" />
 
+<script src="{$uri}Public/Scripts/PSI/Form/MainForm.js?dt={$dtFlag}" type="text/javascript"></script>
+
 <script>
   Ext.onReady(function () {
     var app = Ext.create("PSI.App", {
@@ -8,8 +10,9 @@
     });
 
     app.setAppHeader({
-      title: "{$title}",
-      iconCls: "PSI-fid-7999"
+      title: "{$title}"
     });
+
+    app.add(Ext.create("PSI.Form.MainForm"));
   });
 </script>

@@ -4,6 +4,7 @@ namespace Home\Controller;
 
 use Home\Common\FIdConst;
 use Home\Service\UserService;
+use Home\Service\FormService;
 
 /**
  * 自定义表单Controller
@@ -29,6 +30,17 @@ class FormController extends PSIBaseController
       $this->display();
     } else {
       $this->gotoLoginPage("/Home/Form/index");
+    }
+  }
+
+  /**
+   * 表单分类列表
+   */
+  public function categoryList()
+  {
+    if (IS_POST) {
+      $service = new FormService();
+      $this->ajaxReturn($service->categoryList());
     }
   }
 }

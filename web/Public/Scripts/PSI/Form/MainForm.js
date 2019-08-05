@@ -42,12 +42,14 @@ Ext.define("PSI.Form.MainForm", {
           collapsible: true,
           header: false,
           border: 0,
-          items: []
+          items: [me.getCategoryGrid()]
         }]
       }]
     });
 
     me.callParent(arguments);
+
+    me.refreshCategoryGrid();
   },
 
   getToolbarCmp: function () {
@@ -90,6 +92,65 @@ Ext.define("PSI.Form.MainForm", {
     }];
   },
 
+  getCategoryGrid: function () {
+    var me = this;
+
+    if (me.__categoryGrid) {
+      return me.__categoryGrid;
+    }
+
+    var modelName = "PSIFormCategory";
+
+    Ext.define(modelName, {
+      extend: "Ext.data.Model",
+      fields: ["id", "code", "name"]
+    });
+
+    me.__categoryGrid = Ext.create("Ext.grid.Panel", {
+      cls: "PSI",
+      viewConfig: {
+        enableTextSelection: true
+      },
+      header: {
+        height: 30,
+        title: me.formatGridHeaderTitle("表单分类")
+      },
+      tools: [{
+        type: "close",
+        handler: function () {
+          Ext.getCmp("panelCategory").collapse();
+        }
+      }],
+      columnLines: true,
+      columns: [{
+        header: "分类编码",
+        dataIndex: "code",
+        width: 80,
+        menuDisabled: true,
+        sortable: false
+      }, {
+        header: "表单分类",
+        dataIndex: "name",
+        width: 200,
+        menuDisabled: true,
+        sortable: false
+      }],
+      store: Ext.create("Ext.data.Store", {
+        model: modelName,
+        autoLoad: false,
+        data: []
+      }),
+      listeners: {
+        select: {
+          fn: me.onCategoryGridSelect,
+          scope: me
+        }
+      }
+    });
+
+    return me.__categoryGrid;
+  },
+
   onAddCategory: function () {
     var me = this;
 
@@ -124,5 +185,40 @@ Ext.define("PSI.Form.MainForm", {
     var me = this;
 
     me.showInfo("TODO");
+  },
+
+  refreshCategoryGrid: function (id) {
+    var me = this;
+    var grid = me.getCategoryGrid();
+    var el = grid.getEl() || Ext.getBody();
+    el.mask(PSI.Const.LOADING);
+    var r = {
+      url: me.URL("Home/Form/categoryList"),
+      callback: function (options, success, response) {
+        var store = grid.getStore();
+
+        store.removeAll();
+
+        if (success) {
+          var data = me.decodeJSON(response.responseText);
+          store.add(data);
+
+          if (store.getCount() > 0) {
+            if (id) {
+              var r = store.findExact("id", id);
+              if (r != -1) {
+                grid.getSelectionModel().select(r);
+              }
+            } else {
+              grid.getSelectionModel().select(0);
+            }
+          }
+        }
+
+        el.unmask();
+      }
+    };
+
+    me.ajax(r);
   }
 });

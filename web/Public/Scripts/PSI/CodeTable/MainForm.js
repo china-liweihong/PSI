@@ -24,16 +24,14 @@ Ext.define("PSI.CodeTable.MainForm", {
             region: "center",
             layout: "fit",
             border: 0,
-            items: me
-              .getMainGrid()
+            items: me.getMainGrid()
           }, {
             region: "south",
             layout: "fit",
             border: 0,
             height: "60%",
             split: true,
-            items: [me
-              .getColsGrid()]
+            items: [me.getColsGrid()]
           }]
         }, {
           id: "panelCategory",

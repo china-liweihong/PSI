@@ -33,4 +33,14 @@ class FormDAO extends PSIBaseExDAO
 
     return $result;
   }
+
+  /**
+   * 新增表单分类
+   */
+  public function addFormCategory(&$params)
+  {
+    $db = $this->db;
+
+    return $this->todo();
+  }
 }

@@ -154,7 +154,11 @@ Ext.define("PSI.Form.MainForm", {
   onAddCategory: function () {
     var me = this;
 
-    me.showInfo("TODO");
+    var form = Ext.create("PSI.Form.CategoryEditForm", {
+      parentForm: me
+    });
+
+    form.show();
   },
 
   onEditCategory: function () {

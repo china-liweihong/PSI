@@ -296,8 +296,8 @@ class UserDAO extends PSIBaseExDAO
       return $this->bad("编码不能为空");
     }
 
-    if ($this->stringBeyondLimit($loginName, 20)) {
-      return $this->bad("登录名长度不能超过20位");
+    if ($this->stringBeyondLimit($loginName, 40)) {
+      return $this->bad("登录名长度不能超过40位");
     }
     if ($this->stringBeyondLimit($name, 20)) {
       return $this->bad("姓名长度不能超过20位");

@@ -324,6 +324,7 @@ Ext.define("PSI.User.MainForm", {
         menuDisabled: true,
         sortable: false,
         locked: true,
+        width: 250,
         renderer: function (value, metaData, record) {
           if (parseInt(record.get("enabled")) == 1) {
             return value;

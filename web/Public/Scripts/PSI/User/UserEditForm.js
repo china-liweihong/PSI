@@ -78,6 +78,8 @@ Ext.define("PSI.User.UserEditForm", {
           value: entity === null
             ? null
             : entity.loginName,
+          colspan: 2,
+          width: 430,
           listeners: {
             specialkey: {
               fn: me.onEditSpecialKey,
@@ -116,7 +118,7 @@ Ext.define("PSI.User.UserEditForm", {
               scope: me
             }
           },
-          colspan: 2
+          colspan: 1
         }, {
           id: "editOrgName",
           xtype: "PSI_org_editor",

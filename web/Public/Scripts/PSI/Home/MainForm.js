@@ -203,8 +203,9 @@ Ext.define("PSI.Home.MainForm", {
     var modelName = "PSIPortalInventory";
     Ext.define(modelName, {
       extend: "Ext.data.Model",
-      fields: ["warehouseName", "inventoryMoney", "siCount",
-        "iuCount"]
+      fields: ["warehouseName", { name: "inventoryMoney", type: "float" },
+        { name: "siCount", type: "float" },
+        { name: "iuCount", type: "float" }]
     });
 
     me.__inventoryGrid = Ext.create("Ext.grid.Panel", {
@@ -212,6 +213,10 @@ Ext.define("PSI.Home.MainForm", {
       viewConfig: {
         enableTextSelection: true
       },
+      features: [{
+        ftype: "summary",
+        dock: "bottom"
+      }],
       columnLines: true,
       border: 0,
       columns: [{
@@ -219,7 +224,10 @@ Ext.define("PSI.Home.MainForm", {
         dataIndex: "warehouseName",
         width: 160,
         menuDisabled: true,
-        sortable: false
+        sortable: false,
+        summaryRenderer: function () {
+          return "合计";
+        }
       }, {
         header: "存货金额",
         dataIndex: "inventoryMoney",
@@ -227,7 +235,8 @@ Ext.define("PSI.Home.MainForm", {
         menuDisabled: true,
         sortable: false,
         align: "right",
-        xtype: "numbercolumn"
+        xtype: "numbercolumn",
+        summaryType: "sum"
       }, {
         header: "低于安全库存商品种类数",
         dataIndex: "siCount",
@@ -242,7 +251,8 @@ Ext.define("PSI.Home.MainForm", {
             ? "<span style='color:red'>"
             + value + "</span>"
             : value;
-        }
+        },
+        summaryType: "sum"
       }, {
         header: "超过库存上限的商品种类数",
         dataIndex: "iuCount",
@@ -257,7 +267,8 @@ Ext.define("PSI.Home.MainForm", {
             ? "<span style='color:red'>"
             + value + "</span>"
             : value;
-        }
+        },
+        summaryType: "sum"
       }],
       store: Ext.create("Ext.data.Store", {
         model: modelName,

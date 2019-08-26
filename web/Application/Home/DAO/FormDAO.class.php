@@ -79,6 +79,22 @@ class FormDAO extends PSIBaseExDAO
     return null;
   }
 
+  public function getCategoryById($id)
+  {
+    $db = $this->db;
+
+    $sql = "select code, name from t_form_category where id = '%s' ";
+    $data = $db->query($sql, $id);
+    if ($data) {
+      return [
+        "code" => $data[0]["code"],
+        "name" => $data[0]["name"]
+      ];
+    } else {
+      return null;
+    }
+  }
+
   /**
    * 编辑表单分类
    */
@@ -86,6 +102,48 @@ class FormDAO extends PSIBaseExDAO
   {
     $db = $this->db;
 
-    return $this->todo();
+    $id = $params["id"];
+    $code = $params["code"] ?? "";
+    $code = strtoupper($code);
+    $name = $params["name"];
+
+    $category = $this->getCategoryById($id);
+    if (!$category) {
+      return $this->bad("要编辑的表单分类不存在");
+    }
+
+    // 检查编码是否已经存在
+    if ($code) {
+      $sql = "select count(*) as cnt from t_form_category 
+              where code = '%s' and id <> '%s' ";
+      $data = $db->query($sql, $code, $id);
+      $cnt = $data[0]["cnt"];
+      if ($cnt) {
+        return $this->bad("表单分类编码[{$code}]已经存在");
+      }
+    } else {
+      $code = "";
+    }
+
+    // 检查分类名称是否已经存在
+    $sql = "select count(*) as cnt from t_form_category 
+            where name = '%s' and id <> '%s' ";
+    $data = $db->query($sql, $name, $id);
+    $cnt = $data[0]["cnt"];
+    if ($cnt) {
+      return $this->bad("表单分类[{$name}]已经存在");
+    }
+
+    $sql = "update t_form_category
+            set code = '%s', name = '%s'
+            where id = '%s' ";
+    $rc = $db->execute($sql, $code, $name, $id);
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+
+    // 操作成功
+    $params["id"] = $id;
+    return null;
   }
 }

@@ -78,4 +78,14 @@ class FormDAO extends PSIBaseExDAO
     $params["id"] = $id;
     return null;
   }
+
+  /**
+   * 编辑表单分类
+   */
+  public function updateFormCategory(&$params)
+  {
+    $db = $this->db;
+
+    return $this->todo();
+  }
 }

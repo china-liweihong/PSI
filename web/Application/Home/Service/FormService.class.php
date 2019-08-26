@@ -77,4 +77,35 @@ class FormService extends PSIBaseExService
 
     return $this->ok($id);
   }
+
+  /**
+   * 删除表单分类
+   */
+  public function deleteFormCategory($params)
+  {
+    if ($this->isNotOnline()) {
+      return $this->notOnlineError();
+    }
+
+    $db = $this->db();
+    $db->startTrans();
+
+    $dao = new FormDAO($db);
+    $rc = $dao->deleteFormCategory($params);
+    if ($rc) {
+      $db->rollback();
+      return $rc;
+    }
+
+    $name = $params["name"];
+    $log = "删除表单分类：{$name}";
+
+    // 记录业务日志
+    $bs = new BizlogService($db);
+    $bs->insertBizlog($log, $this->LOG_CATEGORY);
+
+    $db->commit();
+
+    return $this->ok();
+  }
 }

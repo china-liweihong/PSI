@@ -146,4 +146,31 @@ class FormDAO extends PSIBaseExDAO
     $params["id"] = $id;
     return null;
   }
+
+  /**
+   * 删除表单分类
+   */
+  public function deleteFormCategory(&$params)
+  {
+    $db = $this->db;
+
+    $id = $params["id"];
+    $category = $this->getCategoryById($id);
+    if (!$category) {
+      return $this->bad("要删除的表单分类不存在");
+    }
+    $name = $category["name"];
+
+    // 检查是否有下级分类
+    $sql = "select count(*) as cnt from t_form_category where parent_id = '%s' ";
+    $data = $db->query($sql, $id);
+    $cnt = $data[0]["cnt"];
+    if ($cnt > 0) {
+      return $this->bad("分类[{$name}]还有下级分类，不能删除");
+    }
+
+    // 检查该分类下是否有表单
+
+    return $this->todo();
+  }
 }

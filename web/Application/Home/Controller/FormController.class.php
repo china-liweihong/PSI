@@ -58,4 +58,17 @@ class FormController extends PSIBaseController
     $service = new FormService();
     $this->ajaxReturn($service->editFormCategory($params));
   }
+
+  /**
+   * 删除表单分类
+   */
+  public function deleteFormCategory()
+  {
+    $params = [
+      "id" => I("post.id"),
+    ];
+
+    $service = new FormService();
+    $this->ajaxReturn($service->deleteFormCategory($params));
+  }
 }

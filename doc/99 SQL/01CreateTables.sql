@@ -1502,6 +1502,16 @@ CREATE TABLE IF NOT EXISTS `t_form_category` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `t_form_md`;
+CREATE TABLE IF NOT EXISTS `t_form_md` (
+  `id` varchar(255) NOT NULL,
+  `parent_id` varchar(255) DEFAULT NULL,
+  `prop_name` varchar(255) NOT NULL,
+  `prop_value` varchar(1000) NOT NULL,
+  `show_order` int(11) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

@@ -269,6 +269,7 @@ class UpdateDBService extends PSIBaseService
     $this->update_20190724_01();
     $this->update_20190731_01();
     $this->update_20190802_01();
+    $this->update_20190909_01();
 
     $sql = "delete from t_psi_db_version";
     $db->execute($sql);
@@ -290,6 +291,25 @@ class UpdateDBService extends PSIBaseService
   // ============================================
   private function notForgot()
   { }
+
+  private function update_20190909_01()
+  {
+    // 本次更新：新增表t_form_md
+    $db = $this->db;
+
+    $tableName = "t_form_md";
+    if (!$this->tableExists($db, $tableName)) {
+      $sql = "CREATE TABLE IF NOT EXISTS `t_form_md` (
+                `id` varchar(255) NOT NULL,
+                `parent_id` varchar(255) DEFAULT NULL,
+                `prop_name` varchar(255) NOT NULL,
+                `prop_value` varchar(1000) NOT NULL,
+                `show_order` int(11) NOT NULL DEFAULT 0,
+                PRIMARY KEY (`id`)
+              ) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+      $db->execute($sql);
+    }
+  }
 
   private function update_20190802_01()
   {

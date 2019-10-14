@@ -1035,6 +1035,8 @@ class SOBillDAO extends PSIBaseExDAO
     $bill["warehouseName"] = $data[0]["warehouse_name"];
     $bill["bizUserName"] = $data[0]["biz_user_name"];
     $bill["saleMoney"] = $data[0]["goods_money"];
+    $bill["tax"] = $data[0]["tax"];
+    $bill["moneyWithTax"] = $data[0]["money_with_tax"];
     $bill["dealAddress"] = $data[0]["deal_address"];
 
     // 明细表
@@ -1046,14 +1048,19 @@ class SOBillDAO extends PSIBaseExDAO
             order by s.show_order";
     $data = $db->query($sql, $id);
     $items = array();
-    foreach ($data as $i => $v) {
-      $items[$i]["goodsCode"] = $v["code"];
-      $items[$i]["goodsName"] = $v["name"];
-      $items[$i]["goodsSpec"] = $v["spec"];
-      $items[$i]["unitName"] = $v["unit_name"];
-      $items[$i]["goodsCount"] = $v["goods_count"];
-      $items[$i]["goodsPrice"] = $v["goods_price"];
-      $items[$i]["goodsMoney"] = $v["goods_money"];
+    foreach ($data as $v) {
+      $items[] = [
+        "goodsCode" => $v["code"],
+        "goodsName" => $v["name"],
+        "goodsSpec" => $v["spec"],
+        "unitName" => $v["unit_name"],
+        "goodsCount" => $v["goods_count"],
+        "goodsPrice" => $v["goods_price"],
+        "goodsMoney" => $v["goods_money"],
+        "taxRate" => $v["tax_rate"],
+        "tax" => $v["tax"],
+        "moneyWithTax" => $v["money_with_tax"]
+      ];
     }
     $bill["items"] = $items;
 

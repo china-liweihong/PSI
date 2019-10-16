@@ -1086,7 +1086,10 @@ class POBillDAO extends PSIBaseExDAO
         "goodsCount" => $v["goods_count"],
         "unitName" => $v["unit_name"],
         "goodsPrice" => $v["goods_price"],
-        "goodsMoney" => $v["goods_money"]
+        "goodsMoney" => $v["goods_money"],
+        "tax" => $v["tax"],
+        "taxRate" => $v["tax_rate"],
+        "moneyWithTax" => $v["money_with_tax"]
       ];
     }
 

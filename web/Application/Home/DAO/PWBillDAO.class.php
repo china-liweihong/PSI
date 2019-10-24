@@ -1444,7 +1444,7 @@ class PWBillDAO extends PSIBaseExDAO
 
       $balanceCount = 0;
       $balanceMoney = 0;
-      $balancePrice = (float)0;
+      $balancePrice = (float) 0;
       // 库存总账
       $sql = "select convert(in_count, $fmt) as in_count, in_money, balance_count, balance_money
               from t_inventory
@@ -2068,7 +2068,8 @@ class PWBillDAO extends PSIBaseExDAO
 
     $sql = "select p.ref, p.bill_status, p.ref, p.biz_dt, u1.name as biz_user_name, u2.name as input_user_name,
               p.goods_money, w.name as warehouse_name, s.name as supplier_name,
-              p.date_created, p.payment_type, p.company_id, p.bill_memo
+              p.date_created, p.payment_type, p.company_id, p.bill_memo,
+              p.money_with_tax
             from t_pw_bill p, t_warehouse w, t_supplier s, t_user u1, t_user u2
             where (p.warehouse_id = w.id) and (p.supplier_id = s.id)
               and (p.biz_user_id = u1.id) and (p.input_user_id = u2.id)
@@ -2092,6 +2093,7 @@ class PWBillDAO extends PSIBaseExDAO
     $result["billStatus"] = $v["bill_status"];
     $result["supplierName"] = $v["supplier_name"];
     $result["goodsMoney"] = $canViewPrice ? $v["goods_money"] : "****";
+    $result["moneyWithTax"] = $canViewPrice ? $v["money_with_tax"] : "****";
     $result["bizDT"] = $this->toYMD($v["biz_dt"]);
     $result["warehouseName"] = $v["warehouse_name"];
     $result["bizUserName"] = $v["biz_user_name"];
@@ -2101,7 +2103,7 @@ class PWBillDAO extends PSIBaseExDAO
 
     $sql = "select g.code, g.name, g.spec, u.name as unit_name,
               convert(p.goods_count, $fmt) as goods_count, p.goods_price,
-              p.goods_money, p.memo
+              p.goods_money, p.memo, p.tax_rate, p.money_with_tax
             from t_pw_bill_detail p, t_goods g, t_goods_unit u
             where p.pwbill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
             order by p.show_order ";
@@ -2117,6 +2119,8 @@ class PWBillDAO extends PSIBaseExDAO
         "unitName" => $v["unit_name"],
         "goodsPrice" => $canViewPrice ? $v["goods_price"] : "****",
         "goodsMoney" => $canViewPrice ? $v["goods_money"] : "****",
+        "taxRate" => $canViewPrice ? intval($v["tax_rate"]) : "****",
+        "moneyWithTax" => $canViewPrice ? $v["money_with_tax"] : "****",
         "memo" => $v["memo"]
       ];
     }

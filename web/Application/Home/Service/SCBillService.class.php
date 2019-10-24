@@ -299,7 +299,7 @@ class SCBillService extends PSIBaseExService
 
     $html = '<table border="1" cellpadding="1">
 					<tr><td>商品编号</td><td>商品名称</td><td>规格型号</td><td>数量</td><td>单位</td>
-						<td>单价</td><td>销售金额</td>
+						<td>单价</td><td>销售金额</td><td>税率</td><td>价税合计</td>
 					</tr>
 				';
     foreach ($bill["items"] as $v) {
@@ -311,6 +311,8 @@ class SCBillService extends PSIBaseExService
       $html .= '<td>' . $v["unitName"] . '</td>';
       $html .= '<td align="right">' . $v["goodsPrice"] . '</td>';
       $html .= '<td align="right">' . $v["goodsMoney"] . '</td>';
+      $html .= '<td align="right">' . intval($v["taxRate"]) . '%</td>';
+      $html .= '<td align="right">' . $v["moneyWithTax"] . '</td>';
       $html .= '</tr>';
     }
 

@@ -254,6 +254,7 @@ class PWBillService extends PSIBaseExService
 
     $ref = $params["ref"];
 
+    $params["canViewPrice"] = $canViewPrice;
     $dao = new PWBillDAO($this->db());
 
     $bill = $dao->getDataForPDF($params);
@@ -300,7 +301,7 @@ class PWBillService extends PSIBaseExService
 					<tr><td>业务日期：' . $bill["bizDT"] . '</td><td>入库仓库:' . $bill["warehouseName"] . '</td></tr>
 					<tr><td>业务员：' . $bill["bizUserName"] . '</td><td></td></tr>';
     if ($canViewPrice) {
-      $html .= '<tr><td colspan="2">采购货款:' . $bill["goodsMoney"] . '</td></tr>';
+      $html .= '<tr><td>采购货款:' . $bill["goodsMoney"] . '</td><td>价税合计：' . $bill["moneyWithTax"] . '</td></tr>';
     }
     $html .= '</table>';
 
@@ -309,7 +310,7 @@ class PWBillService extends PSIBaseExService
     $html = '<table border="1" cellpadding="1">
 					<tr><td>商品编号</td><td>商品名称</td><td>规格型号</td><td>数量</td><td>单位</td>';
     if ($canViewPrice) {
-      $html .= '<td>采购单价</td><td>采购金额</td>';
+      $html .= '<td>采购单价</td><td>采购金额</td><td>税率</td><td>价税合计</td>';
     }
     $html .= '</tr>';
     foreach ($bill["items"] as $v) {
@@ -322,6 +323,8 @@ class PWBillService extends PSIBaseExService
       if ($canViewPrice) {
         $html .= '<td align="right">' . $v["goodsPrice"] . '</td>';
         $html .= '<td align="right">' . $v["goodsMoney"] . '</td>';
+        $html .= '<td align="right">' . $v["taxRate"] . '%</td>';
+        $html .= '<td align="right">' . $v["moneyWithTax"] . '</td>';
       }
       $html .= '</tr>';
     }

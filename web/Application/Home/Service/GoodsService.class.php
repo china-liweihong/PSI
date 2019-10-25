@@ -986,4 +986,109 @@ class GoodsService extends PSIBaseExService
     $dao = new GoodsBrandDAO($this->db());
     return $dao->queryGoodsBrandData($params);
   }
+
+  /**
+   * 导出Excel
+   */
+  public function exportExcel()
+  {
+    if ($this->isNotOnline()) {
+      return;
+    }
+
+    $params["loginUserId"] = $this->getLoginUserId();
+
+    $dao = new GoodsDAO($this->db());
+
+    $data = $dao->getDataForExcel($params);
+
+    // 记录业务日志
+    $log = "商品导出Excel文件";
+    $bls = new BizlogService($this->db());
+    $bls->insertBizlog($log, $this->LOG_CATEGORY_GOODS);
+
+    $excel = new \PHPExcel();
+
+    $sheet = $excel->getActiveSheet();
+    if (!$sheet) {
+      $sheet = $excel->createSheet();
+    }
+
+    $sheet->setTitle("商品");
+
+    $sheet->getRowDimension('1')->setRowHeight(22);
+    $sheet->setCellValue("A1", "");
+
+    $sheet->getColumnDimension('A')->setWidth(40);
+    $sheet->setCellValue("A2", "商品分类");
+
+    $sheet->getColumnDimension('B')->setWidth(15);
+    $sheet->setCellValue("B2", "商品编码");
+
+    $sheet->getColumnDimension('C')->setWidth(40);
+    $sheet->setCellValue("C2", "品名");
+
+    $sheet->getColumnDimension('D')->setWidth(80);
+    $sheet->setCellValue("D2", "规格型号");
+
+    $sheet->getColumnDimension('E')->setWidth(15);
+    $sheet->setCellValue("E2", "计量单位");
+
+    $sheet->getColumnDimension('F')->setWidth(40);
+    $sheet->setCellValue("F2", "品牌");
+
+    $sheet->getColumnDimension('G')->setWidth(15);
+    $sheet->setCellValue("G2", "销售基准价");
+
+    $sheet->getColumnDimension('H')->setWidth(15);
+    $sheet->setCellValue("H2", "建议采购价");
+
+    $sheet->getColumnDimension('I')->setWidth(15);
+    $sheet->setCellValue("I2", "税率");
+
+    $sheet->getColumnDimension('J')->setWidth(15);
+    $sheet->setCellValue("J2", "条形码");
+
+    $sheet->getColumnDimension('K')->setWidth(40);
+    $sheet->setCellValue("K2", "备注");
+
+    $sheet->getColumnDimension('L')->setWidth(15);
+    $sheet->setCellValue("L2", "状态");
+
+    foreach ($data as $i => $v) {
+      $row = $i + 3;
+      $sheet->setCellValue("A" . $row, $v["categoryName"]);
+      $sheet->setCellValue("B" . $row, $v["code"]);
+      $sheet->setCellValue("C" . $row, $v["name"]);
+      $sheet->setCellValue("D" . $row, $v["spec"]);
+      $sheet->setCellValue("E" . $row, $v["unitName"]);
+      $sheet->setCellValue("F" . $row, $v["brandFullName"]);
+      $sheet->setCellValue("G" . $row, $v["salePrice"]);
+      $sheet->setCellValue("H" . $row, $v["purchasePrice"]);
+      $sheet->setCellValue("I" . $row, $v["taxRate"]);
+      $sheet->setCellValue("J" . $row, $v["barCode"]);
+      $sheet->setCellValue("K" . $row, $v["memo"]);
+      $sheet->setCellValue("L" . $row, $v["recordStatus"]);
+    }
+
+    // 画表格边框
+    $styleArray = [
+      'borders' => [
+        'allborders' => [
+          'style' => 'thin'
+        ]
+      ]
+    ];
+    $lastRow = count($data) + 2;
+    $sheet->getStyle('A2:L' . $lastRow)->applyFromArray($styleArray);
+
+    $dt = date("YmdHis");
+
+    header('Content-Type: application/vnd.ms-excel');
+    header('Content-Disposition: attachment;filename="商品_' . $dt . '.xlsx"');
+    header('Cache-Control: max-age=0');
+
+    $writer = \PHPExcel_IOFactory::createWriter($excel, "Excel2007");
+    $writer->save("php://output");
+  }
 }

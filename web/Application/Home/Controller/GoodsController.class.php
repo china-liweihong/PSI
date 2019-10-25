@@ -7,6 +7,8 @@ use Home\Service\GoodsService;
 use Home\Service\ImportService;
 use Home\Service\UserService;
 
+require __DIR__ . '/../Common/Excel/PHPExcel/IOFactory.php';
+
 /**
  * 商品Controller
  *
@@ -813,6 +815,21 @@ class GoodsController extends PSIBaseController
       $queryKey = I("post.queryKey");
       $service = new GoodsService();
       $this->ajaxReturn($service->queryGoodsBrandData($queryKey));
+    }
+  }
+
+  /**
+   * 导出Excel
+   */
+  public function exportExcel()
+  {
+    $us = new UserService();
+
+    if ($us->hasPermission(FIdConst::GOODS_EXPORT_EXCEL)) {
+      $service = new GoodsService();
+      $service->exportExcel();
+    } else {
+      echo "没有导出Excel的权限";
     }
   }
 }

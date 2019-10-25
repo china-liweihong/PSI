@@ -1303,4 +1303,53 @@ class GoodsDAO extends PSIBaseExDAO
 
     return $result;
   }
+
+  /**
+   * 为导出Excel查询数据
+   */
+  public function getDataForExcel($params)
+  {
+    $db = $this->db;
+
+    $loginUserId = $params["loginUserId"];
+
+    $result = [];
+    $sql = "select g.code, g.name, g.sale_price, g.spec, u.name as unit_name,
+              g.purchase_price, g.bar_code, g.memo, g.brand_id, g.record_status,
+              g.tax_rate, c.full_name as category_name
+            from t_goods g, t_goods_unit u, t_goods_category c
+            where (g.unit_id = u.id) and g.category_id = c.id
+            order by g.code ";
+    $queryParam = [];
+    $ds = new DataOrgDAO($db);
+    $rs = $ds->buildSQL(FIdConst::GOODS, "g", $loginUserId);
+    if ($rs) {
+      $sql .= " and " . $rs[0];
+      $queryParam = array_merge($queryParam, $rs[1]);
+    }
+
+    $data = $db->query($sql, $queryParam);
+
+    foreach ($data as $v) {
+      $brandId = $v["brand_id"];
+      $brandFullName = $brandId ? $this->getBrandFullNameById($db, $brandId) : null;
+
+      $result[] = [
+        "categoryName" => $v["category_name"],
+        "code" => $v["code"],
+        "name" => $v["name"],
+        "salePrice" => $v["sale_price"],
+        "spec" => $v["spec"],
+        "unitName" => $v["unit_name"],
+        "purchasePrice" => $v["purchase_price"] == 0 ? null : $v["purchase_price"],
+        "barCode" => $v["bar_code"],
+        "memo" => $v["memo"],
+        "brandFullName" => $brandFullName,
+        "recordStatus" => $v["record_status"] == 1000 ? "启用" : "停用",
+        "taxRate" => $this->toTaxRate($v["tax_rate"])
+      ];
+    }
+
+    return $result;
+  }
 }

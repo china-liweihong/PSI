@@ -1532,6 +1532,10 @@ Ext.define("PSI.Goods.MainForm", {
   onExcel: function () {
     var me = this;
 
-    me.showInfo("TODO");
+    me.confirm("请确认是否把商品资料导出为Excel文件？", function () {
+      var url = "Home/Goods/exportExcel";
+
+      window.open(me.URL(url));
+    });
   }
 });

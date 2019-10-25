@@ -73,6 +73,9 @@ class GoodsController extends PSIBaseController
         $us->hasPermission(FIdConst::PRICE_SYSTEM_SETTING_GOODS) ? 1 : 0
       );
 
+      // 按钮权限：导出Excel
+      $this->assign("pExcel", $us->hasPermission(FIdConst::GOODS_EXPORT_EXCEL) ? 1 : 0);
+
       $this->display();
     } else {
       $this->gotoLoginPage("/Home/Goods/index");

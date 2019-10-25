@@ -18,7 +18,8 @@ Ext.define("PSI.Goods.MainForm", {
     pAddBOM: null,
     pEditBOM: null,
     pDeleteBOM: null,
-    pPriceSystem: null
+    pPriceSystem: null,
+    pExcel: null
   },
 
 	/**
@@ -130,6 +131,11 @@ Ext.define("PSI.Goods.MainForm", {
       text: "删除商品",
       disabled: me.getPDeleteGoods() == "0",
       handler: me.onDeleteGoods,
+      scope: me
+    }, "-", {
+      text: "导出Excel",
+      disabled: me.getPExcel() == "0",
+      handler: me.onExcel,
       scope: me
     }, "-", {
       text: "帮助",
@@ -1520,5 +1526,12 @@ Ext.define("PSI.Goods.MainForm", {
     });
 
     form.show();
+  },
+
+  // 导出Excel
+  onExcel: function () {
+    var me = this;
+
+    me.showInfo("TODO");
   }
 });

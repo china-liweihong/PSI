@@ -275,6 +275,11 @@ class FIdConst
   const GOODS_SI = "1001-10";
 
   /**
+   * 导出Excel
+   */
+  const GOODS_EXPORT_EXCEL = "1001-11";
+
+  /**
    * 基础数据-商品计量单位
    */
   const GOODS_UNIT = "1002";

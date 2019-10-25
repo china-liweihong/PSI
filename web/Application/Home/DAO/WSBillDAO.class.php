@@ -1951,7 +1951,8 @@ class WSBillDAO extends PSIBaseExDAO
     $sql = "select w.ref, w.bizdt, c.name as customer_name,
               u.name as biz_user_name,
               h.name as warehouse_name,
-              w.sale_money, w.memo, w.deal_address, w.company_id
+              w.sale_money, w.memo, w.deal_address, w.company_id,
+              w.money_with_tax
             from t_ws_bill w, t_customer c, t_user u, t_warehouse h
             where w.customer_id = c.id and w.biz_user_id = u.id
               and w.warehouse_id = h.id
@@ -1977,13 +1978,14 @@ class WSBillDAO extends PSIBaseExDAO
     $bill["saleMoney"] = $data[0]["sale_money"];
     $bill["billMemo"] = $data[0]["memo"];
     $bill["dealAddress"] = $data[0]["deal_address"];
+    $bill["moneyWithTax"] = $data[0]["money_with_tax"];
 
     $bill["printDT"] = date("Y-m-d H:i:s");
 
     // 明细表
     $sql = "select g.code, g.name, g.spec, u.name as unit_name,
               convert(d.goods_count, $fmt) as goods_count,
-              d.goods_price, d.goods_money, d.sn_note
+              d.goods_price, d.goods_money, d.sn_note, d.tax_rate, d.money_with_tax
             from t_ws_bill_detail d, t_goods g, t_goods_unit u
             where d.wsbill_id = '%s' and d.goods_id = g.id and g.unit_id = u.id
             order by d.show_order";
@@ -1998,7 +2000,9 @@ class WSBillDAO extends PSIBaseExDAO
         "goodsCount" => $v["goods_count"],
         "goodsPrice" => $v["goods_price"],
         "goodsMoney" => $v["goods_money"],
-        "sn" => $v["sn_note"]
+        "sn" => $v["sn_note"],
+        "taxRate" => intval($v["tax_rate"]),
+        "moneyWithTax" => $v["money_with_tax"]
       ];
     }
     $bill["items"] = $items;

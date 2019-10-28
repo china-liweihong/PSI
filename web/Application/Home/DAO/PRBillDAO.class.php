@@ -1658,7 +1658,8 @@ class PRBillDAO extends PSIBaseExDAO
 
     $sql = "select p.ref, p.bill_status, w.name as warehouse_name, p.bizdt,
               p.rejection_money, u1.name as biz_user_name, u2.name as input_user_name,
-              s.name as supplier_name, p.date_created, p.receiving_type, p.company_id
+              s.name as supplier_name, p.date_created, p.receiving_type, p.company_id,
+              p.rejection_money_with_tax as money_with_tax
             from t_pr_bill p, t_warehouse w, t_user u1, t_user u2, t_supplier s
             where (p.warehouse_id = w.id)
               and (p.biz_user_id = u1.id)
@@ -1686,12 +1687,13 @@ class PRBillDAO extends PSIBaseExDAO
       "bizDT" => $this->toYMD($v["bizdt"]),
       "warehouseName" => $v["warehouse_name"],
       "bizUserName" => $v["biz_user_name"],
-      "printDT" => date("Y-m-d H:i:s")
+      "printDT" => date("Y-m-d H:i:s"),
+      "moneyWithTax" => $v["money_with_tax"]
     ];
 
     $sql = "select g.code, g.name, g.spec, u.name as unit_name,
               convert(p.rejection_goods_count, $fmt) as rej_count, p.rejection_goods_price as rej_price,
-              p.rejection_money as rej_money
+              p.rejection_money as rej_money, p.goods_money_with_tax as money_with_tax, p.tax_rate
             from t_pr_bill_detail p, t_goods g, t_goods_unit u
             where p.goods_id = g.id and g.unit_id = u.id and p.prbill_id = '%s'
               and p.rejection_goods_count > 0
@@ -1707,7 +1709,9 @@ class PRBillDAO extends PSIBaseExDAO
         "goodsCount" => $v["rej_count"],
         "unitName" => $v["unit_name"],
         "goodsPrice" => $v["rej_price"],
-        "goodsMoney" => $v["rej_money"]
+        "goodsMoney" => $v["rej_money"],
+        "moneyWithTax" => $v["money_with_tax"],
+        "taxRate" => intval($v["tax_rate"])
       ];
     }
 

@@ -1202,7 +1202,7 @@ class DMWBillDAO extends PSIBaseExDAO
 
       $balanceCount = 0;
       $balanceMoney = 0;
-      $balancePrice = (float)0;
+      $balancePrice = (float) 0;
       // 库存总账
       $sql = "select convert(in_count, $fmt) as in_count, in_money, balance_count, balance_money
               from t_inventory
@@ -1438,7 +1438,8 @@ class DMWBillDAO extends PSIBaseExDAO
 
     $sql = "select p.ref, p.bill_status, p.ref, p.biz_dt, u1.name as biz_user_name, u2.name as input_user_name,
               p.goods_money, w.name as warehouse_name, f.name as factory_name,
-              p.date_created, p.payment_type, p.company_id, p.bill_memo
+              p.date_created, p.payment_type, p.company_id, p.bill_memo,
+              p.money_with_tax
             from t_dmw_bill p, t_warehouse w, t_factory f, t_user u1, t_user u2
             where (p.warehouse_id = w.id) and (p.factory_id = f.id)
               and (p.biz_user_id = u1.id) and (p.input_user_id = u2.id)
@@ -1466,12 +1467,13 @@ class DMWBillDAO extends PSIBaseExDAO
     $result["warehouseName"] = $v["warehouse_name"];
     $result["bizUserName"] = $v["biz_user_name"];
     $result["billMemo"] = $v["bill_memo"];
+    $result["moneyWithTax"] = $v["money_with_tax"];
 
     $result["printDT"] = date("Y-m-d H:i:s");
 
     $sql = "select g.code, g.name, g.spec, u.name as unit_name,
               convert(p.goods_count, $fmt) as goods_count, p.goods_price,
-              p.goods_money, p.memo
+              p.goods_money, p.memo, p.tax_rate, p.money_with_tax
             from t_dmw_bill_detail p, t_goods g, t_goods_unit u
             where p.dmwbill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
             order by p.show_order ";
@@ -1487,7 +1489,9 @@ class DMWBillDAO extends PSIBaseExDAO
         "unitName" => $v["unit_name"],
         "goodsPrice" => $v["goods_price"],
         "goodsMoney" => $v["goods_money"],
-        "memo" => $v["memo"]
+        "memo" => $v["memo"],
+        "taxRate" => intval($v["tax_rate"]),
+        "moneyWithTax" => $v["money_with_tax"]
       ];
     }
 

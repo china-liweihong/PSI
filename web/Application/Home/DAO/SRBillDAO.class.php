@@ -1561,7 +1561,8 @@ class SRBillDAO extends PSIBaseExDAO
     $db = $this->db;
     $sql = "select w.id, w.bizdt, c.name as customer_name, u.name as biz_user_name,
               user.name as input_user_name, h.name as warehouse_name, w.rejection_sale_money,
-              w.bill_status, w.date_created, w.payment_type, w.company_id
+              w.bill_status, w.date_created, w.payment_type, w.company_id,
+              w.rejection_sale_money_with_tax as money_with_tax
             from t_sr_bill w, t_customer c, t_user u, t_user user, t_warehouse h
             where (w.customer_id = c.id) and (w.biz_user_id = u.id)
               and (w.input_user_id = user.id) and (w.warehouse_id = h.id) 
@@ -1583,14 +1584,15 @@ class SRBillDAO extends PSIBaseExDAO
       "customerName" => $data[0]["customer_name"],
       "warehouseName" => $data[0]["warehouse_name"],
       "bizUserName" => $data[0]["biz_user_name"],
-      "rejMoney" => $data[0]["rejection_sale_money"]
+      "rejMoney" => $data[0]["rejection_sale_money"],
+      "moneyWithTax" => $data[0]["money_with_tax"]
     ];
 
     // 明细表
     $sql = "select s.id, g.code, g.name, g.spec, u.name as unit_name,
               convert(s.rejection_goods_count, $fmt) as rejection_goods_count, 
               s.rejection_goods_price, s.rejection_sale_money,
-              s.sn_note
+              s.sn_note, s.tax_rate, s.rejection_sale_money_with_tax as money_with_tax
             from t_sr_bill_detail s, t_goods g, t_goods_unit u
             where s.srbill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
               and s.rejection_goods_count > 0
@@ -1606,7 +1608,9 @@ class SRBillDAO extends PSIBaseExDAO
         "goodsCount" => $v["rejection_goods_count"],
         "goodsPrice" => $v["rejection_goods_price"],
         "goodsMoney" => $v["rejection_sale_money"],
-        "sn" => $v["sn_note"]
+        "sn" => $v["sn_note"],
+        "taxRate" => intval($v["tax_rate"]),
+        "moneyWithTax" => $v["money_with_tax"]
       ];
     }
     $bill["items"] = $items;

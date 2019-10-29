@@ -47,6 +47,12 @@
       <td>
         <div align="center" style='font-size: 13'>退货金额</div>
       </td>
+      <td>
+        <div align="center" style='font-size: 13'>税率</div>
+      </td>
+      <td>
+        <div align="center" style='font-size: 13'>价税合计</div>
+      </td>
     </tr>
     <foreach name="data['items']" item="v" key="i">
       <tr>
@@ -74,6 +80,12 @@
         <td>
           <div align="right" style='font-size: 13'>{$v["goodsMoney"]}</div>
         </td>
+        <td>
+          <div align="right" style='font-size: 13'>{$v["taxRate"]}%</div>
+        </td>
+        <td>
+          <div align="right" style='font-size: 13'>{$v["moneyWithTax"]}</div>
+        </td>
       </tr>
     </foreach>
     <tr>
@@ -88,6 +100,11 @@
       <td></td>
       <td>
         <div align="right">￥{$data["rejMoney"]}</div>
+      </td>
+      <td>
+      </td>
+      <td>
+        <div align="right">￥{$data["moneyWithTax"]}</div>
       </td>
     </tr>
   </table>

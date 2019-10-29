@@ -1015,7 +1015,7 @@ class DMWBillDAO extends PSIBaseExDAO
 
     $sql = "select p.id, p.bill_status, p.ref, p.biz_dt, u1.name as biz_user_name, u2.name as input_user_name,
               p.goods_money, w.name as warehouse_name, f.name as factory_name,
-              p.date_created, p.payment_type, p.company_id
+              p.date_created, p.payment_type, p.company_id, p.money_with_tax
             from t_dmw_bill p, t_warehouse w, t_factory f, t_user u1, t_user u2
             where (p.warehouse_id = w.id) and (p.factory_id = f.id)
               and (p.biz_user_id = u1.id) and (p.input_user_id = u2.id)
@@ -1042,10 +1042,11 @@ class DMWBillDAO extends PSIBaseExDAO
     $result["bizDT"] = $this->toYMD($v["biz_dt"]);
     $result["warehouseName"] = $v["warehouse_name"];
     $result["bizUserName"] = $v["biz_user_name"];
+    $result["moneyWithTax"] = $v["money_with_tax"];
 
     $sql = "select g.code, g.name, g.spec, u.name as unit_name,
               convert(p.goods_count, $fmt) as goods_count, p.goods_price,
-              p.goods_money
+              p.goods_money, p.tax_rate, p.money_with_tax
             from t_dmw_bill_detail p, t_goods g, t_goods_unit u
             where p.dmwbill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
             order by p.show_order ";
@@ -1060,7 +1061,9 @@ class DMWBillDAO extends PSIBaseExDAO
         "goodsCount" => $v["goods_count"],
         "unitName" => $v["unit_name"],
         "goodsPrice" => $v["goods_price"],
-        "goodsMoney" => $v["goods_money"]
+        "goodsMoney" => $v["goods_money"],
+        "taxRate" => intval($v["tax_rate"]),
+        "moneyWithTax" => $v["money_with_tax"]
       ];
     }
 

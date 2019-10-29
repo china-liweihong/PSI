@@ -373,14 +373,14 @@ class DMOBillService extends PSIBaseExService
 					<tr><td colspan="2">工厂：' . $bill["factoryName"] . '</td></tr>
 					<tr><td>交货日期：' . $bill["dealDate"] . '</td><td>交货地址:' . $bill["dealAddress"] . '</td></tr>
 					<tr><td>业务员：' . $bill["bizUserName"] . '</td><td></td></tr>
-					<tr><td colspan="2">货款:' . $bill["goodsMoney"] . '</td></tr>
+					<tr><td>货款:' . $bill["goodsMoney"] . '</td><td>价税合计：' . $bill["moneyWithTax"] . '</td></tr>
 				</table>
 				';
     $pdf->writeHTML($html);
 
     $html = '<table border="1" cellpadding="1">
 					<tr><td>商品编号</td><td>商品名称</td><td>规格型号</td><td>数量</td><td>单位</td>
-						<td>单价</td><td>金额</td>
+						<td>单价</td><td>金额</td><td>税率</td><td>价税合计</td>
 					</tr>
 				';
     foreach ($bill["items"] as $v) {
@@ -392,6 +392,8 @@ class DMOBillService extends PSIBaseExService
       $html .= '<td>' . $v["unitName"] . '</td>';
       $html .= '<td align="right">' . $v["goodsPrice"] . '</td>';
       $html .= '<td align="right">' . $v["goodsMoney"] . '</td>';
+      $html .= '<td align="right">' . $v["taxRate"] . '%</td>';
+      $html .= '<td align="right">' . $v["moneyWithTax"] . '</td>';
       $html .= '</tr>';
     }
 

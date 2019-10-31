@@ -272,6 +272,7 @@ class UpdateDBService extends PSIBaseService
     $this->update_20190909_01();
     $this->update_20190911_01();
     $this->update_20191025_01();
+    $this->update_20191031_01();
 
     $sql = "delete from t_psi_db_version";
     $db->execute($sql);
@@ -293,6 +294,29 @@ class UpdateDBService extends PSIBaseService
   // ============================================
   private function notForgot()
   { }
+
+  private function update_20191031_01(){
+    // 本次更新：账样列增加码表相关字段
+    $db = $this->db;
+
+    $tableName = "t_acc_fmt_cols";
+
+    $columnName = "use_code_table";
+    if (!$this->columnExists($db, $tableName, $columnName)) {
+      $sql = "alter table {$tableName} add {$columnName} int(11) NOT NULL DEFAULT 0;";
+      $db->execute($sql);
+    }
+    $columnName = "code_table_name";
+    if (!$this->columnExists($db, $tableName, $columnName)) {
+      $sql = "alter table {$tableName} add {$columnName} varchar(255) DEFAULT NULL;";
+      $db->execute($sql);
+    }
+    $columnName = "code_table_field_name";
+    if (!$this->columnExists($db, $tableName, $columnName)) {
+      $sql = "alter table {$tableName} add {$columnName} varchar(255) DEFAULT NULL;";
+      $db->execute($sql);
+    }
+  }
 
   private function update_20191025_01(){
     // 本次更新：商品模块新增权限【导出Excel】

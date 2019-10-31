@@ -1214,18 +1214,21 @@ class InstallService extends PSIBaseExService
 
     // t_acc_fmt_cols
     $sql = "CREATE TABLE IF NOT EXISTS `t_acc_fmt_cols` (
-				  `id` varchar(255) NOT NULL,
-				  `fmt_id` varchar(255) NOT NULL,
-				  `db_field_name` varchar(255) NOT NULL,
-				  `db_field_type` varchar(255) DEFAULT NULL,
-				  `db_field_length` int(11) NOT NULL,
-				  `db_field_decimal` int(11) NOT NULL,
-				  `show_order` int(11) NOT NULL,
-				  `caption` varchar(255) NOT NULL,
-				  `sys_col` int(11) DEFAULT NULL,
-				  PRIMARY KEY (`id`)
-				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-		";
+              `id` varchar(255) NOT NULL,
+              `fmt_id` varchar(255) NOT NULL,
+              `db_field_name` varchar(255) NOT NULL,
+              `db_field_type` varchar(255) DEFAULT NULL,
+              `db_field_length` int(11) NOT NULL,
+              `db_field_decimal` int(11) NOT NULL,
+              `show_order` int(11) NOT NULL,
+              `caption` varchar(255) NOT NULL,
+              `sys_col` int(11) DEFAULT NULL,
+              `use_code_table` int(11) NOT NULL DEFAULT 0,
+              `code_table_name` varchar(255) DEFAULT NULL,
+              `code_table_field_name` varchar(255) DEFAULT NULL,
+              PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+            ";
     $db->execute($sql);
 
     // t_fv_md

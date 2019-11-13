@@ -3,7 +3,6 @@
 namespace Home\Service;
 
 use Home\Common\FIdConst;
-use Think\Think;
 
 /**
  * 数据库升级Service
@@ -273,6 +272,11 @@ class UpdateDBService extends PSIBaseService
     $this->update_20190911_01();
     $this->update_20191025_01();
     $this->update_20191031_01();
+
+    // 从2019-11-13开始的针对PSI 2020的数据库结构更新代码写在UpdateDB2020Service里面
+    // 以减少当期class的代码行数
+    $service2020 = new UpdateDB2020Service($db);
+    $service2020->update();
 
     $sql = "delete from t_psi_db_version";
     $db->execute($sql);

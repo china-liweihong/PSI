@@ -1067,6 +1067,7 @@ CREATE TABLE IF NOT EXISTS `t_acc_fmt_cols` (
   `use_code_table` int(11) NOT NULL DEFAULT 0,
   `code_table_name` varchar(255) DEFAULT NULL,
   `code_table_field_name` varchar(255) DEFAULT NULL,
+  `code_table_field_name_fk` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

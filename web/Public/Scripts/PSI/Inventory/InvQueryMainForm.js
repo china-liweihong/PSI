@@ -31,79 +31,8 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 
     Ext.apply(me, {
       tbar: [{
-        xtype: "displayfield",
-        value: "商品编码"
-      }, {
-        cls: "PSI-toolbox",
-        xtype: "textfield",
-        id: "editQueryCode",
-        listeners: {
-          specialkey: {
-            fn: me.onQueryEditSpecialKey,
-            scope: me
-          }
-        }
-      }, {
-        xtype: "displayfield",
-        value: "品名"
-      }, {
-        cls: "PSI-toolbox",
-        xtype: "textfield",
-        id: "editQueryName",
-        listeners: {
-          specialkey: {
-            fn: me.onQueryEditSpecialKey,
-            scope: me
-          }
-        }
-      }, {
-        xtype: "displayfield",
-        value: "规格型号"
-      }, {
-        cls: "PSI-toolbox",
-        xtype: "textfield",
-        id: "editQuerySpec",
-        listeners: {
-          specialkey: {
-            fn: me.onQueryEditSpecialKey,
-            scope: me
-          }
-        }
-      }, {
-        xtype: "displayfield",
-        value: "品牌"
-      }, {
-        cls: "PSI-toolbox",
-        xtype: "PSI_goods_brand_field",
-        showModal: true,
-        id: "editQueryBrand",
-        listeners: {
-          specialkey: {
-            fn: me.onLastQueryEditSpecialKey,
-            scope: me
-          }
-        }
-      }, " ", {
-        xtype: "checkbox",
-        boxLabel: "只显示有库存的商品",
-        inputValue: "1",
-        id: "editQueryHasInv",
-        listeners: {
-          change: {
-            fn: function () {
-              me.onQueryGoods();
-            },
-            scoep: me
-          }
-        }
-      }, " ", "-", {
-        text: "查询",
-        iconCls: "PSI-button-refresh",
-        handler: me.onQueryGoods,
-        scope: me
-      }, "-", {
-        text: "清空查询条件",
-        handler: me.onClearQuery,
+        text: "总账导出Excel",
+        handler: me.onExcel,
         scope: me
       }, "-", {
         text: "关闭",
@@ -112,10 +41,18 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
         }
       }],
       items: [{
+        id: "panelQueryCmp",
         region: "north",
-        height: 2,
         border: 0,
-        bodyStyle: "background-color:#f5f5f5"
+        height: 65,
+        header: false,
+        collapsible: true,
+        collapseMode: "mini",
+        layout: {
+          type: "table",
+          columns: 4
+        },
+        items: me.getQueryCmp()
       }, {
         id: "panelWarehouse",
         region: "west",
@@ -155,8 +92,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
           split: true,
           layout: "fit",
           border: 1,
-          items: [me
-            .getInventoryDetailGrid()]
+          items: [me.getInventoryDetailGrid()]
         }]
       }]
     });
@@ -167,6 +103,114 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
       "editQuerySpec", "editQueryBrand"];
 
     me.refreshWarehouseGrid();
+  },
+
+  getQueryCmp: function () {
+    var me = this;
+
+    return [{
+      labelWidth: 60,
+      labelAlign: "right",
+      labelSeparator: "",
+      fieldLabel: "商品编码",
+      margin: "5, 0, 0, 0",
+      xtype: "textfield",
+      id: "editQueryCode",
+      listeners: {
+        specialkey: {
+          fn: me.onQueryEditSpecialKey,
+          scope: me
+        }
+      }
+    }, {
+      labelWidth: 60,
+      labelAlign: "right",
+      labelSeparator: "",
+      fieldLabel: "品名",
+      margin: "5, 0, 0, 0",
+      xtype: "textfield",
+      id: "editQueryName",
+      listeners: {
+        specialkey: {
+          fn: me.onQueryEditSpecialKey,
+          scope: me
+        }
+      }
+    }, {
+      labelWidth: 60,
+      labelAlign: "right",
+      labelSeparator: "",
+      fieldLabel: "规格型号",
+      margin: "5, 0, 0, 0",
+      xtype: "textfield",
+      id: "editQuerySpec",
+      listeners: {
+        specialkey: {
+          fn: me.onQueryEditSpecialKey,
+          scope: me
+        }
+      }
+    }, {
+      xtype: "container",
+      items: [{
+        text: "查询",
+        iconCls: "PSI-button-refresh",
+        handler: me.onQueryGoods,
+        scope: me,
+        width: 100,
+        height: 26,
+        margin: "5, 0, 0, 20",
+        xtype: "button"
+      }, {
+        text: "清空查询条件",
+        handler: me.onClearQuery,
+        scope: me,
+        width: 100,
+        height: 26,
+        margin: "5, 0, 0, 20",
+        xtype: "button"
+      }, {
+        xtype: "button",
+        text: "隐藏查询条件栏",
+        width: 130,
+        height: 26,
+        iconCls: "PSI-button-hide",
+        margin: "5 0 0 10",
+        handler: function () {
+          Ext.getCmp("panelQueryCmp").collapse();
+        },
+        scope: me
+      }]
+    }, {
+      labelWidth: 60,
+      labelAlign: "right",
+      labelSeparator: "",
+      fieldLabel: "品牌",
+      margin: "5, 0, 0, 0",
+      xtype: "PSI_goods_brand_field",
+      showModal: true,
+      id: "editQueryBrand",
+      listeners: {
+        specialkey: {
+          fn: me.onLastQueryEditSpecialKey,
+          scope: me
+        }
+      }
+    }, {
+      xtype: "checkbox",
+      boxLabel: "只显示有库存的商品",
+      inputValue: "1",
+      margin: "5 0 0 50",
+      id: "editQueryHasInv",
+      listeners: {
+        change: {
+          fn: function () {
+            me.onQueryGoods();
+          },
+          scoep: me
+        }
+      }
+    }];
   },
 
   getWarehouseGrid: function () {
@@ -823,5 +867,30 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
 
   onQueryGoods: function () {
     this.refreshInventoryGrid();
+  },
+
+  // 导出Excel
+  onExcel: function () {
+    var me = this;
+
+    me.confirm("请确认是否把库存总账导出为Excel文件？<br/><br/>(数据是根据当前查询条件生成)", function () {
+      var url = "Home/Inventory/exportExcel";
+
+      var code = Ext.getCmp("editQueryCode").getValue();
+      url += "?code=" + code;
+
+      var name = Ext.getCmp("editQueryName").getValue();
+      url += "&name=" + name;
+
+      var spec = Ext.getCmp("editQuerySpec").getValue();
+      url += "&spec=" + spec;
+
+      var hasInv = Ext.getCmp("editQueryHasInv").getValue();
+      url += "&hasInv=" + (hasInv ? "1" : "0");
+
+      var brandId = Ext.getCmp("editQueryBrand").getIdValue();
+      url += "&brandId=" + (brandId ? brandId : "");
+      window.open(me.URL(url));
+    });
   }
 });

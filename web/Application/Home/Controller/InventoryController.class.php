@@ -103,4 +103,26 @@ class InventoryController extends PSIBaseController
       $this->ajaxReturn($is->inventoryDetailList($params));
     }
   }
+
+  /**
+   * 总账导出Excel
+   */
+  public function exportExcel()
+  {
+    $us = new UserService();
+
+    if ($us->hasPermission(FIdConst::INVENTORY_QUERY)) {
+      $params = [
+        "code" => I("get.code"),
+        "name" => I("get.name"),
+        "spec" => I("get.spec"),
+        "brandId" => I("get.brandId"),
+        "hasInv" => I("get.hasInv"),
+      ];
+      $service = new InventoryService();
+      $service->exportExcel($params);
+    } else {
+      echo "没有导出Excel的权限";
+    }
+  }
 }

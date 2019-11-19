@@ -261,4 +261,10 @@ class InventoryService extends PSIBaseService
       "totalCount" => $data[0]["cnt"]
     );
   }
+
+  /**
+   * 导出Excel
+   */
+  public function exportExcel($params)
+  { }
 }

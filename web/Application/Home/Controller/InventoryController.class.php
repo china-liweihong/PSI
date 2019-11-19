@@ -6,6 +6,8 @@ use Home\Common\FIdConst;
 use Home\Service\InventoryService;
 use Home\Service\UserService;
 
+require __DIR__ . '/../Common/Excel/PHPExcel/IOFactory.php';
+
 /**
  * 库存Controller
  *

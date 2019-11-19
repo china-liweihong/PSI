@@ -262,9 +262,200 @@ class InventoryService extends PSIBaseService
     );
   }
 
+  private function getDataForExcel($params)
+  {
+    $db = M();
+    $sql = "select id, code, name, enabled from t_warehouse 
+            where (inited = 1) ";
+    $queryParams = [];
+
+    $ds = new DataOrgService();
+    $rs = $ds->buildSQL(FIdConst::INVENTORY_QUERY, "t_warehouse");
+    if ($rs) {
+      $sql .= " and " . $rs[0];
+      $queryParams = array_merge($queryParams, $rs[1]);
+    }
+
+    $sql .= " order by enabled, code";
+
+    $data = $db->query($sql, $queryParams);
+    $result = [];
+
+    $companyId = (new UserService())->getCompanyId();
+    $bcDAO = new BizConfigDAO($db);
+    $dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+    $fmt = "decimal(19, " . $dataScale . ")";
+
+    $code = $params["code"];
+    $name = $params["name"];
+    $spec = $params["spec"];
+    $brandId = $params["brandId"];
+    $hasInv = $params["hasInv"] == "1";
+
+    foreach ($data as $v) {
+      $warehouseId = $v["id"];
+      $queryParams = [];
+      $queryParams[] = $warehouseId;
+
+      $sql = "select g.code, g.name, g.spec, u.name as unit_name,
+                convert(v.in_count, $fmt) as in_count, 
+                v.in_price, v.in_money, convert(v.out_count, $fmt) as out_count, v.out_price, v.out_money,
+                convert(v.balance_count, $fmt) as balance_count, v.balance_price, v.balance_money, 
+                convert(v.afloat_count, $fmt) as afloat_count,
+                v.afloat_money, v.afloat_price
+              from t_inventory v, t_goods g, t_goods_unit u
+              where (v.warehouse_id = '%s') and (v.goods_id = g.id) and (g.unit_id = u.id) ";
+      if ($code) {
+        $sql .= " and (g.code like '%s')";
+        $queryParams[] = "%{$code}%";
+      }
+      if ($name) {
+        $sql .= " and (g.name like '%s' or g.py like '%s')";
+        $queryParams[] = "%{$name}%";
+        $queryParams[] = "%{$name}%";
+      }
+      if ($spec) {
+        $sql .= " and (g.spec like '%s')";
+        $queryParams[] = "%{$spec}%";
+      }
+      if ($brandId) {
+        $sql .= " and (g.brand_id = '%s')";
+        $queryParams[] = $brandId;
+      }
+      if ($hasInv) {
+        $sql .= " and (convert(v.balance_count, $fmt) > 0) ";
+      }
+      $sql .= " order by g.code";
+
+      $d = $db->query($sql, $queryParams);
+
+      $result[] = [
+        "warehouseCode" => $v["code"],
+        "warehouseName" => $v["name"],
+        "goodsDataList" => $d
+      ];
+    }
+
+    return $result;
+  }
+
   /**
    * 导出Excel
    */
   public function exportExcel($params)
-  { }
+  {
+    if ($this->isNotOnline()) {
+      return;
+    }
+
+    $db = M();
+
+    $data = $this->getDataForExcel($params);
+
+    // 记录业务日志
+    $log = "库存总账导出Excel文件";
+    $bls = new BizlogService($db);
+    $bls->insertBizlog($log, "库存账查询");
+
+    $excel = new \PHPExcel();
+
+    // 删除Excel自动创建的Sheet
+    $n = $excel->getSheetCount() - 1;
+    for ($i = $n; $i >= 0; $i--) {
+      $excel->removeSheetByIndex($i);
+    }
+
+    // 每个仓库创建一个Sheet
+    foreach ($data as $i => $w) {
+      $sheet = $excel->createSheet($i);
+
+      $warehouseName = $w["warehouseName"];
+      $sheet->setTitle($warehouseName);
+
+      $sheet->getRowDimension('1')->setRowHeight(22);
+      $sheet->setCellValue("A1", $warehouseName);
+
+      $sheet->getColumnDimension('A')->setWidth(15);
+      $sheet->setCellValue("A2", "商品编码");
+
+      $sheet->getColumnDimension('B')->setWidth(40);
+      $sheet->setCellValue("B2", "商品名称");
+
+      $sheet->getColumnDimension('C')->setWidth(40);
+      $sheet->setCellValue("C2", "规格型号");
+
+      $sheet->getColumnDimension('D')->setWidth(10);
+      $sheet->setCellValue("D2", "单位");
+
+      $sheet->getColumnDimension('E')->setWidth(15);
+      $sheet->setCellValue("E2", "在途数量");
+      $sheet->getColumnDimension('F')->setWidth(15);
+      $sheet->setCellValue("F2", "在途单价");
+      $sheet->getColumnDimension('G')->setWidth(15);
+      $sheet->setCellValue("G2", "在途金额");
+
+      $sheet->getColumnDimension('H')->setWidth(15);
+      $sheet->setCellValue("H2", "入库数量");
+      $sheet->getColumnDimension('I')->setWidth(15);
+      $sheet->setCellValue("I2", "入库平均单价");
+      $sheet->getColumnDimension('J')->setWidth(15);
+      $sheet->setCellValue("J2", "入库总金额");
+
+      $sheet->getColumnDimension('K')->setWidth(15);
+      $sheet->setCellValue("K2", "出库数量");
+      $sheet->getColumnDimension('L')->setWidth(15);
+      $sheet->setCellValue("L2", "出库平均单价");
+      $sheet->getColumnDimension('M')->setWidth(15);
+      $sheet->setCellValue("M2", "出库总金额");
+
+      $sheet->getColumnDimension('N')->setWidth(15);
+      $sheet->setCellValue("N2", "余额数量");
+      $sheet->getColumnDimension('O')->setWidth(15);
+      $sheet->setCellValue("O2", "余额平均单价");
+      $sheet->getColumnDimension('P')->setWidth(15);
+      $sheet->setCellValue("P2", "余额总金额");
+
+      $goodsDataList = $w["goodsDataList"];
+      foreach ($goodsDataList as $i => $v) {
+        $row = $i + 3;
+        $sheet->setCellValue("A" . $row, $v["code"]);
+        $sheet->setCellValue("B" . $row, $v["name"]);
+        $sheet->setCellValue("C" . $row, $v["spec"]);
+        $sheet->setCellValue("D" . $row, $v["unit_name"]);
+        $sheet->setCellValue("E" . $row, $v["afloat_count"]);
+        $sheet->setCellValue("F" . $row, $v["afloat_price"]);
+        $sheet->setCellValue("G" . $row, $v["afloat_money"]);
+        $sheet->setCellValue("H" . $row, $v["in_count"]);
+        $sheet->setCellValue("I" . $row, $v["in_price"]);
+        $sheet->setCellValue("J" . $row, $v["in_money"]);
+        $sheet->setCellValue("K" . $row, $v["out_count"]);
+        $sheet->setCellValue("L" . $row, $v["out_price"]);
+        $sheet->setCellValue("M" . $row, $v["out_money"]);
+        $sheet->setCellValue("N" . $row, $v["balance_count"]);
+        $sheet->setCellValue("O" . $row, $v["balance_price"]);
+        $sheet->setCellValue("P" . $row, $v["balance_money"]);
+      }
+
+      // 画表格边框
+      $styleArray = [
+        'borders' => [
+          'allborders' => [
+            'style' => 'thin'
+          ]
+        ]
+      ];
+      $lastRow = count($goodsDataList) + 2;
+      $sheet->getStyle('A2:P' . $lastRow)->applyFromArray($styleArray);
+    }
+
+    $excel->setActiveSheetIndex(0);
+
+    $dt = date("YmdHis");
+    header('Content-Type: application/vnd.ms-excel');
+    header('Content-Disposition: attachment;filename="库存总账_' . $dt . '.xlsx"');
+    header('Cache-Control: max-age=0');
+
+    $writer = \PHPExcel_IOFactory::createWriter($excel, "Excel2007");
+    $writer->save("php://output");
+  }
 }

@@ -25,9 +25,38 @@ class UpdateDB2020Service extends PSIBaseService
     $this->db = $db;
   }
 
+  // ============================================
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // 注意：
+  // 如果修改了数据库结构，别忘记了在InstallService中修改相应的SQL语句
+  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // ============================================
+  private function notForgot()
+  { }
+
+
   public function update()
   {
     $this->update_20191113_01();
+    $this->update_20191120_01();
+  }
+
+  private function update_20191120_01()
+  {
+    // 本次更新：新增表t_form
+    $db = $this->db;
+    $tableName = "t_form";
+    if (!$this->tableExists($db, $tableName)) {
+      $sql = "CREATE TABLE IF NOT EXISTS `t_form` (
+                `id` varchar(255) NOT NULL,
+                `code` varchar(255) NOT NULL,
+                `name` varchar(1000) NOT NULL,
+                `category_id` varchar(255) NOT NULL,
+                PRIMARY KEY (`id`)
+              ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+              ";
+      $db->execute($sql);
+    }
   }
 
   private function update_20191113_01()

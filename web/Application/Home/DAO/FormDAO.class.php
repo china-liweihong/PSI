@@ -170,7 +170,22 @@ class FormDAO extends PSIBaseExDAO
     }
 
     // 检查该分类下是否有表单
+    $sql = "select count(*) as cnt from t_form where category_id = '%s' ";
+    $data = $db->query($sql, $id);
+    $cnt = $data[0]["cnt"];
+    if ($cnt > 0) {
+      return $this->bad("分类[{$name}]中还有表单，不能删除");
+    }
 
-    return $this->todo();
+    // 执行删除操作
+    $sql = "delete from t_form_category where id = '%s' ";
+    $rc = $db->execute($sql, $id);
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+
+    // 操作成功
+    $params["name"] = $name;
+    return null;
   }
 }

@@ -108,4 +108,17 @@ class FormService extends PSIBaseExService
 
     return $this->ok();
   }
+
+  /**
+   * 表单分类自定义字段 - 查询数据
+   */
+  public function queryDataForCategory($params)
+  {
+    if ($this->isNotOnline()) {
+      return $this->emptyResult();
+    }
+
+    $dao = new FormDAO($this->db());
+    return $dao->queryDataForCategory($params);
+  }
 }

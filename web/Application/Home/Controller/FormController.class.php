@@ -71,4 +71,19 @@ class FormController extends PSIBaseController
     $service = new FormService();
     $this->ajaxReturn($service->deleteFormCategory($params));
   }
+
+  /**
+   * 表单分类自定义字段 - 查询数据
+   */
+  public function queryDataForCategory()
+  {
+    if (IS_POST) {
+      $params = [
+        "queryKey" => I("post.queryKey")
+      ];
+
+      $service = new FormService();
+      $this->ajaxReturn($service->queryDataForCategory($params));
+    }
+  }
 }

@@ -237,7 +237,20 @@ Ext.define("PSI.Form.MainForm", {
   onAddForm: function () {
     var me = this;
 
-    me.showInfo("TODO");
+    var item = me.getCategoryGrid().getSelectionModel()
+      .getSelection();
+    if (item == null || item.length != 1) {
+      me.showInfo("请选择一个的表单分类");
+      return;
+    }
+
+    var category = item[0];
+
+    var form = Ext.create("PSI.Form.FormEditForm", {
+      parentForm: me,
+      category: category
+    });
+    form.show();
   },
 
   onEditForm: function () {

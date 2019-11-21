@@ -188,4 +188,34 @@ class FormDAO extends PSIBaseExDAO
     $params["name"] = $name;
     return null;
   }
+
+  /**
+   * 表单分类自定义字段 - 查询数据
+   */
+  public function queryDataForCategory($params)
+  {
+    $db = $this->db;
+
+    $queryKey = $params["queryKey"] ?? "";
+
+    $sql = "select id, code, name
+            from t_form_category
+            where code like '%s' or name like '%s' ";
+    $queryParams = [];
+    $queryParams[] = "%{$queryKey}%";
+    $queryParams[] = "%{$queryKey}%";
+
+    $data = $db->query($sql, $queryParams);
+
+    $result = [];
+    foreach ($data as $v) {
+      $result[] = [
+        "id" => $v["id"],
+        "code" => $v["code"],
+        "name" => $v["name"]
+      ];
+    }
+
+    return $result;
+  }
 }

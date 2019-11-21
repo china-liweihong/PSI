@@ -121,4 +121,55 @@ class FormService extends PSIBaseExService
     $dao = new FormDAO($this->db());
     return $dao->queryDataForCategory($params);
   }
+
+  /**
+   * 新增或编辑表单
+   */
+  public function editForm($params)
+  {
+    if ($this->isNotOnline()) {
+      return $this->notOnlineError();
+    }
+
+    $id = $params["id"];
+    $name = $params["name"];
+
+    $pyService = new PinyinService();
+    $py = $pyService->toPY($name);
+    $params["py"] = $py;
+
+    $db = $this->db();
+    $db->startTrans();
+
+    $log = null;
+    $dao = new FormDAO($db);
+    if ($id) {
+      // 编辑
+      $rc = $dao->updateForm($params);
+      if ($rc) {
+        $db->rollback();
+        return $rc;
+      }
+
+      $log = "编辑表单[{$name}]的元数据";
+    } else {
+      // 新增
+      $rc = $dao->addForm($params);
+      if ($rc) {
+        $db->rollback();
+        return $rc;
+      }
+
+      $id = $params["id"];
+      $log = "新增表单：{$name}";
+    }
+
+    // 记录业务日志
+    $bs = new BizlogService($db);
+    $bs->insertBizlog($log, $this->LOG_CATEGORY);
+
+    $db->commit();
+
+    return $this->ok($id);
+  }
 }

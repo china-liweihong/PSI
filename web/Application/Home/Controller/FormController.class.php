@@ -86,4 +86,24 @@ class FormController extends PSIBaseController
       $this->ajaxReturn($service->queryDataForCategory($params));
     }
   }
+
+  /**
+   * 新增或编辑表单
+   */
+  public function editForm()
+  {
+    if (IS_POST) {
+      $params = [
+        "id" => I("post.id"),
+        "categoryId" => I("post.categoryId"),
+        "code" => I("post.code"),
+        "name" => I("post.name"),
+        "tableName" => I("post.tableName"),
+        "memo" => I("post.memo")
+      ];
+
+      $service = new FormService();
+      $this->ajaxReturn($service->editForm($params));
+    }
+  }
 }

@@ -29,7 +29,7 @@ PSI的开源协议为GPL v3
 
 # 商务合作
 
-QQ: crm8000@qq.com
+Email: crm8000@qq.com
 
 PSI商业计划见：<a href="https://gitee.com/crm8000/PSI/tree/master/doc/00%20%E5%95%86%E4%B8%9A%E8%AE%A1%E5%88%92">PSI 商业计划</a>
 

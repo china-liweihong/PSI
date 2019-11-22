@@ -39,6 +39,20 @@ class UpdateDB2020Service extends PSIBaseService
   {
     $this->update_20191113_01();
     $this->update_20191120_01();
+    $this->update_20191122_01();
+  }
+
+  private function update_20191122_01()
+  {
+    // 本次更新：t_form新增字段sys_form
+    $db = $this->db;
+
+    $tableName = "t_form";
+    $columnName = "sys_form";
+    if (!$this->columnExists($db, $tableName, $columnName)) {
+      $sql = "alter table {$tableName} add {$columnName} int(11) NOT NULL DEFAULT 0;";
+      $db->execute($sql);
+    }
   }
 
   private function update_20191120_01()

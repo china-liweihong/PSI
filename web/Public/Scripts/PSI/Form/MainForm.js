@@ -23,7 +23,7 @@ Ext.define("PSI.Form.MainForm", {
             region: "center",
             layout: "fit",
             border: 0,
-            items: []
+            items: [me.getMainGrid()]
           }, {
             region: "south",
             layout: "fit",
@@ -232,6 +232,141 @@ Ext.define("PSI.Form.MainForm", {
     };
 
     me.confirm(info, funcConfirm);
+  },
+
+  onCategoryGridSelect: function () {
+    var me = this;
+    me.refreshMainGrid();
+  },
+
+  getMainGrid: function () {
+    var me = this;
+
+    if (me.__mainGrid) {
+      return me.__mainGrid;
+    }
+
+    var modelName = "PSIForm";
+
+    Ext.define(modelName, {
+      extend: "Ext.data.Model",
+      fields: ["id", "code", "name", "tableName", "memo", "mdVersion", "sysForm"]
+    });
+
+    me.__mainGrid = Ext.create("Ext.grid.Panel", {
+      cls: "PSI",
+      viewConfig: {
+        enableTextSelection: true
+      },
+      header: {
+        height: 30,
+        title: me.formatGridHeaderTitle("表单")
+      },
+      columnLines: true,
+      columns: [{
+        header: "编码",
+        dataIndex: "code",
+        width: 80,
+        menuDisabled: true,
+        sortable: false
+      }, {
+        header: "表单名称",
+        dataIndex: "name",
+        width: 200,
+        menuDisabled: true,
+        sortable: false
+      }, {
+        header: "数据库表名",
+        dataIndex: "tableName",
+        width: 200,
+        menuDisabled: true,
+        sortable: false
+      }, {
+        header: "备注",
+        dataIndex: "memo",
+        width: 300,
+        menuDisabled: true,
+        sortable: false
+      }, {
+        header: "版本",
+        dataIndex: "mdVersion",
+        width: 90,
+        menuDisabled: true,
+        sortable: false
+      }, {
+        header: "系统固有",
+        dataIndex: "sysForm",
+        width: 80,
+        menuDisabled: true,
+        sortable: false,
+        renderer: function (value) {
+          return parseInt(value) == 1 ? "是" : "否";
+        }
+      }],
+      store: Ext.create("Ext.data.Store", {
+        model: modelName,
+        autoLoad: false,
+        data: []
+      }),
+      listeners: {
+        select: {
+          fn: me.onMainGridSelect,
+          scope: me
+        }
+      }
+    });
+
+    return me.__mainGrid;
+  },
+
+  refreshMainGrid: function (id) {
+    var me = this;
+
+    var item = me.getCategoryGrid().getSelectionModel()
+      .getSelection();
+    if (item == null || item.length != 1) {
+      me.getMainGrid().setTitle(me.formatGridHeaderTitle("表单"));
+      return;
+    }
+
+    var category = item[0];
+
+    var grid = me.getMainGrid();
+    grid.setTitle(me.formatGridHeaderTitle("属于分类["
+      + category.get("name") + "]的表单"));
+    var el = grid.getEl() || Ext.getBody();
+    el.mask(PSI.Const.LOADING);
+    var r = {
+      url: me.URL("Home/Form/formList"),
+      params: {
+        categoryId: category.get("id")
+      },
+      callback: function (options, success, response) {
+        var store = grid.getStore();
+
+        store.removeAll();
+
+        if (success) {
+          var data = me.decodeJSON(response.responseText);
+          store.add(data);
+
+          if (store.getCount() > 0) {
+            if (id) {
+              var r = store.findExact("id", id);
+              if (r != -1) {
+                grid.getSelectionModel().select(r);
+              }
+            } else {
+              grid.getSelectionModel().select(0);
+            }
+          }
+        }
+
+        el && el.unmask();
+      }
+    };
+
+    me.ajax(r);
   },
 
   onAddForm: function () {

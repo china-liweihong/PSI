@@ -172,4 +172,17 @@ class FormService extends PSIBaseExService
 
     return $this->ok($id);
   }
+
+  /**
+   * 某个分类下的表单列表
+   */
+  public function formList($params)
+  {
+    if ($this->isNotOnline()) {
+      return $this->emptyResult();
+    }
+
+    $dao = new FormDAO($this->db());
+    return $dao->formList($params);
+  }
 }

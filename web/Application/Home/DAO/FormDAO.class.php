@@ -220,6 +220,32 @@ class FormDAO extends PSIBaseExDAO
   }
 
   /**
+   * 某个分类下的表单列表
+   */
+  public function formList($params)
+  {
+    $db = $this->db;
+
+    $categoryId = $params["caregoryId"];
+
+    $sql = "select id, code, name, sys_form
+            from t_form 
+            where category_id = '%s'
+            order by code";
+    $data = $db->query($sql, $categoryId);
+    $result = [];
+    foreach ($data as $v) {
+      $result[] = [
+        "id" => $v["id"],
+        "code" => $v["code"],
+        "name" => $v["name"],
+        "sysForm" => $v["sys_form"]
+      ];
+    }
+    return $result;
+  }
+
+  /**
    * 新增表单
    */
   public function addForm(&$params)

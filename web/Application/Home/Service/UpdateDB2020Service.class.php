@@ -40,6 +40,26 @@ class UpdateDB2020Service extends PSIBaseService
     $this->update_20191113_01();
     $this->update_20191120_01();
     $this->update_20191122_01();
+    $this->update_20191123_01();
+  }
+
+  private function update_20191123_01()
+  {
+    // 本次更新：t_form新增字段md_version和memo
+    $db = $this->db;
+
+    $tableName = "t_form";
+    $columnName = "md_version";
+    if (!$this->columnExists($db, $tableName, $columnName)) {
+      $sql = "alter table {$tableName} add {$columnName} int(11) NOT NULL DEFAULT 1;";
+      $db->execute($sql);
+    }
+
+    $columnName = "memo";
+    if (!$this->columnExists($db, $tableName, $columnName)) {
+      $sql = "alter table {$tableName} add {$columnName} varchar(1000) DEFAULT NULL;";
+      $db->execute($sql);
+    }
   }
 
   private function update_20191122_01()

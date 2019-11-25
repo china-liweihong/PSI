@@ -43,6 +43,39 @@ class UpdateDB2020Service extends PSIBaseService
     $this->update_20191123_01();
     $this->update_20191125_01();
     $this->update_20191125_02();
+    $this->update_20191125_03();
+  }
+
+  private function update_20191125_03()
+  {
+    // 本次更新：新增表t_form_detail_cols
+    $db = $this->db;
+    $tableName = "t_form_detail_cols";
+    if (!$this->tableExists($db, $tableName)) {
+      $sql = "CREATE TABLE IF NOT EXISTS `t_form_detail_cols` (
+                `id` varchar(255) NOT NULL,
+                `detail_id` varchar(255) NOT NULL,
+                `caption` varchar(255) NOT NULL,
+                `db_field_name` varchar(255) NOT NULL,
+                `db_field_type` varchar(255) NOT NULL,
+                `db_field_length` int(11) NOT NULL,
+                `db_field_decimal` int(11) NOT NULL,
+                `show_order` int(11) NOT NULL,
+                `width_in_view` int(11) NOT NULL,
+                `value_from` int(11) DEFAULT NULL,
+                `value_from_table_name` varchar(255) DEFAULT NULL,
+                `value_from_col_name` varchar(255) DEFAULT NULL,
+                `value_from_col_name_display` varchar(255) DEFAULT NULL,
+                `must_input` int(11) DEFAULT 1,
+                `sys_col` int(11) DEFAULT 1,
+                `is_visible` int(11) DEFAULT 1,
+                `note` varchar(1000) DEFAULT NULL,
+                `editor_xtype` varchar(255) NOT NULL DEFAULT 'textfield',
+                PRIMARY KEY (`id`)
+              ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+              ";
+      $db->execute($sql);
+    }
   }
 
   private function update_20191125_02()

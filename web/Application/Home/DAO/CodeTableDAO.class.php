@@ -601,7 +601,7 @@ class CodeTableDAO extends PSIBaseExDAO
     if ($rc) {
       return $rc;
     }
-    // 检查名表是否已经存在
+    // 检查表名是否已经存在
     $sql = "select count(*) as cnt from t_code_table_md
 					where table_name = '%s' ";
     $data = $db->query($sql, $tableName);

@@ -247,6 +247,43 @@ class FormDAO extends PSIBaseExDAO
     return $result;
   }
 
+  private function checkTableName($tableName)
+  {
+    $tableName = strtolower($tableName);
+
+    $len = strlen($tableName);
+    if ($len < 6) {
+      return $this->bad("数据库表名长度不能小于6");
+    }
+
+    $c = ord($tableName{
+      0});
+    $isABC = ord('a') <= $c && ord('z') >= $c;
+    if (!$isABC) {
+      return $this->bad("数据库表名需要以字符开头");
+    }
+
+    for ($i = 1; $i < $len; $i++) {
+      $c = ord($tableName{
+        $i});
+      $isABC = ord('a') <= $c && ord('z') >= $c;
+      $isNumber = ord('0') <= $c && ord('9') >= $c;
+      $isOK = $isABC || $isNumber || ord('_') == $c;
+      if (!$isOK) {
+        $index = $i + 1;
+        return $this->bad("数据库表名的第{$index}个字符非法");
+      }
+    }
+
+    // 表单需要以t_开头
+    if (!(substr($tableName, 0, 2) == "t_")) {
+      return $this->bad("数据库表名需要以 <span style='color:red'>t_</span> 开头");
+    }
+
+    // 表名正确
+    return null;
+  }
+
   /**
    * 新增表单
    */
@@ -254,7 +291,17 @@ class FormDAO extends PSIBaseExDAO
   {
     $db = $this->db;
 
+    $categoryId = $params["categoryId"];
+    $code = $params["code"];
+    $name = $params["name"];
+    $tableName = strtolower($params["tableName"]);
+    $memo = $params["memo"];
+
     // 1. 检查数据库表名是否正确
+    $rc = $this->checkTableName($tableName);
+    if ($rc) {
+      return $rc;
+    }
 
     // 2. 检查数据库表是否已经存在了
 

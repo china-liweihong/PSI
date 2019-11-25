@@ -196,7 +196,7 @@ Ext.define("PSI.Form.FormEditForm", {
 
     if (me.adding) {
       // 新建
-      me.editTableName.setValue("t_fm_");
+      me.editTableName.setValue("t_");
     } else {
       // 编辑
       var el = me.getEl();

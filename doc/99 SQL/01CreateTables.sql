@@ -1526,6 +1526,7 @@ CREATE TABLE IF NOT EXISTS `t_form` (
   `sys_form` int(11) NOT NULL DEFAULT 0,
   `md_version` int(11) NOT NULL DEFAULT 1,
   `memo` varchar(1000) DEFAULT NULL,
+  `table_name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

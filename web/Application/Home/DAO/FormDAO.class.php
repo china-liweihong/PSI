@@ -292,6 +292,11 @@ class FormDAO extends PSIBaseExDAO
     $db = $this->db;
 
     $categoryId = $params["categoryId"];
+    $category = $this->getCategoryById($categoryId);
+    if (!$category) {
+      return $this->badParam("categoryId");
+    }
+
     $code = $params["code"];
     $name = $params["name"];
     $tableName = strtolower($params["tableName"]);
@@ -304,15 +309,58 @@ class FormDAO extends PSIBaseExDAO
     }
 
     // 2. 检查数据库表是否已经存在了
+    $sql = "select count(*) as cnt from t_form
+            where table_name = '%s' ";
+    $data = $db->query($sql, $tableName);
+    $cnt = $data[0]["cnt"];
+    if ($cnt > 0) {
+      return $this->bad("表名为[{$tableName}]的表单已经存在");
+    }
+    // 检查数据库中是否已经存在该表了
+    $dbUtilDAO = new DBUtilDAO($db);
+    if ($dbUtilDAO->tableExists($tableName)) {
+      return $this->bad("表[{$tableName}]已经在数据库中存在了");
+    }
+    // 检查明细表是否已经存在在数据库中
+    $detailTableName = $tableName . "_detail";
+    if ($dbUtilDAO->tableExists($detailTableName)) {
+      return $this->bad("表[{$detailTableName}]已经在数据库中存在了");
+    }
 
     // 3. 保存元数据
+    // 检查编码是否重复
+    if ($code) {
+      $sql = "select count(*) as cnt from t_form where code = '%s' ";
+      $data = $db->query($sql, $code);
+      $cnt = $data[0]["cnt"];
+      if ($cnt > 0) {
+        return $this->bad("编码为[$code]的表单已经存在");
+      }
+    }
+    // 检查表单名称是否重复
+    $sql = "select count(*) as cnt from t_form where name = '%s' ";
+    $data = $db->query($sql, $name);
+    $cnt = $data[0]["cnt"];
+    if ($cnt > 0) {
+      return $this->bad("表单名称为[$name]的表单已经存在");
+    }
+
     // 3.1 主表元数据
+    $id = $this->newId();
+    $sql = "insert into t_form (id, code, name, category_id, sys_form, md_version, memo)
+            values ('%s', '%s', '%s', '%s', 0, 1, '%s') ";
+    $rc = $db->execute($sql, $id, $code, $name, $categoryId, $memo);
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+
     // 3.2 主表各个标准字段的元数据
     // 3.3 明细表元数据
     // 3.4 明细表各个标准字段的元数据
 
     // 4. 创建数据库表
 
+    $params["id"] = $id;
     return $this->todo();
   }
 }

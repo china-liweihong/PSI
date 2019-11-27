@@ -38,7 +38,22 @@ Ext.define("PSI.Form.MainForm", {
                 border: 0,
                 items: me.getColsGrid()
               }, {
-                title: "明细表"
+                title: "明细表",
+                border: 0,
+                layout: "border",
+                items: [{
+                  region: "west",
+                  border: 0,
+                  width: 300,
+                  layout: "fit",
+                  split: true,
+                  items: [me.getDetailGrid()]
+                }, {
+                  region: "center",
+                  border: 0,
+                  layout: "fit",
+                  items: [me.getDetailColsGrid()]
+                }]
               }]
             }]
           }]
@@ -562,5 +577,217 @@ Ext.define("PSI.Form.MainForm", {
     });
 
     return me.__colsGrid;
+  },
+
+  getDetailGrid: function () {
+    var me = this;
+
+    if (me.__detailGrid) {
+      return me.__detailGrid;
+    }
+
+    var modelName = "PSIFormDetail";
+
+    Ext.define(modelName, {
+      extend: "Ext.data.Model",
+      fields: ["id", "name", "tableName", "fkName", "showOrder"]
+    });
+
+    me.__detailGrid = Ext.create("Ext.grid.Panel", {
+      cls: "PSI",
+      viewConfig: {
+        enableTextSelection: true
+      },
+      header: {
+        height: 30,
+        title: me.formatGridHeaderTitle("明细表")
+      },
+      tbar: [{
+        text: "新增明细表",
+        handler: me.onAddFormDetail,
+        scope: me
+      }, "-", {
+        text: "编辑明细表",
+        handler: me.onEditFormDetail,
+        scope: me
+      }, "-", {
+        text: "删除明细表",
+        handler: me.onDeleteFormDetail,
+        scope: me
+      }],
+      columnLines: true,
+      columns: [{
+        header: "明细表名称",
+        dataIndex: "name",
+        width: 200,
+        menuDisabled: true,
+        sortable: false
+      }, {
+        header: "数据库表名",
+        dataIndex: "tableName",
+        width: 200,
+        menuDisabled: true,
+        sortable: false
+      }, {
+        header: "外键",
+        dataIndex: "fkName",
+        width: 200,
+        menuDisabled: true,
+        sortable: false
+      }, {
+        header: "显示次序",
+        dataIndex: "showOrder",
+        width: 100,
+        align: "right",
+        menuDisabled: true,
+        sortable: false
+      }],
+      store: Ext.create("Ext.data.Store", {
+        model: modelName,
+        autoLoad: false,
+        data: []
+      }),
+      listeners: {
+        select: {
+          fn: me.onMainGridSelect,
+          scope: me
+        }
+      }
+    });
+
+    return me.__detailGrid;
+  },
+
+  getDetailColsGrid: function () {
+    var me = this;
+
+    if (me.__detailColsGrid) {
+      return me.__detailColsGrid;
+    }
+
+    var modelName = "PSIFormDetailCols";
+
+    Ext.define(modelName, {
+      extend: "Ext.data.Model",
+      fields: ["id", "caption", "fieldName",
+        "fieldType", "fieldLength", "fieldDecimal",
+        "valueFrom", "valueFromTableName",
+        "valueFromColName", "valueFromColNameDisplay", "mustInput",
+        "showOrder", "sysCol", "isVisible",
+        "widthInView", "note", "showOrderInView", "editorXtype"]
+    });
+
+    me.__detailColsGrid = Ext.create("Ext.grid.Panel", {
+      cls: "PSI",
+      viewConfig: {
+        enableTextSelection: true
+      },
+      header: {
+        height: 30,
+        title: me.formatGridHeaderTitle("明细表列")
+      },
+      tbar: [{
+        text: "新增列",
+        handler: me.onAddDetailCol,
+        scope: me
+      }, "-", {
+        text: "编辑列",
+        handler: me.onEditDetailCol,
+        scope: me
+      }, "-", {
+        text: "删除列",
+        handler: me.onDeleteDetailCol,
+        scope: me
+      }],
+      columnLines: true,
+      columns: {
+        defaults: {
+          menuDisabled: true,
+          sortable: false
+        },
+        items: [{
+          header: "列标题",
+          dataIndex: "caption",
+          width: 150,
+          locked: true
+        }, {
+          header: "列数据库名",
+          dataIndex: "fieldName",
+          width: 150
+        }, {
+          header: "列数据类型",
+          dataIndex: "fieldType",
+          width: 80
+        }, {
+          header: "列数据长度",
+          dataIndex: "fieldLength",
+          align: "right",
+          width: 90
+        }, {
+          header: "列小数位数",
+          dataIndex: "fieldDecimal",
+          align: "right",
+          width: 90
+        }, {
+          header: "值来源",
+          dataIndex: "valueFrom",
+          width: 120
+        }, {
+          header: "值来源表",
+          dataIndex: "valueFromTableName",
+          width: 150
+        }, {
+          header: "值来源字段(关联用)",
+          dataIndex: "valueFromColName",
+          width: 150
+        }, {
+          header: "值来源字段(显示用)",
+          dataIndex: "valueFromColNameDisplay",
+          width: 150
+        }, {
+          header: "系统字段",
+          dataIndex: "sysCol",
+          width: 70
+        }, {
+          header: "对用户可见",
+          dataIndex: "isVisible",
+          width: 80
+        }, {
+          header: "必须录入",
+          dataIndex: "mustInput",
+          width: 70
+        }, {
+          header: "列视图宽度(px)",
+          dataIndex: "widthInView",
+          width: 120,
+          align: "right"
+        }, {
+          header: "编辑界面中显示次序",
+          dataIndex: "showOrder",
+          width: 140,
+          align: "right"
+        }, {
+          header: "视图中显示次序",
+          dataIndex: "showOrderInView",
+          width: 130,
+          align: "right"
+        }, {
+          header: "编辑器类型",
+          dataIndex: "editorXtype",
+          width: 130
+        }, {
+          header: "备注",
+          dataIndex: "note",
+          width: 200
+        }]
+      },
+      store: Ext.create("Ext.data.Store", {
+        model: modelName,
+        autoLoad: false,
+        data: []
+      })
+    });
+
+    return me.__detailColsGrid;
   }
 });

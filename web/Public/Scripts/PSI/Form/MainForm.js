@@ -30,7 +30,17 @@ Ext.define("PSI.Form.MainForm", {
             border: 0,
             height: "60%",
             split: true,
-            items: []
+            items: [{
+              xtype: "tabpanel",
+              items: [{
+                title: "主表列",
+                layout: "fit",
+                border: 0,
+                items: me.getColsGrid()
+              }, {
+                title: "明细表"
+              }]
+            }]
           }]
         }, {
           id: "panelCategory",
@@ -433,5 +443,124 @@ Ext.define("PSI.Form.MainForm", {
     };
 
     me.ajax(r);
+  },
+
+  getColsGrid: function () {
+    var me = this;
+
+    if (me.__colsGrid) {
+      return me.__colsGrid;
+    }
+
+    var modelName = "PSICodeTableCols";
+
+    Ext.define(modelName, {
+      extend: "Ext.data.Model",
+      fields: ["id", "caption", "fieldName",
+        "fieldType", "fieldLength", "fieldDecimal",
+        "valueFrom", "valueFromTableName",
+        "valueFromColName", "valueFromColNameDisplay", "mustInput",
+        "showOrder", "sysCol", "isVisible", "note", "editorXtype"]
+    });
+
+    me.__colsGrid = Ext.create("Ext.grid.Panel", {
+      cls: "PSI",
+      viewConfig: {
+        enableTextSelection: true
+      },
+      border: 0,
+      tbar: [{
+        text: "新增列",
+        handler: me.onAddCol,
+        scope: me
+      }, "-", {
+        text: "编辑列",
+        handler: me.onEditCol,
+        scope: me
+      }, "-", {
+        text: "删除列",
+        handler: me.onDeleteCol,
+        scope: me
+      }],
+      columnLines: true,
+      columns: {
+        defaults: {
+          menuDisabled: true,
+          sortable: false
+        },
+        items: [{
+          header: "列标题",
+          dataIndex: "caption",
+          width: 150,
+          locked: true
+        }, {
+          header: "列数据库名",
+          dataIndex: "fieldName",
+          width: 150
+        }, {
+          header: "列数据类型",
+          dataIndex: "fieldType",
+          width: 80
+        }, {
+          header: "列数据长度",
+          dataIndex: "fieldLength",
+          align: "right",
+          width: 90
+        }, {
+          header: "列小数位数",
+          dataIndex: "fieldDecimal",
+          align: "right",
+          width: 90
+        }, {
+          header: "值来源",
+          dataIndex: "valueFrom",
+          width: 120
+        }, {
+          header: "值来源表",
+          dataIndex: "valueFromTableName",
+          width: 150
+        }, {
+          header: "值来源字段(关联用)",
+          dataIndex: "valueFromColName",
+          width: 150
+        }, {
+          header: "值来源字段(显示用)",
+          dataIndex: "valueFromColNameDisplay",
+          width: 150
+        }, {
+          header: "系统字段",
+          dataIndex: "sysCol",
+          width: 70
+        }, {
+          header: "对用户可见",
+          dataIndex: "isVisible",
+          width: 80
+        }, {
+          header: "必须录入",
+          dataIndex: "mustInput",
+          width: 70
+        }, {
+          header: "编辑界面中显示次序",
+          dataIndex: "showOrder",
+          width: 140,
+          align: "right"
+        }, {
+          header: "编辑器类型",
+          dataIndex: "editorXtype",
+          width: 130
+        }, {
+          header: "备注",
+          dataIndex: "note",
+          width: 200
+        }]
+      },
+      store: Ext.create("Ext.data.Store", {
+        model: modelName,
+        autoLoad: false,
+        data: []
+      })
+    });
+
+    return me.__colsGrid;
   }
 });

@@ -593,6 +593,43 @@ class FormDAO extends PSIBaseExDAO
     }
 
     // 3.2 主表各个标准字段的元数据
+    $mdCols = $this->getFormSysCols();;
+    foreach ($mdCols as $v) {
+      $sql = "insert into t_form_cols(id, form_id, caption, db_field_name, db_field_type,
+                db_field_length, db_field_decimal, show_order, col_span, value_from,
+                value_from_table_name, value_from_col_name, value_from_col_name_display, must_input,
+                sys_col, is_visible, note, editor_xtype)
+              values ('%s', '%s', '%s', '%s', '%s',
+                %d, %d, %d, %d, %d,
+                '%s', '%s', '%s', %d,
+                %d, %d, '%s', '%s'
+                )";
+      $rc = $db->execute(
+        $sql,
+        $this->newId(),
+        $id,
+        $v["caption"],
+        $v["fieldName"],
+        $v["fieldType"],
+        $v["fieldLength"],
+        $v["fieldDecimal"],
+        $v["showOrder"],
+        $v["colSpan"],
+        $v["valueFrom"],
+        $v["valueFromTableName"],
+        $v["valueFromColName"],
+        $v["valueFromColNameDisplay"],
+        $v["mustInput"],
+        $v["sysCol"],
+        $v["isVisible"],
+        "",
+        $v["editorXtype"]
+      );
+      if ($rc === false) {
+        return $this->sqlError(__METHOD__, __LINE__);
+      }
+    }
+
     // 3.3 明细表元数据
     // 3.4 明细表各个标准字段的元数据
 

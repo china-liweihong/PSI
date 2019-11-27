@@ -631,6 +631,14 @@ class FormDAO extends PSIBaseExDAO
     }
 
     // 3.3 明细表元数据
+    $detailId = $this->newId();
+    $sql = "insert into t_form_detail(id, form_id, name, table_name, fk_name, show_order)
+            values ('%s', '%s', '%s', '%s', '%s', 1)";
+    $rc = $db->execute($sql, $detailId, $id, "明细", "{$tableName}_detail", "bill_id");
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+
     // 3.4 明细表各个标准字段的元数据
 
     // 4. 创建数据库表

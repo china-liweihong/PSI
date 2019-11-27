@@ -523,6 +523,149 @@ class FormDAO extends PSIBaseExDAO
   }
 
   /**
+   * 表单明细表表标准字段
+   */
+  private function getFormDetailSysCols($pkName)
+  {
+    $result = [];
+
+    // 主键：id
+    $result[] = [
+      "caption" => "id",
+      "fieldName" => "id",
+      "fieldType" => "varchar",
+      "fieldLength" => 255,
+      "fieldDecimal" => 0,
+      "valueFrom" => 5,
+      "valueFromTableName" => "",
+      "valueFromColName" => "",
+      "valueFromColNameDisplay" => "",
+      "mustInput" => 1,
+      "showOrder" => -1000,
+      "sysCol" => 1,
+      "isVisible" => 2,
+      "editorXtype" => "displayfield",
+      "widthInView" => 100
+    ];
+
+    // 外键
+    $result[] = [
+      "caption" => "外键",
+      "fieldName" => $pkName,
+      "fieldType" => "varchar",
+      "fieldLength" => 255,
+      "fieldDecimal" => 0,
+      "valueFrom" => 5,
+      "valueFromTableName" => "",
+      "valueFromColName" => "",
+      "valueFromColNameDisplay" => "",
+      "mustInput" => 1,
+      "showOrder" => -1000,
+      "sysCol" => 1,
+      "isVisible" => 2,
+      "editorXtype" => "displayfield",
+      "widthInView" => 100
+    ];
+
+    // date_created
+    $result[] = [
+      "caption" => "创建时间",
+      "fieldName" => "date_created",
+      "fieldType" => "datetime",
+      "fieldLength" => 0,
+      "fieldDecimal" => 0,
+      "valueFrom" => 5,
+      "valueFromTableName" => "",
+      "valueFromColName" => "",
+      "valueFromColNameDisplay" => "",
+      "mustInput" => 1,
+      "showOrder" => -1000,
+      "sysCol" => 1,
+      "isVisible" => 2,
+      "editorXtype" => "displayfield",
+      "widthInView" => 100
+    ];
+
+    // memo
+    $result[] = [
+      "caption" => "备注",
+      "fieldName" => "memo",
+      "fieldType" => "varchar",
+      "fieldLength" => 1000,
+      "fieldDecimal" => 0,
+      "valueFrom" => 1,
+      "valueFromTableName" => "",
+      "valueFromColName" => "",
+      "valueFromColNameDisplay" => "",
+      "mustInput" => 2,
+      "showOrder" => 100,
+      "sysCol" => 1,
+      "isVisible" => 1,
+      "editorXtype" => "textfield",
+      "widthInView" => 100
+    ];
+
+    // show_order
+    $result[] = [
+      "caption" => "显示次序",
+      "fieldName" => "show_order",
+      "fieldType" => "int",
+      "fieldLength" => 11,
+      "fieldDecimal" => 0,
+      "valueFrom" => 1,
+      "valueFromTableName" => "",
+      "valueFromColName" => "",
+      "valueFromColNameDisplay" => "",
+      "mustInput" => 2,
+      "showOrder" => -1000,
+      "sysCol" => 1,
+      "isVisible" => 1,
+      "editorXtype" => "textfield",
+      "widthInView" => 100
+    ];
+
+    // data_org
+    $result[] = [
+      "caption" => "数据域",
+      "fieldName" => "data_org",
+      "fieldType" => "varchar",
+      "fieldLength" => 255,
+      "fieldDecimal" => 0,
+      "valueFrom" => 5,
+      "valueFromTableName" => "",
+      "valueFromColName" => "",
+      "valueFromColNameDisplay" => "",
+      "mustInput" => 1,
+      "showOrder" => -1000,
+      "sysCol" => 1,
+      "isVisible" => 1,
+      "editorXtype" => "displayfield",
+      "widthInView" => 100
+    ];
+
+    // company_id
+    $result[] = [
+      "caption" => "公司id",
+      "fieldName" => "company_id",
+      "fieldType" => "varchar",
+      "fieldLength" => 255,
+      "fieldDecimal" => 0,
+      "valueFrom" => 5,
+      "valueFromTableName" => "",
+      "valueFromColName" => "",
+      "valueFromColNameDisplay" => "",
+      "mustInput" => 1,
+      "showOrder" => -1000,
+      "sysCol" => 1,
+      "isVisible" => 1,
+      "editorXtype" => "displayfield",
+      "widthInView" => 100
+    ];
+
+    return $result;
+  }
+
+  /**
    * 新增表单
    */
   public function addForm(&$params)
@@ -632,18 +775,93 @@ class FormDAO extends PSIBaseExDAO
 
     // 3.3 明细表元数据
     $detailId = $this->newId();
+    $pkName = "bill_id";
     $sql = "insert into t_form_detail(id, form_id, name, table_name, fk_name, show_order)
             values ('%s', '%s', '%s', '%s', '%s', 1)";
-    $rc = $db->execute($sql, $detailId, $id, "明细", "{$tableName}_detail", "bill_id");
+    $rc = $db->execute($sql, $detailId, $id, "明细", "{$tableName}_detail", $pkName);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
     }
 
     // 3.4 明细表各个标准字段的元数据
+    $mdCols = $this->getFormDetailSysCols($pkName);
+    foreach ($mdCols as $v) {
+      $sql = "insert into t_form_detail_cols(id, detail_id, caption, db_field_name, db_field_type,
+                db_field_length, db_field_decimal, show_order, width_in_view,
+                value_from, value_from_table_name, value_from_col_name, value_from_col_name_display,
+                must_input, sys_col, is_visible, note, editor_xtype)
+              values ('%s', '%s', '%s', '%s', '%s',
+                %d, %d, %d, %d,
+                %d, '%s', '%s', '%s',
+                %d, %d, %d, '%s', '%s')";
+      $rc = $db->execute(
+        $sql,
+        $this->newId(),
+        $detailId,
+        $v["caption"],
+        $v["fieldName"],
+        $v["fieldType"],
+        $v["fieldLength"],
+        $v["fieldDecimal"],
+        $v["showOrder"],
+        $v["widthInView"],
+        $v["valueFrom"],
+        $v["valueFromTableName"],
+        $v["valueFromColName"],
+        $v["valueFromColNameDisplay"],
+        $v["mustInput"],
+        $v["sysCol"],
+        $v["isVisible"],
+        "",
+        $v["editorXtype"]
+      );
+      if ($rc === false) {
+        return $this->sqlError(__METHOD__, __LINE__);
+      }
+    }
 
     // 4. 创建数据库表
+    // 主表
+    $sql = "CREATE TABLE IF NOT EXISTS $tableName (
+              `id` varchar(255) NOT NULL,
+              `ref` varchar(255) NOT NULL,
+              `bill_status` int(11) NOT NULL,
+              `biz_dt` datetime NOT NULL,
+              `biz_user_id` varchar(255) NOT NULL,
+              `date_created` datetime DEFAULT NULL,
+              `input_user_id` varchar(255) NOT NULL,
+              `confirm_user_id` varchar(255) DEFAULT NULL,
+              `confirm_dt` datetime DEFAULT NULL,
+              `bill_memo` varchar(255) DEFAULT NULL,
+              `data_org` varchar(255) DEFAULT NULL,
+              `company_id` varchar(255) DEFAULT NULL,
+              PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+            ";
+    $rc = $db->execute($sql);
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
 
+    // 明细表
+    $sql = "CREATE TABLE IF NOT EXISTS {$tableName}_detail (
+              `id` varchar(255) NOT NULL,
+              `date_created` datetime DEFAULT NULL,
+              `{$pkName}` varchar(255) NOT NULL,
+              `show_order` int(11) NOT NULL,
+              `data_org` varchar(255) DEFAULT NULL,
+              `company_id` varchar(255) DEFAULT NULL,
+              `memo` varchar(255) DEFAULT NULL,
+              PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+            ";
+    $rc = $db->execute($sql);
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+
+    // 操作成功
     $params["id"] = $id;
-    return $this->todo();
+    return null;
   }
 }

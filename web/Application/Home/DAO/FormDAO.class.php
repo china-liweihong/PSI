@@ -285,6 +285,244 @@ class FormDAO extends PSIBaseExDAO
   }
 
   /**
+   * 表单主表标准字段
+   */
+  private function getFormSysCols()
+  {
+    $result = [];
+
+    // id
+    $result[] = [
+      "caption" => "id",
+      "fieldName" => "id",
+      "fieldType" => "varchar",
+      "fieldLength" => 255,
+      "fieldDecimal" => 0,
+      "valueFrom" => 5,
+      "valueFromTableName" => "",
+      "valueFromColName" => "",
+      "valueFromColNameDisplay" => "",
+      "mustInput" => 1,
+      "showOrder" => -1000,
+      "sysCol" => 1,
+      "isVisible" => 2,
+      "editorXtype" => "displayfield",
+      "colSpan" => 1
+    ];
+
+    // bill_status
+    $result[] = [
+      "caption" => "状态",
+      "fieldName" => "bill_status",
+      "fieldType" => "int",
+      "fieldLength" => 11,
+      "fieldDecimal" => 0,
+      "valueFrom" => 5,
+      "valueFromTableName" => "",
+      "valueFromColName" => "",
+      "valueFromColNameDisplay" => "",
+      "mustInput" => 1,
+      "showOrder" => -1000,
+      "sysCol" => 1,
+      "isVisible" => 1,
+      "editorXtype" => "displayfield",
+      "colSpan" => 1
+    ];
+
+    // ref
+    $result[] = [
+      "caption" => "单号",
+      "fieldName" => "ref",
+      "fieldType" => "varchar",
+      "fieldLength" => 255,
+      "fieldDecimal" => 0,
+      "valueFrom" => 5,
+      "valueFromTableName" => "",
+      "valueFromColName" => "",
+      "valueFromColNameDisplay" => "",
+      "mustInput" => 1,
+      "showOrder" => 1,
+      "sysCol" => 1,
+      "isVisible" => 1,
+      "editorXtype" => "displayfield",
+      "colSpan" => 1
+    ];
+
+    // biz_dt
+    $result[] = [
+      "caption" => "业务日期",
+      "fieldName" => "biz_dt",
+      "fieldType" => "datetime",
+      "fieldLength" => 0,
+      "fieldDecimal" => 0,
+      "valueFrom" => 1,
+      "valueFromTableName" => "",
+      "valueFromColName" => "",
+      "valueFromColNameDisplay" => "",
+      "mustInput" => 1,
+      "showOrder" => 2,
+      "sysCol" => 1,
+      "isVisible" => 1,
+      "editorXtype" => "datefield",
+      "colSpan" => 1
+    ];
+
+    // biz_user_id
+    $result[] = [
+      "caption" => "业务员",
+      "fieldName" => "biz_user_id",
+      "fieldType" => "varchar",
+      "fieldLength" => 255,
+      "fieldDecimal" => 0,
+      "valueFrom" => 3,
+      "valueFromTableName" => "t_user",
+      "valueFromColName" => "id",
+      "valueFromColNameDisplay" => "name",
+      "mustInput" => 1,
+      "showOrder" => 3,
+      "sysCol" => 1,
+      "isVisible" => 1,
+      "editorXtype" => "psi_userfield",
+      "colSpan" => 1
+    ];
+
+    // date_created
+    $result[] = [
+      "caption" => "制单时间",
+      "fieldName" => "date_created",
+      "fieldType" => "datetime",
+      "fieldLength" => 0,
+      "fieldDecimal" => 0,
+      "valueFrom" => 5,
+      "valueFromTableName" => "",
+      "valueFromColName" => "",
+      "valueFromColNameDisplay" => "",
+      "mustInput" => 1,
+      "showOrder" => -1000,
+      "sysCol" => 1,
+      "isVisible" => 2,
+      "editorXtype" => "displayfield",
+      "colSpan" => 1
+    ];
+
+    // input_user_id
+    $result[] = [
+      "caption" => "制单人",
+      "fieldName" => "input_user_id",
+      "fieldType" => "varchar",
+      "fieldLength" => 255,
+      "fieldDecimal" => 0,
+      "valueFrom" => 5,
+      "valueFromTableName" => "t_user",
+      "valueFromColName" => "id",
+      "valueFromColNameDisplay" => "name",
+      "mustInput" => 1,
+      "showOrder" => -1000,
+      "sysCol" => 1,
+      "isVisible" => 1,
+      "editorXtype" => "displayfield",
+      "colSpan" => 1
+    ];
+
+    // bill_memo
+    $result[] = [
+      "caption" => "备注",
+      "fieldName" => "bill_memo",
+      "fieldType" => "varchar",
+      "fieldLength" => 1000,
+      "fieldDecimal" => 0,
+      "valueFrom" => 1,
+      "valueFromTableName" => "",
+      "valueFromColName" => "",
+      "valueFromColNameDisplay" => "",
+      "mustInput" => 2,
+      "showOrder" => 4,
+      "sysCol" => 1,
+      "isVisible" => 1,
+      "editorXtype" => "textfield",
+      "colSpan" => 1
+    ];
+
+    // confirm_user_id
+    $result[] = [
+      "caption" => "审核人",
+      "fieldName" => "confirm_user_id",
+      "fieldType" => "varchar",
+      "fieldLength" => 255,
+      "fieldDecimal" => 0,
+      "valueFrom" => 5,
+      "valueFromTableName" => "t_user",
+      "valueFromColName" => "id",
+      "valueFromColNameDisplay" => "name",
+      "mustInput" => 1,
+      "showOrder" => -1000,
+      "sysCol" => 1,
+      "isVisible" => 1,
+      "editorXtype" => "displayfield",
+      "colSpan" => 1
+    ];
+
+    // confirm_dt
+    $result[] = [
+      "caption" => "审核时间",
+      "fieldName" => "confirm_dt",
+      "fieldType" => "datetime",
+      "fieldLength" => 0,
+      "fieldDecimal" => 0,
+      "valueFrom" => 5,
+      "valueFromTableName" => "",
+      "valueFromColName" => "",
+      "valueFromColNameDisplay" => "",
+      "mustInput" => 1,
+      "showOrder" => -1000,
+      "sysCol" => 1,
+      "isVisible" => 1,
+      "editorXtype" => "displayfield",
+      "colSpan" => 1
+    ];
+
+    // data_org
+    $result[] = [
+      "caption" => "数据域",
+      "fieldName" => "data_org",
+      "fieldType" => "varchar",
+      "fieldLength" => 255,
+      "fieldDecimal" => 0,
+      "valueFrom" => 5,
+      "valueFromTableName" => "",
+      "valueFromColName" => "",
+      "valueFromColNameDisplay" => "",
+      "mustInput" => 1,
+      "showOrder" => -1000,
+      "sysCol" => 1,
+      "isVisible" => 1,
+      "editorXtype" => "displayfield",
+      "colSpan" => 1
+    ];
+
+    // company_id
+    $result[] = [
+      "caption" => "公司id",
+      "fieldName" => "company_id",
+      "fieldType" => "varchar",
+      "fieldLength" => 255,
+      "fieldDecimal" => 0,
+      "valueFrom" => 5,
+      "valueFromTableName" => "",
+      "valueFromColName" => "",
+      "valueFromColNameDisplay" => "",
+      "mustInput" => 1,
+      "showOrder" => -1000,
+      "sysCol" => 1,
+      "isVisible" => 1,
+      "editorXtype" => "displayfield",
+      "colSpan" => 1
+    ];
+
+    return $result;
+  }
+
+  /**
    * 新增表单
    */
   public function addForm(&$params)

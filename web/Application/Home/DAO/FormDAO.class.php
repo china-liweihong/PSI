@@ -226,9 +226,10 @@ class FormDAO extends PSIBaseExDAO
   {
     $db = $this->db;
 
-    $categoryId = $params["caregoryId"];
+    $categoryId = $params["categoryId"];
 
-    $sql = "select id, code, name, sys_form, md_version, memo
+    $sql = "select id, code, name, sys_form, md_version, memo,
+              table_name
             from t_form 
             where category_id = '%s'
             order by code";
@@ -241,7 +242,8 @@ class FormDAO extends PSIBaseExDAO
         "name" => $v["name"],
         "sysForm" => $v["sys_form"],
         "mdVersion" => $v["md_version"],
-        "memo" => $v["memo"]
+        "memo" => $v["memo"],
+        "tableName" => $v["table_name"]
       ];
     }
     return $result;
@@ -728,9 +730,9 @@ class FormDAO extends PSIBaseExDAO
 
     // 3.1 主表元数据
     $id = $this->newId();
-    $sql = "insert into t_form (id, code, name, category_id, sys_form, md_version, memo)
-            values ('%s', '%s', '%s', '%s', 0, 1, '%s') ";
-    $rc = $db->execute($sql, $id, $code, $name, $categoryId, $memo);
+    $sql = "insert into t_form (id, code, name, category_id, sys_form, md_version, memo, table_name)
+            values ('%s', '%s', '%s', '%s', 0, 1, '%s', '%s') ";
+    $rc = $db->execute($sql, $id, $code, $name, $categoryId, $memo, $tableName);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
     }

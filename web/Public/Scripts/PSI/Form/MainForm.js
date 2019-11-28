@@ -344,8 +344,16 @@ Ext.define("PSI.Form.MainForm", {
     return me.__mainGrid;
   },
 
+  onMainGridSelect: function () {
+    var me = this;
+
+    me.refreshColsGrid();
+  },
+
   refreshMainGrid: function (id) {
     var me = this;
+
+    me.getColsGrid().getStore().removeAll();
 
     var item = me.getCategoryGrid().getSelectionModel().getSelection();
     if (item == null || item.length != 1) {
@@ -386,6 +394,51 @@ Ext.define("PSI.Form.MainForm", {
         }
 
         el && el.unmask();
+      }
+    };
+
+    me.ajax(r);
+  },
+
+  refreshColsGrid: function (id) {
+    var me = this;
+    var item = me.getMainGrid().getSelectionModel().getSelection();
+    if (item == null || item.length != 1) {
+      return;
+    }
+
+    var form = item[0];
+
+    var grid = me.getColsGrid();
+    var el = grid.getEl() || Ext.getBody();
+    el.mask(PSI.Const.LOADING);
+    var r = {
+      url: me.URL("Home/form/formColList"),
+      params: {
+        id: form.get("id")
+      },
+      callback: function (options, success, response) {
+        var store = grid.getStore();
+
+        store.removeAll();
+
+        if (success) {
+          var data = me.decodeJSON(response.responseText);
+          store.add(data);
+
+          if (store.getCount() > 0) {
+            if (id) {
+              var r = store.findExact("id", id);
+              if (r != -1) {
+                grid.getSelectionModel().select(r);
+              }
+            } else {
+              grid.getSelectionModel().select(0);
+            }
+          }
+        }
+
+        el.unmask();
       }
     };
 
@@ -472,7 +525,8 @@ Ext.define("PSI.Form.MainForm", {
         "fieldType", "fieldLength", "fieldDecimal",
         "valueFrom", "valueFromTableName",
         "valueFromColName", "valueFromColNameDisplay", "mustInput",
-        "showOrder", "sysCol", "isVisible", "note", "editorXtype"]
+        "showOrder", "sysCol", "isVisible", "note", "editorXtype",
+        "colSpan"]
     });
 
     me.__colsGrid = Ext.create("Ext.grid.Panel", {
@@ -559,6 +613,11 @@ Ext.define("PSI.Form.MainForm", {
         }, {
           header: "编辑器类型",
           dataIndex: "editorXtype",
+          width: 130
+        }, {
+          header: "编辑器列占位",
+          dataIndex: "colSpan",
+          align: "right",
           width: 130
         }, {
           header: "备注",

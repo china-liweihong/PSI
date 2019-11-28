@@ -361,7 +361,7 @@ class FormDAO extends PSIBaseExDAO
       "valueFromTableName" => "",
       "valueFromColName" => "",
       "valueFromColNameDisplay" => "",
-      "mustInput" => 1,
+      "mustInput" => 2,
       "showOrder" => 2,
       "sysCol" => 1,
       "isVisible" => 1,
@@ -380,7 +380,7 @@ class FormDAO extends PSIBaseExDAO
       "valueFromTableName" => "t_user",
       "valueFromColName" => "id",
       "valueFromColNameDisplay" => "name",
-      "mustInput" => 1,
+      "mustInput" => 2,
       "showOrder" => 3,
       "sysCol" => 1,
       "isVisible" => 1,
@@ -437,7 +437,7 @@ class FormDAO extends PSIBaseExDAO
       "valueFromTableName" => "",
       "valueFromColName" => "",
       "valueFromColNameDisplay" => "",
-      "mustInput" => 2,
+      "mustInput" => 1,
       "showOrder" => 4,
       "sysCol" => 1,
       "isVisible" => 1,
@@ -865,5 +865,66 @@ class FormDAO extends PSIBaseExDAO
     // 操作成功
     $params["id"] = $id;
     return null;
+  }
+
+  private function valueFromCodeToName($valueFrom)
+  {
+    switch ($valueFrom) {
+      case 1:
+        return "直接录入";
+      case 2:
+        return "引用系统数据字典";
+      case 3:
+        return "引用码表";
+      case 5:
+        return "自动生成";
+      default:
+        return "";
+    }
+  }
+
+  /**
+   * 表单主表列
+   */
+  public function formColList($params)
+  {
+    $db = $this->db;
+
+    $id = $params["id"];
+
+    $sql = "select id, caption, db_field_name, db_field_type,
+              db_field_length, db_field_decimal, show_order,
+              col_span, value_from, value_from_table_name,
+              value_from_col_name, value_from_col_name_display,
+              must_input, sys_col, is_visible, note, editor_xtype
+            from t_form_cols
+            where form_id = '%s' 
+            order by show_order";
+    $data = $db->query($sql, $id);
+    $result = [];
+    foreach ($data as $v) {
+      $result[] = [
+        "id" => $v["id"],
+        "caption" => $v["caption"],
+        "fieldName" => $v["db_field_name"],
+        "fieldType" => $v["db_field_type"],
+        "fieldLength" => $v["db_field_length"],
+        "fieldDecimal" => $v["db_field_decimal"],
+        "valueFrom" => $this->valueFromCodeToName($v["value_from"]),
+        "valueFromTableName" => $v["value_from_table_name"],
+        "valueFromColName" => $v["value_from_col_name"],
+        "valueFromColNameDisplay" => $v["value_from_col_name_display"],
+        "sysCol" => $v["sys_col"] == 1 ? "系统列" : "",
+        "isVisible" => $v["is_visible"] == 1 ? "可见" : "不可见",
+        "note" => $v["note"],
+        "showOrderInView" => $v["show_order_in_view"],
+        "editorXtype" => $v["editor_xtype"],
+        "mustInput" => $v["must_input"] == 2 ? "必录项" : "",
+        "colSpan" => $v["col_span"],
+        "showOrder" => $v["show_order"]
+      ];
+    }
+
+    return $result;
   }
 }

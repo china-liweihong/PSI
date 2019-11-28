@@ -261,6 +261,10 @@ Ext.define("PSI.Form.MainForm", {
 
   onCategoryGridSelect: function () {
     var me = this;
+
+    me.getColsGrid().getStore().removeAll();
+    me.getDetailGrid().getStore().removeAll();
+
     me.refreshMainGrid();
   },
 
@@ -348,12 +352,11 @@ Ext.define("PSI.Form.MainForm", {
     var me = this;
 
     me.refreshColsGrid();
+    me.refreshDetailGrid();
   },
 
   refreshMainGrid: function (id) {
     var me = this;
-
-    me.getColsGrid().getStore().removeAll();
 
     var item = me.getCategoryGrid().getSelectionModel().getSelection();
     if (item == null || item.length != 1) {
@@ -414,6 +417,51 @@ Ext.define("PSI.Form.MainForm", {
     el.mask(PSI.Const.LOADING);
     var r = {
       url: me.URL("Home/form/formColList"),
+      params: {
+        id: form.get("id")
+      },
+      callback: function (options, success, response) {
+        var store = grid.getStore();
+
+        store.removeAll();
+
+        if (success) {
+          var data = me.decodeJSON(response.responseText);
+          store.add(data);
+
+          if (store.getCount() > 0) {
+            if (id) {
+              var r = store.findExact("id", id);
+              if (r != -1) {
+                grid.getSelectionModel().select(r);
+              }
+            } else {
+              grid.getSelectionModel().select(0);
+            }
+          }
+        }
+
+        el.unmask();
+      }
+    };
+
+    me.ajax(r);
+  },
+
+  refreshDetailGrid: function (id) {
+    var me = this;
+    var item = me.getMainGrid().getSelectionModel().getSelection();
+    if (item == null || item.length != 1) {
+      return;
+    }
+
+    var form = item[0];
+
+    var grid = me.getDetailGrid();
+    var el = grid.getEl() || Ext.getBody();
+    el.mask(PSI.Const.LOADING);
+    var r = {
+      url: me.URL("Home/form/formDetailList"),
       params: {
         id: form.get("id")
       },
@@ -705,7 +753,7 @@ Ext.define("PSI.Form.MainForm", {
       }),
       listeners: {
         select: {
-          fn: me.onMainGridSelect,
+          fn: me.onDetailGridSelect,
           scope: me
         }
       }

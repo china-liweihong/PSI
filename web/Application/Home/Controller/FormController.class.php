@@ -151,4 +151,19 @@ class FormController extends PSIBaseController
       $this->ajaxReturn($service->formDetailList($params));
     }
   }
+
+  /**
+   * 表单明细表的列的列表
+   */
+  public function formDetailColList()
+  {
+    if (IS_POST) {
+      $params = [
+        "id" => I("post.id")
+      ];
+
+      $service = new FormService();
+      $this->ajaxReturn($service->formDetailColList($params));
+    }
+  }
 }

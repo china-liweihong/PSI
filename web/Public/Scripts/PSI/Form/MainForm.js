@@ -264,6 +264,7 @@ Ext.define("PSI.Form.MainForm", {
 
     me.getColsGrid().getStore().removeAll();
     me.getDetailGrid().getStore().removeAll();
+    me.getDetailColsGrid().getStore().removeAll();
 
     me.refreshMainGrid();
   },
@@ -464,6 +465,51 @@ Ext.define("PSI.Form.MainForm", {
       url: me.URL("Home/form/formDetailList"),
       params: {
         id: form.get("id")
+      },
+      callback: function (options, success, response) {
+        var store = grid.getStore();
+
+        store.removeAll();
+
+        if (success) {
+          var data = me.decodeJSON(response.responseText);
+          store.add(data);
+
+          if (store.getCount() > 0) {
+            if (id) {
+              var r = store.findExact("id", id);
+              if (r != -1) {
+                grid.getSelectionModel().select(r);
+              }
+            } else {
+              grid.getSelectionModel().select(0);
+            }
+          }
+        }
+
+        el.unmask();
+      }
+    };
+
+    me.ajax(r);
+  },
+
+  refreshDetailColsGrid: function (id) {
+    var me = this;
+    var item = me.getDetailGrid().getSelectionModel().getSelection();
+    if (item == null || item.length != 1) {
+      return;
+    }
+
+    var formDetail = item[0];
+
+    var grid = me.getDetailColsGrid();
+    var el = grid.getEl() || Ext.getBody();
+    el.mask(PSI.Const.LOADING);
+    var r = {
+      url: me.URL("Home/form/formDetailColList"),
+      params: {
+        id: formDetail.get("id")
       },
       callback: function (options, success, response) {
         var store = grid.getStore();
@@ -762,6 +808,12 @@ Ext.define("PSI.Form.MainForm", {
     return me.__detailGrid;
   },
 
+  onDetailGridSelect: function () {
+    var me = this;
+
+    me.refreshDetailColsGrid();
+  },
+
   getDetailColsGrid: function () {
     var me = this;
 
@@ -778,7 +830,7 @@ Ext.define("PSI.Form.MainForm", {
         "valueFrom", "valueFromTableName",
         "valueFromColName", "valueFromColNameDisplay", "mustInput",
         "showOrder", "sysCol", "isVisible",
-        "widthInView", "note", "showOrderInView", "editorXtype"]
+        "widthInView", "note", "editorXtype"]
     });
 
     me.__detailColsGrid = Ext.create("Ext.grid.Panel", {
@@ -861,19 +913,14 @@ Ext.define("PSI.Form.MainForm", {
           dataIndex: "mustInput",
           width: 70
         }, {
-          header: "列视图宽度(px)",
+          header: "列宽度(px)",
           dataIndex: "widthInView",
           width: 120,
           align: "right"
         }, {
-          header: "编辑界面中显示次序",
+          header: "列显示次序",
           dataIndex: "showOrder",
           width: 140,
-          align: "right"
-        }, {
-          header: "视图中显示次序",
-          dataIndex: "showOrderInView",
-          width: 130,
           align: "right"
         }, {
           header: "编辑器类型",

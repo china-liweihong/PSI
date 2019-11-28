@@ -211,4 +211,17 @@ class FormService extends PSIBaseExService
     $dao = new FormDAO($this->db());
     return $dao->formDetailList($params);
   }
+
+  /**
+   * 表单明细表的列的列表
+   */
+  public function formDetailColList($params)
+  {
+    if ($this->isNotOnline()) {
+      return $this->emptyResult();
+    }
+
+    $dao = new FormDAO($this->db());
+    return $dao->formDetailColList($params);
+  }
 }

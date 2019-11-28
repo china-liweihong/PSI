@@ -599,7 +599,7 @@ class FormDAO extends PSIBaseExDAO
       "valueFromTableName" => "",
       "valueFromColName" => "",
       "valueFromColNameDisplay" => "",
-      "mustInput" => 2,
+      "mustInput" => 1,
       "showOrder" => 100,
       "sysCol" => 1,
       "isVisible" => 1,
@@ -950,6 +950,51 @@ class FormDAO extends PSIBaseExDAO
         "tableName" => $v["table_name"],
         "fkName" => $v["fk_name"],
         "showOrder" => $v["show_order"]
+      ];
+    }
+
+    return $result;
+  }
+
+  /**
+   * 表单明细表的列的列表
+   */
+  public function formDetailColList($params)
+  {
+    $db = $this->db;
+
+    $id = $params["id"];
+
+    $sql = "select id, caption, db_field_name, db_field_type,
+              db_field_length, db_field_decimal, show_order, width_in_view,
+              value_from, value_from_table_name, value_from_col_name, 
+              value_from_col_name_display, must_input, sys_col, is_visible,
+              note, editor_xtype
+            from t_form_detail_cols
+            where detail_id = '%s' 
+            order by show_order";
+    $data = $db->query($sql, $id);
+
+    $result = [];
+    foreach ($data as $v) {
+      $result[] = [
+        "id" => $v["id"],
+        "caption" => $v["caption"],
+        "fieldName" => $v["db_field_name"],
+        "fieldType" => $v["db_field_type"],
+        "fieldLength" => $v["db_field_length"],
+        "fieldDecimal" => $v["db_field_decimal"],
+        "valueFrom" => $this->valueFromCodeToName($v["value_from"]),
+        "valueFromTableName" => $v["value_from_table_name"],
+        "valueFromColName" => $v["value_from_col_name"],
+        "valueFromColNameDisplay" => $v["value_from_col_name_display"],
+        "mustInput" => $v["must_input"] == 2 ? "必录项" : "",
+        "isVisible" => $v["is_visible"] == 1 ? "可见" : "不可见",
+        "showOrder" => $v["show_order"],
+        "note" => $v["note"],
+        "editorXtype" => $v["editor_xtype"],
+        "widthInView" => $v["width_in_view"],
+        "sysCol" => $v["sys_col"] == 1 ? "系统列" : "",
       ];
     }
 

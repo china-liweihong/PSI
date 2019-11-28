@@ -347,8 +347,7 @@ Ext.define("PSI.Form.MainForm", {
   refreshMainGrid: function (id) {
     var me = this;
 
-    var item = me.getCategoryGrid().getSelectionModel()
-      .getSelection();
+    var item = me.getCategoryGrid().getSelectionModel().getSelection();
     if (item == null || item.length != 1) {
       me.getMainGrid().setTitle(me.formatGridHeaderTitle("表单"));
       return;
@@ -357,8 +356,7 @@ Ext.define("PSI.Form.MainForm", {
     var category = item[0];
 
     var grid = me.getMainGrid();
-    grid.setTitle(me.formatGridHeaderTitle("属于分类["
-      + category.get("name") + "]的表单"));
+    grid.setTitle(me.formatGridHeaderTitle("属于分类[" + category.get("name") + "]的表单"));
     var el = grid.getEl() || Ext.getBody();
     el.mask(PSI.Const.LOADING);
     var r = {
@@ -397,8 +395,7 @@ Ext.define("PSI.Form.MainForm", {
   onAddForm: function () {
     var me = this;
 
-    var item = me.getCategoryGrid().getSelectionModel()
-      .getSelection();
+    var item = me.getCategoryGrid().getSelectionModel().getSelection();
     if (item == null || item.length != 1) {
       me.showInfo("请选择一个的表单分类");
       return;

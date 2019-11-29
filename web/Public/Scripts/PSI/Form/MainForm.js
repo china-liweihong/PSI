@@ -262,10 +262,6 @@ Ext.define("PSI.Form.MainForm", {
   onCategoryGridSelect: function () {
     var me = this;
 
-    me.getColsGrid().getStore().removeAll();
-    me.getDetailGrid().getStore().removeAll();
-    me.getDetailColsGrid().getStore().removeAll();
-
     me.refreshMainGrid();
   },
 
@@ -358,6 +354,10 @@ Ext.define("PSI.Form.MainForm", {
 
   refreshMainGrid: function (id) {
     var me = this;
+
+    me.getColsGrid().getStore().removeAll();
+    me.getDetailGrid().getStore().removeAll();
+    me.getDetailColsGrid().getStore().removeAll();
 
     var item = me.getCategoryGrid().getSelectionModel().getSelection();
     if (item == null || item.length != 1) {

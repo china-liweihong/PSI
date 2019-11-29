@@ -219,6 +219,25 @@ class FormDAO extends PSIBaseExDAO
     return $result;
   }
 
+  public function getFormById($id)
+  {
+    $db = $this->db;
+
+    $sql = "select code, name from t_form where id = '%s' ";
+    $data = $db->query($sql, $id);
+    if ($data) {
+      $v = $data[0];
+
+      return [
+        "id" => $id,
+        "name" => $v["name"],
+        "code" => $v["code"]
+      ];
+    } else {
+      return null;
+    }
+  }
+
   /**
    * 某个分类下的表单列表
    */
@@ -1006,6 +1025,51 @@ class FormDAO extends PSIBaseExDAO
    */
   public function deleteForm(&$params)
   {
-    return $this->todo();
+    $db = $this->db;
+
+    $id = $params["id"];
+
+    $form = $this->getFormById($id);
+    if (!$form) {
+      return $this->bad("要删除的表单不存在");
+    }
+    $name = $form["name"];
+
+    // 删除明细表的列
+    $sql = "select id from t_form_detail where form_id = '%s' ";
+    $data = $db->query($sql, $id);
+    foreach ($data as $v) {
+      $detailId = $v["id"];
+      $sql = "delete from t_form_detail_cols where detail_id = '%s' ";
+      $rc = $db->execute($sql, $detailId);
+      if ($rc === false) {
+        return $this->sqlError(__METHOD__, __LINE__);
+      }
+    }
+
+    // 删除明细表
+    $sql = "delete from t_form_detail where form_id = '%s' ";
+    $rc = $db->execute($sql, $id);
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+
+    // 删除主表列
+    $sql = "delete from t_form_cols where form_id = '%s' ";
+    $rc = $db->execute($sql, $id);
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+
+    // 删除主表
+    $sql = "delete from t_form where id = '%s' ";
+    $rc = $db->execute($sql, $id);
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+
+    // 操作成功
+    $params["name"] = $name;
+    return null;
   }
 }

@@ -7,7 +7,7 @@ use Home\Service\GoodsService;
 use Home\Service\ImportService;
 use Home\Service\UserService;
 
-require __DIR__ . '/../Common/Excel/PHPExcel/IOFactory.php';
+require_once __DIR__ . '/../Common/Excel/PHPExcel/IOFactory.php';
 
 /**
  * 商品Controller

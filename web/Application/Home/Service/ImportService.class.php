@@ -4,7 +4,7 @@ namespace Home\Service;
 
 use Think\Exception;
 
-require __DIR__ . '/../Common/Excel/PHPExcel/IOFactory.php';
+require_once __DIR__ . '/../Common/Excel/PHPExcel/IOFactory.php';
 
 /**
  * PHPExcel文件 Service

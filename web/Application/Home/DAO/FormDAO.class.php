@@ -1000,4 +1000,12 @@ class FormDAO extends PSIBaseExDAO
 
     return $result;
   }
+
+  /**
+   * 删除表单元数据
+   */
+  public function deleteForm(&$params)
+  {
+    return $this->todo();
+  }
 }

@@ -563,10 +563,60 @@ Ext.define("PSI.Form.MainForm", {
     me.showInfo("TODO");
   },
 
+  // 删除表单元数据
   onDeleteForm: function () {
     var me = this;
+    var item = me.getMainGrid().getSelectionModel().getSelection();
+    if (item == null || item.length != 1) {
+      me.showInfo("请选择要删除的表单");
+      return;
+    }
 
-    me.showInfo("TODO");
+    var form = item[0];
+
+    var store = me.getMainGrid().getStore();
+    var index = store.findExact("id", form.get("id"));
+    index--;
+    var preIndex = null;
+    var preItem = store.getAt(index);
+    if (preItem) {
+      preIndex = preItem.get("id");
+    }
+
+    var info = "请确认是否删除表单: <span style='color:red'>"
+      + form.get("name")
+      + "</span><br /><br />当前操作只删除表单元数据，数据库实际表不会删除";
+
+    var funcConfirm = function () {
+      var el = Ext.getBody();
+      el.mask("正在删除中...");
+
+      var r = {
+        url: me.URL("Home/Form/deleteForm"),
+        params: {
+          id: form.get("id")
+        },
+        callback: function (options, success, response) {
+          el.unmask();
+
+          if (success) {
+            var data = me.decodeJSON(response.responseText);
+            if (data.success) {
+              me.tip("成功完成删除操作");
+              me.refreshMainGrid(preIndex);
+            } else {
+              me.showInfo(data.msg);
+            }
+          } else {
+            me.showInfo("网络错误");
+          }
+        }
+      };
+
+      me.ajax(r);
+    };
+
+    me.confirm(info, funcConfirm);
   },
 
   refreshCategoryGrid: function (id) {

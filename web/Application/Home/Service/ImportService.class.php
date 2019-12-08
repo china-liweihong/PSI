@@ -4,7 +4,7 @@ namespace Home\Service;
 
 use Think\Exception;
 
-require_once __DIR__ . '/../Common/Excel/PHPExcel/IOFactory.php';
+// require_once __DIR__ . '/../Common/Excel/PHPExcel/IOFactory.php';
 
 /**
  * PHPExcel文件 Service
@@ -27,13 +27,8 @@ class ImportService extends PSIBaseService
     $dataFile = $params["datafile"];
     $ext = $params["ext"];
     $message = "";
-    $success = true;
-    $result = array(
-      "msg" => $message,
-      "success" => $success
-    );
     if (!$dataFile || !$ext)
-      return $result;
+      return $this->bad("上传Excel文件失败，请重新上传");
 
     $inputFileType = 'Excel5';
     if ($ext == 'xlsx')
@@ -45,168 +40,176 @@ class ImportService extends PSIBaseService
     $objReader = \PHPExcel_IOFactory::createReader($inputFileType);
     // 设置只读，可取消类似"3.08E-05"之类自动转换的数据格式，避免写库失败
     $objReader->setReadDataOnly(true);
-    try {
-      // 载入文件
-      $objPHPExcel = $objReader->load($dataFile);
-      // 获取表中的第一个工作表
-      $currentSheet = $objPHPExcel->getSheet(0);
-      // 获取总行数
-      $allRow = $currentSheet->getHighestRow();
 
-      // 如果没有数据行，直接返回
-      if ($allRow < 2)
-        return $result;
+    // 载入文件
+    $objPHPExcel = $objReader->load($dataFile);
+    // 获取表中的第一个工作表
+    $currentSheet = $objPHPExcel->getSheet(0);
+    // 获取总行数
+    $allRow = $currentSheet->getHighestRow();
 
-      $ps = new PinyinService();
-      $idGen = new IdGenService();
-      $bs = new BizlogService();
-      $gs = new GoodsService();
-      $db = M();
-      $units = array(); // 将计量单位缓存，以免频繁访问数据库
-      $categories = array(); // 同上
-      $params = array(); // 数据参数
+    // 如果没有数据行，直接返回
+    if ($allRow < 2) {
+      return $this->bad("Excel中没有数据，无法导入");
+    }
 
-      $us = new UserService();
-      $dataOrg = $us->getLoginUserDataOrg();
+    $ps = new PinyinService();
+    $idGen = new IdGenService();
+    $bs = new BizlogService();
+    $gs = new GoodsService();
+    $db = M();
+    $units = array(); // 将计量单位缓存，以免频繁访问数据库
+    $categories = array(); // 同上
+    $params = array(); // 数据参数
 
-      $insertSql = "insert into t_goods (id, code, name, spec, category_id, unit_id, sale_price,	py, 
-					purchase_price, bar_code, data_org, memo, spec_py) values";
-      $dataSql = "('%s', '%s', '%s', '%s', '%s', '%s', %f, '%s', %f, '%s', '%s', '%s', '%s'),";
-      /**
-       * 单元格定义
-       * A 商品分类编码
-       * B 商品编码
-       * C 商品名称
-       * D 规格型号
-       * E 计量单位
-       * F 销售单价
-       * G 建议采购单价
-       * H 条形码
-       * I 备注
-       */
-      // 从第2行获取数据
-      for ($currentRow = 2; $currentRow <= $allRow; $currentRow++) {
-        // 数据坐标
-        $indexCategory = 'A' . $currentRow;
-        $indexCode = 'B' . $currentRow;
-        $indexName = 'C' . $currentRow;
-        $indexSpec = 'D' . $currentRow;
-        $indexUnit = 'E' . $currentRow;
-        $indexSalePrice = 'F' . $currentRow;
-        $indexPurchasePrice = 'G' . $currentRow;
-        $indexBarcode = 'H' . $currentRow;
-        $indexMemo = 'I' . $currentRow;
-        // 读取到的数据，保存到数组$arr中
-        $category = $currentSheet->getCell($indexCategory)->getValue();
-        $code = $currentSheet->getCell($indexCode)->getValue();
-        $name = $currentSheet->getCell($indexName)->getValue();
-        $spec = $currentSheet->getCell($indexSpec)->getValue();
-        $unit = $currentSheet->getCell($indexUnit)->getValue();
-        $salePrice = $currentSheet->getCell($indexSalePrice)->getValue();
-        $purchasePrice = $currentSheet->getCell($indexPurchasePrice)->getValue();
-        $barcode = $currentSheet->getCell($indexBarcode)->getValue();
-        $memo = $currentSheet->getCell($indexMemo)->getValue();
+    $us = new UserService();
+    $dataOrg = $us->getLoginUserDataOrg();
 
-        // 如果为空则直接读取下一条记录
-        if (!$category || !$code || !$name || !$unit)
-          continue;
+    $insertSql = "insert into t_goods (id, code, name, spec, category_id, unit_id, sale_price,	py, 
+					            purchase_price, bar_code, data_org, memo, spec_py) values";
+    $dataSql = "('%s', '%s', '%s', '%s', '%s', '%s', %f, '%s', %f, '%s', '%s', '%s', '%s'),";
+    /**
+     * 单元格定义
+     * A 商品分类编码
+     * B 商品编码
+     * C 商品名称
+     * D 规格型号
+     * E 计量单位
+     * F 销售单价
+     * G 建议采购单价
+     * H 条形码
+     * I 备注
+     */
+    // 从第2行获取数据
+    for ($currentRow = 2; $currentRow <= $allRow; $currentRow++) {
+      // 数据坐标
+      $indexCategory = 'A' . $currentRow;
+      $indexCode = 'B' . $currentRow;
+      $indexName = 'C' . $currentRow;
+      $indexSpec = 'D' . $currentRow;
+      $indexUnit = 'E' . $currentRow;
+      $indexSalePrice = 'F' . $currentRow;
+      $indexPurchasePrice = 'G' . $currentRow;
+      $indexBarcode = 'H' . $currentRow;
+      $indexMemo = 'I' . $currentRow;
+      // 读取到的数据，保存到数组$arr中
+      $category = $currentSheet->getCell($indexCategory)->getValue();
+      $code = $currentSheet->getCell($indexCode)->getValue();
+      $name = $currentSheet->getCell($indexName)->getValue();
+      $spec = $currentSheet->getCell($indexSpec)->getValue();
+      $unit = $currentSheet->getCell($indexUnit)->getValue();
+      $salePrice = $currentSheet->getCell($indexSalePrice)->getValue();
+      $purchasePrice = $currentSheet->getCell($indexPurchasePrice)->getValue();
+      $barcode = $currentSheet->getCell($indexBarcode)->getValue();
+      $memo = $currentSheet->getCell($indexMemo)->getValue();
 
-        $unitId = null;
-        $categoryId = null;
+      // 如果为空则直接读取下一条记录
+      if (!$category || !$code || !$name || !$unit)
+        continue;
 
-        if ($units["{$unit}"]) {
-          $unitId = $units["{$unit}"];
-        } else {
-          $sql = "select id, `name` from t_goods_unit where `name` = '%s' ";
-          $data = $db->query($sql, $unit);
-          if (!$data) {
-            // 新增计量单位
-            $newUnitParams = array(
-              "name" => $unit
-            );
-            $newUnit = $gs->editUnit($newUnitParams);
-            $unitId = $newUnit["id"];
-          } else {
-            $unitId = $data[0]["id"];
-          }
-          $units += array(
-            "{$unit}" => "{$unitId}"
+      $unitId = null;
+      $categoryId = null;
+
+      if ($units["{$unit}"]) {
+        $unitId = $units["{$unit}"];
+      } else {
+        $sql = "select id, `name` from t_goods_unit where `name` = '%s' ";
+        $data = $db->query($sql, $unit);
+        if (!$data) {
+          // 新增计量单位
+          $newUnitParams = array(
+            "name" => $unit
           );
-        }
-
-        if ($categories["{$category}"]) {
-          $categoryId = $categories["{$category}"];
+          $newUnit = $gs->editUnit($newUnitParams);
+          $unitId = $newUnit["id"];
         } else {
-          $sql = "select id, code from t_goods_category where code = '%s' ";
-          $data = $db->query($sql, $category);
-          if (!$data) {
-            // 新增分类
-            continue;
-          } else {
-            $categoryId = $data[0]["id"];
-          }
-          $categories += array(
-            "{$category}" => "{$categoryId}"
-          );
+          $unitId = $data[0]["id"];
         }
-
-        // 新增
-        // 检查商品编码是否唯一
-        $sql = "select 1  from t_goods where code = '%s' ";
-        $data = $db->query($sql, $code);
-        if ($data) {
-          $message .= "商品: 商品编码 = {$code}, 品名 = {$name}, 规格型号 = {$spec} 已存在; \r\n";
-          continue;
-        }
-
-        // 如果录入了条形码，则需要检查条形码是否唯一
-        if ($barcode) {
-          $sql = "select 1  from t_goods where bar_code = '%s' ";
-          $data = $db->query($sql, $barcode);
-          if ($data) {
-            $message .= "商品: 商品编码 = {$code}, 品名 = {$name}, 规格型号 = {$spec}，条形码 = {$barcode} 已存在;\r\n";
-            continue;
-          }
-        }
-
-        $id = $idGen->newId();
-        $py = $ps->toPY($name);
-        $specPY = $ps->toPY($spec);
-
-        $insertSql .= $dataSql;
-        // 数据参数加入
-        array_push(
-          $params,
-          $id,
-          $code,
-          $name,
-          $spec,
-          $categoryId,
-          $unitId,
-          $salePrice,
-          $py,
-          $purchasePrice,
-          $barcode,
-          $dataOrg,
-          $memo,
-          $specPY
+        $units += array(
+          "{$unit}" => "{$unitId}"
         );
       }
 
-      $db->execute(rtrim($insertSql, ','), $params);
+      if ($categories["{$category}"]) {
+        $categoryId = $categories["{$category}"];
+      } else {
+        $sql = "select id, code from t_goods_category where code = '%s' ";
+        $data = $db->query($sql, $category);
+        if (!$data) {
+          // 商品分类不存在
+          $message .= "Excel中第{$currentRow}行记录 商品分类不存在，不能导入<br/><br/>";
+          continue;
+        } else {
+          $categoryId = $data[0]["id"];
+        }
+        $categories += array(
+          "{$category}" => "{$categoryId}"
+        );
+      }
 
-      $log = "导入方式新增商品;{$dataFile}";
-      $bs->insertBizlog($log, "基础数据-商品");
-    } catch (Exception $e) {
-      $success = false;
-      $message = $e;
+      // 新增
+      // 检查商品编码是否唯一
+      $sql = "select 1  from t_goods where code = '%s' ";
+      $data = $db->query($sql, $code);
+      if ($data) {
+        $message .= "Excel中第{$currentRow}行记录 商品: 商品编码 = {$code}, 品名 = {$name}, 规格型号 = {$spec} 已存在，不能导入<br/><br/>";
+        continue;
+      }
+
+      // 如果录入了条形码，则需要检查条形码是否唯一
+      if ($barcode) {
+        $sql = "select 1  from t_goods where bar_code = '%s' ";
+        $data = $db->query($sql, $barcode);
+        if ($data) {
+          $message .= "Excel中第{$currentRow}行记录 商品[ 商品编码 = {$code}, 品名 = {$name}, 规格型号 = {$spec}]的条形码 = {$barcode} 已存在，不能导入<br/><br/>";
+          continue;
+        }
+      }
+
+      $id = $idGen->newId();
+      $py = $ps->toPY($name);
+      $specPY = $ps->toPY($spec);
+
+      $insertSql .= $dataSql;
+      // 数据参数加入
+      array_push(
+        $params,
+        $id,
+        $code,
+        $name,
+        $spec,
+        $categoryId,
+        $unitId,
+        $salePrice,
+        $py,
+        $purchasePrice,
+        $barcode,
+        $dataOrg,
+        $memo,
+        $specPY
+      );
+    } // end of for
+
+    if ($message) {
+      // 这个时候，Excel中有部分不能导入的数据
+      if (mb_strlen($message) >  300) {
+        // 防止太多的错误信息让前端页面乱，最大就返回300个字符的错误信息
+        $message = mb_substr($message, 0, 300) . "......(错误信息超过300个字符，后面的信息已经省略)";
+      }
+
+      return $this->bad($message);
     }
 
-    $result = array(
-      "msg" => $message,
-      "success" => $success
-    );
-    return $result;
+    // 存在这种情况：所有的数据都非法，这样SQL就是不完整的，执行就会出错
+    if (count($params) == 0) {
+      return $this->bad("没有合格的数据可以导入");
+    }
+
+    $db->execute(rtrim($insertSql, ','), $params);
+    $log = "以导入Excel方式新增商品";
+    $bs->insertBizlog($log, "基础数据-商品");
+
+    return $this->ok();
   }
 
   /**

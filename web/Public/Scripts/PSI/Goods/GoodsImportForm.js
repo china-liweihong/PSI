@@ -27,12 +27,12 @@ Ext.define("PSI.Goods.GoodsImportForm", {
       },
       scope: me
     }, {
-        text: "关闭",
-        handler: function () {
-          me.close();
-        },
-        scope: me
-      });
+      text: "关闭",
+      handler: function () {
+        me.close();
+      },
+      scope: me
+    });
 
     Ext.apply(me, {
       header: {
@@ -87,23 +87,21 @@ Ext.define("PSI.Goods.GoodsImportForm", {
     var me = this;
     var f = Ext.getCmp("importForm");
     var el = f.getEl();
-    el.mask('正在导入...');
+    el && el.mask('正在导入...');
     f.submit({
       url: PSI.Const.BASE_URL + "Home/Goods/import",
       method: "POST",
       success: function (form, action) {
-        el.unmask();
+        el && el.unmask();
 
-        PSI.MsgBox.showInfo("数据导入成功" + action.result.msg);
-        me.focus();
+        PSI.MsgBox.showInfo("数据导入成功");
+
         me.close();
         me.getParentForm().freshGoodsGrid();
       },
       failure: function (form, action) {
-        el.unmask();
-        PSI.MsgBox.showInfo(action.result.msg, function () {
-          Ext.getCmp("editFileData").focus();
-        });
+        el && el.unmask();
+        PSI.MsgBox.showInfo(action.result.msg);
       }
     });
   }

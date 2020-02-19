@@ -181,4 +181,19 @@ class FormController extends PSIBaseController
       $this->ajaxReturn($service->deleteForm($params));
     }
   }
+
+  /**
+   * 获得表单主表元数据
+   */
+  public function formInfo()
+  {
+    if (IS_POST) {
+      $params = [
+        "id" => I("post.id")
+      ];
+
+      $service = new FormService();
+      $this->ajaxReturn($service->formInfo($params));
+    }
+  }
 }

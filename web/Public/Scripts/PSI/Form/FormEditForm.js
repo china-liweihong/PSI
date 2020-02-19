@@ -1,6 +1,7 @@
-//
-// 表单 - 新建或编辑界面
-//
+/**
+* 表单 - 新建或编辑界面
+* @author 李静波
+*/
 Ext.define("PSI.Form.FormEditForm", {
   extend: "PSI.AFX.BaseDialogForm",
 
@@ -202,14 +203,14 @@ Ext.define("PSI.Form.FormEditForm", {
       var el = me.getEl();
       el && el.mask(PSI.Const.LOADING);
       Ext.Ajax.request({
-        url: me.URL("/Home/Form/formInfo"),
+        url: me.URL("Home/Form/formInfo"),
         params: {
           id: me.getEntity().get("id")
         },
         method: "POST",
         callback: function (options, success, response) {
           if (success) {
-            var data = Ext.JSON.decode(response.responseText);
+            var data = me.decodeJSON(response.responseText);
             me.editCategory.setIdValue(data.categoryId);
             me.editCategory.setValue(data.categoryName);
             me.editCode.setValue(data.code);

@@ -560,7 +560,28 @@ Ext.define("PSI.Form.MainForm", {
   onEditForm: function () {
     var me = this;
 
-    me.showInfo("TODO");
+    var item = me.getCategoryGrid().getSelectionModel().getSelection();
+    if (item == null || item.length != 1) {
+      me.showInfo("请选择一个的表单分类");
+      return;
+    }
+
+    var category = item[0];
+
+    var item = me.getMainGrid().getSelectionModel().getSelection();
+    if (item == null || item.length != 1) {
+      me.showInfo("请选择要编辑的表单");
+      return;
+    }
+
+    var fm = item[0];
+
+    var form = Ext.create("PSI.Form.FormEditForm", {
+      parentForm: me,
+      entity: fm,
+      category: category
+    });
+    form.show();
   },
 
   // 删除表单元数据

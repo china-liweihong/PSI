@@ -886,6 +886,13 @@ class FormDAO extends PSIBaseExDAO
     return null;
   }
 
+  public function updateForm(&$params)
+  {
+    $db = $this->db;
+
+    return $this->todo();
+  }
+
   private function valueFromCodeToName($valueFrom)
   {
     switch ($valueFrom) {
@@ -1071,5 +1078,34 @@ class FormDAO extends PSIBaseExDAO
     // 操作成功
     $params["name"] = $name;
     return null;
+  }
+
+  /**
+   * 获得表单主表元数据
+   */
+  public function formInfo($params)
+  {
+    $db = $this->db;
+
+    $id = $params["id"];
+
+    $sql = "select f.code, f.name, f.memo, f.table_name, 
+              f.category_id, c.name as category_name
+            from t_form f, t_form_category c
+            where f.category_id = c.id and f.id = '%s' ";
+    $data = $db->query($sql, $id);
+    if ($data) {
+      $v = $data[0];
+      return [
+        "code" => $v["code"],
+        "name" => $v["name"],
+        "memo" => $v["memo"],
+        "tableName" => $v["table_name"],
+        "categoryName" => $v["category_name"],
+        "categoryId" => $v["category_id"]
+      ];
+    } else {
+      return $this->emptyResult();
+    }
   }
 }

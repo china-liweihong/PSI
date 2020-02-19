@@ -151,7 +151,7 @@ class FormService extends PSIBaseExService
         return $rc;
       }
 
-      $log = "编辑表单[{$name}]的元数据";
+      $log = "编辑表单[{$name}]的主表元数据";
     } else {
       // 新增
       $rc = $dao->addForm($params);

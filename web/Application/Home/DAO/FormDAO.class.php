@@ -200,7 +200,8 @@ class FormDAO extends PSIBaseExDAO
 
     $sql = "select id, code, name
             from t_form_category
-            where code like '%s' or name like '%s' ";
+            where code like '%s' or name like '%s' 
+            order by code";
     $queryParams = [];
     $queryParams[] = "%{$queryKey}%";
     $queryParams[] = "%{$queryKey}%";
@@ -890,7 +891,55 @@ class FormDAO extends PSIBaseExDAO
   {
     $db = $this->db;
 
-    return $this->todo();
+    $id = $params["id"];
+    $categoryId = $params["categoryId"];
+    $category = $this->getCategoryById($categoryId);
+    if (!$category) {
+      return $this->badParam("categoryId");
+    }
+
+    $code = $params["code"];
+    $name = $params["name"];
+    $memo = $params["memo"];
+
+    $form = $this->getFormById($id);
+    if (!$form) {
+      return $this->bad("要编辑的表单不存在");
+    }
+
+    // 检查编码是否存在
+    if ($code) {
+      $sql = "select count(*) as cnt 
+              from t_form 
+              where code = '%s' and id <> '%s' ";
+      $data = $db->query($sql, $code, $id);
+      $cnt = $data[0]["cnt"];
+      if ($cnt > 0) {
+        return $this->bad("编码为[$code]的表单已经存在");
+      }
+    }
+    // 检查表单名称是否重复
+    $sql = "select count(*) as cnt 
+            from t_form 
+            where name = '%s' and id <> '%s' ";
+    $data = $db->query($sql, $name, $id);
+    $cnt = $data[0]["cnt"];
+    if ($cnt > 0) {
+      return $this->bad("名称为[$name]的表单已经存在");
+    }
+
+    // 编辑主表元数据
+    $sql = "update t_form
+            set category_id = '%s', code = '%s', name = '%s',
+              memo = '%s', md_version = md_version + 1 
+            where id = '%s' ";
+    $rc = $db->execute($sql, $categoryId, $code, $name, $memo, $id);
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+
+    // 操作成功
+    return null;
   }
 
   private function valueFromCodeToName($valueFrom)

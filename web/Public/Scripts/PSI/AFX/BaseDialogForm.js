@@ -50,5 +50,22 @@ Ext.define("PSI.AFX.BaseDialogForm", {
 
   htmlDecode: function (s) {
     return Ext.String.htmlDecode(s);
+  },
+
+  genLogoHtml: function (entity, t) {
+    var f = entity == null
+      ? "edit-form-create.png"
+      : "edit-form-update.png";
+    var logoHtml = "<img style='float:left;margin:10px 20px 0px 10px;width:48px;height:48px;' src='"
+      + PSI.Const.BASE_URL
+      + "Public/Images/"
+      + f
+      + "'></img>"
+      + "<h2 style='color:#196d83'>"
+      + t
+      + "</h2>"
+      + "<p style='color:#196d83'>标记 <span style='color:red;font-weight:bold'>*</span>的是必须录入数据的字段</p>";
+
+    return logoHtml;
   }
 });

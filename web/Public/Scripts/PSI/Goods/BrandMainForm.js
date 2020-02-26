@@ -30,7 +30,7 @@ Ext.define("PSI.Goods.BrandMainForm", {
     }, "-", {
       text: "帮助",
       handler: function () {
-        window.open(me.URL("/Home/Help/index?t=goodsBrand"));
+        window.open(me.URL("Home/Help/index?t=goodsBrand"));
       }
     }, "-", {
       text: "关闭",

@@ -123,7 +123,7 @@ Ext.define("PSI.Purchase.PWMainForm", {
     }, {
       text: "帮助",
       handler: function () {
-        window.open(me.URL("/Home/Help/index?t=pwbill"));
+        window.open(me.URL("Home/Help/index?t=pwbill"));
       }
     }, "-", {
       text: "关闭",

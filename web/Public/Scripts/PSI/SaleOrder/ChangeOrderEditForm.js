@@ -207,7 +207,7 @@ Ext.define("PSI.SaleOrder.ChangeOrderEditForm", {
       var el = f.getEl();
       el.mask(PSI.Const.SAVING);
       var sf = {
-        url: me.URL("/Home/Sale/changeSaleOrder"),
+        url: me.URL("Home/Sale/changeSaleOrder"),
         method: "POST",
         success: function (form, action) {
           me.__lastId = action.result.id;

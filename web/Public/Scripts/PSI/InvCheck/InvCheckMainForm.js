@@ -126,7 +126,7 @@ Ext.define("PSI.InvCheck.InvCheckMainForm", {
     }, {
       text: "帮助",
       handler: function () {
-        window.open(me.URL("/Home/Help/index?t=icbill"));
+        window.open(me.URL("Home/Help/index?t=icbill"));
       }
     }, "-", {
       text: "关闭",

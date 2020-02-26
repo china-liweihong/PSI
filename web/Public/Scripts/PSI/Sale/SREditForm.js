@@ -54,7 +54,7 @@ Ext.define("PSI.Sale.SREditForm", {
         text: "表单通用操作帮助",
         iconCls: "PSI-help",
         handler: function () {
-          window.open(me.URL("/Home/Help/index?t=commBill"));
+          window.open(me.URL("Home/Help/index?t=commBill"));
         }
       }, "-", {
         fieldLabel: "快捷访问",

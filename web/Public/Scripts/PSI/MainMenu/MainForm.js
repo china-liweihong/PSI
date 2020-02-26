@@ -45,7 +45,7 @@ Ext.define("PSI.MainMenu.MainForm", {
     }, "-", {
       text: "帮助",
       handler: function () {
-        var url = me.URL("/Home/Help/index?t=mainMenuMaintain")
+        var url = me.URL("Home/Help/index?t=mainMenuMaintain")
         window.open(url);
       }
     }, "-", {
@@ -198,7 +198,7 @@ Ext.define("PSI.MainMenu.MainForm", {
       el.mask("正在删除中...");
 
       var r = {
-        url: me.URL("/Home/MainMenu/deleteMenuItem"),
+        url: me.URL("Home/MainMenu/deleteMenuItem"),
         params: {
           id: menuItem.get("id")
         },

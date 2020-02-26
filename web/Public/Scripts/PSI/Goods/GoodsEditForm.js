@@ -375,7 +375,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
     var unitStore = me.unitStore;
     el.mask(PSI.Const.LOADING);
     Ext.Ajax.request({
-      url: me.URL("/Home/Goods/goodsInfo"),
+      url: me.URL("Home/Goods/goodsInfo"),
       params: {
         id: me.adding ? null : me.getEntity().get("id"),
         categoryId: categoryId
@@ -448,7 +448,7 @@ Ext.define("PSI.Goods.GoodsEditForm", {
     var el = f.getEl();
     el.mask(PSI.Const.SAVING);
     f.submit({
-      url: me.URL("/Home/Goods/editGoods"),
+      url: me.URL("Home/Goods/editGoods"),
       method: "POST",
       success: function (form, action) {
         el.unmask();

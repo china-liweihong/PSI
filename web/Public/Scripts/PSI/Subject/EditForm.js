@@ -213,7 +213,7 @@ Ext.define("PSI.Subject.EditForm", {
     var el = f.getEl();
     el.mask(PSI.Const.SAVING);
     var sf = {
-      url: me.URL("/Home/Subject/editSubject"),
+      url: me.URL("Home/Subject/editSubject"),
       method: "POST",
       success: function (form, action) {
         me.__lastId = action.result.id;

@@ -138,7 +138,7 @@ Ext.define("PSI.Supplier.MainForm", {
     }, "-", {
       text: "帮助",
       handler: function () {
-        window.open(me.URL("/Home/Help/index?t=supplier"));
+        window.open(me.URL("Home/Help/index?t=supplier"));
       }
     }, "-", {
       text: "关闭",
@@ -407,7 +407,7 @@ Ext.define("PSI.Supplier.MainForm", {
         actionMethods: {
           read: "POST"
         },
-        url: me.URL("/Home/Supplier/supplierList"),
+        url: me.URL("Home/Supplier/supplierList"),
         reader: {
           root: 'supplierList',
           totalProperty: 'totalCount'
@@ -673,7 +673,7 @@ Ext.define("PSI.Supplier.MainForm", {
       var el = Ext.getBody();
       el.mask("正在删除中...");
       me.ajax({
-        url: me.URL("/Home/Supplier/deleteCategory"),
+        url: me.URL("Home/Supplier/deleteCategory"),
         params: {
           id: category.get("id")
         },
@@ -700,7 +700,7 @@ Ext.define("PSI.Supplier.MainForm", {
     var el = grid.getEl() || Ext.getBody();
     el.mask(PSI.Const.LOADING);
     me.ajax({
-      url: me.URL("/Home/Supplier/categoryList"),
+      url: me.URL("Home/Supplier/categoryList"),
       params: me.getQueryParam(),
       callback: function (options, success, response) {
         var store = grid.getStore();
@@ -824,7 +824,7 @@ Ext.define("PSI.Supplier.MainForm", {
       var el = Ext.getBody();
       el.mask("正在删除中...");
       me.ajax({
-        url: me.URL("/Home/Supplier/deleteSupplier"),
+        url: me.URL("Home/Supplier/deleteSupplier"),
         params: {
           id: supplier.get("id")
         },
@@ -1159,7 +1159,7 @@ Ext.define("PSI.Supplier.MainForm", {
       var el = Ext.getBody();
       el.mask("正在删除中...");
       var r = {
-        url: me.URL("/Home/Supplier/deleteGRCategory"),
+        url: me.URL("Home/Supplier/deleteGRCategory"),
         params: {
           id: supplier.get("id"),
           idList: idArray.join(",")
@@ -1228,7 +1228,7 @@ Ext.define("PSI.Supplier.MainForm", {
       var el = Ext.getBody();
       el.mask("正在删除中...");
       var r = {
-        url: me.URL("/Home/Supplier/deleteGRGoods"),
+        url: me.URL("Home/Supplier/deleteGRGoods"),
         params: {
           id: supplier.get("id"),
           idList: idArray.join(",")

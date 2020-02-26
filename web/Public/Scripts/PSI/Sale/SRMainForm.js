@@ -123,7 +123,7 @@ Ext.define("PSI.Sale.SRMainForm", {
     }, {
       text: "帮助",
       handler: function () {
-        window.open(me.URL("/Home/Help/index?t=srbill"));
+        window.open(me.URL("Home/Help/index?t=srbill"));
       }
     }, "-", {
       text: "关闭",

@@ -140,7 +140,7 @@ Ext.define("PSI.Goods.MainForm", {
     }, "-", {
       text: "帮助",
       handler: function () {
-        window.open(me.URL("/Home/Help/index?t=goods"));
+        window.open(me.URL("Home/Help/index?t=goods"));
       }
     }, "-", {
       text: "关闭",

@@ -125,7 +125,7 @@ Ext.define("PSI.Sale.WSMainForm", {
     }, {
       text: "帮助",
       handler: function () {
-        window.open(me.URL("/Home/Help/index?t=wsbill"));
+        window.open(me.URL("Home/Help/index?t=wsbill"));
       }
     }, "-", {
       text: "关闭",

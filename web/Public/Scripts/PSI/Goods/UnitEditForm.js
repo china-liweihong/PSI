@@ -165,7 +165,7 @@ Ext.define("PSI.Goods.UnitEditForm", {
     var el = f.getEl();
     el.mask(PSI.Const.SAVING);
     f.submit({
-      url: me.URL("/Home/Goods/editUnit"),
+      url: me.URL("Home/Goods/editUnit"),
       method: "POST",
       success: function (form, action) {
         el.unmask();

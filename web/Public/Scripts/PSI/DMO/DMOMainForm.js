@@ -160,7 +160,7 @@ Ext.define("PSI.DMO.DMOMainForm", {
     }, {
       text: "帮助",
       handler: function () {
-        window.open(me.URL("/Home/Help/index?t=dmobill"));
+        window.open(me.URL("Home/Help/index?t=dmobill"));
       }
     }, "-", {
       text: "关闭",

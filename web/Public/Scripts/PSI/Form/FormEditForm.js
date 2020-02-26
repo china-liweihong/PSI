@@ -227,7 +227,7 @@ Ext.define("PSI.Form.FormEditForm", {
     var el = f.getEl();
     el && el.mask(PSI.Const.SAVING);
     f.submit({
-      url: me.URL("/Home/Form/editForm"),
+      url: me.URL("Home/Form/editForm"),
       method: "POST",
       success: function (form, action) {
         el && el.unmask();

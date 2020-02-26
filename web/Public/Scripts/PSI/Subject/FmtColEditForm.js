@@ -195,7 +195,7 @@ Ext.define("PSI.Subject.FmtColEditForm", {
     var el = f.getEl();
     el && el.mask(PSI.Const.SAVING);
     var sf = {
-      url: me.URL("/Home/Subject/editFmtCol"),
+      url: me.URL("Home/Subject/editFmtCol"),
       method: "POST",
       success: function (form, action) {
         me.__lastId = action.result.id;

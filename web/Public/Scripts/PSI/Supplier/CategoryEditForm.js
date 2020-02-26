@@ -149,7 +149,7 @@ Ext.define("PSI.Supplier.CategoryEditForm", {
     var el = f.getEl();
     el.mask(PSI.Const.SAVING);
     f.submit({
-      url: me.URL("/Home/Supplier/editCategory"),
+      url: me.URL("Home/Supplier/editCategory"),
       method: "POST",
       success: function (form, action) {
         el.unmask();

@@ -343,7 +343,7 @@ Ext.define("PSI.User.UserEditForm", {
     var el = me.getEl();
     el.mask(PSI.Const.LOADING);
     Ext.Ajax.request({
-      url: me.URL("/Home/User/userInfo"),
+      url: me.URL("Home/User/userInfo"),
       params: {
         id: me.getEntity().id
       },

@@ -229,7 +229,7 @@ Ext.define("PSI.CodeTable.RuntimeEditForm", {
     var el = f.getEl();
     el && el.mask(PSI.Const.SAVING);
     var sf = {
-      url: me.URL("/Home/CodeTable/editCodeTableRecord"),
+      url: me.URL("Home/CodeTable/editCodeTableRecord"),
       method: "POST",
       success: function (form, action) {
         me.__lastId = action.result.id;
@@ -303,7 +303,7 @@ Ext.define("PSI.CodeTable.RuntimeEditForm", {
     var el = me.getEl();
     el && el.mask(PSI.Const.LOADING);
     Ext.Ajax.request({
-      url: me.URL("/Home/CodeTable/recordInfo"),
+      url: me.URL("Home/CodeTable/recordInfo"),
       params: {
         id: me.adding ? null : me.getEntity().get("id"),
         fid: md.fid

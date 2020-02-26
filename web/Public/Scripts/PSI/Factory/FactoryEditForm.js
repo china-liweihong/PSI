@@ -425,7 +425,7 @@ Ext.define("PSI.Factory.FactoryEditForm", {
         var el = Ext.getBody();
         el.mask(PSI.Const.LOADING);
         var r = {
-          url: me.URL("/Home/Factory/categoryList"),
+          url: me.URL("Home/Factory/categoryList"),
           params: {
             recordStatus: -1
           },
@@ -451,7 +451,7 @@ Ext.define("PSI.Factory.FactoryEditForm", {
       var el = me.getEl();
       el && el.mask(PSI.Const.LOADING);
       Ext.Ajax.request({
-        url: me.URL("/Home/Factory/factoryInfo"),
+        url: me.URL("Home/Factory/factoryInfo"),
         params: {
           id: me.getEntity().get("id")
         },
@@ -498,7 +498,7 @@ Ext.define("PSI.Factory.FactoryEditForm", {
     var el = f.getEl();
     el && el.mask(PSI.Const.SAVING);
     f.submit({
-      url: me.URL("/Home/Factory/editFactory"),
+      url: me.URL("Home/Factory/editFactory"),
       method: "POST",
       success: function (form, action) {
         el && el.unmask();

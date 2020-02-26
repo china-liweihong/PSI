@@ -147,7 +147,7 @@ Ext.define("PSI.Supplier.GRCategoryEditForm", {
     var el = f.getEl();
     el.mask(PSI.Const.SAVING);
     f.submit({
-      url: me.URL("/Home/Supplier/addGRCategory"),
+      url: me.URL("Home/Supplier/addGRCategory"),
       method: "POST",
       success: function (form, action) {
         el.unmask();

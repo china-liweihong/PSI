@@ -123,7 +123,7 @@ Ext.define("PSI.PurchaseRej.PRMainForm", {
     }, {
       text: "帮助",
       handler: function () {
-        window.open(me.URL("/Home/Help/index?t=prbill"));
+        window.open(me.URL("Home/Help/index?t=prbill"));
       }
     }, "-", {
       text: "关闭",

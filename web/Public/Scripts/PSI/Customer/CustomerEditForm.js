@@ -468,7 +468,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
       var el = me.getEl();
       el.mask(PSI.Const.LOADING);
       Ext.Ajax.request({
-        url: me.URL("/Home/Customer/customerInfo"),
+        url: me.URL("Home/Customer/customerInfo"),
         params: {
           id: me.getEntity().get("id")
         },
@@ -544,7 +544,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
         var el = Ext.getBody();
         el.mask(PSI.Const.LOADING);
         Ext.Ajax.request({
-          url: me.URL("/Home/Customer/categoryList"),
+          url: me.URL("Home/Customer/categoryList"),
           params: {
             recordStatus: -1
           },
@@ -594,7 +594,7 @@ Ext.define("PSI.Customer.CustomerEditForm", {
     var el = f.getEl();
     el.mask(PSI.Const.SAVING);
     f.submit({
-      url: me.URL("/Home/Customer/editCustomer"),
+      url: me.URL("Home/Customer/editCustomer"),
       method: "POST",
       success: function (form, action) {
         el.unmask();

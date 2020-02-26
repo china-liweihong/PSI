@@ -199,7 +199,7 @@ Ext.define("PSI.MainMenu.MenuItemEditForm", {
     var el = f.getEl();
     el.mask(PSI.Const.SAVING);
     var sf = {
-      url: me.URL("/Home/MainMenu/editMenuItem"),
+      url: me.URL("Home/MainMenu/editMenuItem"),
       method: "POST",
       success: function (form, action) {
         me.__lastId = action.result.id;
@@ -289,7 +289,7 @@ Ext.define("PSI.MainMenu.MenuItemEditForm", {
     var el = me.getEl();
     el && el.mask("数据加载中...");
     var r = {
-      url: me.URL("/Home/MainMenu/menuItemInfo"),
+      url: me.URL("Home/MainMenu/menuItemInfo"),
       method: "POST",
       params: {
         id: entity.get("id")

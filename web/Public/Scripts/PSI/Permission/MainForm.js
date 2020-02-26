@@ -157,7 +157,7 @@ Ext.define("PSI.Permission.MainForm", {
     }, "-", {
       text: "帮助",
       handler: function () {
-        window.open(me.URL("/Home/Help/index?t=permission"));
+        window.open(me.URL("Home/Help/index?t=permission"));
       }
     }, "-", {
       text: "关闭",

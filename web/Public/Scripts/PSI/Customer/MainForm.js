@@ -117,7 +117,7 @@ Ext.define("PSI.Customer.MainForm", {
 				}, "-", {
 					text : "帮助",
 					handler : function() {
-						window.open(me.URL("/Home/Help/index?t=customer"));
+						window.open(me.URL("Home/Help/index?t=customer"));
 					}
 				}, "-", {
 					text : "关闭",

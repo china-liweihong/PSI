@@ -186,7 +186,7 @@ Ext.define("PSI.Bank.EditForm", {
     var el = f.getEl();
     el.mask(PSI.Const.SAVING);
     var sf = {
-      url: me.URL("/Home/Bank/editBank"),
+      url: me.URL("Home/Bank/editBank"),
       method: "POST",
       success: function (form, action) {
         me.__lastId = action.result.id;

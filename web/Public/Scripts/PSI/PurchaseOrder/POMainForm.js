@@ -167,7 +167,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
     }, {
       text: "帮助",
       handler: function () {
-        window.open(me.URL("/Home/Help/index?t=pobill"));
+        window.open(me.URL("Home/Help/index?t=pobill"));
       }
     }, "-", {
       text: "关闭",

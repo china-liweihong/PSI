@@ -181,7 +181,7 @@ Ext.define("PSI.Goods.BrandEditForm", {
 
     me.getEl().mask("数据加载中...");
     Ext.Ajax.request({
-      url: me.URL("/Home/Goods/brandParentName"),
+      url: me.URL("Home/Goods/brandParentName"),
       method: "POST",
       params: {
         id: entity.get("id")
@@ -212,7 +212,7 @@ Ext.define("PSI.Goods.BrandEditForm", {
     var el = f.getEl();
     el.mask("数据保存中...");
     f.submit({
-      url: me.URL("/Home/Goods/editBrand"),
+      url: me.URL("Home/Goods/editBrand"),
       method: "POST",
       success: function (form, action) {
         el.unmask();

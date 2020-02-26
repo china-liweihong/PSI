@@ -16,7 +16,7 @@ Ext.define("PSI.Warehouse.EditDataOrgForm", {
       text: "数据域的使用帮助",
       iconCls: "PSI-help",
       handler: function () {
-        var url = me.URL("/Home/Help/index?t=dataOrg")
+        var url = me.URL("Home/Help/index?t=dataOrg")
         window.open(url);
       }
     }, "->"];
@@ -157,7 +157,7 @@ Ext.define("PSI.Warehouse.EditDataOrgForm", {
     el.mask(PSI.Const.SAVING);
 
     var r = {
-      url: me.URL("/Home/Warehouse/editDataOrg"),
+      url: me.URL("Home/Warehouse/editDataOrg"),
       params: {
         id: me.editId.getValue(),
         dataOrg: newDataOrg

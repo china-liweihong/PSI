@@ -111,7 +111,7 @@ Ext.define("PSI.Bizlog.MainForm", {
       text: "帮助",
       iconCls: "PSI-help",
       handler: function () {
-        window.open(me.URL("/Home/Help/index?t=bizlog"));
+        window.open(me.URL("Home/Help/index?t=bizlog"));
       }
     }, "-", {
       text: "关闭",

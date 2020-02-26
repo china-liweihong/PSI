@@ -401,7 +401,7 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
     var el = me.getEl();
     el && el.mask(PSI.Const.LOADING);
     Ext.Ajax.request({
-      url: me.URL("/Home/CodeTable/codeTableColInfo"),
+      url: me.URL("Home/CodeTable/codeTableColInfo"),
       params: {
         id: me.adding ? null : me.getEntity().get("id"),
         tableId: me.getCodeTable().get("id")
@@ -496,7 +496,7 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
     var el = f.getEl();
     el && el.mask(PSI.Const.SAVING);
     f.submit({
-      url: me.URL("/Home/CodeTable/editCodeTableCol"),
+      url: me.URL("Home/CodeTable/editCodeTableCol"),
       method: "POST",
       success: function (form, action) {
         el && el.unmask();

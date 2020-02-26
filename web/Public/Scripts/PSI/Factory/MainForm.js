@@ -115,7 +115,7 @@ Ext.define("PSI.Factory.MainForm", {
     }, {
       text: "帮助",
       handler: function () {
-        window.open(me.URL("/Home/Help/index?t=factory"));
+        window.open(me.URL("Home/Help/index?t=factory"));
       }
     }, "-", {
       text: "关闭",
@@ -365,7 +365,7 @@ Ext.define("PSI.Factory.MainForm", {
         actionMethods: {
           read: "POST"
         },
-        url: me.URL("/Home/Factory/factoryList"),
+        url: me.URL("Home/Factory/factoryList"),
         reader: {
           root: 'dataList',
           totalProperty: 'totalCount'
@@ -595,7 +595,7 @@ Ext.define("PSI.Factory.MainForm", {
       var el = Ext.getBody();
       el.mask("正在删除中...");
       me.ajax({
-        url: me.URL("/Home/Factory/deleteCategory"),
+        url: me.URL("Home/Factory/deleteCategory"),
         params: {
           id: category.get("id")
         },
@@ -622,7 +622,7 @@ Ext.define("PSI.Factory.MainForm", {
     var el = grid.getEl() || Ext.getBody();
     el.mask(PSI.Const.LOADING);
     me.ajax({
-      url: me.URL("/Home/Factory/categoryList"),
+      url: me.URL("Home/Factory/categoryList"),
       params: me.getQueryParam(),
       callback: function (options, success, response) {
         var store = grid.getStore();
@@ -743,7 +743,7 @@ Ext.define("PSI.Factory.MainForm", {
       var el = Ext.getBody();
       el.mask("正在删除中...");
       me.ajax({
-        url: me.URL("/Home/Factory/deleteFactory"),
+        url: me.URL("Home/Factory/deleteFactory"),
         params: {
           id: factory.get("id")
         },

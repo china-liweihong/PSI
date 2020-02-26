@@ -53,7 +53,7 @@ Ext.define("PSI.Warehouse.MainForm", {
     result.push("-", {
       text: "帮助",
       handler: function () {
-        window.open(me.URL("/Home/Help/index?t=warehouse"));
+        window.open(me.URL("Home/Help/index?t=warehouse"));
       }
     }, "-", {
         text: "关闭",

@@ -203,7 +203,7 @@ Ext.define("PSI.Goods.CategoryEditForm", {
     var el = f.getEl();
     el.mask(PSI.Const.SAVING);
     f.submit({
-      url: me.URL("/Home/Goods/editCategory"),
+      url: me.URL("Home/Goods/editCategory"),
       method: "POST",
       success: function (form, action) {
         el.unmask();
@@ -295,7 +295,7 @@ Ext.define("PSI.Goods.CategoryEditForm", {
     var el = me.getEl();
     el.mask(PSI.Const.LOADING);
     Ext.Ajax.request({
-      url: me.URL("/Home/Goods/getCategoryInfo"),
+      url: me.URL("Home/Goods/getCategoryInfo"),
       params: {
         id: me.getEntity().get("id")
       },

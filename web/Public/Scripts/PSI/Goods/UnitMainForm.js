@@ -24,7 +24,7 @@ Ext.define("PSI.Goods.UnitMainForm", {
     }, "-", {
       text: "帮助",
       handler: function () {
-        window.open(me.URL("/Home/Help/index?t=goodsUnit"));
+        window.open(me.URL("Home/Help/index?t=goodsUnit"));
       }
     }, "-", {
       text: "关闭",

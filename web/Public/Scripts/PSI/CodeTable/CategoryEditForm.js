@@ -158,7 +158,7 @@ Ext.define("PSI.CodeTable.CategoryEditForm", {
     var el = f.getEl();
     el.mask(PSI.Const.SAVING);
     var sf = {
-      url: me.URL("/Home/CodeTable/editCodeTableCategory"),
+      url: me.URL("Home/CodeTable/editCodeTableCategory"),
       method: "POST",
       success: function (form, action) {
         me.__lastId = action.result.id;

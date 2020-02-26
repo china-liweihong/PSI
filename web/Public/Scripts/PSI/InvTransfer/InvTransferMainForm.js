@@ -123,7 +123,7 @@ Ext.define("PSI.InvTransfer.InvTransferMainForm", {
     }, {
       text: "帮助",
       handler: function () {
-        window.open(me.URL("/Home/Help/index?t=itbill"));
+        window.open(me.URL("Home/Help/index?t=itbill"));
       }
     }, "-", {
       text: "关闭",

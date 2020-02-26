@@ -258,7 +258,7 @@ Ext.define("PSI.Goods.GoodsBOMEditForm", {
     var el = f.getEl();
     el.mask(PSI.Const.SAVING);
     var sf = {
-      url: me.URL("/Home/Goods/editGoodsBOM"),
+      url: me.URL("Home/Goods/editGoodsBOM"),
       method: "POST",
       success: function (form, action) {
         me.__lastId = action.result.id;

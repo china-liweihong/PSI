@@ -151,7 +151,7 @@ Ext.define("PSI.SaleContract.SCMainForm", {
     }, {
       text: "帮助",
       handler: function () {
-        window.open(me.URL("/Home/Help/index?t=scbill"));
+        window.open(me.URL("Home/Help/index?t=scbill"));
       }
     }, "-", {
       text: "关闭",

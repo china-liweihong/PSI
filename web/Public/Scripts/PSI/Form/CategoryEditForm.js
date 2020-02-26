@@ -155,7 +155,7 @@ Ext.define("PSI.Form.CategoryEditForm", {
     var el = f.getEl();
     el.mask(PSI.Const.SAVING);
     var sf = {
-      url: me.URL("/Home/Form/editFormCategory"),
+      url: me.URL("Home/Form/editFormCategory"),
       method: "POST",
       success: function (form, action) {
         me.__lastId = action.result.id;

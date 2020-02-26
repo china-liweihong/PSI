@@ -155,7 +155,7 @@ Ext.define("PSI.Supplier.GRGoodsEditForm", {
     var el = f.getEl();
     el.mask(PSI.Const.SAVING);
     var sf = {
-      url: me.URL("/Home/Supplier/addGRGoods"),
+      url: me.URL("Home/Supplier/addGRGoods"),
       method: "POST",
       success: function (form, action) {
         el.unmask();

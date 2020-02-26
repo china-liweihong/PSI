@@ -172,7 +172,7 @@ Ext.define("PSI.SaleOrder.SOMainForm", {
     }, {
       text: "帮助",
       handler: function () {
-        window.open(me.URL("/Home/Help/index?t=sobill"));
+        window.open(me.URL("Home/Help/index?t=sobill"));
       }
     }, "-", {
       text: "关闭",

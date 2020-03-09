@@ -24,12 +24,12 @@ Ext.define("PSI.Form.FormColEditForm", {
       },
       scope: me
     }, {
-        text: entity == null ? "关闭" : "取消",
-        handler: function () {
-          me.close();
-        },
-        scope: me
-      });
+      text: entity == null ? "关闭" : "取消",
+      handler: function () {
+        me.close();
+      },
+      scope: me
+    });
 
     var t = entity == null ? "新增表单列" : "编辑表单列";
     var f = entity == null
@@ -84,20 +84,20 @@ Ext.define("PSI.Form.FormColEditForm", {
           value: entity == null ? null : entity.get("id")
         }, {
           xtype: "hidden",
-          name: "codeTableId",
-          value: me.getCodeTable().get("id")
+          name: "formId",
+          value: me.getForm().get("id")
         }, {
           id: "PSI_CodeTable_CodeTableColEditForm_editName",
-          fieldLabel: "码表名称",
+          fieldLabel: "表单名称",
           readOnly: true,
-          value: me.getCodeTable().get("name")
+          value: me.getForm().get("name")
         }, {
           id: "PSI_CodeTable_CodeTableColEditForm_editTableName",
           fieldLabel: "数据库表名",
           readOnly: true,
           colspan: 2,
           width: col2Width,
-          value: me.getCodeTable().get("tableName")
+          value: me.getForm().get("tableName")
         }, {
           id: "PSI_CodeTable_CodeTableColEditForm_editCaption",
           fieldLabel: "列标题",
@@ -404,83 +404,19 @@ Ext.define("PSI.Form.FormColEditForm", {
       url: me.URL("Home/Form/formColInfo"),
       params: {
         id: me.adding ? null : me.getEntity().get("id"),
-        tableId: me.getCodeTable().get("id")
+        formId: me.getForm().get("id")
       },
       method: "POST",
       callback: function (options, success, response) {
         if (success) {
           el && el.unmask();
 
-          var data = Ext.JSON.decode(response.responseText);
-          if (data.editorXtype) {
-            var store = me.editEditorXtype.getStore();
-            store.removeAll();
-            store.add(data.editorXtype);
-          }
+          var data = me.decodeJSON(response.responseText);
 
           if (me.adding) {
             // 新建
-            var store = me.editEditorXtype.getStore();
-            me.editEditorXtype.setValue(store.getAt(0));
           } else {
             // 编辑
-            me.editTableName.setReadOnly(true);
-            me.editCaption.setReadOnly(true);
-            me.editFieldName.setReadOnly(true);
-            me.editFieldType.setReadOnly(true);
-            me.editFieldLength.setReadOnly(true);
-            me.editFieldLength.setDisabled(false);
-            me.editFieldDec.setReadOnly(true);
-            me.editFieldDec.setDisabled(false);
-
-            var col = data.col;
-            if (col) {
-              me.editCaption.setValue(col.caption);
-              me.editFieldName.setValue(col.fieldName);
-              me.editFieldType.setValue(col.fieldType);
-              me.editFieldDec.setValue(col.fieldDecimal);
-              var valueFrom = parseInt(col.valueFrom);
-              me.editValueFrom.setValue(valueFrom);
-              me.editValueFromTableName.setValue(col.valueFromTableName);
-              me.editValueFromColName.setValue(col.valueFromColName);
-              me.editValueFromColNameDisplay.setValue(col.valueFromColNameDisplay);
-
-              if (valueFrom == 4) {
-                // 引用自身数据
-                me.editValueFrom.setReadOnly(true);
-                me.editValueFromTableName.setReadOnly(true);
-                me.editValueFromTableName.setDisabled(false);
-                me.editValueFromColName.setDisabled(false);
-                me.editValueFromColNameDisplay.setDisabled(false);
-              }
-
-              me.editIsVisible.setValue(parseInt(col.isVisible));
-              me.editMustInput.setValue(parseInt(col.mustInput));
-              me.editWidthInView.setValue(col.widthInView);
-              me.editShowOrder.setValue(col.showOrder);
-              me.editShowOrderInView.setValue(col.showOrderInView);
-              me.editEditorXtype.setValue(col.editorXtype);
-              me.editMemo.setValue(col.memo);
-
-              if (col.sysCol == 1) {
-                // 系统列的时候，进一步限制字段的修改
-                me.editValueFrom.setReadOnly(true);
-                me.editIsVisible.setReadOnly(true);
-                me.editMustInput.setReadOnly(true);
-                me.editWidthInView.setReadOnly(true);
-                me.editWidthInView.clearInvalid();
-                me.editWidthInView.setMinValue(0);
-                me.editEditorXtype.setReadOnly(true);
-              } else {
-                me.editCaption.setDisabled(false);
-                me.editCaption.setReadOnly(false);
-              }
-
-              if (col.isVisible == 1) {
-                // 可见的字段，也能设置在视图中的宽度
-                me.editWidthInView.setReadOnly(false);
-              }
-            }
           }
 
           me.editCaption.focus();

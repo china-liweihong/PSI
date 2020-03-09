@@ -268,4 +268,21 @@ class FormService extends PSIBaseExService
     $dao = new FormDAO($this->db());
     return $dao->formInfo($params);
   }
+
+  /**
+   * 返回表单主表列的信息
+   */
+  public function formColInfo($params)
+  {
+    // TODO
+    return $this->emptyResult();
+  }
+
+  /**
+   * 新增或编辑表单主表列
+   */
+  public function editFormCol($params)
+  {
+    return $this->todo();
+  }
 }

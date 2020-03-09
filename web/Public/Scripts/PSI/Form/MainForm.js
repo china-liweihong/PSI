@@ -1013,8 +1013,21 @@ Ext.define("PSI.Form.MainForm", {
     return me.__detailColsGrid;
   },
 
-  onAddCol:function(){
+  onAddCol: function () {
     var me = this;
-    me.showInfo("TODO")
+
+    var item = me.getMainGrid().getSelectionModel().getSelection();
+    if (item == null || item.length != 1) {
+      me.showInfo("请先选择表单");
+      return;
+    }
+
+    var fm = item[0];
+
+    var form = Ext.create("PSI.Form.FormColEditForm", {
+      parentForm: me,
+      form: fm
+    });
+    form.show();
   }
 });

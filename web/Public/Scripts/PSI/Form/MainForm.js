@@ -682,7 +682,7 @@ Ext.define("PSI.Form.MainForm", {
       return me.__colsGrid;
     }
 
-    var modelName = "PSICodeTableCols";
+    var modelName = "PSIFormCols";
 
     Ext.define(modelName, {
       extend: "Ext.data.Model",
@@ -1011,5 +1011,10 @@ Ext.define("PSI.Form.MainForm", {
     });
 
     return me.__detailColsGrid;
+  },
+
+  onAddCol:function(){
+    var me = this;
+    me.showInfo("TODO")
   }
 });

@@ -701,15 +701,15 @@ Ext.define("PSI.Form.MainForm", {
       },
       border: 0,
       tbar: [{
-        text: "新增列",
+        text: "新增主表列",
         handler: me.onAddCol,
         scope: me
       }, "-", {
-        text: "编辑列",
+        text: "编辑主表列",
         handler: me.onEditCol,
         scope: me
       }, "-", {
-        text: "删除列",
+        text: "删除主表列",
         handler: me.onDeleteCol,
         scope: me
       }],
@@ -1029,5 +1029,15 @@ Ext.define("PSI.Form.MainForm", {
       form: fm
     });
     form.show();
+  },
+
+  onEditCol: function () {
+    var me = this;
+    me.showInfo("TODO");
+  },
+
+  onDeleteCol: function () {
+    var me = this;
+    me.showInfo("TODO");
   }
 });

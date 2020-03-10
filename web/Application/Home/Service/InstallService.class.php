@@ -1813,6 +1813,20 @@ class InstallService extends PSIBaseExService
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
             ";
     $db->execute($sql);
+
+    // t_sysdict_form_editor_xtype
+    $sql = "CREATE TABLE IF NOT EXISTS `t_sysdict_form_editor_xtype` (
+              `id` varchar(255) NOT NULL,
+              `code` varchar(255) NOT NULL,
+              `code_int` int(11) NOT NULL,
+              `name` varchar(255) NOT NULL,
+              `py` varchar(255) NOT NULL,
+              `memo` varchar(255) NOT NULL,
+              `show_order` int(11) DEFAULT NULL,
+              PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+            ";
+    $db->execute($sql);
   }
 
   /**
@@ -2388,14 +2402,17 @@ class InstallService extends PSIBaseExService
 
     // t_dict_table_category
     $sql = "INSERT INTO `t_dict_table_category` (`id`, `code`, `name`, `parent_id`) VALUES
-				('01', '01', '码表', NULL);
-		";
+            ('01', '01', '码表', NULL),
+            ('02', '02', '自定义表单', NULL);
+            ";
     $db->execute($sql);
 
     // t_dict_table_md
     $sql = "INSERT INTO `t_dict_table_md` (`id`, `code`, `name`, `table_name`, `category_id`, `memo`, `py`) VALUES
-				('01', '01', '码表记录状态', 't_sysdict_record_status', '01', '用于码表', 'MBJLZT');
-		";
+            ('0101', '0101', '码表记录状态', 't_sysdict_record_status', '01', '码表记录的状态', 'MBJLZT'),
+            ('0102', '0102', '码表字段编辑器类型', 't_sysdict_editor_xtype', '01', '码表字段编辑器的类型', 'MBZDBJQLX'),
+            ('0201', '0201', '表单字段编辑器类型', 't_sysdict_form_editor_xtype', '02', '表单字段编辑器的类型', 'BDZDBJQLX');
+            ";
     $db->execute($sql);
 
     // t_sysdict_record_status
@@ -2411,6 +2428,13 @@ class InstallService extends PSIBaseExService
             ('7B795BEF-9F97-11E9-9BDF-F0BF9790E21F', '2', 2, 'numberfield', 'numberfield', '数值编辑器', 2),
             ('FD1F4CF4-9F97-11E9-9BDF-F0BF9790E21F', '3', 3, 'psi_codetable_parentidfield', 'psi_codetable_parentidfield', '上级记录编辑器', 3),
             ('9929B6FA-AD1A-11E9-B2D3-F0BF9790E21F', '4', 4, 'psi_codetable_recordreffield', 'psi_codetable_recordreffield', '码表记录引用字段编辑器', 4);
+            ";
+    $db->execute($sql);
+
+    // t_sysdict_form_editor_xtype
+    $sql = "INSERT INTO `t_sysdict_form_editor_xtype` (`id`, `code`, `code_int`, `name`, `py`, `memo`, `show_order`) VALUES
+            ('133BC834-62A4-11EA-BE39-F0BF9790E21F', '1', 1, 'textfield', 'textfield', '字符串编辑器', 1),
+            ('2E01A0A4-62A4-11EA-BE39-F0BF9790E21F', '2', 2, 'numberfield', 'numberfield', '数值编辑器', 2);
             ";
     $db->execute($sql);
 

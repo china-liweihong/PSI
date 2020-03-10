@@ -32,7 +32,8 @@ class UpdateDB2020Service extends PSIBaseService
   // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   // ============================================
   private function notForgot()
-  { }
+  {
+  }
 
 
   public function update()
@@ -45,6 +46,50 @@ class UpdateDB2020Service extends PSIBaseService
     $this->update_20191125_02();
     $this->update_20191125_03();
     $this->update_20191126_01();
+    $this->update_20200310_01();
+  }
+
+  private function update_20200310_01()
+  {
+    // 本次更新：新增表t_sysdict_form_editor_xtype，及相关数据
+    $db = $this->db;
+    $tableName = "t_sysdict_form_editor_xtype";
+    if (!$this->tableExists($db, $tableName)) {
+      $sql = "CREATE TABLE IF NOT EXISTS `t_sysdict_form_editor_xtype` (
+                `id` varchar(255) NOT NULL,
+                `code` varchar(255) NOT NULL,
+                `code_int` int(11) NOT NULL,
+                `name` varchar(255) NOT NULL,
+                `py` varchar(255) NOT NULL,
+                `memo` varchar(255) NOT NULL,
+                `show_order` int(11) DEFAULT NULL,
+                PRIMARY KEY (`id`)
+              ) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+      $db->execute($sql);
+    }
+
+    // 新增相关数据
+    $sql = "TRUNCATE TABLE `t_dict_table_category`;
+            INSERT INTO `t_dict_table_category` (`id`, `code`, `name`, `parent_id`) VALUES
+            ('01', '01', '码表', NULL),
+            ('02', '02', '自定义表单', NULL);
+            ";
+    $db->execute($sql);
+
+    $sql = "TRUNCATE TABLE `t_dict_table_md`;
+            INSERT INTO `t_dict_table_md` (`id`, `code`, `name`, `table_name`, `category_id`, `memo`, `py`) VALUES
+            ('0101', '0101', '码表记录状态', 't_sysdict_record_status', '01', '码表记录的状态', 'MBJLZT'),
+            ('0102', '0102', '码表字段编辑器类型', 't_sysdict_editor_xtype', '01', '码表字段编辑器的类型', 'MBZDBJQLX'),
+            ('0201', '0201', '表单字段编辑器类型', 't_sysdict_form_editor_xtype', '02', '表单字段编辑器的类型', 'BDZDBJQLX');
+            ";
+    $db->execute($sql);
+
+    $sql = "TRUNCATE TABLE `t_sysdict_form_editor_xtype`;
+            INSERT INTO `t_sysdict_form_editor_xtype` (`id`, `code`, `code_int`, `name`, `py`, `memo`, `show_order`) VALUES
+            ('133BC834-62A4-11EA-BE39-F0BF9790E21F', '1', 1, 'textfield', 'textfield', '字符串编辑器', 1),
+            ('2E01A0A4-62A4-11EA-BE39-F0BF9790E21F', '2', 2, 'numberfield', 'numberfield', '数值编辑器', 2);
+            ";
+    $db->execute($sql);
   }
 
   private function update_20191126_01()

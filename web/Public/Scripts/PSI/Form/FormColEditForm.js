@@ -287,8 +287,25 @@ Ext.define("PSI.Form.FormColEditForm", {
           }),
           value: "textfield",
           name: "editorXtype",
-          colspan: 3,
+          colspan: 2,
           width: col2Width
+        }, {
+          id: "PSI_Form_FormColEditForm_editColSpan",
+          fieldLabel: "编辑器列占位",
+          allowBlank: false,
+          blankText: "没有输入编辑器列占位",
+          beforeLabelTextTpl: PSI.Const.REQUIRED,
+          xtype: "numberfield",
+          hideTrigger: true,
+          allowDecimal: false,
+          value: 1,
+          name: "colSpan",
+          listeners: {
+            specialkey: {
+              fn: me.onEditSpecialKey,
+              scope: me
+            }
+          }
         }, {
           id: "PSI_Form_FormColEditForm_editMemo",
           fieldLabel: "备注",
@@ -335,12 +352,13 @@ Ext.define("PSI.Form.FormColEditForm", {
     me.editValueFromColNameDisplay = Ext.getCmp("PSI_Form_FormColEditForm_editValueFromColNameDisplay");
     me.editShowOrder = Ext.getCmp("PSI_Form_FormColEditForm_editShowOrder");
     me.editEditorXtype = Ext.getCmp("PSI_Form_FormColEditForm_editEditorXtype");
+    me.editColSpan = Ext.getCmp("PSI_Form_FormColEditForm_editColSpan");
     me.editMemo = Ext.getCmp("PSI_Form_FormColEditForm_editMemo");
     me.editIsVisible = Ext.getCmp("PSI_Form_FormColEditForm_editIsVisible");
     me.editMustInput = Ext.getCmp("PSI_Form_FormColEditForm_editMustInput");
 
     me.__editorList = [
-      me.editCaption, me.editFieldName, me.editShowOrder, me.editMemo
+      me.editCaption, me.editFieldName, me.editShowOrder, me.editColSpan, me.editMemo
     ];
   },
 

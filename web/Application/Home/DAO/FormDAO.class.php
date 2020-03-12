@@ -1157,4 +1157,28 @@ class FormDAO extends PSIBaseExDAO
       return $this->emptyResult();
     }
   }
+
+  /**
+   * 返回表单主表列的信息
+   */
+  public function formColInfo($params)
+  {
+    $db = $this->db;
+
+    $result = [];
+
+    $sql = "select name, memo from t_sysdict_form_editor_xtype order by code";
+    $data = $db->query($sql);
+    $xtype = [];
+    foreach ($data as $v) {
+      $xtype[] = [
+        "id" => $v["name"],
+        "text" => $v["name"] . " - " . $v["memo"]
+      ];
+    }
+
+    $result["editorXtype"] = $xtype;
+
+    return $result;
+  }
 }

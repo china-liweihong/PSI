@@ -274,8 +274,12 @@ class FormService extends PSIBaseExService
    */
   public function formColInfo($params)
   {
-    // TODO
-    return $this->emptyResult();
+    if ($this->isNotOnline()) {
+      return $this->emptyResult();
+    }
+
+    $dao = new FormDAO($this->db());
+    return $dao->formColInfo($params);
   }
 
   /**

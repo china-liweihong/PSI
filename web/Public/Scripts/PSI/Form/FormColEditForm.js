@@ -364,9 +364,16 @@ Ext.define("PSI.Form.FormColEditForm", {
           el && el.unmask();
 
           var data = me.decodeJSON(response.responseText);
+          if (data.editorXtype) {
+            var store = me.editEditorXtype.getStore();
+            store.removeAll();
+            store.add(data.editorXtype);
+          }
 
           if (me.adding) {
             // 新建
+            var store = me.editEditorXtype.getStore();
+            me.editEditorXtype.setValue(store.getAt(0));
           } else {
             // 编辑
           }

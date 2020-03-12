@@ -340,8 +340,7 @@ Ext.define("PSI.Form.FormColEditForm", {
     me.editMustInput = Ext.getCmp("PSI_Form_FormColEditForm_editMustInput");
 
     me.__editorList = [
-      me.editCaption, me.editFieldName, me.editWidthInView, me.editShowOrder,
-      me.editShowOrderInView, me.editMemo
+      me.editCaption, me.editFieldName, me.editShowOrder, me.editMemo
     ];
   },
 

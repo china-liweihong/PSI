@@ -1,5 +1,7 @@
 <layout name="layout" />
 
+<script src="{$uri}Public/Scripts/PSI/Report/PurchaseDetailForm.js?dt={$dtFlag}" type="text/javascript"></script>
+
 <!-- 打印 -->
 <script src="{$uri}Public/Lodop/LodopFuncs.js?dt={$dtFlag}" type="text/javascript"></script>
 
@@ -12,5 +14,7 @@
         title: "{$title}"
       }
     });
+
+    app.add(Ext.create("PSI.Report.PurchaseDetailForm"));
   });
 </script>

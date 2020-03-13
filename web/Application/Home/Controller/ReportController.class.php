@@ -5,6 +5,7 @@ namespace Home\Controller;
 use Home\Common\FIdConst;
 use Home\Service\InventoryReportService;
 use Home\Service\PayablesReportService;
+use Home\Service\PurchaseReportService;
 use Home\Service\ReceivablesReportService;
 use Home\Service\SaleReportService;
 use Home\Service\UserService;
@@ -1225,6 +1226,24 @@ class ReportController extends PSIBaseController
       $this->display();
     } else {
       $this->gotoLoginPage("/Home/Report/purchaseDetail");
+    }
+  }
+
+  /**
+   * 采购入库明细表 - 查询数据
+   */
+  public function purchaseDetailQueryData()
+  {
+    if (IS_POST) {
+      $params = [
+        "page" => I("post.page"),
+        "start" => I("post.start"),
+        "limit" => I("post.limit")
+      ];
+
+      $service = new PurchaseReportService();
+
+      $this->ajaxReturn($service->purchaseDetailQueryData($params));
     }
   }
 }

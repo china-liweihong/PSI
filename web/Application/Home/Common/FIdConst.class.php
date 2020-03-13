@@ -1080,6 +1080,13 @@ class FIdConst
    */
   const DMW_PRINT = "2036-06";
 
+  /**
+   * 采购入库明细表
+   * 
+   * @var string
+   */
+  const PURCHASE_DETAIL_REPORT = "2037";
+
   // -------------------------
   // 财务总账系统GL fid使用2100段
   // -------------------------

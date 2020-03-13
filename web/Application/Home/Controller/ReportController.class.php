@@ -1209,4 +1209,22 @@ class ReportController extends PSIBaseController
     $service = new InventoryReportService();
     $service->inventoryUpperExcel($params);
   }
+
+  /**
+   * 采购入库明细表
+   */
+  public function purchaseDetail()
+  {
+    $us = new UserService();
+
+    if ($us->hasPermission(FIdConst::PURCHASE_DETAIL_REPORT)) {
+      $this->initVar();
+
+      $this->assign("title", "采购入库明细表");
+
+      $this->display();
+    } else {
+      $this->gotoLoginPage("/Home/Report/purchaseDetail");
+    }
+  }
 }

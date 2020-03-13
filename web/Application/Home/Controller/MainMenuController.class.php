@@ -274,6 +274,10 @@ class MainMenuController extends PSIBaseController
           // 系统数据字典
           redirect(__ROOT__ . "/Home/SysDict/index");
           break;
+        case FIdConst::PURCHASE_DETAIL_REPORT:
+          // 采购入库明细表
+          redirect(__ROOT__ . "/Home/Report/purchaseDetail");
+          break;
         default:
           redirect(__ROOT__ . "/Home");
       }

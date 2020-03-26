@@ -123,7 +123,7 @@ Ext.define("PSI.Report.PurchaseDetailForm", {
       fieldLabel: "供应商",
       margin: "5, 0, 0, 0",
       xtype: "psi_supplierfield"
-    },{
+    }, {
       id: "editQueryWarehouse",
       labelAlign: "right",
       labelSeparator: "",
@@ -191,8 +191,10 @@ Ext.define("PSI.Report.PurchaseDetailForm", {
     var modelName = "PSIPurchaseDetailReport";
     Ext.define(modelName, {
       extend: "Ext.data.Model",
-      fields: ["goodsCode", "goodsName", "goodsSpec",
-        "unitName"]
+      fields: ["supplierName", "poBillRef", "pwBillRef", "bizDate", "warehouseName", "goodsCode",
+        "goodsName", "goodsSpec", "unitName", "goodsCount", "goodsMoney",
+        "goodsPrice", "memo", "taxRate", "tax",
+        "moneyWithTax", "goodsPriceWithTax"]
     });
     var store = Ext.create("Ext.data.Store", {
       autoLoad: false,
@@ -219,26 +221,88 @@ Ext.define("PSI.Report.PurchaseDetailForm", {
       },
       border: 0,
       columnLines: true,
-      columns: [{
-        xtype: "rownumberer"
-      }, {
-        header: "商品名称",
-        dataIndex: "goodsName",
-        menuDisabled: true,
-        sortable: false,
-        width: 200
-      }, {
-        header: "规格型号",
-        dataIndex: "goodsSpec",
-        menuDisabled: true,
-        sortable: false,
-        width: 160
-      }, {
-        header: "计量单位",
-        dataIndex: "unitName",
-        menuDisabled: true,
-        sortable: false
-      }],
+      columns: {
+        defaults: {
+          menuDisabled: true,
+          sortable: false
+        },
+        items: [{
+          xtype: "rownumberer"
+        }, {
+          header: "采购单号",
+          dataIndex: "poBillRef",
+          width: 120
+        }, {
+          header: "入库单单号",
+          dataIndex: "pwBillRef",
+          width: 120
+        }, {
+          header: "供应商",
+          dataIndex: "supplierName",
+          width: 200
+        }, {
+          header: "商品编码",
+          dataIndex: "goodsCode",
+          width: 120
+        }, {
+          header: "商品名称",
+          dataIndex: "goodsName",
+          width: 200
+        }, {
+          header: "规格型号",
+          dataIndex: "goodsSpec",
+          width: 200
+        }, {
+          header: "入库数量",
+          width: 120,
+          dataIndex: "goodsCount",
+          align: "right"
+        }, {
+          header: "单位",
+          dataIndex: "unitName",
+          width: 60
+        }, {
+          header: "采购单价",
+          dataIndex: "goodsPrice",
+          align: "right",
+          xtype: "numbercolumn",
+          width: 150
+        }, {
+          header: "采购金额",
+          dataIndex: "goodsMoney",
+          align: "right",
+          xtype: "numbercolumn",
+          width: 150
+        }, {
+          header: "税率(%)",
+          dataIndex: "taxRate",
+          align: "right",
+          xtype: "numbercolumn",
+          format: "0"
+        }, {
+          header: "税金",
+          dataIndex: "tax",
+          align: "right",
+          xtype: "numbercolumn",
+          width: 150
+        }, {
+          header: "价税合计",
+          dataIndex: "moneyWithTax",
+          align: "right",
+          xtype: "numbercolumn",
+          width: 150
+        }, {
+          header: "含税价",
+          dataIndex: "goodsPriceWithTax",
+          align: "right",
+          xtype: "numbercolumn",
+          width: 150
+        }, {
+          header: "备注",
+          dataIndex: "memo",
+          width: 200
+        }]
+      },
       store: store
     });
 

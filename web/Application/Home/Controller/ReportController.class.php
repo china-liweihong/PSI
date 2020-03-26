@@ -1236,6 +1236,10 @@ class ReportController extends PSIBaseController
   {
     if (IS_POST) {
       $params = [
+        "supplierId" => I("post.supplierId"),
+        "warehouseId" => I("post.warehouseId"),
+        "fromDT" => I("post.fromDT"),
+        "toDT" => I("post.toDT"),
         "page" => I("post.page"),
         "start" => I("post.start"),
         "limit" => I("post.limit")

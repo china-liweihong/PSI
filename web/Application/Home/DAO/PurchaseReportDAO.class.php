@@ -17,6 +17,13 @@ class PurchaseReportDAO extends PSIBaseExDAO
    */
   public function purchaseDetailQueryData($params)
   {
+    $db = $this->db;
+
+    $supplierId = $params["supplierId"];
+    $warehouseId = $params["warehouseId"];
+    $fromDT = $params["fromDT"];
+    $toDT = $params["toDT"];
+
     $result = [];
     $cnt = 0;
 

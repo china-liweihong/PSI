@@ -213,6 +213,9 @@ Ext.define("PSI.Report.PurchaseDetailForm", {
         }
       }
     });
+    store.on("beforeload", function () {
+      store.proxy.extraParams = me.getQueryParam();
+    });
 
     me.__mainGrid = Ext.create("Ext.grid.Panel", {
       cls: "PSI",
@@ -311,6 +314,25 @@ Ext.define("PSI.Report.PurchaseDetailForm", {
 
   onQuery: function () {
     this.refreshMainGrid();
+  },
+
+  getQueryParam: function () {
+    var result = {
+      supplierId: Ext.getCmp("editQuerySupplier").getIdValue(),
+      warehouseId: Ext.getCmp("editQueryWarehouse").getIdValue()
+    };
+
+    var fromDT = Ext.getCmp("editQueryFromDT").getValue();
+    if (fromDT) {
+      result.fromDT = Ext.Date.format(fromDT, "Y-m-d");
+    }
+
+    var toDT = Ext.getCmp("editQueryToDT").getValue();
+    if (toDT) {
+      result.toDT = Ext.Date.format(toDT, "Y-m-d");
+    }
+
+    return result;
   },
 
   onClearQuery: function () {

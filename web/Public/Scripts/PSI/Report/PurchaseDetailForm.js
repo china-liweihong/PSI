@@ -85,14 +85,101 @@ Ext.define("PSI.Report.PurchaseDetailForm", {
         }
       }],
       items: [{
-        region: "center",
+        id: "panelQueryCmp",
+        region: "north",
+        height: 65,
         layout: "fit",
         border: 0,
+        header: false,
+        collapsible: true,
+        collapseMode: "mini",
+        layout: {
+          type: "table",
+          columns: 4
+        },
+        items: me.getQueryCmp()
+      }, {
+        region: "center",
+        layout: "fit",
         items: [me.getMainGrid()]
       }]
     });
 
     me.callParent(arguments);
+  },
+
+  getQueryCmp: function () {
+    var me = this;
+
+    Ext.define("PSILogCategory", {
+      extend: "Ext.data.Model",
+      fields: ["id", "name"]
+    });
+
+    return [{
+      id: "editQuerySupplier",
+      labelAlign: "right",
+      labelSeparator: "",
+      fieldLabel: "供应商",
+      margin: "5, 0, 0, 0",
+      xtype: "psi_supplierfield"
+    },{
+      id: "editQueryWarehouse",
+      labelAlign: "right",
+      labelSeparator: "",
+      fieldLabel: "入库仓库",
+      margin: "5, 0, 0, 0",
+      xtype: "psi_warehousefield"
+    }, {
+      xtype: "container",
+      items: [{
+        xtype: "button",
+        text: "查询",
+        width: 100,
+        height: 26,
+        margin: "5 0 0 10",
+        handler: me.onQuery,
+        scope: me
+      }, {
+        xtype: "button",
+        text: "清空查询条件",
+        width: 100,
+        height: 26,
+        margin: "5, 0, 0, 10",
+        handler: me.onClearQuery,
+        scope: me
+      }]
+    }, {
+      xtype: "container",
+      items: [{
+        xtype: "button",
+        iconCls: "PSI-button-hide",
+        text: "隐藏查询条件栏",
+        width: 130,
+        height: 26,
+        margin: "5 0 0 10",
+        handler: function () {
+          Ext.getCmp("panelQueryCmp").collapse();
+        },
+        scope: me
+      }]
+    }, {
+      id: "editQueryFromDT",
+      xtype: "datefield",
+      margin: "5, 0, 0, 0",
+      format: "Y-m-d",
+      labelAlign: "right",
+      labelSeparator: "",
+      fieldLabel: "业务日期（起）"
+    }, {
+      id: "editQueryToDT",
+      xtype: "datefield",
+      margin: "5, 0, 0, 0",
+      format: "Y-m-d",
+      labelAlign: "right",
+      labelSeparator: "",
+      fieldLabel: "业务日期（止）"
+    }];
   },
 
   getMainGrid: function () {
@@ -160,6 +247,19 @@ Ext.define("PSI.Report.PurchaseDetailForm", {
 
   onQuery: function () {
     this.refreshMainGrid();
+  },
+
+  onClearQuery: function () {
+    var me = this;
+
+    Ext.getCmp("editQuerySupplier").clearIdValue();
+    Ext.getCmp("editQueryWarehouse").clearIdValue();
+    Ext.getCmp("editQueryFromDT").setValue(null);
+    Ext.getCmp("editQueryToDT").setValue(null);
+
+    me.getMainGrid().getStore().currentPage = 1;
+
+    me.onQuery();
   },
 
   refreshMainGrid: function (id) {

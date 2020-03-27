@@ -103,13 +103,13 @@ class InventoryService extends PSIBaseService
     $queryParams[] = $warehouseId;
 
     $sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name,
-				 	convert(v.in_count, $fmt) as in_count, 
-					v.in_price, v.in_money, convert(v.out_count, $fmt) as out_count, v.out_price, v.out_money,
-				 	convert(v.balance_count, $fmt) as balance_count, v.balance_price, v.balance_money, 
-					convert(v.afloat_count, $fmt) as afloat_count,
-					v.afloat_money, v.afloat_price
-				from t_inventory v, t_goods g, t_goods_unit u
-				where (v.warehouse_id = '%s') and (v.goods_id = g.id) and (g.unit_id = u.id) ";
+              convert(v.in_count, $fmt) as in_count, 
+              v.in_price, v.in_money, convert(v.out_count, $fmt) as out_count, v.out_price, v.out_money,
+              convert(v.balance_count, $fmt) as balance_count, v.balance_price, v.balance_money, 
+              convert(v.afloat_count, $fmt) as afloat_count,
+              v.afloat_money, v.afloat_price
+            from t_inventory v, t_goods g, t_goods_unit u
+            where (v.warehouse_id = '%s') and (v.goods_id = g.id) and (g.unit_id = u.id) ";
     if ($code) {
       $sql .= " and (g.code like '%s')";
       $queryParams[] = "%{$code}%";
@@ -131,7 +131,7 @@ class InventoryService extends PSIBaseService
       $sql .= " and (convert(v.balance_count, $fmt) > 0) ";
     }
     $sql .= " order by %s %s
-				limit %d, %d";
+              limit %d, %d";
     $queryParams[] = $sortProperty;
     $queryParams[] = $sortDirection;
     $queryParams[] = $start;
@@ -164,8 +164,8 @@ class InventoryService extends PSIBaseService
     $queryParams = [];
     $queryParams[] = $warehouseId;
     $sql = "select count(*) as cnt 
-				from t_inventory v, t_goods g, t_goods_unit u
-				where (v.warehouse_id = '%s') and (v.goods_id = g.id) and (g.unit_id = u.id) ";
+            from t_inventory v, t_goods g, t_goods_unit u
+            where (v.warehouse_id = '%s') and (v.goods_id = g.id) and (g.unit_id = u.id) ";
     if ($code) {
       $sql .= " and (g.code like '%s')";
       $queryParams[] = "%{$code}%";
@@ -217,17 +217,17 @@ class InventoryService extends PSIBaseService
     $limit = $params["limit"];
 
     $sql = "select g.id, g.code, g.name, g.spec, u.name as unit_name,
-					convert(v.in_count, $fmt) as in_count, v.in_price, v.in_money, 
-					convert(v.out_count, $fmt) as out_count, v.out_price, v.out_money,
-					convert(v.balance_count, $fmt) as balance_count, v.balance_price, v.balance_money,
-					v.biz_date,  user.name as biz_user_name, v.ref_number, v.ref_type 
-				from t_inventory_detail v, t_goods g, t_goods_unit u, t_user user
-				where v.warehouse_id = '%s' and v.goods_id = '%s' 
-					and v.goods_id = g.id and g.unit_id = u.id 
-					and v.biz_user_id = user.id 
-					and (v.biz_date between '%s' and '%s' ) 
-				order by v.id 
-				limit %d, %d";
+              convert(v.in_count, $fmt) as in_count, v.in_price, v.in_money, 
+              convert(v.out_count, $fmt) as out_count, v.out_price, v.out_money,
+              convert(v.balance_count, $fmt) as balance_count, v.balance_price, v.balance_money,
+              v.biz_date,  user.name as biz_user_name, v.ref_number, v.ref_type 
+            from t_inventory_detail v, t_goods g, t_goods_unit u, t_user user
+            where v.warehouse_id = '%s' and v.goods_id = '%s' 
+              and v.goods_id = g.id and g.unit_id = u.id 
+              and v.biz_user_id = user.id 
+              and (v.biz_date between '%s' and '%s' ) 
+            order by v.id 
+            limit %d, %d";
     $data = $db->query($sql, $warehouseId, $goodsId, $dtFrom, $dtTo, $start, $limit);
 
     $result = [];
@@ -253,7 +253,9 @@ class InventoryService extends PSIBaseService
       $result[$i]["refType"] = $v["ref_type"];
     }
 
-    $sql = "select count(*) as cnt from t_inventory_detail" . " where warehouse_id = '%s' and goods_id = '%s' " . "     and (biz_date between '%s' and '%s')";
+    $sql = "select count(*) as cnt from t_inventory_detail
+            where warehouse_id = '%s' and goods_id = '%s'      
+              and (biz_date between '%s' and '%s')";
     $data = $db->query($sql, $warehouseId, $goodsId, $dtFrom, $dtTo);
 
     return array(

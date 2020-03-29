@@ -10,7 +10,7 @@ use Home\Service\ReceivablesReportService;
 use Home\Service\SaleReportService;
 use Home\Service\UserService;
 
-require __DIR__ . '/../Common/Excel/PHPExcel/IOFactory.php';
+require_once __DIR__ . '/../Common/Excel/PHPExcel/IOFactory.php';
 
 /**
  * 报表Controller
@@ -1248,5 +1248,22 @@ class ReportController extends PSIBaseController
 
       $this->ajaxReturn($service->purchaseDetailQueryData($params));
     }
+  }
+
+  /**
+   * 采购入库明细表 - 导出Excel
+   */
+  public function purchaseDetailExcel()
+  {
+    $params = [
+      "limit" => I("get.limit"),
+      "warehouseId" => I("get.warehouseId"),
+      "supplierId" => I("get.supplierId"),
+      "fromDT" => I("get.fromDT"),
+      "toDT" => I("get.toDT")
+    ];
+
+    $service = new PurchaseReportService();
+    $service->purchaseDetailExcel($params);
   }
 }

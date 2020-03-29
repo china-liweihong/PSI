@@ -1240,7 +1240,6 @@ class ReportController extends PSIBaseController
         "warehouseId" => I("post.warehouseId"),
         "fromDT" => I("post.fromDT"),
         "toDT" => I("post.toDT"),
-        "page" => I("post.page"),
         "start" => I("post.start"),
         "limit" => I("post.limit")
       ];

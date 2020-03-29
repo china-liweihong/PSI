@@ -240,6 +240,14 @@ Ext.define("PSI.Report.PurchaseDetailForm", {
           dataIndex: "pwBillRef",
           width: 120
         }, {
+          header: "入库单业务日期",
+          dataIndex: "bizDate",
+          width: 120
+        }, {
+          header: "入库仓库",
+          dataIndex: "warehouseName",
+          width: 120
+        }, {
           header: "供应商",
           dataIndex: "supplierName",
           width: 200

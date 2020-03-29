@@ -24,6 +24,8 @@ class PurchaseReportService extends PSIBaseExService
       return $this->emptyResult();
     }
 
+    $params["companyId"] = $this->getCompanyId();
+
     $dao = new PurchaseReportDAO($this->db());
 
     return $dao->purchaseDetailQueryData($params);

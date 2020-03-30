@@ -36,6 +36,7 @@ class BillController extends Controller
       FIdConst::PURCHASE_ORDER,
       FIdConst::SALE_ORDER,
       FIdConst::PURCHASE_WAREHOUSE,
+      FIdConst::PURCHASE_ORDER,
       FIdConst::DMW
     );
 
@@ -85,6 +86,31 @@ class BillController extends Controller
       default:
         $this->display();
     }
+  }
+
+  /**
+   * 查看采购订单
+   */
+  public function viewPOBill()
+  {
+    $fid = I("get.fid");
+    if (!$this->hasPermission($fid)) {
+      return;
+    }
+
+    $bcs = new BizConfigService();
+    $this->assign("productionName", $bcs->getProductionName());
+
+    $ref = I("get.ref");
+    $this->assign("ref", $ref);
+
+    $this->assign("title", "查看采购订单");
+    $this->assign("uri", __ROOT__ . "/");
+
+    $dtFlag = getdate();
+    $this->assign("dtFlag", $dtFlag[0]);
+
+    $this->display();
   }
 
   /**

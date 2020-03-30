@@ -163,6 +163,8 @@ class PurchaseReportService extends PSIBaseExService
       return;
     }
 
+    ini_set('max_execution_time', 300); // 300 seconds = 5 minutes
+
     $bs = new BizConfigService();
     $productionName = $bs->getProductionName();
 

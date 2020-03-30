@@ -462,10 +462,27 @@ Ext.define("PSI.Report.PurchaseDetailForm", {
 
   onPDF: function () {
     var me = this;
-    me.showInfo("TODO");
-    return;
 
     var url = "Home/Report/purchaseDetailPdf?limit=-1";
+    var supplierId = Ext.getCmp("editQuerySupplier").getIdValue();
+    if (supplierId) {
+      url = url + "&supplierId=" + supplierId;
+    }
+    var warehouseId = Ext.getCmp("editQueryWarehouse").getIdValue();
+    if (warehouseId) {
+      url = url + "&warehouseId=" + warehouseId;
+    }
+    var fromDT = Ext.getCmp("editQueryFromDT").getValue();
+    if (fromDT) {
+      var dt = Ext.Date.format(fromDT, "Y-m-d");
+      url = url + "&fromDT=" + dt;
+    }
+    var toDT = Ext.getCmp("editQueryToDT").getValue();
+    if (toDT) {
+      var dt = Ext.Date.format(toDT, "Y-m-d");
+      url = url + "&toDT=" + dt;
+    }
+
     window.open(me.URL(url));
   },
 

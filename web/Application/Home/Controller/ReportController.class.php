@@ -1266,4 +1266,21 @@ class ReportController extends PSIBaseController
     $service = new PurchaseReportService();
     $service->purchaseDetailExcel($params);
   }
+
+  /**
+   * 采购入库明细表 - 导出PDF
+   */
+  public function purchaseDetailPdf()
+  {
+    $params = [
+      "limit" => I("get.limit"),
+      "warehouseId" => I("get.warehouseId"),
+      "supplierId" => I("get.supplierId"),
+      "fromDT" => I("get.fromDT"),
+      "toDT" => I("get.toDT")
+    ];
+
+    $service = new PurchaseReportService();
+    $service->purchaseDetailPdf($params);
+  }
 }

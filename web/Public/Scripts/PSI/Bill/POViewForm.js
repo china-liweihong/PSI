@@ -93,7 +93,7 @@ Ext.define("PSI.Bill.POViewForm", {
     var el = me.getEl() || Ext.getBody();
     el.mask(PSI.Const.LOADING);
     Ext.Ajax.request({
-      url: PSI.Const.BASE_URL + "Home/Bill/pwBillInfo",
+      url: PSI.Const.BASE_URL + "Home/Bill/poBillInfo",
       params: {
         ref: me.getRef()
       },
@@ -105,7 +105,6 @@ Ext.define("PSI.Bill.POViewForm", {
           var data = Ext.JSON.decode(response.responseText);
 
           Ext.getCmp("editSupplier").setValue(data.supplierName);
-          Ext.getCmp("editWarehouse").setValue(data.warehouseName);
           Ext.getCmp("editBizUser").setValue(data.bizUserName);
           Ext.getCmp("editBizDT").setValue(data.bizDT);
 
@@ -124,7 +123,7 @@ Ext.define("PSI.Bill.POViewForm", {
     if (me.__goodsGrid) {
       return me.__goodsGrid;
     }
-    var modelName = "PSIPWBillDetail_ViewForm";
+    var modelName = "PSIPOBillDetail_ViewForm";
     Ext.define(modelName, {
       extend: "Ext.data.Model",
       fields: ["id", "goodsId", "goodsCode",

@@ -45,7 +45,7 @@ Ext.define("PSI.Bill.POViewForm", {
           xtype: "displayfield",
           value: me.getRef()
         }, {
-          id: "editBizDT",
+          id: "editDealDate",
           fieldLabel: "交货日期",
           labelWidth: 60,
           labelAlign: "right",
@@ -64,7 +64,7 @@ Ext.define("PSI.Bill.POViewForm", {
           id: "editDealAddress",
           labelWidth: 60,
           labelAlign: "right",
-          labelSeparator: "",
+          labelSeparator: ":",
           fieldLabel: "交货地址",
           colspan: 2,
           width: 430,
@@ -73,28 +73,28 @@ Ext.define("PSI.Bill.POViewForm", {
           id: "editContact",
           labelWidth: 60,
           labelAlign: "right",
-          labelSeparator: "",
+          labelSeparator: ":",
           fieldLabel: "联系人",
           xtype: "displayfield"
         }, {
           id: "editTel",
           labelWidth: 60,
           labelAlign: "right",
-          labelSeparator: "",
+          labelSeparator: ":",
           fieldLabel: "电话",
           xtype: "displayfield"
         }, {
           id: "editFax",
           labelWidth: 60,
           labelAlign: "right",
-          labelSeparator: "",
+          labelSeparator: ":",
           fieldLabel: "传真",
           xtype: "displayfield"
         }, {
           id: "editOrg",
           labelWidth: 60,
           labelAlign: "right",
-          labelSeparator: "",
+          labelSeparator: ":",
           fieldLabel: "组织机构",
           xtype: "displayfield",
           colspan: 2,
@@ -103,21 +103,21 @@ Ext.define("PSI.Bill.POViewForm", {
           id: "editBizUser",
           labelWidth: 60,
           labelAlign: "right",
-          labelSeparator: "",
+          labelSeparator: ":",
           fieldLabel: "业务员",
           xtype: "displayfield"
         }, {
           id: "editPaymentType",
           labelWidth: 60,
           labelAlign: "right",
-          labelSeparator: "",
+          labelSeparator: ":",
           fieldLabel: "付款方式",
           xtype: "displayfield"
         }, {
           id: "editBillMemo",
           labelWidth: 60,
           labelAlign: "right",
-          labelSeparator: "",
+          labelSeparator: ":",
           fieldLabel: "备注",
           xtype: "displayfield",
           colspan: 3,
@@ -153,14 +153,21 @@ Ext.define("PSI.Bill.POViewForm", {
           var data = Ext.JSON.decode(response.responseText);
 
           Ext.getCmp("editSupplier").setValue(data.supplierName);
+          Ext.getCmp("editBillMemo").setValue(data.billMemo);
+          Ext.getCmp("editDealDate").setValue(data.dealDate);
+          Ext.getCmp("editDealAddress").setValue(data.dealAddress);
+          Ext.getCmp("editContact").setValue(data.contact);
+          Ext.getCmp("editTel").setValue(data.tel);
+          Ext.getCmp("editFax").setValue(data.fax);
+
           Ext.getCmp("editBizUser").setValue(data.bizUserName);
-          Ext.getCmp("editBizDT").setValue(data.bizDT);
+          Ext.getCmp("editOrg").setValue(data.orgFullName);
+
+          Ext.getCmp("editPaymentType").setValue(data.paymentType);
 
           var store = me.getGoodsGrid().getStore();
           store.removeAll();
-          if (data.items) {
-            store.add(data.items);
-          }
+          store.add(data.items);
         }
       }
     });

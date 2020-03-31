@@ -1487,4 +1487,96 @@ class POBillDAO extends PSIBaseExDAO
       return $this->emptyResult();
     }
   }
+
+  private function paymentTypeCodeToName($code)
+  {
+    switch ($code) {
+      case 0:
+        return "记应付账款";
+      case 1:
+        return "现金付款";
+      default:
+        return "";
+    }
+  }
+
+  /**
+   * 通过单号查询采购订单的全部数据，包括子表
+   */
+  public function getFullBillDataByRef($ref)
+  {
+    $db = $this->db;
+
+    $sql = "select p.id, p.deal_date, p.deal_address,
+              s.name as supplier_name, p.contact, p.tel, p.fax,
+              o.full_name, u.name as biz_user_name,
+              p.payment_type, p.bill_memo, p.company_id
+            from t_po_bill p, t_supplier s, t_user u, t_org o
+            where p.ref = '%s' and p.supplier_id = s.id
+              and p.biz_user_id = u.id
+              and p.org_id = o.id";
+    $data = $db->query($sql, $ref);
+    if (!$data) {
+      return $this->emptyResult();
+    }
+    $v = $data[0];
+
+    $companyId = $v["company_id"];
+    if ($this->companyIdNotExists($companyId)) {
+      return $this->emptyResult();
+    }
+
+    $id = $v["id"];
+
+    $result = [
+      "dealDate" => $this->toYMD($v["deal_date"]),
+      "dealAddress" => $v["deal_address"],
+      "supplierName" => $v["supplier_name"],
+      "contact" => $v["contact"],
+      "tel" => $v["tel"],
+      "fax" => $v["fax"],
+      "orgFullName" => $v["full_name"],
+      "bizUserName" => $v["biz_user_name"],
+      "paymentType" => $this->paymentTypeCodeToName($v["payment_type"]),
+      "billMemo" => $v["bill_memo"],
+    ];
+
+    $bcDAO = new BizConfigDAO($db);
+
+    $dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+    $fmt = "decimal(19, " . $dataScale . ")";
+
+    // 明细表
+    $sql = "select p.id, p.goods_id, g.code, g.name, g.spec, 
+              convert(p.goods_count, " . $fmt . ") as goods_count, 
+              p.goods_price, p.goods_money,
+              p.tax_rate, p.tax, p.money_with_tax, u.name as unit_name, p.memo,
+              p.goods_price_with_tax
+            from t_po_bill_detail p, t_goods g, t_goods_unit u
+            where p.pobill_id = '%s' and p.goods_id = g.id and g.unit_id = u.id
+            order by p.show_order";
+    $items = [];
+    $data = $db->query($sql, $id);
+
+    foreach ($data as $v) {
+      $items[] = [
+        "goodsCode" => $v["code"],
+        "goodsName" => $v["name"],
+        "goodsSpec" => $v["spec"],
+        "goodsCount" => $v["goods_count"],
+        "goodsPrice" => $v["goods_price"],
+        "goodsMoney" => $v["goods_money"],
+        "taxRate" => $v["tax_rate"],
+        "tax" => $v["tax"],
+        "moneyWithTax" => $v["money_with_tax"],
+        "unitName" => $v["unit_name"],
+        "memo" => $v["memo"],
+        "goodsPriceWithTax" => $v["goods_price_with_tax"]
+      ];
+    }
+
+    $result["items"] = $items;
+
+    return $result;
+  }
 }

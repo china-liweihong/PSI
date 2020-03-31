@@ -167,6 +167,19 @@ class BillController extends Controller
   }
 
   /**
+   * 采购订单 - 数据查询
+   */
+  public function poBillInfo()
+  {
+    if (IS_POST) {
+      $ref = I("post.ref");
+
+      $bs = new BillViewService();
+      $this->ajaxReturn($bs->poBillInfo($ref));
+    }
+  }
+
+  /**
    * 采购入库单 - 数据查询
    */
   public function pwBillInfo()

@@ -10,6 +10,7 @@ use Home\DAO\ITBillDAO;
 use Home\DAO\ICBillDAO;
 use Home\DAO\WSPBillDAO;
 use Home\DAO\DMWBillDAO;
+use Home\DAO\POBillDAO;
 
 /**
  * 查看单据Service
@@ -18,6 +19,23 @@ use Home\DAO\DMWBillDAO;
  */
 class BillViewService extends PSIBaseExService
 {
+
+  /**
+   * 采购订单 - 数据查询
+   *
+   * @param string $ref
+   *        	采购订单单号
+   * @return array|NULL
+   */
+  public function poBillInfo($ref)
+  {
+    if ($this->isNotOnline()) {
+      return $this->emptyResult();
+    }
+
+    $dao = new POBillDAO($this->db());
+    return $dao->getFullBillDataByRef($ref);
+  }
 
   /**
    * 由单号查询采购入库单信息

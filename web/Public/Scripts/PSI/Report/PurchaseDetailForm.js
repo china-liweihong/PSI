@@ -249,7 +249,17 @@ Ext.define("PSI.Report.PurchaseDetailForm", {
         }, {
           header: "入库单单号",
           dataIndex: "pwBillRef",
-          width: 120
+          width: 120,
+          renderer: function (value, md, record) {
+            return "<a href='"
+              + PSI.Const.BASE_URL
+              + "Home/Bill/viewIndex?fid=2001&refType="
+              + encodeURIComponent("采购入库")
+              + "&ref="
+              + encodeURIComponent(record.get("pwBillRef"))
+              + "' target='_blank'>" + value
+              + "</a>";
+          }
         }, {
           header: "入库单业务日期",
           dataIndex: "bizDate",

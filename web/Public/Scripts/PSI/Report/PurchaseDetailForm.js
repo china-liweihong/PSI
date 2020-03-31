@@ -235,7 +235,17 @@ Ext.define("PSI.Report.PurchaseDetailForm", {
         }, {
           header: "采购单号",
           dataIndex: "poBillRef",
-          width: 120
+          width: 120,
+          renderer: function (value, md, record) {
+            return "<a href='"
+              + PSI.Const.BASE_URL
+              + "Home/Bill/viewIndex?fid=2027&refType="
+              + encodeURIComponent("采购订单")
+              + "&ref="
+              + encodeURIComponent(record.get("poBillRef"))
+              + "' target='_blank'>" + value
+              + "</a>";
+          }
         }, {
           header: "入库单单号",
           dataIndex: "pwBillRef",

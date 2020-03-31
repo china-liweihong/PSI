@@ -31,9 +31,9 @@ Ext.define("PSI.Bill.POViewForm", {
         id: "editForm",
         layout: {
           type: "table",
-          columns: 2
+          columns: 4
         },
-        height: 100,
+        height: 120,
         bodyPadding: 10,
         border: 0,
         items: [{
@@ -46,7 +46,7 @@ Ext.define("PSI.Bill.POViewForm", {
           value: me.getRef()
         }, {
           id: "editBizDT",
-          fieldLabel: "业务日期",
+          fieldLabel: "交货日期",
           labelWidth: 60,
           labelAlign: "right",
           labelSeparator: ":",
@@ -61,19 +61,67 @@ Ext.define("PSI.Bill.POViewForm", {
           xtype: "displayfield",
           fieldLabel: "供应商"
         }, {
-          id: "editWarehouse",
+          id: "editDealAddress",
           labelWidth: 60,
           labelAlign: "right",
-          labelSeparator: ":",
-          fieldLabel: "入库仓库",
+          labelSeparator: "",
+          fieldLabel: "交货地址",
+          colspan: 2,
+          width: 430,
           xtype: "displayfield"
+        }, {
+          id: "editContact",
+          labelWidth: 60,
+          labelAlign: "right",
+          labelSeparator: "",
+          fieldLabel: "联系人",
+          xtype: "displayfield"
+        }, {
+          id: "editTel",
+          labelWidth: 60,
+          labelAlign: "right",
+          labelSeparator: "",
+          fieldLabel: "电话",
+          xtype: "displayfield"
+        }, {
+          id: "editFax",
+          labelWidth: 60,
+          labelAlign: "right",
+          labelSeparator: "",
+          fieldLabel: "传真",
+          xtype: "displayfield"
+        }, {
+          id: "editOrg",
+          labelWidth: 60,
+          labelAlign: "right",
+          labelSeparator: "",
+          fieldLabel: "组织机构",
+          xtype: "displayfield",
+          colspan: 2,
+          width: 430
         }, {
           id: "editBizUser",
           labelWidth: 60,
           labelAlign: "right",
-          labelSeparator: ":",
+          labelSeparator: "",
           fieldLabel: "业务员",
           xtype: "displayfield"
+        }, {
+          id: "editPaymentType",
+          labelWidth: 60,
+          labelAlign: "right",
+          labelSeparator: "",
+          fieldLabel: "付款方式",
+          xtype: "displayfield"
+        }, {
+          id: "editBillMemo",
+          labelWidth: 60,
+          labelAlign: "right",
+          labelSeparator: "",
+          fieldLabel: "备注",
+          xtype: "displayfield",
+          colspan: 3,
+          width: 645
         }]
       }],
       listeners: {

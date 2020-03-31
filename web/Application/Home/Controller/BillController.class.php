@@ -57,6 +57,9 @@ class BillController extends Controller
     $ref = I("get.ref");
 
     switch ($refType) {
+      case "采购订单":
+        redirect(__ROOT__ . "/Home/Bill/viewPOBill?fid={$fid}&ref={$ref}");
+        break;
       case "采购入库":
         redirect(__ROOT__ . "/Home/Bill/viewPWBill?fid={$fid}&ref={$ref}");
         break;

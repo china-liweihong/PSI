@@ -1827,6 +1827,28 @@ class InstallService extends PSIBaseExService
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
             ";
     $db->execute($sql);
+
+    // t_voucher
+    $sql = "CREATE TABLE IF NOT EXISTS `t_voucher` (
+              `id` varchar(255) NOT NULL,
+              `v_dt` datetime NOT NULL,
+              `ref` varchar(255) NOT NULL,
+              `input_user_id` varchar(255) NOT NULL,
+              `input_user_name` varchar(255) NOT NULL,
+              `confirm_user_id` varchar(255) DEFAULT NULL,
+              `confirm_user_name` varchar(255) DEFAULT NULL,
+              `gl_user_id` varchar(255) DEFAULT NULL,
+              `gl_user_name` varchar(255) DEFAULT NULL,
+              `charge_user_id` varchar(255) DEFAULT NULL,
+              `charge_user_name` varchar(255) DEFAULT NULL,
+              `cash_user_id` varchar(255) DEFAULT NULL,
+              `cash_user_name` varchar(255) DEFAULT NULL,
+              `bill_number` int(11) NOT NULL DEFAULT 0,
+              `company_id` varchar(255) NOT NULL,
+              PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+            ";
+    $db->execute($sql);
   }
 
   /**

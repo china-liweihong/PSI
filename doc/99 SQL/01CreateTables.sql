@@ -1619,6 +1619,18 @@ CREATE TABLE IF NOT EXISTS `t_voucher` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `t_voucher_detail`;
+CREATE TABLE IF NOT EXISTS `t_voucher_detail` (
+  `id` varchar(255) NOT NULL,
+  `voucher_id` varchar(255) NOT NULL,
+  `subject` varchar(255) NOT NULL,
+  `summary` varchar(255) DEFAULT NULL,
+  `debit` decimal(19, 2) DEFAULT NULL,
+  `credit` decimal(19, 2) DEFAULT NULL,
+  `show_order` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

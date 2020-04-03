@@ -48,9 +48,32 @@ class UpdateDB2020Service extends PSIBaseService
     $this->update_20200310_01();
     $this->update_20200313_01();
     $this->update_20200402_01();
+    $this->update_20200403_01();
   }
 
-  private function update_20200402_01(){
+  private function update_20200403_01()
+  {
+    // 本次更新：新增表t_voucher_detail
+    $db = $this->db;
+    $tableName = "t_voucher_detail";
+    if (!$this->tableExists($db, $tableName)) {
+      $sql = "CREATE TABLE IF NOT EXISTS `t_voucher_detail` (
+                `id` varchar(255) NOT NULL,
+                `voucher_id` varchar(255) NOT NULL,
+                `subject` varchar(255) NOT NULL,
+                `summary` varchar(255) DEFAULT NULL,
+                `debit` decimal(19, 2) DEFAULT NULL,
+                `credit` decimal(19, 2) DEFAULT NULL,
+                `show_order` int(11) NOT NULL,
+                PRIMARY KEY (`id`)
+              ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+              ";
+      $db->execute($sql);
+    }
+  }
+
+  private function update_20200402_01()
+  {
     // 本次更新：新增表t_voucher
     $db = $this->db;
     $tableName = "t_voucher";

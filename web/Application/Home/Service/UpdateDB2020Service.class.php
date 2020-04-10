@@ -50,6 +50,28 @@ class UpdateDB2020Service extends PSIBaseService
     $this->update_20200402_01();
     $this->update_20200403_01();
     $this->update_20200410_01();
+    $this->update_20200410_02();
+  }
+
+  private function update_20200410_02()
+  {
+    // 本次更新：新增表t_material_unit
+    $db = $this->db;
+
+    $tableName = "t_material_unit";
+    if (!$this->tableExists($db, $tableName)) {
+      $sql = "CREATE TABLE IF NOT EXISTS `t_material_unit` (
+                `id` varchar(255) NOT NULL,
+                `name` varchar(255) NOT NULL,
+                `data_org` varchar(255) DEFAULT NULL,
+                `company_id` varchar(255) DEFAULT NULL,
+                `code` varchar(255) DEFAULT NULL,
+                `record_status` int(11) DEFAULT 1,
+                PRIMARY KEY (`id`)
+              ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+              ";
+      $db->execute($sql);
+    }
   }
 
   private function update_20200410_01()

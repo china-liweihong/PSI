@@ -1899,6 +1899,19 @@ class InstallService extends PSIBaseExService
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
             ";
     $db->execute($sql);
+
+    // t_material_unit
+    $sql = "CREATE TABLE IF NOT EXISTS `t_material_unit` (
+              `id` varchar(255) NOT NULL,
+              `name` varchar(255) NOT NULL,
+              `data_org` varchar(255) DEFAULT NULL,
+              `company_id` varchar(255) DEFAULT NULL,
+              `code` varchar(255) DEFAULT NULL,
+              `record_status` int(11) DEFAULT 1,
+              PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+            ";
+    $db->execute($sql);
   }
 
   /**

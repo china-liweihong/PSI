@@ -1631,6 +1631,39 @@ CREATE TABLE IF NOT EXISTS `t_voucher_detail` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+
+DROP TABLE IF EXISTS `t_raw_material`;
+CREATE TABLE IF NOT EXISTS `t_raw_material` (
+  `id` varchar(255) NOT NULL,
+  `category_id` varchar(255) NOT NULL,
+  `code` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `spec` varchar(255) NOT NULL,
+  `unit_id` varchar(255) NOT NULL,
+  `purchase_price` decimal(19, 2) DEFAULT NULL,
+  `py` varchar(255) DEFAULT NULL,
+  `spec_py` varchar(255) DEFAULT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
+  `memo` varchar(500) DEFAULT NULL,
+  `company_id` varchar(255) DEFAULT NULL,
+  `record_status` int(11) DEFAULT 1000,
+  `tax_rate` decimal(19,2) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `t_raw_material_category`;
+CREATE TABLE IF NOT EXISTS `t_raw_material_category` (
+  `id` varchar(255) NOT NULL,
+  `code` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `parent_id` varchar(255) DEFAULT NULL,
+  `full_name` varchar(1000) DEFAULT NULL,
+  `data_org` varchar(255) DEFAULT NULL,
+  `company_id` varchar(255) DEFAULT NULL,
+  `tax_rate` decimal(19,2) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

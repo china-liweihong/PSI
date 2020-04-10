@@ -49,6 +49,55 @@ class UpdateDB2020Service extends PSIBaseService
     $this->update_20200313_01();
     $this->update_20200402_01();
     $this->update_20200403_01();
+    $this->update_20200410_01();
+  }
+
+  private function update_20200410_01()
+  {
+    // 本次更新：新增表t_raw_material_category、t_raw_material
+    $db = $this->db;
+
+    // t_raw_material_category
+    $tableName = "t_raw_material_category";
+    if (!$this->tableExists($db, $tableName)) {
+      $sql = "CREATE TABLE IF NOT EXISTS `t_raw_material_category` (
+                `id` varchar(255) NOT NULL,
+                `code` varchar(255) NOT NULL,
+                `name` varchar(255) NOT NULL,
+                `parent_id` varchar(255) DEFAULT NULL,
+                `full_name` varchar(1000) DEFAULT NULL,
+                `data_org` varchar(255) DEFAULT NULL,
+                `company_id` varchar(255) DEFAULT NULL,
+                `tax_rate` decimal(19,2) DEFAULT NULL,
+                PRIMARY KEY (`id`)
+              ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+              ";
+      $db->execute($sql);
+    }
+
+    // t_raw_material
+    $tableName = "t_raw_material";
+    if (!$this->tableExists($db, $tableName)) {
+      $sql = "CREATE TABLE IF NOT EXISTS `t_raw_material` (
+                `id` varchar(255) NOT NULL,
+                `category_id` varchar(255) NOT NULL,
+                `code` varchar(255) NOT NULL,
+                `name` varchar(255) NOT NULL,
+                `spec` varchar(255) NOT NULL,
+                `unit_id` varchar(255) NOT NULL,
+                `purchase_price` decimal(19, 2) DEFAULT NULL,
+                `py` varchar(255) DEFAULT NULL,
+                `spec_py` varchar(255) DEFAULT NULL,
+                `data_org` varchar(255) DEFAULT NULL,
+                `memo` varchar(500) DEFAULT NULL,
+                `company_id` varchar(255) DEFAULT NULL,
+                `record_status` int(11) DEFAULT 1000,
+                `tax_rate` decimal(19,2) DEFAULT NULL,
+                PRIMARY KEY (`id`)
+              ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+              ";
+      $db->execute($sql);
+    }
   }
 
   private function update_20200403_01()

@@ -45,4 +45,22 @@ class MaterialController extends PSIBaseController
       $this->ajaxReturn($service->allUnits());
     }
   }
+
+  /**
+   * 新增或编辑物料单位
+   */
+  public function editUnit()
+  {
+    if (IS_POST) {
+      $params = [
+        "id" => I("post.id"),
+        "name" => I("post.name"),
+        "code" => I("post.code"),
+        "recordStatus" => I("post.recordStatus")
+      ];
+
+      $service = new MaterialService();
+      $this->ajaxReturn($service->editUnit($params));
+    }
+  }
 }

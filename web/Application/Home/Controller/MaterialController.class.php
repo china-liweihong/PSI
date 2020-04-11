@@ -60,7 +60,7 @@ class MaterialController extends PSIBaseController
     if (IS_POST) {
       $us = new UserService();
       if (!$us->hasPermission(FIdConst::MATERIAL_UNIT)) {
-        $this->ajaxReturn($this->noPermission("物料编码"));
+        $this->ajaxReturn($this->noPermission("物料单位"));
         return;
       }
 
@@ -84,7 +84,7 @@ class MaterialController extends PSIBaseController
     if (IS_POST) {
       $us = new UserService();
       if (!$us->hasPermission(FIdConst::MATERIAL_UNIT)) {
-        $this->ajaxReturn($this->noPermission("物料编码"));
+        $this->ajaxReturn($this->noPermission("物料单位"));
         return;
       }
 

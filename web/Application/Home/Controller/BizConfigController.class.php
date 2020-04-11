@@ -76,6 +76,7 @@ class BizConfigController extends PSIBaseController
 
       if (!$us->hasPermission(FIdConst::BIZ_CONFIG)) {
         $this->ajaxReturn($this->noPermission("业务设置-编辑配置项"));
+        return;
       }
 
       $service = new BizConfigService();

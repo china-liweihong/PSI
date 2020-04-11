@@ -41,6 +41,12 @@ class MaterialController extends PSIBaseController
   public function allUnits()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::MATERIAL_UNIT)) {
+        $this->ajaxReturn([]);
+        return;
+      }
+
       $service = new MaterialService();
       $this->ajaxReturn($service->allUnits());
     }
@@ -52,6 +58,12 @@ class MaterialController extends PSIBaseController
   public function editUnit()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::MATERIAL_UNIT)) {
+        $this->ajaxReturn($this->noPermission("物料编码"));
+        return;
+      }
+
       $params = [
         "id" => I("post.id"),
         "name" => I("post.name"),
@@ -70,6 +82,12 @@ class MaterialController extends PSIBaseController
   public function deleteUnit()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::MATERIAL_UNIT)) {
+        $this->ajaxReturn($this->noPermission("物料编码"));
+        return;
+      }
+
       $params = [
         "id" => I("post.id")
       ];

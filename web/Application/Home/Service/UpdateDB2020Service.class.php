@@ -52,6 +52,20 @@ class UpdateDB2020Service extends PSIBaseService
     $this->update_20200410_01();
     $this->update_20200410_02();
     $this->update_20200410_03();
+    $this->update_20200411_01();
+  }
+
+  private function update_20200411_01()
+  {
+    // 本次更新：t_warehouse新增字段usage_type
+    $db = $this->db;
+
+    $tableName = "t_warehouse";
+    $columnName = "usage_type";
+    if (!$this->columnExists($db, $tableName, $columnName)) {
+      $sql = "alter table {$tableName} add {$columnName} int(11) NOT NULL DEFAULT 40;";
+      $db->execute($sql);
+    }
   }
 
   private function update_20200410_03()

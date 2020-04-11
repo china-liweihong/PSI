@@ -57,6 +57,13 @@ class WarehouseController extends PSIBaseController
   public function warehouseList()
   {
     if (IS_POST) {
+      $us = new UserService();
+
+      if (!$us->hasPermission(FIdConst::WAREHOUSE)) {
+        $this->ajaxReturn([]);
+        return;
+      }
+
       $ws = new WarehouseService();
       $this->ajaxReturn($ws->warehouseList());
     }

@@ -12,6 +12,22 @@ use Home\Common\FIdConst;
 class WarehouseDAO extends PSIBaseExDAO
 {
 
+  private function usageTypeCodeToName($code)
+  {
+    switch ($code) {
+      case 10:
+        return "原材料库";
+      case 20:
+        return "半成品库";
+      case 30:
+        return "产成品库";
+      case 40:
+        return "商品库";
+      default:
+        return "";
+    }
+  }
+
   /**
    * 获得所有的仓库列表
    *
@@ -28,7 +44,7 @@ class WarehouseDAO extends PSIBaseExDAO
     }
 
     $sql = "select id, code, name, inited, data_org, enabled,
-              org_id, sale_area 
+              org_id, sale_area, usage_type 
             from t_warehouse ";
     $ds = new DataOrgDAO($db);
     $queryParams = [];
@@ -61,7 +77,8 @@ class WarehouseDAO extends PSIBaseExDAO
         "enabled" => $v["enabled"],
         "saleArea" => $v["sale_area"] == 0 ? null : $v["sale_area"],
         "orgId" => $orgId,
-        "orgName" => $orgName
+        "orgName" => $orgName,
+        "usageType" => $this->usageTypeCodeToName($v["usage_type"]),
       ];
     }
 

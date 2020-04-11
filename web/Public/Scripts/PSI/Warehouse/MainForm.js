@@ -85,7 +85,7 @@ Ext.define("PSI.Warehouse.MainForm", {
     Ext.define(modelName, {
       extend: "Ext.data.Model",
       fields: ["id", "code", "name", "inited", "dataOrg",
-        "enabled", "orgId", "orgName", "saleArea"]
+        "enabled", "orgId", "orgName", "saleArea", "usageType"]
     });
 
     me.__mainGrid = Ext.create("Ext.grid.Panel", {
@@ -137,6 +137,10 @@ Ext.define("PSI.Warehouse.MainForm", {
               ? "建账完毕"
               : "<span style='color:red'>待建账</span>";
           }
+        }, {
+          header: "用途",
+          dataIndex: "usageType",
+          width: 90
         }, {
           header: "仓库状态",
           dataIndex: "enabled",

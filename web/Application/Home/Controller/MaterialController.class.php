@@ -5,6 +5,7 @@ namespace Home\Controller;
 use Home\Common\FIdConst;
 use Home\Service\UserService;
 use Home\Service\BankService;
+use Home\Service\MaterialService;
 
 /**
  * 物料Controller
@@ -30,6 +31,18 @@ class MaterialController extends PSIBaseController
       $this->display();
     } else {
       $this->gotoLoginPage("/Home/Material/unitIndex");
+    }
+  }
+
+  /**
+   * 获得所有的物料单位列表
+   *
+   */
+  public function allUnits()
+  {
+    if (IS_POST) {
+      $service = new MaterialService();
+      $this->ajaxReturn($service->allUnits());
     }
   }
 }

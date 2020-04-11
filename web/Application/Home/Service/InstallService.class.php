@@ -181,19 +181,20 @@ class InstallService extends PSIBaseExService
 
     // t_warehouse
     $sql = "CREATE TABLE IF NOT EXISTS `t_warehouse` (
-				  `id` varchar(255) NOT NULL,
-				  `code` varchar(255) NOT NULL,
-				  `inited` int(11) NOT NULL,
-				  `name` varchar(255) NOT NULL,
-				  `py` varchar(255) DEFAULT NULL,
-				  `data_org` varchar(255) DEFAULT NULL,
-				  `company_id` varchar(255) DEFAULT NULL,
-				  `enabled` int(11) NOT NULL DEFAULT 1,
-				  `org_id` varchar(255) DEFAULT NULL,
-				  `sale_area` decimal(19,2) DEFAULT NULL,
-				  PRIMARY KEY (`id`)
-				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-		";
+              `id` varchar(255) NOT NULL,
+              `code` varchar(255) NOT NULL,
+              `inited` int(11) NOT NULL,
+              `name` varchar(255) NOT NULL,
+              `py` varchar(255) DEFAULT NULL,
+              `data_org` varchar(255) DEFAULT NULL,
+              `company_id` varchar(255) DEFAULT NULL,
+              `enabled` int(11) NOT NULL DEFAULT 1,
+              `org_id` varchar(255) DEFAULT NULL,
+              `sale_area` decimal(19,2) DEFAULT NULL,
+              `usage` int(11) NOT NULL DEFAULT 40,
+              PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+            ";
     $db->execute($sql);
 
     // t_supplier

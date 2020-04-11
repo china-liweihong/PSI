@@ -82,4 +82,34 @@ class MaterialService extends PSIBaseExService
 
     return $this->ok($id);
   }
+
+  /**
+   * 删除物料单位
+   */
+  public function deleteUnit($params)
+  {
+    if ($this->isNotOnline()) {
+      return $this->notOnlineError();
+    }
+
+    $db = $this->db();
+    $db->startTrans();
+
+    $dao = new MaterialUnitDAO($db);
+
+    $rc = $dao->deleteUnit($params);
+    if ($rc) {
+      $db->rollback();
+      return $rc;
+    }
+
+    $name = $params["name"];
+    $log = "删除物料单位: $name";
+    $bs = new BizlogService($db);
+    $bs->insertBizlog($log, $this->LOG_CATEGORY_UNIT);
+
+    $db->commit();
+
+    return $this->ok();
+  }
 }

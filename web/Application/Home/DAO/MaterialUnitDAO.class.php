@@ -156,4 +156,12 @@ class MaterialUnitDAO extends PSIBaseExDAO
     // 操作成功
     return null;
   }
+
+  /**
+   * 删除商品计量单位
+   */
+  public function deleteUnit(&$params)
+  {
+    return $this->todo("在原材材、半成品、产成品这些模块开发完后再实现删除功能");
+  }
 }

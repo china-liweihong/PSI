@@ -409,7 +409,8 @@ class WarehouseDAO extends PSIBaseExDAO
     }
 
     $sql = "select id, code, name from t_warehouse
-            where (enabled = 1) and (code like '%s' or name like '%s' or py like '%s' ) ";
+            where (usage_type = 40) and (enabled = 1) 
+              and (code like '%s' or name like '%s' or py like '%s' ) ";
     $key = "%{$queryKey}%";
     $queryParams = [];
     $queryParams[] = $key;

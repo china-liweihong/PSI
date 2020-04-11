@@ -278,6 +278,10 @@ class MainMenuController extends PSIBaseController
           // 采购入库明细表
           redirect(__ROOT__ . "/Home/Report/purchaseDetail");
           break;
+        case FIdConst::MATERIAL_UNIT:
+          // 物料单位
+          redirect(__ROOT__ . "/Home/Material/unitIndex");
+          break;
         default:
           redirect(__ROOT__ . "/Home");
       }

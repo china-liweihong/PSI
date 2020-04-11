@@ -49,25 +49,15 @@ Ext.define("PSI.Warehouse.EditForm", {
     buttons.push(btn);
 
     var t = entity == null ? "新增仓库" : "编辑仓库";
-    var f = entity == null
-      ? "edit-form-create.png"
-      : "edit-form-update.png";
-    var logoHtml = "<img style='float:left;margin:10px 20px 0px 10px;width:48px;height:48px;' src='"
-      + PSI.Const.BASE_URL
-      + "Public/Images/"
-      + f
-      + "'></img>"
-      + "<h2 style='color:#196d83'>"
-      + t
-      + "</h2>"
-      + "<p style='color:#196d83'>标记 <span style='color:red;font-weight:bold'>*</span>的是必须录入数据的字段</p>";
+    var logoHtml = me.genLogoHtml(entity, t);
+
     Ext.apply(me, {
       header: {
         title: me.formatTitle(PSI.Const.PROD_NAME),
         height: 40
       },
       width: 400,
-      height: 340,
+      height: 370,
       layout: "border",
       listeners: {
         show: {
@@ -192,6 +182,27 @@ Ext.define("PSI.Warehouse.EditForm", {
           id: "PSI_Warehouse_EditForm_hiddenEnabled",
           xtype: "hidden",
           name: "enabled"
+        }, {
+          id: "PSI_Warehouse_EditForm_editUsageType",
+          xtype: "combo",
+          queryMode: "local",
+          editable: false,
+          valueField: "id",
+          labelAlign: "right",
+          labelSeparator: "",
+          fieldLabel: "用途",
+          beforeLabelTextTpl: PSI.Const.REQUIRED,
+          store: Ext.create("Ext.data.ArrayStore", {
+            fields: ["id", "text"],
+            data: [[10, "原材料库"], [20, "半成品库"], [30, "产成品库"], [40, "商品库"]]
+          }),
+          value: entity == null
+            ? 40
+            : parseInt(entity.get("usageType"))
+        }, {
+          id: "PSI_Warehouse_EditForm_hiddenUsageType",
+          xtype: "hidden",
+          name: "usageType"
         }],
         buttons: buttons
       }]
@@ -208,6 +219,8 @@ Ext.define("PSI.Warehouse.EditForm", {
     me.editSaleArea = Ext.getCmp("PSI_Warehouse_EditForm_editSaleArea");
     me.hiddenEnabled = Ext.getCmp("PSI_Warehouse_EditForm_hiddenEnabled");
     me.hiddenOrgId = Ext.getCmp("PSI_Warehouse_EditForm_hiddenOrgId");
+    me.editUsageType = Ext.getCmp("PSI_Warehouse_EditForm_editUsageType");
+    me.hiddenUsageType = Ext.getCmp("PSI_Warehouse_EditForm_hiddenUsageType");
 
     if (!me.adding) {
       me.editOrg.setIdValue(entity.get("orgId"));
@@ -222,6 +235,7 @@ Ext.define("PSI.Warehouse.EditForm", {
 
     me.hiddenOrgId.setValue(me.editOrg.getIdValue());
     me.hiddenEnabled.setValue(me.editEnabled.getValue());
+    me.hiddenUsageType.setValue(me.editUsageType.getValue());
 
     var f = me.editForm;
     var el = f.getEl();

@@ -56,11 +56,11 @@ Ext.define("PSI.Warehouse.MainForm", {
         window.open(me.URL("Home/Help/index?t=warehouse"));
       }
     }, "-", {
-        text: "关闭",
-        handler: function () {
-          me.closeWindow();
-        }
-      });
+      text: "关闭",
+      handler: function () {
+        me.closeWindow();
+      }
+    });
 
     return result;
   },
@@ -85,7 +85,7 @@ Ext.define("PSI.Warehouse.MainForm", {
     Ext.define(modelName, {
       extend: "Ext.data.Model",
       fields: ["id", "code", "name", "inited", "dataOrg",
-        "enabled", "orgId", "orgName", "saleArea", "usageType"]
+        "enabled", "orgId", "orgName", "saleArea", "usageType", "usageTypeName"]
     });
 
     me.__mainGrid = Ext.create("Ext.grid.Panel", {
@@ -139,7 +139,7 @@ Ext.define("PSI.Warehouse.MainForm", {
           }
         }, {
           header: "用途",
-          dataIndex: "usageType",
+          dataIndex: "usageTypeName",
           width: 90
         }, {
           header: "仓库状态",

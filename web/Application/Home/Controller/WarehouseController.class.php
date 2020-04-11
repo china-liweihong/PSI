@@ -90,14 +90,15 @@ class WarehouseController extends PSIBaseController
         }
       }
 
-      $params = array(
+      $params = [
         "id" => I("post.id"),
         "code" => strtoupper(I("post.code")),
         "name" => I("post.name"),
         "orgId" => I("post.orgId"),
         "saleArea" => I("post.saleArea"),
-        "enabled" => I("post.enabled")
-      );
+        "enabled" => I("post.enabled"),
+        "usageType" => I("post.usageType")
+      ];
       $ws = new WarehouseService();
       $this->ajaxReturn($ws->editWarehouse($params));
     }

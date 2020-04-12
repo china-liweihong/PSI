@@ -124,13 +124,13 @@ class MaterialController extends PSIBaseController
       );
 
       // 按钮权限：新增原材料
-      $this->assign("pAddGoods", $us->hasPermission(FIdConst::RAW_MATERIAL_ADD) ? 1 : 0);
+      $this->assign("pAddRawMaterial", $us->hasPermission(FIdConst::RAW_MATERIAL_ADD) ? 1 : 0);
 
       // 按钮权限：编辑原材料
-      $this->assign("pEditGoods", $us->hasPermission(FIdConst::RAW_MATERIAL_EDIT) ? 1 : 0);
+      $this->assign("pEditRawMaterial", $us->hasPermission(FIdConst::RAW_MATERIAL_EDIT) ? 1 : 0);
 
       // 按钮权限：删除原材料
-      $this->assign("pDeleteGoods", $us->hasPermission(FIdConst::RAW_MATERIAL_DELETE) ? 1 : 0);
+      $this->assign("pDeleteRawMaterial", $us->hasPermission(FIdConst::RAW_MATERIAL_DELETE) ? 1 : 0);
 
       $this->display();
     } else {

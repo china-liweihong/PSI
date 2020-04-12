@@ -1120,4 +1120,9 @@ class FIdConst
    * 物料单位
    */
   const MATERIAL_UNIT = "3101";
+
+  /**
+   * 原材料
+   */
+  const RAW_MATERIAL = "3102";
 }

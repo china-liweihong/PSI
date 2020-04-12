@@ -282,6 +282,10 @@ class MainMenuController extends PSIBaseController
           // 物料单位
           redirect(__ROOT__ . "/Home/Material/unitIndex");
           break;
+        case FIdConst::RAW_MATERIAL:
+          // 原材料
+          redirect(__ROOT__ . "/Home/Material/rmIndex");
+          break;
         default:
           redirect(__ROOT__ . "/Home");
       }

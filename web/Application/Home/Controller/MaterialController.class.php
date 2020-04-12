@@ -95,4 +95,46 @@ class MaterialController extends PSIBaseController
       $this->ajaxReturn($service->deleteUnit($params));
     }
   }
+
+  /**
+   * 原材料主页面
+   */
+  public function rmIndex()
+  {
+    $us = new UserService();
+
+    if ($us->hasPermission(FIdConst::RAW_MATERIAL)) {
+      $this->initVar();
+
+      $this->assign("title", "原材料");
+
+      // 按钮权限：新增原材料分类
+      $this->assign("pAddCategory", $us->hasPermission(FIdConst::RAW_MATERIAL_CATEGORY_ADD) ? 1 : 0);
+
+      // 按钮权限：编辑原材料分类
+      $this->assign(
+        "pEditCategory",
+        $us->hasPermission(FIdConst::RAW_MATERIAL_CATEGORY_EDIT) ? 1 : 0
+      );
+
+      // 按钮权限：删除原材料分类
+      $this->assign(
+        "pDeleteCategory",
+        $us->hasPermission(FIdConst::RAW_MATERIAL_CATEGORY_DELETE) ? 1 : 0
+      );
+
+      // 按钮权限：新增原材料
+      $this->assign("pAddGoods", $us->hasPermission(FIdConst::RAW_MATERIAL_ADD) ? 1 : 0);
+
+      // 按钮权限：编辑原材料
+      $this->assign("pEditGoods", $us->hasPermission(FIdConst::RAW_MATERIAL_EDIT) ? 1 : 0);
+
+      // 按钮权限：删除原材料
+      $this->assign("pDeleteGoods", $us->hasPermission(FIdConst::RAW_MATERIAL_DELETE) ? 1 : 0);
+
+      $this->display();
+    } else {
+      $this->gotoLoginPage("/Home/Material/rmIndex");
+    }
+  }
 }

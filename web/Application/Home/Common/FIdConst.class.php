@@ -1125,4 +1125,44 @@ class FIdConst
    * 原材料
    */
   const RAW_MATERIAL = "3102";
+
+  /**
+   * 原材料在业务单据中的使用权限
+   */
+  const RAW_MATERIAL_BILL = "3102-01";
+
+  /**
+   * 原材料分类
+   */
+  const RAW_MATERIAL_CATEGORY = "3102-02";
+
+  /**
+   * 新增原材料分类
+   */
+  const RAW_MATERIAL_CATEGORY_ADD = "3102-03";
+
+  /**
+   * 编辑原材料分类
+   */
+  const RAW_MATERIAL_CATEGORY_EDIT = "3102-04";
+
+  /**
+   * 删除原材料分类
+   */
+  const RAW_MATERIAL_CATEGORY_DELETE = "3102-05";
+
+  /**
+   * 新增原材料
+   */
+  const RAW_MATERIAL_ADD = "3102-06";
+
+  /**
+   * 编辑原材料
+   */
+  const RAW_MATERIAL_EDIT = "3102-07";
+
+  /**
+   * 删除原材料
+   */
+  const RAW_MATERIAL_DELETE = "3102-08";
 }

@@ -489,4 +489,38 @@ class RawMaterialCategoryDAO extends PSIBaseExDAO
     // 操作成功
     return null;
   }
+
+  /**
+   * 获得某个原材料分类的详情
+   */
+  public function getRawMaterialCategoryInfo($params)
+  {
+    $db = $this->db;
+
+    $id = $params["id"];
+
+    $result = [];
+
+    $sql = "select code, name, parent_id, tax_rate 
+            from t_raw_material_category
+            where id = '%s' ";
+    $data = $db->query($sql, $id);
+    if ($data) {
+      $v = $data[0];
+      $result["code"] = $v["code"];
+      $result["name"] = $v["name"];
+      $result["taxRate"] = $v["tax_rate"];
+      $parentId = $v["parent_id"];
+      $result["parentId"] = $parentId;
+      if ($parentId) {
+        $sql = "select full_name from t_raw_material_category where id = '%s' ";
+        $data = $db->query($sql, $parentId);
+        $result["parentName"] = $data[0]["full_name"];
+      } else {
+        $result["parentName"] = null;
+      }
+    }
+
+    return $result;
+  }
 }

@@ -182,4 +182,17 @@ class MaterialService extends PSIBaseExService
 
     return $this->ok($id);
   }
+
+  /**
+   * 获得某个原材料分类的详情
+   */
+  public function getRawMaterialCategoryInfo($params)
+  {
+    if ($this->isNotOnline()) {
+      return $this->emptyResult();
+    }
+
+    $dao = new RawMaterialCategoryDAO($this->db());
+    return $dao->getRawMaterialCategoryInfo($params);
+  }
 }

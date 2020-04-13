@@ -206,7 +206,7 @@ Ext.define("PSI.RawMaterial.MainForm", {
     Ext.define(modelName, {
       extend: "Ext.data.Model",
       fields: ["id", "code", "name", "spec", "unitId",
-        "unitName", "categoryId", 
+        "unitName", "categoryId",
         "purchasePrice", "memo", "dataOrg",
         "recordStatus", "taxRate"]
     });
@@ -387,7 +387,21 @@ Ext.define("PSI.RawMaterial.MainForm", {
 	 */
   onEditCategory: function () {
     var me = this;
-    me.showInfo("TODO");
+
+    var item = me.getCategoryGrid().getSelectionModel().getSelection();
+    if (item == null || item.length != 1) {
+      me.showInfo("请选择要编辑的原材料分类");
+      return;
+    }
+
+    var category = item[0];
+
+    var form = Ext.create("PSI.RawMaterial.CategoryEditForm", {
+      parentForm: me,
+      entity: category
+    });
+
+    form.show();
   },
 
 	/**

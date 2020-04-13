@@ -720,17 +720,18 @@ Ext.define("PSI.RawMaterial.MainForm", {
   },
 
   queryTotalGoodsCount: function () {
-    var me = this;
-    me.ajax({
-      url: me.URL("Home/Matrial/getTotalRawMaterialCount"),
-      params: me.getQueryParamForCategory(),
-      callback: function (options, success, response) {
+    // TODO
+    // var me = this;
+    // me.ajax({
+    //   url: me.URL("Home/Matrial/getTotalRawMaterialCount"),
+    //   params: me.getQueryParamForCategory(),
+    //   callback: function (options, success, response) {
 
-        if (success) {
-          var data = me.decodeJSON(response.responseText);
-          Ext.getCmp("fieldTotalGoodsCount").setValue("共有原材料" + data.cnt + "种");
-        }
-      }
-    });
+    //     if (success) {
+    //       var data = me.decodeJSON(response.responseText);
+    //       Ext.getCmp("fieldTotalGoodsCount").setValue("共有原材料" + data.cnt + "种");
+    //     }
+    //   }
+    // });
   }
 });

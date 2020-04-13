@@ -409,7 +409,43 @@ Ext.define("PSI.RawMaterial.MainForm", {
 	 */
   onDeleteCategory: function () {
     var me = this;
-    me.showInfo("TODO");
+    var item = me.getCategoryGrid().getSelectionModel().getSelection();
+    if (item == null || item.length != 1) {
+      me.showInfo("请选择要删除的原材料分类");
+      return;
+    }
+
+    var category = item[0];
+
+    var info = "请确认是否删除原材料分类: <span style='color:red'>"
+      + category.get("text") + "</span>";
+
+    me.confirm(info, function () {
+      var el = Ext.getBody();
+      el.mask("正在删除中...");
+      me.ajax({
+        url: me.URL("Home/Material/deleteRawMaterialCategory"),
+        params: {
+          id: category.get("id")
+        },
+        callback: function (options, success, response) {
+          el.unmask();
+
+          if (success) {
+            var data = me.decodeJSON(response.responseText);
+            if (data.success) {
+              me.tip("成功完成删除操作")
+              me.freshCategoryGrid();
+            } else {
+              me.showInfo(data.msg);
+            }
+          } else {
+            me.showInfo("网络错误");
+          }
+        }
+
+      });
+    });
   },
 
 	/**

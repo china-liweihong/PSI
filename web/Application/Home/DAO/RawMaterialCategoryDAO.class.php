@@ -523,4 +523,50 @@ class RawMaterialCategoryDAO extends PSIBaseExDAO
 
     return $result;
   }
+
+  /**
+   * 删除原材料分类
+   */
+  public function deleteRawMaterialCategory(&$params)
+  {
+    $db = $this->db;
+
+    $id = $params["id"];
+
+    $category = $this->getRawMaterialCategoryById($id);
+
+    if (!$category) {
+      return $this->bad("要删除的原材料分类不存在");
+    }
+    $code = $category["code"];
+    $name = $category["name"];
+
+    $sql = "select count(*) as cnt from t_raw_material where category_id = '%s' ";
+    $data = $db->query($sql, $id);
+    $cnt = $data[0]["cnt"];
+    if ($cnt > 0) {
+      return $this->bad("还有属于分类 [{$name}] 的原材料，不能删除该分类");
+    }
+
+    // 判断是否还有子分类
+    $sql = "select count(*) as cnt from t_raw_material_category
+            where parent_id = '%s' ";
+    $data = $db->query($sql, $id);
+    $cnt = $data[0]["cnt"];
+    if ($cnt > 0) {
+      return $this->bad("分类[{$name}]还有子分类，不能删除");
+    }
+
+    $sql = "delete from t_raw_material_category where id = '%s' ";
+    $rc = $db->execute($sql, $id);
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+
+    $params["code"] = $code;
+    $params["name"] = $name;
+
+    // 操作成功
+    return null;
+  }
 }

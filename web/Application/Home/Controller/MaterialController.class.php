@@ -137,4 +137,21 @@ class MaterialController extends PSIBaseController
       $this->gotoLoginPage("/Home/Material/rmIndex");
     }
   }
+
+  /**
+   * 获得原材料分类
+   */
+  public function allRawMaterialCategories()
+  {
+    if (IS_POST) {
+      $params = array(
+        "code" => I("post.code"),
+        "name" => I("post.name"),
+        "spec" => I("post.spec"),
+      );
+
+      $service = new MaterialService();
+      $this->ajaxReturn($service->allRawMaterialCategories($params));
+    }
+  }
 }

@@ -422,6 +422,10 @@
     background-image:url(../Images/icons/goodsbrand.png) !important;
 }
 
+.PSI-RawMaterialCategory {
+  background-image:url(../Images/icons/raw_material_category.png) !important;
+}
+
 .PSI-button-hide {
     background-image:url(../Images/icons/hide.png?v=2018041801) !important;
 }

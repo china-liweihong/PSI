@@ -144,11 +144,17 @@ class MaterialController extends PSIBaseController
   public function allRawMaterialCategories()
   {
     if (IS_POST) {
-      $params = array(
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::RAW_MATERIAL)) {
+        $this->ajaxReturn([]);
+        return;
+      }
+
+      $params = [
         "code" => I("post.code"),
         "name" => I("post.name"),
         "spec" => I("post.spec"),
-      );
+      ];
 
       $service = new MaterialService();
       $this->ajaxReturn($service->allRawMaterialCategories($params));

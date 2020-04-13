@@ -39,6 +39,11 @@ class FormController extends PSIBaseController
   public function categoryList()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::FORM_SYSTEM)) {
+        die("没有权限");
+      }
+
       $service = new FormService();
       $this->ajaxReturn($service->categoryList());
     }
@@ -49,14 +54,21 @@ class FormController extends PSIBaseController
    */
   public function editFormCategory()
   {
-    $params = [
-      "id" => I("post.id"),
-      "code" => I("post.code"),
-      "name" => I("post.name")
-    ];
+    if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::FORM_SYSTEM)) {
+        die("没有权限");
+      }
 
-    $service = new FormService();
-    $this->ajaxReturn($service->editFormCategory($params));
+      $params = [
+        "id" => I("post.id"),
+        "code" => I("post.code"),
+        "name" => I("post.name")
+      ];
+
+      $service = new FormService();
+      $this->ajaxReturn($service->editFormCategory($params));
+    }
   }
 
   /**
@@ -64,12 +76,19 @@ class FormController extends PSIBaseController
    */
   public function deleteFormCategory()
   {
-    $params = [
-      "id" => I("post.id"),
-    ];
+    if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::FORM_SYSTEM)) {
+        die("没有权限");
+      }
 
-    $service = new FormService();
-    $this->ajaxReturn($service->deleteFormCategory($params));
+      $params = [
+        "id" => I("post.id"),
+      ];
+
+      $service = new FormService();
+      $this->ajaxReturn($service->deleteFormCategory($params));
+    }
   }
 
   /**
@@ -78,6 +97,11 @@ class FormController extends PSIBaseController
   public function queryDataForCategory()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::FORM_SYSTEM)) {
+        die("没有权限");
+      }
+
       $params = [
         "queryKey" => I("post.queryKey")
       ];
@@ -93,6 +117,11 @@ class FormController extends PSIBaseController
   public function editForm()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::FORM_SYSTEM)) {
+        die("没有权限");
+      }
+
       $params = [
         "id" => I("post.id"),
         "categoryId" => I("post.categoryId"),
@@ -113,6 +142,11 @@ class FormController extends PSIBaseController
   public function formList()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::FORM_SYSTEM)) {
+        die("没有权限");
+      }
+
       $params = [
         "categoryId" => I("post.categoryId")
       ];
@@ -128,6 +162,11 @@ class FormController extends PSIBaseController
   public function formColList()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::FORM_SYSTEM)) {
+        die("没有权限");
+      }
+
       $params = [
         "id" => I("post.id")
       ];
@@ -143,6 +182,11 @@ class FormController extends PSIBaseController
   public function formDetailList()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::FORM_SYSTEM)) {
+        die("没有权限");
+      }
+
       $params = [
         "id" => I("post.id")
       ];
@@ -158,6 +202,11 @@ class FormController extends PSIBaseController
   public function formDetailColList()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::FORM_SYSTEM)) {
+        die("没有权限");
+      }
+
       $params = [
         "id" => I("post.id")
       ];
@@ -173,6 +222,11 @@ class FormController extends PSIBaseController
   public function deleteForm()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::FORM_SYSTEM)) {
+        die("没有权限");
+      }
+
       $params = [
         "id" => I("post.id")
       ];
@@ -188,6 +242,11 @@ class FormController extends PSIBaseController
   public function formInfo()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::FORM_SYSTEM)) {
+        die("没有权限");
+      }
+
       $params = [
         "id" => I("post.id")
       ];
@@ -203,6 +262,11 @@ class FormController extends PSIBaseController
   public function formColInfo()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::FORM_SYSTEM)) {
+        die("没有权限");
+      }
+
       $params = [
         "id" => I("post.id"),
         "formId" => ("post.formId")
@@ -219,6 +283,11 @@ class FormController extends PSIBaseController
   public function editFormCol()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::FORM_SYSTEM)) {
+        die("没有权限");
+      }
+
       $params = [
         "id" => I("post.id"),
         "formId" => ("post.formId")

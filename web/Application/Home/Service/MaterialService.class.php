@@ -13,6 +13,7 @@ use Home\DAO\RawMaterialCategoryDAO;
 class MaterialService extends PSIBaseExService
 {
   private $LOG_CATEGORY_UNIT = "物料单位";
+  private $LOG_CATEGORY_RAW_MATERIAL = "原材料";
   private $LOG_CATEGORY = "物料";
 
   /**
@@ -127,5 +128,58 @@ class MaterialService extends PSIBaseExService
 
     $dao = new RawMaterialCategoryDAO($this->db());
     return $dao->allRawMaterialCategories($params);
+  }
+
+  /**
+   * 新建或者编辑原材料分类
+   */
+  public function editRawMaterialCategory($params)
+  {
+    if ($this->isNotOnline()) {
+      return $this->notOnlineError();
+    }
+
+    $id = $params["id"];
+    $code = $params["code"];
+    $name = $params["name"];
+
+    $db = $this->db();
+    $db->startTrans();
+
+    $dao = new RawMaterialCategoryDAO($db);
+
+    if ($id) {
+      // 编辑
+      $rc = $dao->updateRawMaterialCategory($params);
+      if ($rc) {
+        $db->rollback();
+        return $rc;
+      }
+
+      $log = "编辑原材料分类: 编码 = {$code}， 分类名称 = {$name}";
+    } else {
+      // 新增
+
+      $params["dataOrg"] = $this->getLoginUserDataOrg();
+      $params["companyId"] = $this->getCompanyId();
+
+      $rc = $dao->addRawMaterialCategory($params);
+      if ($rc) {
+        $db->rollback();
+        return $rc;
+      }
+
+      $id = $params["id"];
+
+      $log = "新增原材料分类: 编码 = {$code}， 分类名称 = {$name}";
+    }
+
+    // 记录业务日志
+    $bs = new BizlogService($db);
+    $bs->insertBizlog($log, $this->LOG_CATEGORY_RAW_MATERIAL);
+
+    $db->commit();
+
+    return $this->ok($id);
   }
 }

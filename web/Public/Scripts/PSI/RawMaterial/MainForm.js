@@ -374,7 +374,12 @@ Ext.define("PSI.RawMaterial.MainForm", {
 	 */
   onAddCategory: function () {
     var me = this;
-    me.showInfo("TODO");
+
+    var form = Ext.create("PSI.RawMaterial.CategoryEditForm", {
+      parentForm: me
+    });
+
+    form.show();
   },
 
 	/**
@@ -386,7 +391,7 @@ Ext.define("PSI.RawMaterial.MainForm", {
   },
 
 	/**
-	 * 删除商品分类
+	 * 删除原材料分类
 	 */
   onDeleteCategory: function () {
     var me = this;

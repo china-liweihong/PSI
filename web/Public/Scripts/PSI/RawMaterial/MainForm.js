@@ -483,7 +483,18 @@ Ext.define("PSI.RawMaterial.MainForm", {
 	 */
   onAddRawMaterial: function () {
     var me = this;
-    me.showInfo("TODO");
+
+    var item = me.getCategoryGrid().getSelectionModel().getSelection();
+    if (item == null || item.length != 1) {
+      me.showInfo("请先选择原材料分类");
+      return;
+    }
+
+    var form = Ext.create("PSI.RawMaterial.RawMaterialEditForm", {
+      parentForm: me
+    });
+
+    form.show();
   },
 
 	/**

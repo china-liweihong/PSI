@@ -15,7 +15,7 @@ use Home\Service\FormService;
 class FormController extends PSIBaseController
 {
   /**
-   * 码表运行 - 主页面
+   * 自定义表单运行 - 主页面
    */
   public function run()
   {
@@ -25,7 +25,9 @@ class FormController extends PSIBaseController
     if ($us->hasPermission($fid)) {
       $this->initVar();
 
-      $md = ["title" => "测试"];
+      $service = new FormService();
+
+      $md = $service->getFormMetadataForRuntime($fid);
 
       if ($md) {
         $this->assign("title", $md["title"]);

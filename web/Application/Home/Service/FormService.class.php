@@ -3,6 +3,7 @@
 namespace Home\Service;
 
 use Home\DAO\FormDAO;
+use Home\DAO\FormRuntimeDAO;
 
 /**
  * 自定义表单Service
@@ -288,5 +289,16 @@ class FormService extends PSIBaseExService
   public function editFormCol($params)
   {
     return $this->todo();
+  }
+
+  public function getFormMetadataForRuntime($fid)
+  {
+    if ($this->isNotOnline()) {
+      return null;
+    }
+
+    $params = ["fid" => $fid];
+    $dao = new FormRuntimeDAO($this->db());
+    return $dao->getFormMetadataForRuntime($params);
   }
 }

@@ -146,8 +146,7 @@ class MaterialController extends PSIBaseController
     if (IS_POST) {
       $us = new UserService();
       if (!$us->hasPermission(FIdConst::RAW_MATERIAL)) {
-        $this->ajaxReturn([]);
-        return;
+        die("没有权限");
       }
 
       $params = [
@@ -171,14 +170,12 @@ class MaterialController extends PSIBaseController
       if (I("post.id")) {
         // 编辑原材料分类
         if (!$us->hasPermission(FIdConst::RAW_MATERIAL_CATEGORY_EDIT)) {
-          $this->ajaxReturn($this->noPermission("编辑原材料分类"));
-          return;
+          die("没有权限");
         }
       } else {
         // 新增原材料分类
         if (!$us->hasPermission(FIdConst::RAW_MATERIAL_CATEGORY_ADD)) {
-          $this->ajaxReturn($this->noPermission("新增原材料分类"));
-          return;
+          die("没有权限");
         }
       }
 
@@ -203,7 +200,7 @@ class MaterialController extends PSIBaseController
     if (IS_POST) {
       $us = new UserService;
       if (!$us->hasPermission(FIdConst::RAW_MATERIAL_CATEGORY_EDIT)) {
-        return;
+        die("没有权限");
       }
 
       $params = [
@@ -223,8 +220,7 @@ class MaterialController extends PSIBaseController
     if (IS_POST) {
       $us = new UserService();
       if (!$us->hasPermission(FIdConst::RAW_MATERIAL_CATEGORY_DELETE)) {
-        $this->ajaxReturn($this->noPermission("删除原材料分类"));
-        return;
+        die("没有权限");
       }
 
       $params = [
@@ -293,14 +289,12 @@ class MaterialController extends PSIBaseController
       if (I("post.id")) {
         // 编辑
         if (!$us->hasPermission(FIdConst::RAW_MATERIAL_EDIT)) {
-          $this->ajaxReturn($this->noPermission("编辑商品"));
-          return;
+          die("没有权限");
         }
       } else {
         // 新增
         if (!$us->hasPermission(FIdConst::RAW_MATERIAL_ADD)) {
-          $this->ajaxReturn($this->noPermission("新增商品"));
-          return;
+          die("没有权限");
         }
       }
 
@@ -335,6 +329,25 @@ class MaterialController extends PSIBaseController
 
       $service = new MaterialService();
       $this->ajaxReturn($service->getTotalRawMaterialCount($params));
+    }
+  }
+
+  /**
+   * 删除原材料
+   */
+  public function deleteRawMaterial()
+  {
+    if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::RAW_MATERIAL_DELETE)) {
+        die("没有权限");
+      }
+
+      $params = [
+        "id" => I("post.id")
+      ];
+      $gs = new MaterialService();
+      $this->ajaxReturn($gs->deleteRawMaterial($params));
     }
   }
 }

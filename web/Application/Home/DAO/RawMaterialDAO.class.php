@@ -465,4 +465,25 @@ class RawMaterialDAO extends PSIBaseExDAO
       "cnt" => $data[0]["cnt"]
     ];
   }
+
+  /**
+   * 删除原材料
+   */
+  public function deleteRawMaterial(&$params)
+  {
+    $db = $this->db;
+
+    $id = $params["id"];
+
+    $rm = $this->getRawMaterialById($id);
+    if (!$rm) {
+      return $this->bad("要删除的原材料不存在");
+    }
+    $code = $rm["code"];
+    $name = $rm["name"];
+    $spec = $rm["spec"];
+
+    // TODO 判断是否能删除
+    return $this->todo("需要判断原材料是否能删除");
+  }
 }

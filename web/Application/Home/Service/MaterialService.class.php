@@ -347,4 +347,36 @@ class MaterialService extends PSIBaseExService
     $dao = new RawMaterialDAO($this->db());
     return $dao->getTotalRawMaterialCount($params);
   }
+
+  /**
+   * 删除原材料
+   */
+  public function deleteRawMaterial($params)
+  {
+    if ($this->isNotOnline()) {
+      return $this->notOnlineError();
+    }
+
+    $db = $this->db();
+    $db->startTrans();
+
+    $dao = new RawMaterialDAO($db);
+
+    $rc = $dao->deleteRawMaterial($params);
+    if ($rc) {
+      $db->rollback();
+      return $rc;
+    }
+
+    $code = $params["code"];
+    $name = $params["name"];
+    $spec = $params["spec"];
+    $log = "删除原材料： 编码 = {$code}， 名称 = {$name}，规格型号 = {$spec}";
+    $bs = new BizlogService($db);
+    $bs->insertBizlog($log, $this->LOG_CATEGORY_RAW_MATERIAL);
+
+    $db->commit();
+
+    return $this->ok();
+  }
 }

@@ -534,7 +534,51 @@ Ext.define("PSI.RawMaterial.MainForm", {
 	 */
   onDeleteRawMaterial: function () {
     var me = this;
-    me.showInfo("TODO");
+    var item = me.getMainGrid().getSelectionModel().getSelection();
+    if (item == null || item.length != 1) {
+      me.showInfo("请选择要删除的原材料");
+      return;
+    }
+
+    var rm = item[0];
+
+    var store = me.getMainGrid().getStore();
+    var index = store.findExact("id", rm.get("id"));
+    index--;
+    var preItem = store.getAt(index);
+    if (preItem) {
+      me.__lastId = preItem.get("id");
+    }
+
+    var info = "请确认是否删除原材料: <span style='color:red'>" + rm.get("name")
+      + " " + rm.get("spec") + "</span>";
+
+    me.confirm(info, function () {
+      var el = Ext.getBody();
+      el.mask("正在删除中...");
+      me.ajax({
+        url: me.URL("Home/Material/deleteRawMaterial"),
+        params: {
+          id: rm.get("id")
+        },
+        callback: function (options, success, response) {
+          el.unmask();
+
+          if (success) {
+            var data = me.decodeJSON(response.responseText);
+            if (data.success) {
+              me.tip("成功完成删除操作");
+              me.freshRawMaterialGrid();
+            } else {
+              me.showInfo(data.msg);
+            }
+          } else {
+            me.showInfo("网络错误");
+          }
+        }
+
+      });
+    });
   },
 
   gotoCategoryGridRecord: function (id) {

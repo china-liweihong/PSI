@@ -77,7 +77,7 @@ Ext.define("PSI.RawMaterial.RawMaterialEditForm", {
         height: 40
       },
       width: 460,
-      height: 410,
+      height: 340,
       layout: "border",
       items: [{
         region: "north",
@@ -97,7 +97,7 @@ Ext.define("PSI.RawMaterial.RawMaterialEditForm", {
         bodyPadding: 5,
         defaultType: 'textfield',
         fieldDefaults: {
-          labelWidth: 70,
+          labelWidth: 80,
           labelAlign: "right",
           labelSeparator: "",
           msgTarget: 'side'

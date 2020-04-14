@@ -14,6 +14,33 @@ use Home\Service\FormService;
  */
 class FormController extends PSIBaseController
 {
+  /**
+   * 码表运行 - 主页面
+   */
+  public function run()
+  {
+    $fid = I("get.fid");
+
+    $us = new UserService();
+    if ($us->hasPermission($fid)) {
+      $this->initVar();
+
+      $md = ["title" => "测试"];
+
+      if ($md) {
+        $this->assign("title", $md["title"]);
+        $this->assign("fid", $fid);
+
+        $this->display();
+      } else {
+
+        // 错误的fid，跳转到首页
+        $this->gotoLoginPage("/Home");
+      }
+    } else {
+      $this->gotoLoginPage("/Home");
+    }
+  }
 
   /**
    * 自定义表单 - 主页面

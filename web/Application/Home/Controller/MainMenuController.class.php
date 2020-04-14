@@ -53,6 +53,9 @@ class MainMenuController extends PSIBaseController
     if (substr($fid, 0, 2) == "ct") {
       // 码表
       redirect(__ROOT__ . "/Home/CodeTable/run?fid={$fid}");
+    } else if (substr($fid, 0, 2) == "fm") {
+      //自定义表单
+      redirect(__ROOT__ . "/Home/Form/run?fid={$fid}");
     } else {
       // 系统模块
       switch ($fid) {

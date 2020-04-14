@@ -705,6 +705,7 @@ class FormDAO extends PSIBaseExDAO
     $name = $params["name"];
     $tableName = strtolower($params["tableName"]);
     $memo = $params["memo"];
+    $py = $params["py"];
 
     // 1. 检查数据库表名是否正确
     $rc = $this->checkTableName($tableName);
@@ -843,6 +844,24 @@ class FormDAO extends PSIBaseExDAO
         return $this->sqlError(__METHOD__, __LINE__);
       }
     }
+
+    // fid: t_fid_plus
+    $sql = "insert into t_fid_plus (fid, name, py, memo) values ('%s', '%s', '%s', '')";
+    $rc = $db->execute($sql, $fid, $name, $py);
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+
+    // 权限: t_permission_plus
+    $sql = "insert into t_permission_plus (id, fid, name, note, category, py, show_order)
+            values ('%s', '%s', '%s', '%s', '%s','%s', %d)";
+    $rc = $db->execute($sql, $fid, $fid, $name, "模块权限：通过菜单进入{$name}模块的权限", $name, "", 100);
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+
+    // TODO 权限细化到按钮
+
 
     // 4. 创建数据库表
     // 主表

@@ -242,4 +242,37 @@ class MaterialService extends PSIBaseExService
     $dao = new RawMaterialDAO($this->db());
     return $dao->rawMaterialList($params);
   }
+
+  /**
+   * 获得某个原材料的详情
+   */
+  public function getRawMaterialInfo($id, $categoryId)
+  {
+    if ($this->isNotOnline()) {
+      return $this->emptyResult();
+    }
+
+    $params = [
+      "id" => $id,
+      "categoryId" => $categoryId
+    ];
+
+    $dao = new RawMaterialDAO($this->db());
+    return $dao->getRawMaterialInfo($params);
+  }
+
+  /**
+   * 所有的启用的物料单位
+   *
+   * @param string $goodsId
+   */
+  public function allEnabledUnits()
+  {
+    if ($this->isNotOnline()) {
+      return $this->emptyResult();
+    }
+
+    $dao = new MaterialUnitDAO($this->db());
+    return $dao->allEnabledUnits();
+  }
 }

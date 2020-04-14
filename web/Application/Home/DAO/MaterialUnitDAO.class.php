@@ -164,4 +164,29 @@ class MaterialUnitDAO extends PSIBaseExDAO
   {
     return $this->todo("在原材材、半成品、产成品这些模块开发完后再实现删除功能");
   }
+
+  /**
+   * 所有的启用的物料单位
+   *
+   */
+  public function allEnabledUnits()
+  {
+    $db = $this->db;
+
+    $sql = "select id, name
+            from t_material_unit
+            where record_status = 1
+            order by code, name";
+    $data = $db->query($sql);
+    $result = [];
+
+    foreach ($data as $v) {
+      $result[] = [
+        "id" => $v["id"],
+        "name" => $v["name"]
+      ];
+    }
+
+    return $result;
+  }
 }

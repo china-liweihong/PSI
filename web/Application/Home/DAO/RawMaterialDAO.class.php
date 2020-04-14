@@ -126,4 +126,60 @@ class RawMaterialDAO extends PSIBaseExDAO
       "totalCount" => $totalCount
     ];
   }
+
+  /**
+   * 获得某个原材料的详情
+   */
+  public function getRawMaterialInfo($params)
+  {
+    $db = $this->db;
+
+    $id = $params["id"];
+    $categoryId = $params["categoryId"];
+
+    $sql = "select category_id, code, name, spec, unit_id, purchase_price,
+              memo, record_status, tax_rate
+            from t_raw_material
+            where id = '%s' ";
+    $data = $db->query($sql, $id);
+    if ($data) {
+      $result = [];
+      $categoryId = $data[0]["category_id"];
+      $result["categoryId"] = $categoryId;
+
+      $result["code"] = $data[0]["code"];
+      $result["name"] = $data[0]["name"];
+      $result["spec"] = $data[0]["spec"];
+      $result["unitId"] = $data[0]["unit_id"];
+
+      $v = $data[0]["purchase_price"];
+      if ($v == 0) {
+        $result["purchasePrice"] = null;
+      } else {
+        $result["purchasePrice"] = $v;
+      }
+
+      $result["memo"] = $data[0]["memo"];
+      $result["recordStatus"] = $data[0]["record_status"];
+      $result["taxRate"] = $data[0]["tax_rate"];
+
+      $sql = "select full_name from t_raw_material_category where id = '%s' ";
+      $data = $db->query($sql, $categoryId);
+      if ($data) {
+        $result["categoryName"] = $data[0]["full_name"];
+      }
+
+      return $result;
+    } else {
+      $result = [];
+
+      $sql = "select full_name from t_raw_material_category where id = '%s' ";
+      $data = $db->query($sql, $categoryId);
+      if ($data) {
+        $result["categoryId"] = $categoryId;
+        $result["categoryName"] = $data[0]["full_name"];
+      }
+      return $result;
+    }
+  }
 }

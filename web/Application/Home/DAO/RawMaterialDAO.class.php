@@ -419,4 +419,50 @@ class RawMaterialDAO extends PSIBaseExDAO
     // 操作成功
     return null;
   }
+
+  /**
+   * 查询原材料种类总数
+   *
+   * @param array $params        	
+   * @return int
+   */
+  public function getTotalRawMaterialCount($params)
+  {
+    $db = $this->db;
+
+    $code = $params["code"];
+    $name = $params["name"];
+    $spec = $params["spec"];
+
+    $loginUserId = $params["loginUserId"];
+
+    $sql = "select count(*) as cnt
+            from t_raw_material c
+            where (1 = 1) ";
+    $queryParam = array();
+    $ds = new DataOrgDAO($db);
+    $rs = $ds->buildSQL(FIdConst::RAW_MATERIAL, "c", $loginUserId);
+    if ($rs) {
+      $sql .= " and " . $rs[0];
+      $queryParam = array_merge($queryParam, $rs[1]);
+    }
+    if ($code) {
+      $sql .= " and (c.code like '%s') ";
+      $queryParam[] = "%{$code}%";
+    }
+    if ($name) {
+      $sql .= " and (c.name like '%s' or c.py like '%s') ";
+      $queryParam[] = "%{$name}%";
+      $queryParam[] = "%{$name}%";
+    }
+    if ($spec) {
+      $sql .= " and (c.spec like '%s')";
+      $queryParam[] = "%{$spec}%";
+    }
+    $data = $db->query($sql, $queryParam);
+
+    return [
+      "cnt" => $data[0]["cnt"]
+    ];
+  }
 }

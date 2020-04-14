@@ -320,4 +320,21 @@ class MaterialController extends PSIBaseController
       $this->ajaxReturn($service->editRawMaterial($params));
     }
   }
+
+  /**
+   * 获得所有的原材料种类数
+   */
+  public function getTotalRawMaterialCount()
+  {
+    if (IS_POST) {
+      $params = [
+        "code" => I("post.code"),
+        "name" => I("post.name"),
+        "spec" => I("post.spec"),
+      ];
+
+      $service = new MaterialService();
+      $this->ajaxReturn($service->getTotalRawMaterialCount($params));
+    }
+  }
 }

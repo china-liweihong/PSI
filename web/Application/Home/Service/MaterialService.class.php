@@ -332,4 +332,19 @@ class MaterialService extends PSIBaseExService
 
     return $this->ok($id);
   }
+
+  /**
+   * 查询原材料种类总数
+   */
+  public function getTotalRawMaterialCount($params)
+  {
+    if ($this->isNotOnline()) {
+      return $this->emptyResult();
+    }
+
+    $params["loginUserId"] = $this->getLoginUserId();
+
+    $dao = new RawMaterialDAO($this->db());
+    return $dao->getTotalRawMaterialCount($params);
+  }
 }

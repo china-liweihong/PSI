@@ -4,6 +4,7 @@ namespace Home\Service;
 
 use Home\DAO\MaterialUnitDAO;
 use Home\DAO\RawMaterialCategoryDAO;
+use Home\DAO\RawMaterialDAO;
 
 /**
  * 物料Service
@@ -225,5 +226,20 @@ class MaterialService extends PSIBaseExService
     $db->commit();
 
     return $this->ok();
+  }
+
+  /**
+   * 原材料列表
+   */
+  public function rawMaterialList($params)
+  {
+    if ($this->isNotOnline()) {
+      return $this->emptyResult();
+    }
+
+    $params["loginUserId"] = $this->getLoginUserId();
+
+    $dao = new RawMaterialDAO($this->db());
+    return $dao->rawMaterialList($params);
   }
 }

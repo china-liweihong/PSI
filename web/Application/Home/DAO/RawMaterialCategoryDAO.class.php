@@ -5,7 +5,7 @@ namespace Home\DAO;
 use Home\Common\FIdConst;
 
 /**
- * 原材料 DAO
+ * 原材料分类 DAO
  *
  * @author 李静波
  */

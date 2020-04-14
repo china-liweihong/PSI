@@ -223,7 +223,7 @@ Ext.define("PSI.RawMaterial.MainForm", {
         },
         url: me.URL("Home/Material/rawMaterialList"),
         reader: {
-          root: 'goodsList',
+          root: 'dataList',
           totalProperty: 'totalCount'
         }
       }
@@ -234,8 +234,7 @@ Ext.define("PSI.RawMaterial.MainForm", {
     });
     store.on("load", function (e, records, successful) {
       if (successful) {
-        me.refreshCategoryCount();
-        me.gotoGoodsGridRecord(me.__lastId);
+        me.gotoRawMaterialGridRecord(me.__lastId);
       }
     });
 
@@ -299,7 +298,7 @@ Ext.define("PSI.RawMaterial.MainForm", {
           }
         }
       }, {
-        header: "品名",
+        header: "名称",
         dataIndex: "name",
         menuDisabled: true,
         sortable: false,

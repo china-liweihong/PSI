@@ -235,4 +235,29 @@ class MaterialController extends PSIBaseController
       $this->ajaxReturn($service->deleteRawMaterialCategory($params));
     }
   }
+
+  /**
+   * 获得原材料列表
+   */
+  public function rawMaterialList()
+  {
+    if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::RAW_MATERIAL)) {
+        die("没有权限");
+      }
+
+      $params = [
+        "categoryId" => I("post.categoryId"),
+        "code" => I("post.code"),
+        "name" => I("post.name"),
+        "spec" => I("post.spec"),
+        "start" => I("post.start"),
+        "limit" => I("post.limit")
+      ];
+
+      $service = new MaterialService();
+      $this->ajaxReturn($service->rawMaterialList($params));
+    }
+  }
 }

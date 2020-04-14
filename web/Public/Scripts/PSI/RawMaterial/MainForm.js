@@ -68,7 +68,7 @@ Ext.define("PSI.RawMaterial.MainForm", {
 
     me.callParent(arguments);
 
-    me.queryTotalGoodsCount();
+    me.queryTotalRawMaterialCount();
 
     me.__queryEditNameList = ["editQueryCode", "editQueryName",
       "editQuerySpec"];
@@ -501,7 +501,32 @@ Ext.define("PSI.RawMaterial.MainForm", {
 	 */
   onEditRawMaterial: function () {
     var me = this;
-    me.showInfo("TODO");
+    if (me.getPEditRawMaterial() == "0") {
+      return;
+    }
+
+    var item = me.getCategoryGrid().getSelectionModel().getSelection();
+    if (item == null || item.length != 1) {
+      me.showInfo("请选择原材料分类");
+      return;
+    }
+
+    var category = item[0];
+
+    var item = me.getMainGrid().getSelectionModel().getSelection();
+    if (item == null || item.length != 1) {
+      me.showInfo("请选择要编辑的原材料");
+      return;
+    }
+
+    var rm = item[0];
+    rm.set("categoryId", category.get("id"));
+    var form = Ext.create("PSI.RawMaterial.RawMaterialEditForm", {
+      parentForm: me,
+      entity: rm
+    });
+
+    form.show();
   },
 
 	/**
@@ -627,7 +652,7 @@ Ext.define("PSI.RawMaterial.MainForm", {
 
     me.getMainGrid().getStore().removeAll();
 
-    me.queryTotalGoodsCount();
+    me.queryTotalRawMaterialCount();
 
     me.freshCategoryGrid();
   },
@@ -706,7 +731,7 @@ Ext.define("PSI.RawMaterial.MainForm", {
         }
       }],
       bbar: [{
-        id: "fieldTotalGoodsCount",
+        id: "fieldTotalRawMaterialCount",
         xtype: "displayfield",
         value: "共有原材料0种"
       }],
@@ -784,7 +809,7 @@ Ext.define("PSI.RawMaterial.MainForm", {
     me.onCategoryGridSelect();
   },
 
-  queryTotalGoodsCount: function () {
+  queryTotalRawMaterialCount: function () {
     // TODO
     // var me = this;
     // me.ajax({

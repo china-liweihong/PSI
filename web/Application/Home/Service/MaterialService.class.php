@@ -263,8 +263,6 @@ class MaterialService extends PSIBaseExService
 
   /**
    * 所有的启用的物料单位
-   *
-   * @param string $goodsId
    */
   public function allEnabledUnits()
   {
@@ -274,5 +272,64 @@ class MaterialService extends PSIBaseExService
 
     $dao = new MaterialUnitDAO($this->db());
     return $dao->allEnabledUnits();
+  }
+
+  /**
+   * 新建或编辑原材料
+   */
+  public function editRawMaterial($params)
+  {
+    if ($this->isNotOnline()) {
+      return $this->notOnlineError();
+    }
+
+    $id = $params["id"];
+    $code = $params["code"];
+    $name = $params["name"];
+    $spec = $params["spec"];
+
+    $db = $this->db();
+    $db->startTrans();
+    $dao = new RawMaterialDAO($db);
+
+    $ps = new PinyinService();
+    $params["py"] = $ps->toPY($name);
+    $params["specPY"] = $ps->toPY($spec);
+
+    $log = null;
+
+    if ($id) {
+      // 编辑
+      $rc = $dao->updateRawMaterial($params);
+      if ($rc) {
+        $db->rollback();
+        return $rc;
+      }
+
+      $log = "编辑原材料: 编码 = {$code}, 名称 = {$name}, 规格型号 = {$spec}";
+    } else {
+      // 新增
+
+      $params["dataOrg"] = $this->getLoginUserDataOrg();
+      $params["companyId"] = $this->getCompanyId();
+
+      $rc = $dao->addRawMaterial($params);
+      if ($rc) {
+        $db->rollback();
+        return $rc;
+      }
+
+      $id = $params["id"];
+
+      $log = "新增原材料: 编码 = {$code}, 名称 = {$name}, 规格型号 = {$spec}";
+    }
+
+    // 记录业务日志
+    $bs = new BizlogService($db);
+    $bs->insertBizlog($log, $this->LOG_CATEGORY_RAW_MATERIAL);
+
+    $db->commit();
+
+    return $this->ok($id);
   }
 }

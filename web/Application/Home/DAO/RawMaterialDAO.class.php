@@ -182,4 +182,241 @@ class RawMaterialDAO extends PSIBaseExDAO
       return $result;
     }
   }
+
+  /**
+   * 新增原材料
+   */
+  public function addRawMaterial(&$params)
+  {
+    $db = $this->db;
+
+    $code = $params["code"];
+    $name = $params["name"];
+    $spec = $params["spec"];
+    $categoryId = $params["categoryId"];
+    $unitId = $params["unitId"];
+    $purchasePrice = $params["purchasePrice"];
+    $memo = $params["memo"];
+    $recordStatus = $params["recordStatus"];
+    $taxRate = $params["taxRate"];
+
+    $dataOrg = $params["dataOrg"];
+    $companyId = $params["companyId"];
+    if ($this->dataOrgNotExists($dataOrg)) {
+      return $this->badParam("dataOrg");
+    }
+    if ($this->companyIdNotExists($companyId)) {
+      return $this->badParam("companyId");
+    }
+
+    $py = $params["py"];
+    $specPY = $params["specPY"];
+
+    $unitDAO = new MaterialUnitDAO($db);
+    $unit = $unitDAO->getMaterialUnitById($unitId);
+    if (!$unit) {
+      return $this->bad("物料单位不存在");
+    }
+    $unitRecordStatus = $unit["recordStatus"];
+    if ($unitRecordStatus != 1) {
+      return $this->bad("物料单位已经被停用");
+    }
+
+    $categoryDAO = new RawMaterialCategoryDAO($db);
+    $category = $categoryDAO->getRawMaterialCategoryById($categoryId);
+    if (!$category) {
+      return $this->bad("原材料分类不存在");
+    }
+
+    // 检查编码是否唯一
+    $sql = "select count(*) as cnt from t_raw_material where code = '%s' ";
+    $data = $db->query($sql, $code);
+    $cnt = $data[0]["cnt"];
+    if ($cnt > 0) {
+      return $this->bad("编码为 [{$code}]的原材料已经存在");
+    }
+
+    $id = $this->newId();
+    $sql = "insert into t_raw_material (id, code, name, spec, category_id, unit_id,
+              py, purchase_price, memo, data_org, company_id, spec_py,
+              record_status)
+            values ('%s', '%s', '%s', '%s', '%s', '%s',
+              '%s', %f, '%s', '%s', '%s', '%s',
+              %d)";
+    $rc = $db->execute(
+      $sql,
+      $id,
+      $code,
+      $name,
+      $spec,
+      $categoryId,
+      $unitId,
+      $py,
+      $purchasePrice,
+      $memo,
+      $dataOrg,
+      $companyId,
+      $specPY,
+      $recordStatus
+    );
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+
+    // 税率
+    if ($taxRate == -1) {
+      $sql = "update t_raw_material set tax_rate = null where id = '%s' ";
+      $rc = $db->execute($sql, $id);
+      if ($rc === false) {
+        return $this->sqlError(__METHOD__, __LINE__);
+      }
+    } else {
+      $taxRate = intval($taxRate);
+      if ($taxRate > 17) {
+        $taxRate = 17;
+      }
+      if ($taxRate < 0) {
+        $taxRate = 0;
+      }
+      $sql = "update t_raw_material set tax_rate = %d where id = '%s' ";
+      $rc = $db->execute($sql, $taxRate, $id);
+      if ($rc === false) {
+        return $this->sqlError(__METHOD__, __LINE__);
+      }
+    }
+
+    $params["id"] = $id;
+
+    // 操作成功
+    return null;
+  }
+
+  /**
+   * 通过原材料id查询原材料
+   *
+   * @param string $id        	
+   * @return array|NULL
+   */
+  public function getRawMaterialById($id)
+  {
+    $db = $this->db;
+
+    $sql = "select code, name, spec from t_raw_material where id = '%s' ";
+    $data = $db->query($sql, $id);
+    if ($data) {
+      return [
+        "code" => $data[0]["code"],
+        "name" => $data[0]["name"],
+        "spec" => $data[0]["spec"]
+      ];
+    } else {
+      return null;
+    }
+  }
+
+  /**
+   * 编辑原材料
+   */
+  public function updateRawMaterial(&$params)
+  {
+    $db = $this->db;
+
+    $id = $params["id"];
+    $code = $params["code"];
+    $name = $params["name"];
+    $spec = $params["spec"];
+    $categoryId = $params["categoryId"];
+    $unitId = $params["unitId"];
+    $purchasePrice = $params["purchasePrice"];
+    $memo = $params["memo"];
+    $recordStatus = $params["recordStatus"];
+    $taxRate = $params["taxRate"];
+
+    $py = $params["py"];
+    $specPY = $params["specPY"];
+
+    $rm = $this->getRawMaterialById($id);
+    if (!$rm) {
+      return $this->bad("要编辑的原材料不存在");
+    }
+
+    $unitDAO = new MaterialUnitDAO($db);
+    $unit = $unitDAO->getMaterialUnitById($unitId);
+    if (!$unit) {
+      return $this->bad("单位不存在");
+    }
+    $unitRecordStatus = $unit["recordStatus"];
+    if ($unitRecordStatus == 2) {
+      // 计量单位被停用的时候，原材料的状态不能是启用
+      if (intval($recordStatus) == 1000) {
+        $unitName = $unit["name"];
+        return $this->bad("单位[{$unitName}]被停用的时候，原材料的状态不能是启用");
+      }
+    }
+
+    $categoryDAO = new RawMaterialCategoryDAO($db);
+    $category = $categoryDAO->getRawMaterialCategoryById($categoryId);
+    if (!$category) {
+      return $this->bad("原材料分类不存在");
+    }
+
+    // 编辑
+    // 检查编码是否唯一
+    $sql = "select count(*) as cnt from t_raw_material where code = '%s' and id <> '%s' ";
+    $data = $db->query($sql, $code, $id);
+    $cnt = $data[0]["cnt"];
+    if ($cnt > 0) {
+      return $this->bad("编码为 [{$code}]的原材料已经存在");
+    }
+
+    $sql = "update t_raw_material
+            set code = '%s', name = '%s', spec = '%s', category_id = '%s',
+              unit_id = '%s', py = '%s', purchase_price = %f,
+              memo = '%s', spec_py = '%s',
+              record_status = %d
+            where id = '%s' ";
+
+    $rc = $db->execute(
+      $sql,
+      $code,
+      $name,
+      $spec,
+      $categoryId,
+      $unitId,
+      $py,
+      $purchasePrice,
+      $memo,
+      $specPY,
+      $recordStatus,
+      $id
+    );
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+
+    // 税率
+    if ($taxRate == -1) {
+      $sql = "update t_raw_material set tax_rate = null where id = '%s' ";
+      $rc = $db->execute($sql, $id);
+      if ($rc === false) {
+        return $this->sqlError(__METHOD__, __LINE__);
+      }
+    } else {
+      $taxRate = intval($taxRate);
+      if ($taxRate > 17) {
+        $taxRate = 17;
+      }
+      if ($taxRate < 0) {
+        $taxRate = 0;
+      }
+      $sql = "update t_raw_material set tax_rate = %d where id = '%s' ";
+      $rc = $db->execute($sql, $taxRate, $id);
+      if ($rc === false) {
+        return $this->sqlError(__METHOD__, __LINE__);
+      }
+    }
+
+    // 操作成功
+    return null;
+  }
 }

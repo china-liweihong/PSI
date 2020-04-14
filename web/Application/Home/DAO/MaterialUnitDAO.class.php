@@ -189,4 +189,23 @@ class MaterialUnitDAO extends PSIBaseExDAO
 
     return $result;
   }
+
+  /**
+   * 通过id查询物料单位
+   */
+  public function getMaterialUnitById($id)
+  {
+    $db = $this->db;
+
+    $sql = "select name, record_status from t_material_unit where id = '%s' ";
+    $data = $db->query($sql, $id);
+    if (!$data) {
+      return null;
+    } else {
+      return [
+        "name" => $data[0]["name"],
+        "recordStatus" => $data[0]["record_status"]
+      ];
+    }
+  }
 }

@@ -359,9 +359,6 @@ Ext.define("PSI.RawMaterial.RawMaterialEditForm", {
     var categoryId = me.editCategory.getIdValue();
     me.editCategoryId.setValue(categoryId);
 
-    var brandId = me.editBrand.getIdValue();
-    me.editBrandId.setValue(brandId);
-
     var f = me.editForm;
     var el = f.getEl();
     el.mask(PSI.Const.SAVING);

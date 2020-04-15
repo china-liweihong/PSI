@@ -19,8 +19,16 @@ Ext.define("PSI.Form.RuntimeMainForm", {
       },
       layout: "border",
       items: [{
-        region: "center",
+        region: "north",
         id: "PSI_Form_RuntimeMainForm_panelMain",
+        layout: "fit",
+        split: true,
+        height: "60%",
+        border: 0,
+        items: []
+      }, {
+        region: "center",
+        id: "PSI_Form_RuntimeMainForm_panelDetail",
         layout: "fit",
         border: 0,
         items: []
@@ -31,6 +39,7 @@ Ext.define("PSI.Form.RuntimeMainForm", {
 
     me.__toolBar = Ext.getCmp("PSI_Form_RuntimeMainForm_toolBar");
     me.__panelMain = Ext.getCmp("PSI_Form_RuntimeMainForm_panelMain");
+    me.__pandelDetail = Ext.getCmp("PSI_Form_RuntimeMainForm_panelDetail");
 
     me.fetchMeatData();
   },

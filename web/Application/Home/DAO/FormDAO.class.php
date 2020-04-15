@@ -1013,7 +1013,8 @@ class FormDAO extends PSIBaseExDAO
               db_field_length, db_field_decimal, show_order,
               col_span, value_from, value_from_table_name,
               value_from_col_name, value_from_col_name_display,
-              must_input, sys_col, is_visible, note, editor_xtype
+              must_input, sys_col, is_visible, note, editor_xtype,
+              data_index
             from t_form_cols
             where form_id = '%s' 
             order by show_order";
@@ -1038,7 +1039,8 @@ class FormDAO extends PSIBaseExDAO
         "editorXtype" => $v["editor_xtype"],
         "mustInput" => $v["must_input"] == 2 ? "必录项" : "",
         "colSpan" => $v["col_span"],
-        "showOrder" => $v["show_order"]
+        "showOrder" => $v["show_order"],
+        "dataIndex" => $v["data_index"],
       ];
     }
 
@@ -1086,7 +1088,7 @@ class FormDAO extends PSIBaseExDAO
               db_field_length, db_field_decimal, show_order, width_in_view,
               value_from, value_from_table_name, value_from_col_name, 
               value_from_col_name_display, must_input, sys_col, is_visible,
-              note, editor_xtype
+              note, editor_xtype, data_index
             from t_form_detail_cols
             where detail_id = '%s' 
             order by show_order";
@@ -1112,6 +1114,7 @@ class FormDAO extends PSIBaseExDAO
         "editorXtype" => $v["editor_xtype"],
         "widthInView" => $v["width_in_view"],
         "sysCol" => $v["sys_col"] == 1 ? "系统列" : "",
+        "dataIndex" => $v["data_index"],
       ];
     }
 

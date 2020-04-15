@@ -698,7 +698,7 @@ Ext.define("PSI.Form.MainForm", {
         "valueFrom", "valueFromTableName",
         "valueFromColName", "valueFromColNameDisplay", "mustInput",
         "showOrder", "sysCol", "isVisible", "note", "editorXtype",
-        "colSpan"]
+        "colSpan", "dataIndex"]
     });
 
     me.__colsGrid = Ext.create("Ext.grid.Panel", {
@@ -791,6 +791,9 @@ Ext.define("PSI.Form.MainForm", {
           dataIndex: "colSpan",
           align: "right",
           width: 130
+        }, {
+          header: "dataIndex",
+          dataIndex: "dataIndex"
         }, {
           header: "备注",
           dataIndex: "note",
@@ -908,7 +911,7 @@ Ext.define("PSI.Form.MainForm", {
         "valueFrom", "valueFromTableName",
         "valueFromColName", "valueFromColNameDisplay", "mustInput",
         "showOrder", "sysCol", "isVisible",
-        "widthInView", "note", "editorXtype"]
+        "widthInView", "note", "editorXtype", "dataIndex"]
     });
 
     me.__detailColsGrid = Ext.create("Ext.grid.Panel", {
@@ -1004,6 +1007,9 @@ Ext.define("PSI.Form.MainForm", {
           header: "编辑器类型",
           dataIndex: "editorXtype",
           width: 130
+        }, {
+          header: "dataIndex",
+          dataIndex: "dataIndex"
         }, {
           header: "备注",
           dataIndex: "note",

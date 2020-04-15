@@ -23,7 +23,7 @@ Ext.define("PSI.Form.RuntimeMainForm", {
         id: "PSI_Form_RuntimeMainForm_panelMain",
         layout: "fit",
         split: true,
-        height: "60%",
+        height: "40%",
         border: 0,
         items: []
       }, {
@@ -107,6 +107,50 @@ Ext.define("PSI.Form.RuntimeMainForm", {
         me.closeWindow();
       }
     }]);
+
+    me.__mainGrid = me.createMainGrid(md);
+    me.__panelMain.add(me.__mainGrid);
+  },
+
+  createMainGrid: function (md) {
+    var modelName = "PSIFormRuntime_" + md.tableName;
+
+    var fields = [];
+    var cols = [];
+    var colsLength = md.cols.length;
+    for (var i = 0; i < colsLength; i++) {
+      var mdCol = md.cols[i];
+
+      fields.push(mdCol.fieldName);
+
+      cols.push({
+        header: mdCol.caption,
+        dataIndex: mdCol.fieldName,
+        width: 120,
+        menuDisabled: true,
+        sortable: false
+      });
+    }
+
+    Ext.define(modelName, {
+      extend: "Ext.data.Model",
+      fields: fields
+    });
+
+    return Ext.create("Ext.grid.Panel", {
+      cls: "PSI",
+      viewConfig: {
+        enableTextSelection: true
+      },
+      columnLines: true,
+      border: 0,
+      columns: cols,
+      store: Ext.create("Ext.data.Store", {
+        model: modelName,
+        autoLoad: false,
+        data: []
+      })
+    });
   },
 
   onAddFormRecord: function () {

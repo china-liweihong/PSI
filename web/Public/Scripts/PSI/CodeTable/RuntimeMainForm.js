@@ -29,10 +29,8 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
 
     me.callParent(arguments);
 
-    me.__toolBar = Ext
-      .getCmp("PSI_CodeTable_RuntimeMainForm_toolBar");
-    me.__panelMain = Ext
-      .getCmp("PSI_CodeTable_RuntimeMainForm_panelMain");
+    me.__toolBar = Ext.getCmp("PSI_CodeTable_RuntimeMainForm_toolBar");
+    me.__panelMain = Ext.getCmp("PSI_CodeTable_RuntimeMainForm_panelMain");
 
     me.fetchMeatData();
   },

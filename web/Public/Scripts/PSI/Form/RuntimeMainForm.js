@@ -113,7 +113,7 @@ Ext.define("PSI.Form.RuntimeMainForm", {
   },
 
   createMainGrid: function (md) {
-    var modelName = "PSIFormRuntime_" + md.tableName;
+    var modelName = "PSIFormRuntime_" + Ext.id();
 
     var fields = [];
     var cols = [];

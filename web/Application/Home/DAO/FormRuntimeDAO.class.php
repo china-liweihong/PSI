@@ -32,7 +32,7 @@ class FormRuntimeDAO extends PSIBaseExDAO
 
     $fid = $params["fid"];
 
-    $sql = "select id, name, table_name from t_form where fid = '%s'";
+    $sql = "select id, name from t_form where fid = '%s'";
     $data = $db->query($sql, $fid);
     if (!$data) {
       return null;
@@ -42,7 +42,6 @@ class FormRuntimeDAO extends PSIBaseExDAO
     $formId = $v["id"];
     $result = [
       "name" => $v["name"],
-      "tableName" => $v["table_name"]
     ];
 
     // 主表

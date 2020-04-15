@@ -330,7 +330,8 @@ class FormDAO extends PSIBaseExDAO
       "sysCol" => 1,
       "isVisible" => 2,
       "editorXtype" => "displayfield",
-      "colSpan" => 1
+      "colSpan" => 1,
+      "dataIndex" => "id",
     ];
 
     // bill_status
@@ -349,7 +350,8 @@ class FormDAO extends PSIBaseExDAO
       "sysCol" => 1,
       "isVisible" => 1,
       "editorXtype" => "displayfield",
-      "colSpan" => 1
+      "colSpan" => 1,
+      "dataIndex" => "f1",
     ];
 
     // ref
@@ -368,7 +370,8 @@ class FormDAO extends PSIBaseExDAO
       "sysCol" => 1,
       "isVisible" => 1,
       "editorXtype" => "displayfield",
-      "colSpan" => 1
+      "colSpan" => 1,
+      "dataIndex" => "f2",
     ];
 
     // biz_dt
@@ -387,7 +390,8 @@ class FormDAO extends PSIBaseExDAO
       "sysCol" => 1,
       "isVisible" => 1,
       "editorXtype" => "datefield",
-      "colSpan" => 1
+      "colSpan" => 1,
+      "dataIndex" => "f3",
     ];
 
     // biz_user_id
@@ -406,7 +410,8 @@ class FormDAO extends PSIBaseExDAO
       "sysCol" => 1,
       "isVisible" => 1,
       "editorXtype" => "psi_userfield",
-      "colSpan" => 1
+      "colSpan" => 1,
+      "dataIndex" => "f4",
     ];
 
     // date_created
@@ -425,7 +430,8 @@ class FormDAO extends PSIBaseExDAO
       "sysCol" => 1,
       "isVisible" => 2,
       "editorXtype" => "displayfield",
-      "colSpan" => 1
+      "colSpan" => 1,
+      "dataIndex" => "f5",
     ];
 
     // input_user_id
@@ -444,7 +450,8 @@ class FormDAO extends PSIBaseExDAO
       "sysCol" => 1,
       "isVisible" => 1,
       "editorXtype" => "displayfield",
-      "colSpan" => 1
+      "colSpan" => 1,
+      "dataIndex" => "f6",
     ];
 
     // bill_memo
@@ -463,7 +470,8 @@ class FormDAO extends PSIBaseExDAO
       "sysCol" => 1,
       "isVisible" => 1,
       "editorXtype" => "textfield",
-      "colSpan" => 1
+      "colSpan" => 1,
+      "dataIndex" => "f7",
     ];
 
     // confirm_user_id
@@ -482,7 +490,8 @@ class FormDAO extends PSIBaseExDAO
       "sysCol" => 1,
       "isVisible" => 1,
       "editorXtype" => "displayfield",
-      "colSpan" => 1
+      "colSpan" => 1,
+      "dataIndex" => "f8",
     ];
 
     // confirm_dt
@@ -501,7 +510,8 @@ class FormDAO extends PSIBaseExDAO
       "sysCol" => 1,
       "isVisible" => 1,
       "editorXtype" => "displayfield",
-      "colSpan" => 1
+      "colSpan" => 1,
+      "dataIndex" => "f9",
     ];
 
     // data_org
@@ -520,7 +530,8 @@ class FormDAO extends PSIBaseExDAO
       "sysCol" => 1,
       "isVisible" => 1,
       "editorXtype" => "displayfield",
-      "colSpan" => 1
+      "colSpan" => 1,
+      "dataIndex" => "f10",
     ];
 
     // company_id
@@ -537,9 +548,10 @@ class FormDAO extends PSIBaseExDAO
       "mustInput" => 1,
       "showOrder" => -1000,
       "sysCol" => 1,
-      "isVisible" => 1,
+      "isVisible" => 2,
       "editorXtype" => "displayfield",
-      "colSpan" => 1
+      "colSpan" => 1,
+      "dataIndex" => "f11",
     ];
 
     return $result;
@@ -568,7 +580,8 @@ class FormDAO extends PSIBaseExDAO
       "sysCol" => 1,
       "isVisible" => 2,
       "editorXtype" => "displayfield",
-      "widthInView" => 100
+      "widthInView" => 100,
+      "dataIndex" => "id",
     ];
 
     // 外键
@@ -587,7 +600,8 @@ class FormDAO extends PSIBaseExDAO
       "sysCol" => 1,
       "isVisible" => 2,
       "editorXtype" => "displayfield",
-      "widthInView" => 100
+      "widthInView" => 100,
+      "dataIndex" => "f1",
     ];
 
     // date_created
@@ -606,7 +620,8 @@ class FormDAO extends PSIBaseExDAO
       "sysCol" => 1,
       "isVisible" => 2,
       "editorXtype" => "displayfield",
-      "widthInView" => 100
+      "widthInView" => 100,
+      "dataIndex" => "f2",
     ];
 
     // memo
@@ -625,7 +640,8 @@ class FormDAO extends PSIBaseExDAO
       "sysCol" => 1,
       "isVisible" => 1,
       "editorXtype" => "textfield",
-      "widthInView" => 100
+      "widthInView" => 100,
+      "dataIndex" => "f3",
     ];
 
     // show_order
@@ -642,9 +658,10 @@ class FormDAO extends PSIBaseExDAO
       "mustInput" => 2,
       "showOrder" => -1000,
       "sysCol" => 1,
-      "isVisible" => 1,
+      "isVisible" => 2,
       "editorXtype" => "textfield",
-      "widthInView" => 100
+      "widthInView" => 100,
+      "dataIndex" => "f4",
     ];
 
     // data_org
@@ -661,9 +678,10 @@ class FormDAO extends PSIBaseExDAO
       "mustInput" => 1,
       "showOrder" => -1000,
       "sysCol" => 1,
-      "isVisible" => 1,
+      "isVisible" => 2,
       "editorXtype" => "displayfield",
-      "widthInView" => 100
+      "widthInView" => 100,
+      "dataIndex" => "f5",
     ];
 
     // company_id
@@ -680,9 +698,10 @@ class FormDAO extends PSIBaseExDAO
       "mustInput" => 1,
       "showOrder" => -1000,
       "sysCol" => 1,
-      "isVisible" => 1,
+      "isVisible" => 2,
       "editorXtype" => "displayfield",
-      "widthInView" => 100
+      "widthInView" => 100,
+      "dataIndex" => "f6",
     ];
 
     return $result;
@@ -766,11 +785,11 @@ class FormDAO extends PSIBaseExDAO
       $sql = "insert into t_form_cols(id, form_id, caption, db_field_name, db_field_type,
                 db_field_length, db_field_decimal, show_order, col_span, value_from,
                 value_from_table_name, value_from_col_name, value_from_col_name_display, must_input,
-                sys_col, is_visible, note, editor_xtype)
+                sys_col, is_visible, note, editor_xtype, data_index)
               values ('%s', '%s', '%s', '%s', '%s',
                 %d, %d, %d, %d, %d,
                 '%s', '%s', '%s', %d,
-                %d, %d, '%s', '%s'
+                %d, %d, '%s', '%s', '%s'
                 )";
       $rc = $db->execute(
         $sql,
@@ -791,7 +810,8 @@ class FormDAO extends PSIBaseExDAO
         $v["sysCol"],
         $v["isVisible"],
         "",
-        $v["editorXtype"]
+        $v["editorXtype"],
+        $v["dataIndex"]
       );
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -814,11 +834,11 @@ class FormDAO extends PSIBaseExDAO
       $sql = "insert into t_form_detail_cols(id, detail_id, caption, db_field_name, db_field_type,
                 db_field_length, db_field_decimal, show_order, width_in_view,
                 value_from, value_from_table_name, value_from_col_name, value_from_col_name_display,
-                must_input, sys_col, is_visible, note, editor_xtype)
+                must_input, sys_col, is_visible, note, editor_xtype, data_index)
               values ('%s', '%s', '%s', '%s', '%s',
                 %d, %d, %d, %d,
                 %d, '%s', '%s', '%s',
-                %d, %d, %d, '%s', '%s')";
+                %d, %d, %d, '%s', '%s', '%s')";
       $rc = $db->execute(
         $sql,
         $this->newId(),
@@ -838,7 +858,8 @@ class FormDAO extends PSIBaseExDAO
         $v["sysCol"],
         $v["isVisible"],
         "",
-        $v["editorXtype"]
+        $v["editorXtype"],
+        $v["dataIndex"]
       );
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);

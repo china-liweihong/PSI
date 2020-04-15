@@ -251,8 +251,8 @@ class MainMenuDAO extends PSIBaseExDAO
     $len = strlen($caption);
     if ($len <= 0) {
       return $this->bad("没有输入标题");
-    } else if ($len > 20) {
-      return $this->bad("标题过长，不能大于20个字符");
+    } else if ($len > 40) {
+      return $this->bad("标题过长，不能大于40个字符");
     }
 
     // 检查上级菜单id

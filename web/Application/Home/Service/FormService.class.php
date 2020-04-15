@@ -291,13 +291,23 @@ class FormService extends PSIBaseExService
     return $this->todo();
   }
 
-  public function getFormMetadataForRuntime($fid)
+  public function getFormMetadataForViewInit($fid)
   {
     if ($this->isNotOnline()) {
       return null;
     }
 
     $params = ["fid" => $fid];
+    $dao = new FormRuntimeDAO($this->db());
+    return $dao->getFormMetadataForViewInit($params);
+  }
+
+  public function getFormMetadataForRuntime($params)
+  {
+    if ($this->isNotOnline()) {
+      return null;
+    }
+
     $dao = new FormRuntimeDAO($this->db());
     return $dao->getFormMetadataForRuntime($params);
   }

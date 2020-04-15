@@ -27,7 +27,7 @@ class FormController extends PSIBaseController
 
       $service = new FormService();
 
-      $md = $service->getFormMetadataForRuntime($fid);
+      $md = $service->getFormMetadataForViewInit($fid);
 
       if ($md) {
         $this->assign("title", $md["title"]);
@@ -41,6 +41,28 @@ class FormController extends PSIBaseController
       }
     } else {
       $this->gotoLoginPage("/Home");
+    }
+  }
+
+  /**
+   * 查询表单元数据 - 运行界面用
+   */
+  public function getMetaDataForRuntime()
+  {
+    if (IS_POST) {
+      $fid = I("post.fid");
+
+      $us = new UserService;
+      if (!$us->hasPermission($fid)) {
+        die("没有权限");
+      }
+
+      $params = [
+        "fid" => $fid
+      ];
+
+      $service = new FormService();
+      $this->ajaxReturn($service->getFormMetaDataForRuntime($params));
     }
   }
 

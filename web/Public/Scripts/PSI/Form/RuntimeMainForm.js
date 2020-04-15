@@ -121,11 +121,11 @@ Ext.define("PSI.Form.RuntimeMainForm", {
     for (var i = 0; i < colsLength; i++) {
       var mdCol = md.cols[i];
 
-      fields.push(mdCol.fieldName);
+      fields.push(mdCol.dataIndex);
 
       cols.push({
         header: mdCol.caption,
-        dataIndex: mdCol.fieldName,
+        dataIndex: mdCol.dataIndex,
         width: 120,
         menuDisabled: true,
         sortable: false

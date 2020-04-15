@@ -45,7 +45,7 @@ class FormRuntimeDAO extends PSIBaseExDAO
     ];
 
     // 主表
-    $sql = "select caption, db_field_name
+    $sql = "select caption, data_index
             from t_form_cols
             where form_id = '%s' and is_visible = 1
             order by show_order";
@@ -54,7 +54,7 @@ class FormRuntimeDAO extends PSIBaseExDAO
     foreach ($data as $v) {
       $cols[] = [
         "caption" => $v["caption"],
-        "fieldName" => $v["db_field_name"]
+        "dataIndex" => $v["data_index"]
       ];
     }
     // 主表列

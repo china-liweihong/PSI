@@ -1773,6 +1773,7 @@ class InstallService extends PSIBaseExService
               `is_visible` int(11) DEFAULT 1,
               `note` varchar(1000) DEFAULT NULL,
               `editor_xtype` varchar(255) NOT NULL DEFAULT 'textfield',
+              `data_index` varchar(255) DEFAULT NULL,
               PRIMARY KEY (`id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
             ";
@@ -1811,6 +1812,7 @@ class InstallService extends PSIBaseExService
               `is_visible` int(11) DEFAULT 1,
               `note` varchar(1000) DEFAULT NULL,
               `editor_xtype` varchar(255) NOT NULL DEFAULT 'textfield',
+              `data_index` varchar(255) DEFAULT NULL,
               PRIMARY KEY (`id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
             ";

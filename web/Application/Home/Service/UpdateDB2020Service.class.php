@@ -55,6 +55,29 @@ class UpdateDB2020Service extends PSIBaseService
     $this->update_20200411_01();
     $this->update_20200412_01();
     $this->update_20200413_01();
+    $this->update_20200415_01();
+  }
+
+  private function update_20200415_01()
+  {
+    //本次更新：t_form_cols和t_form_detail_cols新增字段data_index
+    $db = $this->db;
+
+    // t_form_cols
+    $tableName = "t_form_cols";
+    $columnName = "data_index";
+    if (!$this->columnExists($db, $tableName, $columnName)) {
+      $sql = "alter table {$tableName} add {$columnName} varchar(255) DEFAULT NULL;";
+      $db->execute($sql);
+    }
+
+    // t_form_detail_cols
+    $tableName = "t_form_detail_cols";
+    $columnName = "data_index";
+    if (!$this->columnExists($db, $tableName, $columnName)) {
+      $sql = "alter table {$tableName} add {$columnName} varchar(255) DEFAULT NULL;";
+      $db->execute($sql);
+    }
   }
 
   private function update_20200413_01()

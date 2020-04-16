@@ -224,7 +224,7 @@ class FormDAO extends PSIBaseExDAO
   {
     $db = $this->db;
 
-    $sql = "select code, name from t_form where id = '%s' ";
+    $sql = "select code, name, fid from t_form where id = '%s' ";
     $data = $db->query($sql, $id);
     if ($data) {
       $v = $data[0];
@@ -232,7 +232,8 @@ class FormDAO extends PSIBaseExDAO
       return [
         "id" => $id,
         "name" => $v["name"],
-        "code" => $v["code"]
+        "code" => $v["code"],
+        "fid" => $v["fid"],
       ];
     } else {
       return null;
@@ -1136,6 +1137,7 @@ class FormDAO extends PSIBaseExDAO
       return $this->bad("要删除的表单不存在");
     }
     $name = $form["name"];
+    $fid = $form["fid"];
 
     // 删除明细表的列
     $sql = "select id from t_form_detail where form_id = '%s' ";
@@ -1169,6 +1171,22 @@ class FormDAO extends PSIBaseExDAO
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
     }
+
+    // fid
+    $sql = "delete from t_fid_plus where fid = '%s' ";
+    $rc = $db->execute($sql, $fid);
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+
+    // 权限
+    // 用like是为了处理按钮权限
+    $sql = "delete from t_permission_plus where fid like '%s' ";
+    $rc = $db->execute($sql, "{$fid}%");
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+
 
     // 操作成功
     $params["name"] = $name;

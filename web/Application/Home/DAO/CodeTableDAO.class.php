@@ -961,9 +961,15 @@ class CodeTableDAO extends PSIBaseExDAO
     }
 
     // 权限
-    // 用like是为了处理按钮权限
-    $sql = "delete from t_permission_plus where fid like '%s' ";
-    $rc = $db->execute($sql, "{$fid}%");
+    $sql = "delete from t_permission_plus where fid = '%s' ";
+    $rc = $db->execute($sql, $fid);
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+
+    // 删除按钮权限
+    $sql = "delete from t_permission_plus where parent_fid = '%s' ";
+    $rc = $db->execute($sql, $fid);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
     }

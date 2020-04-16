@@ -126,7 +126,7 @@ Ext.define("PSI.Form.RuntimeMainForm", {
       cols.push({
         header: mdCol.caption,
         dataIndex: mdCol.dataIndex,
-        width: 120,
+        width: parseInt(mdCol.widthInView),
         menuDisabled: true,
         sortable: false
       });

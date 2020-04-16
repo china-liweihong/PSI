@@ -1139,6 +1139,20 @@ class FormDAO extends PSIBaseExDAO
     $name = $form["name"];
     $fid = $form["fid"];
 
+    // 检查fid是否在菜单中使用了
+    $sql = "select count(*) as cnt from t_menu_item where fid = '%s' ";
+    $data = $db->query($sql, $fid);
+    $cnt = $data[0]["cnt"];
+    if ($cnt > 0) {
+      return $this->bad("当前表单已经挂接在主菜单中了<br/>在菜单项没有从主菜单中删除之前，表单也不能删除");
+    }
+    $sql = "select count(*) as cnt from t_menu_item_plus where fid = '%s' ";
+    $data = $db->query($sql, $fid);
+    $cnt = $data[0]["cnt"];
+    if ($cnt > 0) {
+      return $this->bad("当前表单已经挂接在主菜单中了<br/>在菜单项没有从主菜单中删除之前，表单也不能删除");
+    }
+
     // 删除明细表的列
     $sql = "select id from t_form_detail where form_id = '%s' ";
     $data = $db->query($sql, $id);
@@ -1180,13 +1194,18 @@ class FormDAO extends PSIBaseExDAO
     }
 
     // 权限
-    // 用like是为了处理按钮权限
-    $sql = "delete from t_permission_plus where fid like '%s' ";
-    $rc = $db->execute($sql, "{$fid}%");
+    $sql = "delete from t_permission_plus where fid = '%s' ";
+    $rc = $db->execute($sql, $fid);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
     }
 
+    // 删除按钮权限
+    $sql = "delete from t_permission_plus where parent_fid = '%s' ";
+    $rc = $db->execute($sql, $fid);
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
 
     // 操作成功
     $params["name"] = $name;

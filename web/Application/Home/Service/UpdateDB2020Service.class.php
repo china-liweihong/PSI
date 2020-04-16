@@ -56,6 +56,21 @@ class UpdateDB2020Service extends PSIBaseService
     $this->update_20200412_01();
     $this->update_20200413_01();
     $this->update_20200415_01();
+    $this->update_20200416_01();
+  }
+
+  private function update_20200416_01()
+  {
+    // 本次更新：t_form_cols新增字段width_in_view
+    $db = $this->db;
+
+    // t_form_cols
+    $tableName = "t_form_cols";
+    $columnName = "width_in_view";
+    if (!$this->columnExists($db, $tableName, $columnName)) {
+      $sql = "alter table {$tableName} add {$columnName} int(11) NOT NULL DEFAULT 120;";
+      $db->execute($sql);
+    }
   }
 
   private function update_20200415_01()

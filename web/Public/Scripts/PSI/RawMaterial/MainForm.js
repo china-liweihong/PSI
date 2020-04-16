@@ -355,7 +355,7 @@ Ext.define("PSI.RawMaterial.MainForm", {
       store: store,
       listeners: {
         itemdblclick: {
-          fn: me.onEditRowMaterial,
+          fn: me.onEditRawMaterial,
           scope: me
         },
         select: {

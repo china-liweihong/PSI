@@ -1014,7 +1014,7 @@ class FormDAO extends PSIBaseExDAO
               col_span, value_from, value_from_table_name,
               value_from_col_name, value_from_col_name_display,
               must_input, sys_col, is_visible, note, editor_xtype,
-              data_index
+              data_index, width_in_view
             from t_form_cols
             where form_id = '%s' 
             order by show_order";
@@ -1041,6 +1041,7 @@ class FormDAO extends PSIBaseExDAO
         "colSpan" => $v["col_span"],
         "showOrder" => $v["show_order"],
         "dataIndex" => $v["data_index"],
+        "widthInView" => $v["width_in_view"],
       ];
     }
 

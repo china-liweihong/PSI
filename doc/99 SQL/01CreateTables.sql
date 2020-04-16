@@ -1553,6 +1553,7 @@ CREATE TABLE IF NOT EXISTS `t_form_cols` (
   `note` varchar(1000) DEFAULT NULL,
   `editor_xtype` varchar(255) NOT NULL DEFAULT 'textfield',
   `data_index` varchar(255) DEFAULT NULL,
+  `width_in_view` int(11) NOT NULL DEFAULT 120,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

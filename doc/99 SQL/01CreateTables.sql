@@ -1471,6 +1471,7 @@ CREATE TABLE IF NOT EXISTS `t_permission_plus` (
   `category` varchar(255) DEFAULT NULL,
   `py` varchar(255) DEFAULT NULL,
   `show_order` int(11) DEFAULT NULL,
+  `parent_fid` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

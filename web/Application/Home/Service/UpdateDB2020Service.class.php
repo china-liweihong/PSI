@@ -58,6 +58,20 @@ class UpdateDB2020Service extends PSIBaseService
     $this->update_20200415_01();
     $this->update_20200416_01();
     $this->update_20200416_02();
+    $this->update_20200416_03();
+  }
+
+  private function update_20200416_03()
+  {
+    // 本次更新：t_permission新增字段parent_fid
+    $db = $this->db;
+
+    $tableName = "t_permission";
+    $columnName = "parent_fid";
+    if (!$this->columnExists($db, $tableName, $columnName)) {
+      $sql = "alter table {$tableName} add {$columnName} varchar(255) DEFAULT NULL;";
+      $db->execute($sql);
+    }
   }
 
   private function update_20200416_02()

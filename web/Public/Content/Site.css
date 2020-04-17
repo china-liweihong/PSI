@@ -329,6 +329,10 @@ h1, h2, h3, p {
 		Arial, sans-serif;
 }
 
+.x-form-date-trigger {
+	background: url(../Images/form/trigger.gif);
+}
+
 .x-toolbar .x-toolbar-text {
 	color: #196d6d;
 }

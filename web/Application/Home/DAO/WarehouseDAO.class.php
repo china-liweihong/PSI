@@ -170,6 +170,10 @@ class WarehouseDAO extends PSIBaseExDAO
     $name = trim($params["name"]);
     $py = $params["py"];
     $enabled = intval($params["enabled"]);
+    if ($enabled != 1) {
+      // 仓库的状态只能是 1 和 2
+      $enabled = 2;
+    }
     $orgId = $params["orgId"] ?? "";
     $saleArea = floatval($params["saleArea"] ?? 0);
     $usageType = $params["usageType"] ?? 40;

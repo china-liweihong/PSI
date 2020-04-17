@@ -129,8 +129,8 @@ Ext.define("PSI.Bill.PWViewForm", {
       extend: "Ext.data.Model",
       fields: ["id", "goodsId", "goodsCode",
         "goodsName", "goodsSpec", "unitName",
-        "goodsCount", "goodsMoney", "goodsPrice",
-        "memo", "taxRate", "tax", "moneyWithTax"]
+        "goodsCount", { name: "goodsMoney", type: "float" }, "goodsPrice",
+        "memo", "taxRate", { name: "tax", type: "float" }, { name: "moneyWithTax", type: "float" }]
     });
     var store = Ext.create("Ext.data.Store", {
       autoLoad: false,
@@ -143,6 +143,9 @@ Ext.define("PSI.Bill.PWViewForm", {
       viewConfig: {
         enableTextSelection: true
       },
+      features: [{
+        ftype: "summary"
+      }],
       columnLines: true,
       columns: [{
         xtype: "rownumberer",
@@ -185,6 +188,9 @@ Ext.define("PSI.Bill.PWViewForm", {
         sortable: false,
         align: "right",
         xtype: "numbercolumn",
+        summaryRenderer: function () {
+          return "采购金额合计";
+        },
         width: 100
       }, {
         header: "采购金额",
@@ -193,6 +199,7 @@ Ext.define("PSI.Bill.PWViewForm", {
         sortable: false,
         align: "right",
         xtype: "numbercolumn",
+        summaryType: "sum",
         width: 120
       }, {
         header: "税率(%)",
@@ -210,6 +217,7 @@ Ext.define("PSI.Bill.PWViewForm", {
         sortable: false,
         align: "right",
         xtype: "numbercolumn",
+        summaryType: "sum",
         width: 120
       }, {
         header: "价税合计",
@@ -218,6 +226,7 @@ Ext.define("PSI.Bill.PWViewForm", {
         sortable: false,
         align: "right",
         xtype: "numbercolumn",
+        summaryType: "sum",
         width: 120
       }, {
         header: "备注",

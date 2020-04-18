@@ -288,7 +288,49 @@ class FormService extends PSIBaseExService
    */
   public function editFormCol($params)
   {
-    return $this->todo();
+    if ($this->isNotOnline()) {
+      return $this->notOnlineError();
+    }
+
+    $db = $this->db();
+    $db->startTrans();
+
+    $dao = new FormDAO($db);
+
+    $id = $params["id"];
+    $fieldName = $params["fieldName"];
+
+    $log = "";
+    if ($id) {
+      // 编辑
+      $rc = $dao->updateFormCol($params);
+      if ($rc){
+        $db->rollback();
+        return $rc;
+      }
+
+      $formName = $params["name"];
+
+      $log = "编辑表单[{$formName}]主表列[$fieldName]的元数据";
+    } else {
+      // 新增
+      $rc = $dao->addFormCol($params);
+      if ($rc) {
+        $db->rollback();
+        return $rc;
+      }
+      $id = $params["id"];
+      $formName = $params["name"];
+
+      $log = "表单[{$formName}]新增主表列[$fieldName]";
+    }
+    // 记录业务日志
+    $bs = new BizlogService($db);
+    $bs->insertBizlog($log, $this->LOG_CATEGORY);
+
+    $db->commit();
+
+    return $this->ok($id);
   }
 
   public function getFormMetadataForViewInit($fid)

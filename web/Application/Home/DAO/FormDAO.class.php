@@ -1279,4 +1279,20 @@ class FormDAO extends PSIBaseExDAO
 
     return $result;
   }
+
+  /**
+   * 新增表单主表列
+   */
+  public function addFormCol(&$params)
+  {
+    return $this->todo();
+  }
+
+  /**
+   * 编辑表单主表列
+   */
+  public function updateFormCol(&$params)
+  {
+    return $this->todo();
+  }
 }

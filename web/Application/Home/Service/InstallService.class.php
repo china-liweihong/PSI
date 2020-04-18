@@ -1777,6 +1777,7 @@ class InstallService extends PSIBaseExService
               `editor_xtype` varchar(255) NOT NULL DEFAULT 'textfield',
               `data_index` varchar(255) DEFAULT NULL,
               `width_in_view` int(11) NOT NULL DEFAULT 120,
+              `show_order_in_view` int(11) NOT NULL DEFAULT -1,
               PRIMARY KEY (`id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
             ";

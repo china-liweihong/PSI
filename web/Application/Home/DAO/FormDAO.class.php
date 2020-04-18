@@ -1281,6 +1281,36 @@ class FormDAO extends PSIBaseExDAO
   }
 
   /**
+   * 检查字段名是否合法
+   */
+  private function checkFieldName($fieldName)
+  {
+    $c = ord($fieldName{
+      0});
+    $isABC = ord('a') <= $c && ord('z') >= $c;
+    if (!$isABC) {
+      return $this->bad("数据库字段名需要以字符开头");
+    }
+
+    $len = strlen($fieldName);
+    for ($i = 1; $i < $len; $i++) {
+      $c = ord($fieldName{
+        $i});
+      $isABC = ord('a') <= $c && ord('z') >= $c;
+      $isNumber = ord('0') <= $c && ord('9') >= $c;
+      $isOK = $isABC || $isNumber || ord('_') == $c;
+      if (!$isOK) {
+        $index = $i + 1;
+        return $this->bad("数据库字段名的第{$index}个字符非法");
+      }
+    }
+
+    // 字段名正确
+    return null;
+  }
+
+
+  /**
    * 新增表单主表列
    */
   public function addFormCol(&$params)

@@ -47,8 +47,8 @@ class FormRuntimeDAO extends PSIBaseExDAO
     // 主表列
     $sql = "select caption, data_index, width_in_view
             from t_form_cols
-            where form_id = '%s' and is_visible = 1
-            order by show_order";
+            where form_id = '%s' and is_visible = 1 and show_order_in_view >= 0
+            order by show_order_in_view";
     $data = $db->query($sql, $formId);
     $cols = [];
     foreach ($data as $v) {

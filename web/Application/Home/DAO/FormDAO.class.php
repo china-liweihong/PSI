@@ -1354,6 +1354,7 @@ class FormDAO extends PSIBaseExDAO
     $editorXtype = $params["editorXtype"];
     $colSpan = $params["colSpan"];
     $widthInView = $params["widthInView"];
+    $showOrderInView = $params["showOrderInView"];
     $memo = $params["memo"];
 
     // 检查字段名是否合法
@@ -1476,12 +1477,14 @@ class FormDAO extends PSIBaseExDAO
               db_field_name, db_field_type, db_field_length, db_field_decimal,
               show_order, value_from, value_from_table_name, value_from_col_name,
               must_input, sys_col, is_visible, width_in_view, note, 
-              col_span, editor_xtype, value_from_col_name_display, data_index)
+              col_span, editor_xtype, value_from_col_name_display, data_index,
+              show_order_in_view)
             values ('%s', '%s', '%s',
               '%s', '%s', %d, %d,
               %d, %d, '%s', '%s',
               %d, %d, %d, %d, '%s',
-              %d, '%s', '%s', '%s')";
+              %d, '%s', '%s', '%s',
+              %d)";
     $rc = $db->execute(
       $sql,
       $id,
@@ -1503,7 +1506,8 @@ class FormDAO extends PSIBaseExDAO
       $colSpan,
       $editorXtype,
       $valueFromColNameDisplay,
-      $dataIndex
+      $dataIndex,
+      $showOrderInView
     );
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);

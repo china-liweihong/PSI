@@ -317,7 +317,24 @@ Ext.define("PSI.Form.FormColEditForm", {
           allowDecimal: false,
           name: "widthInView",
           value: entity == null ? 120 : entity.get("widthInView"),
-          colspan: 3,
+          listeners: {
+            specialkey: {
+              fn: me.onEditSpecialKey,
+              scope: me
+            }
+          }
+        }, {
+          id: "PSI_Form_FormColEditForm_editShowOrderInView",
+          fieldLabel: "视图界面显示次序",
+          allowBlank: false,
+          blankText: "没有输入视图界面显示次序",
+          beforeLabelTextTpl: PSI.Const.REQUIRED,
+          xtype: "numberfield",
+          hideTrigger: true,
+          allowDecimal: false,
+          name: "showOrderInView",
+          value: entity == null ? 10 : entity.get("showOrderInView"),
+          colspan: 2,
           listeners: {
             specialkey: {
               fn: me.onEditSpecialKey,
@@ -374,9 +391,11 @@ Ext.define("PSI.Form.FormColEditForm", {
     me.editIsVisible = Ext.getCmp("PSI_Form_FormColEditForm_editIsVisible");
     me.editMustInput = Ext.getCmp("PSI_Form_FormColEditForm_editMustInput");
     me.editWidthInView = Ext.getCmp("PSI_Form_FormColEditForm_editWidthInView");
+    me.editShowOrderInView = Ext.getCmp("PSI_Form_FormColEditForm_editShowOrderInView");
 
     me.__editorList = [
-      me.editCaption, me.editFieldName, me.editShowOrder, me.editColSpan, me.editWidthInView, me.editMemo
+      me.editCaption, me.editFieldName, me.editShowOrder, me.editColSpan, me.editWidthInView,
+      me.editShowOrderInView, me.editMemo
     ];
   },
 

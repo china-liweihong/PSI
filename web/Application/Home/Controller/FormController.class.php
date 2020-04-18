@@ -357,6 +357,7 @@ class FormController extends PSIBaseController
         "editorXtype" => I("post.editorXtype"),
         "colSpan" => I("post.colSpan"),
         "widthInView" => I("post.widthInView"),
+        "showOrderInView" => I("post.showOrderInView"),
         "memo" => I("post.memo")
       ];
 

@@ -698,7 +698,7 @@ Ext.define("PSI.Form.MainForm", {
         "valueFrom", "valueFromTableName",
         "valueFromColName", "valueFromColNameDisplay", "mustInput",
         "showOrder", "sysCol", "isVisible", "note", "editorXtype",
-        "colSpan", "dataIndex", "widthInView"]
+        "colSpan", "dataIndex", "widthInView", "showOrderInView"]
     });
 
     me.__colsGrid = Ext.create("Ext.grid.Panel", {
@@ -798,6 +798,11 @@ Ext.define("PSI.Form.MainForm", {
           header: "列宽度(px)",
           align: "right",
           dataIndex: "widthInView"
+        }, {
+          header: "视图界面中显示次序",
+          dataIndex: "showOrderInView",
+          width: 140,
+          align: "right"
         }, {
           header: "备注",
           dataIndex: "note",

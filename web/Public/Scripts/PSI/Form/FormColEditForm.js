@@ -307,11 +307,28 @@ Ext.define("PSI.Form.FormColEditForm", {
             }
           }
         }, {
+          id: "PSI_Form_FormColEditForm_editWidthInView",
+          fieldLabel: "列宽度",
+          allowBlank: false,
+          blankText: "没有输入列宽度",
+          beforeLabelTextTpl: PSI.Const.REQUIRED,
+          xtype: "numberfield",
+          hideTrigger: true,
+          allowDecimal: false,
+          name: "widthInView",
+          value: entity == null ? 120 : entity.get("widthInView"),
+          colspan: 3,
+          listeners: {
+            specialkey: {
+              fn: me.onEditSpecialKey,
+              scope: me
+            }
+          }
+        }, {
           id: "PSI_Form_FormColEditForm_editMemo",
           fieldLabel: "备注",
           name: "memo",
-          value: entity == null ? null : entity
-            .get("note"),
+          value: entity == null ? null : entity.get("note"),
           listeners: {
             specialkey: {
               fn: me.onEditLastSpecialKey,
@@ -356,9 +373,10 @@ Ext.define("PSI.Form.FormColEditForm", {
     me.editMemo = Ext.getCmp("PSI_Form_FormColEditForm_editMemo");
     me.editIsVisible = Ext.getCmp("PSI_Form_FormColEditForm_editIsVisible");
     me.editMustInput = Ext.getCmp("PSI_Form_FormColEditForm_editMustInput");
+    me.editWidthInView = Ext.getCmp("PSI_Form_FormColEditForm_editWidthInView");
 
     me.__editorList = [
-      me.editCaption, me.editFieldName, me.editShowOrder, me.editColSpan, me.editMemo
+      me.editCaption, me.editFieldName, me.editShowOrder, me.editColSpan, me.editWidthInView, me.editMemo
     ];
   },
 

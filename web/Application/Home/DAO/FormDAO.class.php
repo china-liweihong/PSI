@@ -335,6 +335,7 @@ class FormDAO extends PSIBaseExDAO
       "colSpan" => 1,
       "dataIndex" => "id",
       "widthInView" => 120,
+      "showOrderInView" => -1000,
     ];
 
     // bill_status
@@ -356,6 +357,7 @@ class FormDAO extends PSIBaseExDAO
       "colSpan" => 1,
       "dataIndex" => "f1",
       "widthInView" => 120,
+      "showOrderInView" => 1,
     ];
 
     // ref
@@ -377,6 +379,7 @@ class FormDAO extends PSIBaseExDAO
       "colSpan" => 1,
       "dataIndex" => "f2",
       "widthInView" => 120,
+      "showOrderInView" => 2,
     ];
 
     // biz_dt
@@ -398,6 +401,7 @@ class FormDAO extends PSIBaseExDAO
       "colSpan" => 1,
       "dataIndex" => "f3",
       "widthInView" => 120,
+      "showOrderInView" => 3,
     ];
 
     // biz_user_id
@@ -419,6 +423,7 @@ class FormDAO extends PSIBaseExDAO
       "colSpan" => 1,
       "dataIndex" => "f4",
       "widthInView" => 120,
+      "showOrderInView" => 100,
     ];
 
     // date_created
@@ -440,6 +445,7 @@ class FormDAO extends PSIBaseExDAO
       "colSpan" => 1,
       "dataIndex" => "f5",
       "widthInView" => 120,
+      "showOrderInView" => 102,
     ];
 
     // input_user_id
@@ -461,6 +467,7 @@ class FormDAO extends PSIBaseExDAO
       "colSpan" => 1,
       "dataIndex" => "f6",
       "widthInView" => 120,
+      "showOrderInView" => 101,
     ];
 
     // bill_memo
@@ -482,6 +489,7 @@ class FormDAO extends PSIBaseExDAO
       "colSpan" => 1,
       "dataIndex" => "f7",
       "widthInView" => 300,
+      "showOrderInView" => 200,
     ];
 
     // confirm_user_id
@@ -503,6 +511,7 @@ class FormDAO extends PSIBaseExDAO
       "colSpan" => 1,
       "dataIndex" => "f8",
       "widthInView" => 120,
+      "showOrderInView" => 103,
     ];
 
     // confirm_dt
@@ -524,6 +533,7 @@ class FormDAO extends PSIBaseExDAO
       "colSpan" => 1,
       "dataIndex" => "f9",
       "widthInView" => 120,
+      "showOrderInView" => 104,
     ];
 
     // data_org
@@ -545,6 +555,7 @@ class FormDAO extends PSIBaseExDAO
       "colSpan" => 1,
       "dataIndex" => "f10",
       "widthInView" => 120,
+      "showOrderInView" => 1000,
     ];
 
     // company_id
@@ -566,6 +577,7 @@ class FormDAO extends PSIBaseExDAO
       "colSpan" => 1,
       "dataIndex" => "f11",
       "widthInView" => 120,
+      "showOrderInView" => -1000,
     ];
 
     return $result;
@@ -800,12 +812,12 @@ class FormDAO extends PSIBaseExDAO
                 db_field_length, db_field_decimal, show_order, col_span, value_from,
                 value_from_table_name, value_from_col_name, value_from_col_name_display, must_input,
                 sys_col, is_visible, note, editor_xtype, data_index,
-                width_in_view)
+                width_in_view, show_order_in_view)
               values ('%s', '%s', '%s', '%s', '%s',
                 %d, %d, %d, %d, %d,
                 '%s', '%s', '%s', %d,
                 %d, %d, '%s', '%s', '%s',
-                %d
+                %d, %d
                 )";
       $rc = $db->execute(
         $sql,
@@ -828,7 +840,8 @@ class FormDAO extends PSIBaseExDAO
         "",
         $v["editorXtype"],
         $v["dataIndex"],
-        $v["widthInView"]
+        $v["widthInView"],
+        $v["showOrderInView"]
       );
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);

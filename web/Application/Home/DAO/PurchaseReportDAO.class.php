@@ -2,6 +2,8 @@
 
 namespace Home\DAO;
 
+use Home\Common\FIdConst;
+
 /**
  * 采购报表 DAO
  *
@@ -23,6 +25,8 @@ class PurchaseReportDAO extends PSIBaseExDAO
     if ($this->companyIdNotExists($companyId)) {
       return $this->emptyResult();
     }
+
+    $loginUserId = $params["loginUserId"];
 
     $bcDAO = new BizConfigDAO($db);
     $dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
@@ -49,6 +53,15 @@ class PurchaseReportDAO extends PSIBaseExDAO
               and (g.unit_id = u.id) and (p.supplier_id = s.id)
               and (p.warehouse_id = w.id) ";
     $queryParams = [];
+
+    $ds = new DataOrgDAO($db);
+    // 构建数据域SQL
+    $rs = $ds->buildSQL(FIdConst::PURCHASE_DETAIL_REPORT, "p", $loginUserId);
+    if ($rs) {
+      $sql .= " and " . $rs[0];
+      $queryParams = array_merge($queryParams, $rs[1]);
+    }
+
     if ($supplierId) {
       $sql .= " and (p.supplier_id = '%s') ";
       $queryParams[] = $supplierId;

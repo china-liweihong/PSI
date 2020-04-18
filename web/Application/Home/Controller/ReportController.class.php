@@ -1235,6 +1235,11 @@ class ReportController extends PSIBaseController
   public function purchaseDetailQueryData()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::PURCHASE_DETAIL_REPORT)) {
+        die("没有权限");
+      }
+
       $params = [
         "supplierId" => I("post.supplierId"),
         "warehouseId" => I("post.warehouseId"),

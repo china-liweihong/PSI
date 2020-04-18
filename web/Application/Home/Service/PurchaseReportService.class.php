@@ -23,6 +23,7 @@ class PurchaseReportService extends PSIBaseExService
     }
 
     $params["companyId"] = $this->getCompanyId();
+    $params["loginUserId"] = $this->getLoginUserId();
 
     $dao = new PurchaseReportDAO($this->db());
 

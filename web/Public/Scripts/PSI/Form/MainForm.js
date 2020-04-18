@@ -613,7 +613,7 @@ Ext.define("PSI.Form.MainForm", {
 
     var info = "请确认是否删除表单: <span style='color:red'>"
       + form.get("name")
-      + "</span><br /><br />当前操作只删除表单元数据，数据库实际表不会删除";
+      + "</span><br /><br />当前操作只删除表单元数据，<br />数据库实际表不会删除";
 
     var funcConfirm = function () {
       var el = Ext.getBody();

@@ -341,7 +341,23 @@ class FormController extends PSIBaseController
 
       $params = [
         "id" => I("post.id"),
-        "formId" => ("post.formId")
+        "formId" => I("post.formId"),
+        "caption" => I("post.caption"),
+        "fieldName" => I("post.fieldName"),
+        "fieldType" => I("post.fieldType"),
+        "fieldLength" => I("post.fieldLength"),
+        "fieldDecimal" => I("post.fieldDecimal"),
+        "valueFrom" => I("post.valueFrom"),
+        "valueFromTableName" => I("post.valueFromTableName"),
+        "valueFromColName" => I("post.valueFromColName"),
+        "valueFromColNameDisplay" => I("post.valueFromColNameDisplay"),
+        "isVisible" => I("post.isVisible"),
+        "mustInput" => I("post.mustInput"),
+        "showOrder" => I("post.showOrder"),
+        "editorXtype" => I("post.editorXtype"),
+        "colSpan" => I("post.colSpan"),
+        "widthInView" => I("post.widthInView"),
+        "memo" => I("post.memo")
       ];
 
       $service = new FormService();

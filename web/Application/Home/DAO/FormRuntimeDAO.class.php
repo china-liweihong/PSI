@@ -61,6 +61,37 @@ class FormRuntimeDAO extends PSIBaseExDAO
     $result["cols"] = $cols;
 
     // 明细表
+    $sql = "select id, name
+            from t_form_detail
+            where form_id = '%s'
+            order by show_order";
+    $data = $db->query($sql, $formId);
+    $details = [];
+    foreach ($data as $v) {
+      $detailId = $v["id"];
+      $detailTable = [
+        "name" => $v["name"]
+      ];
+
+      // 明细表的列
+      $sql = "select caption, width_in_view, data_index
+              from t_form_detail_cols
+              where detail_id = '%s' and is_visible = 1
+              order by show_order ";
+      $d = $db->query($sql, $detailId);
+      $cols = [];
+      foreach ($d as $c) {
+        $cols[] = [
+          "caption" => $c["caption"],
+          "widthInView" => $c["width_in_view"],
+          "dataIndex" => $c["data_index"],
+        ];
+      }
+      $detailTable["cols"] = $cols;
+
+      $details[] = $detailTable;
+    }
+    $result["details"] = $details;
 
     return $result;
   }

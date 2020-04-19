@@ -753,6 +753,7 @@ class FormDAO extends PSIBaseExDAO
     $moduleName = $params["moduleName"];
     $memo = $params["memo"];
     $py = $params["py"];
+    $pyModuleName = $params["pyModuleName"];
 
     // 1. 检查数据库表名是否正确
     $rc = $this->checkTableName($tableName);
@@ -902,7 +903,7 @@ class FormDAO extends PSIBaseExDAO
 
     // fid: t_fid_plus
     $sql = "insert into t_fid_plus (fid, name, py, memo) values ('%s', '%s', '%s', '')";
-    $rc = $db->execute($sql, $fid, $moduleName, $py);
+    $rc = $db->execute($sql, $fid, $moduleName, $pyModuleName);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
     }
@@ -985,12 +986,15 @@ class FormDAO extends PSIBaseExDAO
 
     $code = $params["code"];
     $name = $params["name"];
+    $moduleName = $params["moduleName"];
     $memo = $params["memo"];
+    $pyModuleName = $params["pyModuleName"];
 
     $form = $this->getFormById($id);
     if (!$form) {
       return $this->bad("要编辑的表单不存在");
     }
+    $fid = $form["fid"];
 
     // 检查编码是否存在
     if ($code) {
@@ -1016,12 +1020,32 @@ class FormDAO extends PSIBaseExDAO
     // 编辑主表元数据
     $sql = "update t_form
             set category_id = '%s', code = '%s', name = '%s',
-              memo = '%s', md_version = md_version + 1 
+              memo = '%s', md_version = md_version + 1,
+              module_name = '%s' 
             where id = '%s' ";
-    $rc = $db->execute($sql, $categoryId, $code, $name, $memo, $id);
+    $rc = $db->execute($sql, $categoryId, $code, $name, $memo, $moduleName, $id);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
     }
+
+    // 更改fid中的模块名称
+    $sql = "update t_fid_plus
+            set name = '%s', py = '%s'
+            where fid = '%s' ";
+    $rc = $db->execute($sql, $moduleName, $pyModuleName, $fid);
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+
+    // 更改权限中的模块名称
+    $sql = "update t_permission_plus
+            set category = '%s', name = '%s', note = '%s'
+            where fid = '%s' ";
+    $rc = $db->execute($sql, $moduleName, $moduleName, "模块权限：通过菜单进入{$moduleName}模块的权限", $fid);
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+    // todo：按钮权限中的模块名称
 
     // 操作成功
     return null;

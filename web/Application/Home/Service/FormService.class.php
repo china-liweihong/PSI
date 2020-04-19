@@ -137,7 +137,9 @@ class FormService extends PSIBaseExService
 
     $pyService = new PinyinService();
     $py = $pyService->toPY($name);
+    $pyModuleName = $pyService->toPY($params["moduleName"]);
     $params["py"] = $py;
+    $params["pyModuleName"] = $pyModuleName;
 
     $db = $this->db();
     $db->startTrans();

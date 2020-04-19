@@ -251,7 +251,7 @@ class FormDAO extends PSIBaseExDAO
     $categoryId = $params["categoryId"];
 
     $sql = "select id, code, name, sys_form, md_version, memo,
-              table_name, fid
+              table_name, fid, module_name
             from t_form 
             where category_id = '%s'
             order by code";
@@ -267,6 +267,7 @@ class FormDAO extends PSIBaseExDAO
         "memo" => $v["memo"],
         "tableName" => $v["table_name"],
         "fid" => $v["fid"],
+        "moduleName" => $v["module_name"],
       ];
     }
     return $result;

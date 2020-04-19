@@ -277,7 +277,7 @@ Ext.define("PSI.Form.MainForm", {
     Ext.define(modelName, {
       extend: "Ext.data.Model",
       fields: ["id", "code", "name", "tableName", "memo", "mdVersion",
-        "sysForm", "fid"]
+        "sysForm", "fid", "moduleName"]
     });
 
     me.__mainGrid = Ext.create("Ext.grid.Panel", {
@@ -312,6 +312,12 @@ Ext.define("PSI.Form.MainForm", {
         header: "fid",
         dataIndex: "fid",
         width: 150,
+        menuDisabled: true,
+        sortable: false
+      }, {
+        header: "模块名称",
+        dataIndex: "moduleName",
+        width: 200,
         menuDisabled: true,
         sortable: false
       }, {

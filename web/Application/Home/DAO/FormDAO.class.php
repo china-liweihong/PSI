@@ -1265,7 +1265,7 @@ class FormDAO extends PSIBaseExDAO
     $id = $params["id"];
 
     $sql = "select f.code, f.name, f.memo, f.table_name, 
-              f.category_id, c.name as category_name
+              f.category_id, c.name as category_name, f.module_name
             from t_form f, t_form_category c
             where f.category_id = c.id and f.id = '%s' ";
     $data = $db->query($sql, $id);
@@ -1277,7 +1277,8 @@ class FormDAO extends PSIBaseExDAO
         "memo" => $v["memo"],
         "tableName" => $v["table_name"],
         "categoryName" => $v["category_name"],
-        "categoryId" => $v["category_id"]
+        "categoryId" => $v["category_id"],
+        "moduleName" => $v["module_name"],
       ];
     } else {
       return $this->emptyResult();

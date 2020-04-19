@@ -15,11 +15,11 @@ class FormRuntimeDAO extends PSIBaseExDAO
 
     $fid = $params["fid"];
 
-    $sql = "select name from t_form where fid = '%s'";
+    $sql = "select module_name from t_form where fid = '%s'";
     $data = $db->query($sql, $fid);
     if ($data) {
       return [
-        "title" => $data[0]["name"],
+        "title" => $data[0]["module_name"],
       ];
     } else {
       return null;

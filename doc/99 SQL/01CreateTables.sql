@@ -1531,6 +1531,7 @@ CREATE TABLE IF NOT EXISTS `t_form` (
   `memo` varchar(1000) DEFAULT NULL,
   `table_name` varchar(255) NOT NULL,
   `fid` varchar(255) DEFAULT NULL,
+  `module_name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

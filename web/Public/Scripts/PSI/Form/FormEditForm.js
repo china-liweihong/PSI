@@ -41,7 +41,7 @@ Ext.define("PSI.Form.FormEditForm", {
         height: 40
       },
       width: 550,
-      height: 300,
+      height: 310,
       layout: "border",
       items: [{
         region: "north",
@@ -131,6 +131,21 @@ Ext.define("PSI.Form.FormEditForm", {
           colspan: 2,
           width: 510
         }, {
+          id: "PSI_Form_FormEditForm_editModuleName",
+          fieldLabel: "模块名称",
+          allowBlank: false,
+          blankText: "没有输入模块名称",
+          beforeLabelTextTpl: PSI.Const.REQUIRED,
+          name: "moduleName",
+          listeners: {
+            specialkey: {
+              fn: me.onEditSpecialKey,
+              scope: me
+            }
+          },
+          colspan: 2,
+          width: 510
+        }, {
           id: "PSI_Form_FormEditForm_editMemo",
           fieldLabel: "备注",
           name: "memo",
@@ -168,9 +183,12 @@ Ext.define("PSI.Form.FormEditForm", {
     me.editCode = Ext.getCmp("PSI_Form_FormEditForm_editCode");
     me.editName = Ext.getCmp("PSI_Form_FormEditForm_editName");
     me.editTableName = Ext.getCmp("PSI_Form_FormEditForm_editTableName");
+    me.editModuleName = Ext.getCmp("PSI_Form_FormEditForm_editModuleName");
     me.editMemo = Ext.getCmp("PSI_Form_FormEditForm_editMemo");
 
-    me.__editorList = [me.editCategory, me.editCode, me.editName, me.editTableName, me.editMemo];
+    me.__editorList = [
+      me.editCategory, me.editCode, me.editName,
+      me.editTableName, me.editModuleName, me.editMemo];
 
     var c = me.getCategory();
     if (c) {
@@ -206,6 +224,7 @@ Ext.define("PSI.Form.FormEditForm", {
             me.editName.setValue(data.name);
             me.editTableName.setValue(data.tableName);
             me.editTableName.setReadOnly(true);
+            me.editModuleName.setValue(data.moduleName);
             me.editMemo.setValue(data.memo);
           }
 

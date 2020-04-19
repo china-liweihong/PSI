@@ -749,6 +749,7 @@ class FormDAO extends PSIBaseExDAO
     $code = $params["code"];
     $name = $params["name"];
     $tableName = strtolower($params["tableName"]);
+    $moduleName = $params["moduleName"];
     $memo = $params["memo"];
     $py = $params["py"];
 
@@ -798,9 +799,11 @@ class FormDAO extends PSIBaseExDAO
     // 3.1 主表元数据
     $id = $this->newId();
     $fid = "fm" . date("YmdHis");
-    $sql = "insert into t_form (id, code, name, category_id, sys_form, md_version, memo, table_name, fid)
-            values ('%s', '%s', '%s', '%s', 0, 1, '%s', '%s', '%s') ";
-    $rc = $db->execute($sql, $id, $code, $name, $categoryId, $memo, $tableName, $fid);
+    $sql = "insert into t_form (id, code, name, category_id, sys_form, md_version, memo, table_name, fid,
+              module_name)
+            values ('%s', '%s', '%s', '%s', 0, 1, '%s', '%s', '%s',
+              '%s') ";
+    $rc = $db->execute($sql, $id, $code, $name, $categoryId, $memo, $tableName, $fid, $moduleName);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
     }
@@ -898,7 +901,7 @@ class FormDAO extends PSIBaseExDAO
 
     // fid: t_fid_plus
     $sql = "insert into t_fid_plus (fid, name, py, memo) values ('%s', '%s', '%s', '')";
-    $rc = $db->execute($sql, $fid, $name, $py);
+    $rc = $db->execute($sql, $fid, $moduleName, $py);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
     }
@@ -906,7 +909,16 @@ class FormDAO extends PSIBaseExDAO
     // 权限: t_permission_plus
     $sql = "insert into t_permission_plus (id, fid, name, note, category, py, show_order)
             values ('%s', '%s', '%s', '%s', '%s','%s', %d)";
-    $rc = $db->execute($sql, $fid, $fid, $name, "模块权限：通过菜单进入{$name}模块的权限", $name, "", 100);
+    $rc = $db->execute(
+      $sql,
+      $fid,
+      $fid,
+      $moduleName,
+      "模块权限：通过菜单进入{$moduleName}模块的权限",
+      $moduleName,
+      "",
+      100
+    );
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
     }

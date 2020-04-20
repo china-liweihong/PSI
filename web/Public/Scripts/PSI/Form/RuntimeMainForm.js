@@ -39,7 +39,7 @@ Ext.define("PSI.Form.RuntimeMainForm", {
 
     me.__toolBar = Ext.getCmp("PSI_Form_RuntimeMainForm_toolBar");
     me.__panelMain = Ext.getCmp("PSI_Form_RuntimeMainForm_panelMain");
-    me.__pandelDetail = Ext.getCmp("PSI_Form_RuntimeMainForm_panelDetail");
+    me.__panelDetail = Ext.getCmp("PSI_Form_RuntimeMainForm_panelDetail");
 
     me.fetchMeatData();
   },
@@ -110,6 +110,15 @@ Ext.define("PSI.Form.RuntimeMainForm", {
 
     me.__mainGrid = me.createMainGrid(md);
     me.__panelMain.add(me.__mainGrid);
+
+    // 明细表
+    if (md.details.length > 1) {
+      // 多个明细表
+    } else {
+      // 一个明细表
+      me.__detailGrid = me.createDetailGrid(md.details[0]);
+      me.__panelDetail.add(me.__detailGrid);
+    }
   },
 
   createMainGrid: function (md) {
@@ -152,6 +161,48 @@ Ext.define("PSI.Form.RuntimeMainForm", {
       })
     });
   },
+
+  createDetailGrid: function (md) {
+    var modelName = "PSIFormRuntime_Detail_" + Ext.id();
+
+    var fields = [];
+    var cols = [];
+    var colsLength = md.cols.length;
+    for (var i = 0; i < colsLength; i++) {
+      var mdCol = md.cols[i];
+
+      fields.push(mdCol.dataIndex);
+
+      cols.push({
+        header: mdCol.caption,
+        dataIndex: mdCol.dataIndex,
+        width: parseInt(mdCol.widthInView),
+        menuDisabled: true,
+        sortable: false
+      });
+    }
+
+    Ext.define(modelName, {
+      extend: "Ext.data.Model",
+      fields: fields
+    });
+
+    return Ext.create("Ext.grid.Panel", {
+      cls: "PSI",
+      viewConfig: {
+        enableTextSelection: true
+      },
+      columnLines: true,
+      border: 0,
+      columns: cols,
+      store: Ext.create("Ext.data.Store", {
+        model: modelName,
+        autoLoad: false,
+        data: []
+      })
+    });
+  },
+
 
   onAddFormRecord: function () {
     var me = this;

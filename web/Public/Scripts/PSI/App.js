@@ -61,17 +61,29 @@ Ext.define("PSI.App", {
         menuDisabled: true,
         menuDisabled: true,
         sortable: false,
+        width: 16,
         renderer: function (value, metaData, record) {
           var fid = record.get("fid");
           var fileName = PSI.Const.BASE_URL + "Public/Images/fid/fid" + fid + ".png";
           if (fid.substring(0, 2) == "ct") {
             // 码表
             fileName = PSI.Const.BASE_URL + "Public/Images/fid/default.png";
+          } else if (fid.substring(0, 2) == "fm") {
+            // 自定义表单
+            fileName = PSI.Const.BASE_URL + "Public/Images/fid/default.png";
           }
 
           return "<a href='#' style='text-decoration:none'><img src='"
             + fileName
-            + "' style='vertical-align: middle;margin:0px 5px 0px 5px'></img><span style='vertical-align: middle'>"
+            + "' style='vertical-align: middle;margin:0px 5px 0px 5px'></img></a>";
+        }
+      }, {
+        dataIndex: "name",
+        menuDisabled: true,
+        menuDisabled: true,
+        sortable: false,
+        renderer: function (value, metaData, record) {
+          return "<a href='#' style='text-decoration:none'><span style='vertical-align: middle'>"
             + value + "</span></a>";
         }
       }, {
@@ -101,7 +113,7 @@ Ext.define("PSI.App", {
         });
       } else {
         if (PSI.Const.MOT == "0") {
-          if (cellIndex == 1) {
+          if (cellIndex == 2) {
             window.open(url);
           }
           else {

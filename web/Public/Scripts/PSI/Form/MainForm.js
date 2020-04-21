@@ -1071,7 +1071,27 @@ Ext.define("PSI.Form.MainForm", {
 
   onEditCol: function () {
     var me = this;
-    me.showInfo("TODO");
+
+    var item = me.getMainGrid().getSelectionModel().getSelection();
+    if (item == null || item.length != 1) {
+      me.showInfo("请先选择表单");
+      return;
+    }
+    var fm = item[0];
+
+    var item = me.getColsGrid().getSelectionModel().getSelection();
+    if (item == null || item.length != 1) {
+      me.showInfo("请选择要编辑的表单主表列");
+      return;
+    }
+    var col = item[0];
+
+    var form = Ext.create("PSI.Form.FormColEditForm", {
+      parentForm: me,
+      form: fm,
+      entity: col
+    });
+    form.show();
   },
 
   // 删除主表列

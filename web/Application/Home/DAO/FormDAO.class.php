@@ -1330,6 +1330,41 @@ class FormDAO extends PSIBaseExDAO
 
     $result["editorXtype"] = $xtype;
 
+    $id = $params["id"];
+    if ($id) {
+      // 编辑
+      $sql = "select caption, db_field_name, db_field_type,
+                db_field_length, db_field_decimal, show_order,
+                col_span, value_from, value_from_table_name,
+                value_from_col_name, value_from_col_name_display,
+                must_input, sys_col, is_visible, note, editor_xtype,
+                data_index, width_in_view, show_order_in_view
+              from t_form_cols
+              where id = '%s' ";
+      $data = $db->query($sql, $id);
+      if ($data) {
+        $v = $data[0];
+        $result["caption"] = $v["caption"];
+        $result["fieldName"] = $v["db_field_name"];
+        $result["fieldType"] = $v["db_field_type"];
+        $result["fieldLength"] = $v["db_field_length"];
+        $result["fieldDec"] = $v["db_field_decimal"];
+        $result["colSpan"] = $v["col_span"];
+        $result["valueFrom"] = $v["value_from"];
+        $result["valueFromTableName"] = $v["value_from_table_name"];
+        $result["valueFromColName"] = $v["value_from_col_name"];
+        $result["valueFromColNameDisplay"] = $v["value_from_col_name_display"];
+        $result["mustInput"] = $v["must_input"];
+        $result["isVisible"] = $v["is_visible"];
+        $result["memo"] = $v["note"];
+        $result["editorXtypeValue"] = $v["editor_xtype"];
+        $result["dataIndex"] = $v["data_index"];
+        $result["widthInView"] = $v["width_in_view"];
+        $result["showOrder"] = $v["show_order"];
+        $result["showOrderInView"] = $v["show_order_in_view"];
+      }
+    }
+
     return $result;
   }
 

@@ -153,7 +153,7 @@ Ext.define("PSI.Form.FormColEditForm", {
           xtype: "numberfield",
           hideTrigger: true,
           allowDecimal: false,
-          minValue: 1,
+          minValue: 0,
           value: 255,
           name: "fieldLength"
         }, {
@@ -430,6 +430,27 @@ Ext.define("PSI.Form.FormColEditForm", {
             me.editEditorXtype.setValue(store.getAt(0));
           } else {
             // 编辑
+            me.editCaption.setValue(data.caption);
+            me.editFieldName.setReadOnly(true);
+            me.editFieldName.setValue(data.fieldName);
+            me.editFieldType.setReadOnly(true);
+            me.editFieldType.setValue(data.fieldType);
+            me.editFieldLength.setReadOnly(true);
+            me.editFieldLength.setValue(data.fieldLength);
+            me.editFieldDec.setReadOnly(true);
+            me.editFieldDec.setValue(data.fieldDec);
+            me.editValueFrom.setValue(parseInt(data.valueFrom));
+            me.editValueFromTableName.setValue(data.valueFromTableName);
+            me.editValueFromColName.setValue(data.valueFromColName);
+            me.editValueFromColNameDisplay.setValue(data.valueFromColNameDisplay);
+            me.editIsVisible.setValue(parseInt(data.isVisible));
+            me.editMustInput.setValue(parseInt(data.mustInput));
+            me.editShowOrder.setValue(data.showOrder);
+            me.editEditorXtype.setValue(data.editorXtypeValue);
+            me.editColSpan.setValue(data.colSpan);
+            me.editWidthInView.setValue(data.widthInView);
+            me.editShowOrderInView.setValue(data.showOrderInView);
+            me.editMemo.setValue(data.memo);
           }
 
           me.editCaption.focus();

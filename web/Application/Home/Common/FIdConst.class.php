@@ -385,6 +385,11 @@ class FIdConst
   const INVENTORY_QUERY = "2003";
 
   /**
+   * 库存账查询 - 总账导出Excel
+   */
+  const INVENTORY_QUERY_EXPORT_EXCEL = "2003-01";
+
+  /**
    * 应付账款管理
    */
   const PAYABLES = "2005";

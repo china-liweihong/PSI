@@ -1064,8 +1064,68 @@ Ext.define("PSI.Form.MainForm", {
     me.showInfo("TODO");
   },
 
+  // 删除主表列
   onDeleteCol: function () {
     var me = this;
-    me.showInfo("TODO");
+    var item = me.getMainGrid().getSelectionModel().getSelection();
+    if (item == null || item.length != 1) {
+      me.showInfo("请选择表单");
+      return;
+    }
+
+    var form = item[0];
+
+    var item = me.getColsGrid().getSelectionModel().getSelection();
+    if (item == null || item.length != 1) {
+      me.showInfo("请选择要删除的表单主表列");
+      return;
+    }
+
+    var col = item[0];
+
+    var store = me.getColsGrid().getStore();
+    var index = store.findExact("id", col.get("id"));
+    index--;
+    var preIndex = null;
+    var preItem = store.getAt(index);
+    if (preItem) {
+      preIndex = preItem.get("id");
+    }
+
+    var info = "请确认是否删除表单主表列: <span style='color:red'>"
+      + col.get("caption")
+      + "</span>?<br /><br />当前操作只删除主表列元数据，<br />数据库表的字段不会删除";
+
+    var funcConfirm = function () {
+      var el = Ext.getBody();
+      el.mask("正在删除中...");
+
+      var r = {
+        url: me.URL("Home/Form/deleteFormCol"),
+        params: {
+          id: col.get("id"),
+          formId: form.get("id")
+        },
+        callback: function (options, success, response) {
+          el.unmask();
+
+          if (success) {
+            var data = me.decodeJSON(response.responseText);
+            if (data.success) {
+              me.tip("成功完成删除操作");
+              me.refreshColsGrid(preIndex);
+            } else {
+              me.showInfo(data.msg);
+            }
+          } else {
+            me.showInfo("网络错误");
+          }
+        }
+      };
+
+      me.ajax(r);
+    };
+
+    me.confirm(info, funcConfirm);
   }
 });

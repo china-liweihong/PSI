@@ -347,4 +347,12 @@ class FormService extends PSIBaseExService
     $dao = new FormRuntimeDAO($this->db());
     return $dao->getFormMetadataForRuntime($params);
   }
+
+  /**
+   * 删除表单主表列元数据
+   */
+  public function deleteFormCol($params)
+  {
+    return $this->todo();
+  }
 }

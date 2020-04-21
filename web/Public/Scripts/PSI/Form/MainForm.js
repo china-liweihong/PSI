@@ -54,6 +54,16 @@ Ext.define("PSI.Form.MainForm", {
                   layout: "fit",
                   items: [me.getDetailColsGrid()]
                 }]
+              }, {
+                title: "查询条件",
+                border: 0,
+                layout: "fit",
+                items: []
+              }, {
+                title: "业务按钮",
+                border: 0,
+                layout: "fit",
+                items: []
               }]
             }]
           }]

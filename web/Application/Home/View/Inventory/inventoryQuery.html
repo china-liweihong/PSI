@@ -8,12 +8,12 @@
   Ext.onReady(function () {
     var app = Ext.create("PSI.App", {
       userName: "{$loginUserName}",
-      productionName: "{$productionName}"
+      productionName: "{$productionName}",
+      appHeaderInfo: { title: "{$title}" }
     });
 
-    app.add(Ext.create("PSI.Inventory.InvQueryMainForm"));
-    app.setAppHeader({
-      title: "{$title}"
-    });
+    app.add(Ext.create("PSI.Inventory.InvQueryMainForm", {
+      pExcel: "{$pExcel}"
+    }));
   });
 </script>

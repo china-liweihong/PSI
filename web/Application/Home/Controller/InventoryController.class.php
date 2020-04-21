@@ -45,6 +45,9 @@ class InventoryController extends PSIBaseController
     if ($us->hasPermission(FIdConst::INVENTORY_QUERY)) {
       $this->initVar();
 
+      // 按钮权限：总账导出Excel
+      $this->assign("pExcel", $us->hasPermission(FIdConst::INVENTORY_QUERY_EXPORT_EXCEL) ? "1" : "0");
+
       $this->assign("title", "库存账查询");
 
       $this->display();
@@ -113,7 +116,7 @@ class InventoryController extends PSIBaseController
   {
     $us = new UserService();
 
-    if ($us->hasPermission(FIdConst::INVENTORY_QUERY)) {
+    if ($us->hasPermission(FIdConst::INVENTORY_QUERY_EXPORT_EXCEL)) {
       $params = [
         "code" => I("get.code"),
         "name" => I("get.name"),

@@ -4,6 +4,10 @@
 Ext.define("PSI.Inventory.InvQueryMainForm", {
   extend: "PSI.AFX.BaseMainExForm",
 
+  config: {
+    pExcel: null
+  },
+
   initComponent: function () {
     var me = this;
 
@@ -32,6 +36,7 @@ Ext.define("PSI.Inventory.InvQueryMainForm", {
     Ext.apply(me, {
       tbar: [{
         text: "总账导出Excel",
+        disabled: me.getPExcel() == "0",
         handler: me.onExcel,
         scope: me
       }, "-", {

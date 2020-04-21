@@ -1585,4 +1585,12 @@ class FormDAO extends PSIBaseExDAO
   {
     return $this->todo();
   }
+
+  /**
+   * 删除表单主表列元数据
+   */
+  public function deleteFormCol(&$params)
+  {
+    return $this->todo();
+  }
 }

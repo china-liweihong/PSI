@@ -353,6 +353,28 @@ class FormService extends PSIBaseExService
    */
   public function deleteFormCol($params)
   {
-    return $this->todo();
+    if ($this->isNotOnline()) {
+      return $this->notOnlineError();
+    }
+
+    $db = $this->db();
+    $db->startTrans();
+
+    $dao = new FormDAO($db);
+
+    $rc = $dao->deleteFormCol($params);
+    if ($rc) {
+      $db->rollback();
+      return $rc;
+    }
+
+    // 记录业务日志
+    $log = $params["log"];
+    $bs = new BizlogService($db);
+    $bs->insertBizlog($log, $this->LOG_CATEGORY);
+
+    $db->commit();
+
+    return $this->ok();
   }
 }

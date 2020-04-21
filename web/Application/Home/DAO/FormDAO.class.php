@@ -1591,6 +1591,39 @@ class FormDAO extends PSIBaseExDAO
    */
   public function deleteFormCol(&$params)
   {
-    return $this->todo();
+    $db = $this->db;
+    $formId = $params["formId"];
+    $id = $params["id"];
+
+    $form = $this->getFormById($formId);
+    if (!$form) {
+      return $this->bad("表单不存在");
+    }
+    $formName = $form["name"];
+
+    $sql = "select sys_col, caption
+            from t_form_cols
+            where id = '%s' ";
+    $data = $db->query($sql, $id);
+    if (!$data) {
+      return $this->bad("要删除的主表列不存在");
+    }
+    $sysCol = $data[0]["sys_col"];
+    $caption = $data[0]["caption"];
+    if ($sysCol == 1) {
+      // 系统列不能删除
+      return $this->bad("主表列[{$caption}]是系统字段，不能删除");
+    }
+
+    $sql = "delete from t_form_cols where id = '%s' ";
+    $rc = $db->execute($sql, $id);
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+
+    // 操作成功
+    $log = "删除表单[{$formName}]主表列[{$caption}]的元数据";
+    $params["log"] = $log;
+    return null;
   }
 }

@@ -52,7 +52,7 @@ Ext.define("PSI.Form.FormDetailColEditForm", {
       }, {
         region: "center",
         border: 0,
-        id: "PSI_Form_FormColEditForm_editForm",
+        id: "PSI_Form_FormDetailColEditForm_editForm",
         xtype: "form",
         layout: {
           type: "table",
@@ -76,19 +76,19 @@ Ext.define("PSI.Form.FormDetailColEditForm", {
           name: "formId",
           value: me.getForm().get("id")
         }, {
-          id: "PSI_Form_FormColEditForm_editName",
+          id: "PSI_Form_FormDetailColEditForm_editName",
           fieldLabel: "表单名称",
           readOnly: true,
           value: me.getForm().get("name")
         }, {
-          id: "PSI_Form_FormColEditForm_editTableName",
+          id: "PSI_Form_FormDetailColEditForm_editTableName",
           fieldLabel: "数据库表名",
           readOnly: true,
           colspan: 2,
           width: col2Width,
           value: me.getForm().get("tableName")
         }, {
-          id: "PSI_Form_FormColEditForm_editCaption",
+          id: "PSI_Form_FormDetailColEditForm_editCaption",
           fieldLabel: "列标题",
           allowBlank: false,
           blankText: "没有输入列标题",
@@ -101,7 +101,7 @@ Ext.define("PSI.Form.FormDetailColEditForm", {
           },
           name: "caption"
         }, {
-          id: "PSI_Form_FormColEditForm_editFieldName",
+          id: "PSI_Form_FormDetailColEditForm_editFieldName",
           fieldLabel: "列数据库名",
           allowBlank: false,
           blankText: "没有输入列数据库名",
@@ -116,7 +116,7 @@ Ext.define("PSI.Form.FormDetailColEditForm", {
           width: col2Width,
           name: "fieldName"
         }, {
-          id: "PSI_Form_FormColEditForm_editFieldType",
+          id: "PSI_Form_FormDetailColEditForm_editFieldType",
           xtype: "combo",
           queryMode: "local",
           editable: false,
@@ -142,7 +142,7 @@ Ext.define("PSI.Form.FormDetailColEditForm", {
             }
           }
         }, {
-          id: "PSI_Form_FormColEditForm_editFieldLength",
+          id: "PSI_Form_FormDetailColEditForm_editFieldLength",
           fieldLabel: "列数据长度",
           listeners: {
             specialkey: {
@@ -157,7 +157,7 @@ Ext.define("PSI.Form.FormDetailColEditForm", {
           value: 255,
           name: "fieldLength"
         }, {
-          id: "PSI_Form_FormColEditForm_editFieldDec",
+          id: "PSI_Form_FormDetailColEditForm_editFieldDec",
           fieldLabel: "列小数位数",
           listeners: {
             specialkey: {
@@ -173,7 +173,7 @@ Ext.define("PSI.Form.FormDetailColEditForm", {
           name: "fieldDecimal",
           disabled: true
         }, {
-          id: "PSI_Form_FormColEditForm_editValueFrom",
+          id: "PSI_Form_FormDetailColEditForm_editValueFrom",
           xtype: "combo",
           queryMode: "local",
           editable: false,
@@ -201,22 +201,22 @@ Ext.define("PSI.Form.FormDetailColEditForm", {
           },
           colspan: 3
         }, {
-          id: "PSI_Form_FormColEditForm_editValueFromTableName",
+          id: "PSI_Form_FormDetailColEditForm_editValueFromTableName",
           fieldLabel: "引用表名",
           disabled: true,
           name: "valueFromTableName"
         }, {
-          id: "PSI_Form_FormColEditForm_editValueFromColName",
+          id: "PSI_Form_FormDetailColEditForm_editValueFromColName",
           fieldLabel: "引用列名(关联用)",
           disabled: true,
           name: "valueFromColName"
         }, {
-          id: "PSI_Form_FormColEditForm_editValueFromColNameDisplay",
+          id: "PSI_Form_FormDetailColEditForm_editValueFromColNameDisplay",
           fieldLabel: "引用列名(显示用)",
           disabled: true,
           name: "valueFromColNameDisplay"
         }, {
-          id: "PSI_Form_FormColEditForm_editIsVisible",
+          id: "PSI_Form_FormDetailColEditForm_editIsVisible",
           xtype: "combo",
           queryMode: "local",
           editable: false,
@@ -235,7 +235,7 @@ Ext.define("PSI.Form.FormDetailColEditForm", {
           value: 1,
           name: "isVisible"
         }, {
-          id: "PSI_Form_FormColEditForm_editMustInput",
+          id: "PSI_Form_FormDetailColEditForm_editMustInput",
           xtype: "combo",
           queryMode: "local",
           editable: false,
@@ -254,7 +254,7 @@ Ext.define("PSI.Form.FormDetailColEditForm", {
           value: 1,
           name: "mustInput"
         }, {
-          id: "PSI_Form_FormColEditForm_editShowOrder",
+          id: "PSI_Form_FormDetailColEditForm_editShowOrder",
           fieldLabel: "编辑界面显示次序",
           allowBlank: false,
           blankText: "没有输入编辑界面显示次序",
@@ -270,7 +270,7 @@ Ext.define("PSI.Form.FormDetailColEditForm", {
             }
           }
         }, {
-          id: "PSI_Form_FormColEditForm_editEditorXtype",
+          id: "PSI_Form_FormDetailColEditForm_editEditorXtype",
           xtype: "combo",
           queryMode: "local",
           editable: false,
@@ -290,7 +290,7 @@ Ext.define("PSI.Form.FormDetailColEditForm", {
           colspan: 2,
           width: col2Width
         }, {
-          id: "PSI_Form_FormColEditForm_editColSpan",
+          id: "PSI_Form_FormDetailColEditForm_editColSpan",
           fieldLabel: "编辑器列占位",
           allowBlank: false,
           blankText: "没有输入编辑器列占位",
@@ -307,7 +307,7 @@ Ext.define("PSI.Form.FormDetailColEditForm", {
             }
           }
         }, {
-          id: "PSI_Form_FormColEditForm_editWidthInView",
+          id: "PSI_Form_FormDetailColEditForm_editWidthInView",
           fieldLabel: "列宽度",
           allowBlank: false,
           blankText: "没有输入列宽度",
@@ -324,7 +324,7 @@ Ext.define("PSI.Form.FormDetailColEditForm", {
             }
           }
         }, {
-          id: "PSI_Form_FormColEditForm_editShowOrderInView",
+          id: "PSI_Form_FormDetailColEditForm_editShowOrderInView",
           fieldLabel: "视图界面显示次序",
           allowBlank: false,
           blankText: "没有输入视图界面显示次序",
@@ -342,7 +342,7 @@ Ext.define("PSI.Form.FormDetailColEditForm", {
             }
           }
         }, {
-          id: "PSI_Form_FormColEditForm_editMemo",
+          id: "PSI_Form_FormDetailColEditForm_editMemo",
           fieldLabel: "备注",
           name: "memo",
           value: entity == null ? null : entity.get("note"),
@@ -371,27 +371,27 @@ Ext.define("PSI.Form.FormDetailColEditForm", {
 
     me.callParent(arguments);
 
-    me.editForm = Ext.getCmp("PSI_Form_FormColEditForm_editForm");
+    me.editForm = Ext.getCmp("PSI_Form_FormDetailColEditForm_editForm");
 
-    me.editName = Ext.getCmp("PSI_Form_FormColEditForm_editName");
-    me.editTableName = Ext.getCmp("PSI_Form_FormColEditForm_editTableName");
-    me.editCaption = Ext.getCmp("PSI_Form_FormColEditForm_editCaption");
-    me.editFieldName = Ext.getCmp("PSI_Form_FormColEditForm_editFieldName");
-    me.editFieldType = Ext.getCmp("PSI_Form_FormColEditForm_editFieldType");
-    me.editFieldLength = Ext.getCmp("PSI_Form_FormColEditForm_editFieldLength");
-    me.editFieldDec = Ext.getCmp("PSI_Form_FormColEditForm_editFieldDec");
-    me.editValueFrom = Ext.getCmp("PSI_Form_FormColEditForm_editValueFrom");
-    me.editValueFromTableName = Ext.getCmp("PSI_Form_FormColEditForm_editValueFromTableName");
-    me.editValueFromColName = Ext.getCmp("PSI_Form_FormColEditForm_editValueFromColName");
-    me.editValueFromColNameDisplay = Ext.getCmp("PSI_Form_FormColEditForm_editValueFromColNameDisplay");
-    me.editShowOrder = Ext.getCmp("PSI_Form_FormColEditForm_editShowOrder");
-    me.editEditorXtype = Ext.getCmp("PSI_Form_FormColEditForm_editEditorXtype");
-    me.editColSpan = Ext.getCmp("PSI_Form_FormColEditForm_editColSpan");
-    me.editMemo = Ext.getCmp("PSI_Form_FormColEditForm_editMemo");
-    me.editIsVisible = Ext.getCmp("PSI_Form_FormColEditForm_editIsVisible");
-    me.editMustInput = Ext.getCmp("PSI_Form_FormColEditForm_editMustInput");
-    me.editWidthInView = Ext.getCmp("PSI_Form_FormColEditForm_editWidthInView");
-    me.editShowOrderInView = Ext.getCmp("PSI_Form_FormColEditForm_editShowOrderInView");
+    me.editName = Ext.getCmp("PSI_Form_FormDetailColEditForm_editName");
+    me.editTableName = Ext.getCmp("PSI_Form_FormDetailColEditForm_editTableName");
+    me.editCaption = Ext.getCmp("PSI_Form_FormDetailColEditForm_editCaption");
+    me.editFieldName = Ext.getCmp("PSI_Form_FormDetailColEditForm_editFieldName");
+    me.editFieldType = Ext.getCmp("PSI_Form_FormDetailColEditForm_editFieldType");
+    me.editFieldLength = Ext.getCmp("PSI_Form_FormDetailColEditForm_editFieldLength");
+    me.editFieldDec = Ext.getCmp("PSI_Form_FormDetailColEditForm_editFieldDec");
+    me.editValueFrom = Ext.getCmp("PSI_Form_FormDetailColEditForm_editValueFrom");
+    me.editValueFromTableName = Ext.getCmp("PSI_Form_FormDetailColEditForm_editValueFromTableName");
+    me.editValueFromColName = Ext.getCmp("PSI_Form_FormDetailColEditForm_editValueFromColName");
+    me.editValueFromColNameDisplay = Ext.getCmp("PSI_Form_FormDetailColEditForm_editValueFromColNameDisplay");
+    me.editShowOrder = Ext.getCmp("PSI_Form_FormDetailColEditForm_editShowOrder");
+    me.editEditorXtype = Ext.getCmp("PSI_Form_FormDetailColEditForm_editEditorXtype");
+    me.editColSpan = Ext.getCmp("PSI_Form_FormDetailColEditForm_editColSpan");
+    me.editMemo = Ext.getCmp("PSI_Form_FormDetailColEditForm_editMemo");
+    me.editIsVisible = Ext.getCmp("PSI_Form_FormDetailColEditForm_editIsVisible");
+    me.editMustInput = Ext.getCmp("PSI_Form_FormDetailColEditForm_editMustInput");
+    me.editWidthInView = Ext.getCmp("PSI_Form_FormDetailColEditForm_editWidthInView");
+    me.editShowOrderInView = Ext.getCmp("PSI_Form_FormDetailColEditForm_editShowOrderInView");
 
     me.__editorList = [
       me.editCaption, me.editFieldName, me.editShowOrder, me.editColSpan, me.editWidthInView,
@@ -407,7 +407,7 @@ Ext.define("PSI.Form.FormDetailColEditForm", {
     var el = me.getEl();
     el && el.mask(PSI.Const.LOADING);
     Ext.Ajax.request({
-      url: me.URL("Home/Form/formColInfo"),
+      url: me.URL("Home/Form/formDetailColInfo"),
       params: {
         id: me.adding ? null : me.getEntity().get("id"),
         formId: me.getForm().get("id")
@@ -466,7 +466,7 @@ Ext.define("PSI.Form.FormDetailColEditForm", {
     var el = f.getEl();
     el && el.mask(PSI.Const.SAVING);
     f.submit({
-      url: me.URL("Home/Form/editFormCol"),
+      url: me.URL("Home/Form/editFormDetailCol"),
       method: "POST",
       success: function (form, action) {
         el && el.unmask();

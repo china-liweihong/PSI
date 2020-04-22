@@ -242,6 +242,28 @@ class FormDAO extends PSIBaseExDAO
   }
 
   /**
+   * 根据id查询明细表
+   */
+  public function getDetailFormById($id)
+  {
+    $db = $this->db;
+
+    $sql = "select name, table_name from t_form_detail where id = '%s' ";
+    $data = $db->query($sql, $id);
+    if ($data) {
+      $v = $data[0];
+
+      return [
+        "id" => $id,
+        "name" => $v["name"],
+        "tableName" => $v["table_name"]
+      ];
+    } else {
+      return null;
+    }
+  }
+
+  /**
    * 某个分类下的表单列表
    */
   public function formList($params)
@@ -1608,9 +1630,6 @@ class FormDAO extends PSIBaseExDAO
     $params["log"] = "新增表单[{$formName}]主表列 ：{$caption}";
     $params["id"] = $id;
     return null;
-
-
-    return $this->todo();
   }
 
   /**

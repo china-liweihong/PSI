@@ -248,7 +248,7 @@ class FormDAO extends PSIBaseExDAO
   {
     $db = $this->db;
 
-    $sql = "select name, table_name from t_form_detail where id = '%s' ";
+    $sql = "select name, table_name, form_id from t_form_detail where id = '%s' ";
     $data = $db->query($sql, $id);
     if ($data) {
       $v = $data[0];
@@ -256,7 +256,8 @@ class FormDAO extends PSIBaseExDAO
       return [
         "id" => $id,
         "name" => $v["name"],
-        "tableName" => $v["table_name"]
+        "tableName" => $v["table_name"],
+        "mainFormId" => $v["form_id"],
       ];
     } else {
       return null;
@@ -1844,6 +1845,12 @@ class FormDAO extends PSIBaseExDAO
     }
     $formName = $form["name"];
     $tableName = $form["tableName"];
+    $mainFormId = $form["mainFormId"];
+    $mainForm = $this->getFormById($mainFormId);
+    if (!$mainForm) {
+      return $this->bad("表单不存在");
+    }
+    $mainFormName = $mainForm["name"];
 
     $caption = $params["caption"];
     $fieldName = $params["fieldName"];
@@ -2031,7 +2038,7 @@ class FormDAO extends PSIBaseExDAO
     }
 
     //操作成功
-    $params["log"] = "新增明细单[{$formName}]列 ：{$caption}";
+    $params["log"] = "新增表单[{$mainFormName}]明细单[{$formName}]列 ：{$caption}";
     $params["id"] = $id;
     return null;
   }
@@ -2051,6 +2058,12 @@ class FormDAO extends PSIBaseExDAO
       return $this->bad("明细表不存在");
     }
     $formName = $form["name"];
+    $mainFormId = $form["mainFormId"];
+    $mainForm = $this->getFormById($mainFormId);
+    if (!$mainForm) {
+      return $this->bad("表单不存在");
+    }
+    $mainFormName = $mainForm["name"];
 
     $sql = "select sys_col, caption
             from t_form_detail_cols
@@ -2126,7 +2139,7 @@ class FormDAO extends PSIBaseExDAO
     }
 
     // 操作成功
-    $log = "编辑明细表[{$formName}]列[{$caption}]的元数据";
+    $log = "编辑表单[{$mainFormName}]明细表[{$formName}]列[{$caption}]的元数据";
     $params["log"] = $log;
     return null;
   }

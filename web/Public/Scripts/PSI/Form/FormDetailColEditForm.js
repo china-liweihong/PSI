@@ -42,7 +42,7 @@ Ext.define("PSI.Form.FormDetailColEditForm", {
         height: 40
       },
       width: 870,
-      height: 430,
+      height: 400,
       layout: "border",
       items: [{
         region: "north",
@@ -77,7 +77,7 @@ Ext.define("PSI.Form.FormDetailColEditForm", {
           value: me.getForm().get("id")
         }, {
           id: "PSI_Form_FormDetailColEditForm_editName",
-          fieldLabel: "表单名称",
+          fieldLabel: "明细单名称",
           readOnly: true,
           value: me.getForm().get("name")
         }, {
@@ -324,24 +324,6 @@ Ext.define("PSI.Form.FormDetailColEditForm", {
             }
           }
         }, {
-          id: "PSI_Form_FormDetailColEditForm_editShowOrderInView",
-          fieldLabel: "视图界面显示次序",
-          allowBlank: false,
-          blankText: "没有输入视图界面显示次序",
-          beforeLabelTextTpl: PSI.Const.REQUIRED,
-          xtype: "numberfield",
-          hideTrigger: true,
-          allowDecimal: false,
-          name: "showOrderInView",
-          value: entity == null ? 10 : entity.get("showOrderInView"),
-          colspan: 2,
-          listeners: {
-            specialkey: {
-              fn: me.onEditSpecialKey,
-              scope: me
-            }
-          }
-        }, {
           id: "PSI_Form_FormDetailColEditForm_editMemo",
           fieldLabel: "备注",
           name: "memo",
@@ -391,11 +373,10 @@ Ext.define("PSI.Form.FormDetailColEditForm", {
     me.editIsVisible = Ext.getCmp("PSI_Form_FormDetailColEditForm_editIsVisible");
     me.editMustInput = Ext.getCmp("PSI_Form_FormDetailColEditForm_editMustInput");
     me.editWidthInView = Ext.getCmp("PSI_Form_FormDetailColEditForm_editWidthInView");
-    me.editShowOrderInView = Ext.getCmp("PSI_Form_FormDetailColEditForm_editShowOrderInView");
 
     me.__editorList = [
       me.editCaption, me.editFieldName, me.editShowOrder, me.editColSpan, me.editWidthInView,
-      me.editShowOrderInView, me.editMemo
+      me.editMemo
     ];
   },
 
@@ -449,7 +430,6 @@ Ext.define("PSI.Form.FormDetailColEditForm", {
             me.editEditorXtype.setValue(data.editorXtypeValue);
             me.editColSpan.setValue(data.colSpan);
             me.editWidthInView.setValue(data.widthInView);
-            me.editShowOrderInView.setValue(data.showOrderInView);
             me.editMemo.setValue(data.memo);
           }
 

@@ -2143,4 +2143,12 @@ class FormDAO extends PSIBaseExDAO
     $params["log"] = $log;
     return null;
   }
+
+  /**
+   * 删除表单明细表列元数据
+   */
+  public function deleteFormDetailCol(&$params)
+  {
+    return $this->todo();
+  }
 }

@@ -444,4 +444,25 @@ class FormController extends PSIBaseController
       $this->ajaxReturn($service->editFormDetailCol($params));
     }
   }
+
+  /**
+   * 删除表单明细表列元数据
+   */
+  public function deleteFormDetailCol()
+  {
+    if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::FORM_SYSTEM)) {
+        die("没有权限");
+      }
+
+      $params = [
+        "id" => I("post.id"),
+        "formId" => I("post.formId"),
+      ];
+
+      $service = new FormService();
+      $this->ajaxReturn($service->deleteFormDetailCol($params));
+    }
+  }
 }

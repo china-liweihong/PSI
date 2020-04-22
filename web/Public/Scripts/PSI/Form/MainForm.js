@@ -1181,7 +1181,7 @@ Ext.define("PSI.Form.MainForm", {
 
     var item = me.getDetailGrid().getSelectionModel().getSelection();
     if (item == null || item.length != 1) {
-      me.showInfo("请先选择明细单");
+      me.showInfo("请先选择明细表");
       return;
     }
 
@@ -1194,9 +1194,30 @@ Ext.define("PSI.Form.MainForm", {
     form.show();
   },
 
+  // 编辑明细表的列
   onEditDetailCol: function () {
     var me = this;
-    me.showInfo("TODO");
+    var item = me.getDetailGrid().getSelectionModel().getSelection();
+    if (item == null || item.length != 1) {
+      me.showInfo("请先选择明细表");
+      return;
+    }
+
+    var fm = item[0];
+
+    var item = me.getDetailColsGrid().getSelectionModel().getSelection();
+    if (item == null || item.length != 1) {
+      me.showInfo("请选择要编辑的明细表列");
+      return;
+    }
+    var col = item[0];
+
+    var form = Ext.create("PSI.Form.FormDetailColEditForm", {
+      parentForm: me,
+      form: fm,
+      entity: col
+    });
+    form.show();
   },
 
   onDeleteDetailCol: function () {

@@ -1799,7 +1799,7 @@ class FormDAO extends PSIBaseExDAO
       // 编辑
       $sql = "select caption, db_field_name, db_field_type,
                 db_field_length, db_field_decimal, show_order,
-                col_span, value_from, value_from_table_name,
+                value_from, value_from_table_name,
                 value_from_col_name, value_from_col_name_display,
                 must_input, sys_col, is_visible, note, editor_xtype,
                 data_index, width_in_view
@@ -1813,7 +1813,6 @@ class FormDAO extends PSIBaseExDAO
         $result["fieldType"] = $v["db_field_type"];
         $result["fieldLength"] = $v["db_field_length"];
         $result["fieldDec"] = $v["db_field_decimal"];
-        $result["colSpan"] = $v["col_span"];
         $result["valueFrom"] = $v["value_from"];
         $result["valueFromTableName"] = $v["value_from_table_name"];
         $result["valueFromColName"] = $v["value_from_col_name"];
@@ -1841,7 +1840,7 @@ class FormDAO extends PSIBaseExDAO
     $formId = $params["formId"];
     $form = $this->getDetailFormById($formId);
     if (!$form) {
-      return $this->bad("明细单不存在");
+      return $this->bad("明细表不存在");
     }
     $formName = $form["name"];
     $tableName = $form["tableName"];

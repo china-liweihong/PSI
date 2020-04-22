@@ -1157,5 +1157,35 @@ Ext.define("PSI.Form.MainForm", {
     };
 
     me.confirm(info, funcConfirm);
+  },
+
+  onAddFormDetail: function () {
+    var me = this;
+    me.showInfo("TODO");
+  },
+
+  onEditFormDetail: function () {
+    var me = this;
+    me.showInfo("TODO");
+  },
+
+  onDeleteFormDetail: function () {
+    var me = this;
+    me.showInfo("TODO");
+  },
+
+  onAddDetailCol: function () {
+    var me = this;
+    me.showInfo("TODO");
+  },
+
+  onEditDetailCol: function () {
+    var me = this;
+    me.showInfo("TODO");
+  },
+
+  onDeleteDetailCol: function () {
+    var me = this;
+    me.showInfo("TODO");
   }
 });

@@ -42,7 +42,7 @@ Ext.define("PSI.Form.FormDetailColEditForm", {
         height: 40
       },
       width: 870,
-      height: 400,
+      height: 430,
       layout: "border",
       items: [{
         region: "north",
@@ -290,23 +290,6 @@ Ext.define("PSI.Form.FormDetailColEditForm", {
           colspan: 2,
           width: col2Width
         }, {
-          id: "PSI_Form_FormDetailColEditForm_editColSpan",
-          fieldLabel: "编辑器列占位",
-          allowBlank: false,
-          blankText: "没有输入编辑器列占位",
-          beforeLabelTextTpl: PSI.Const.REQUIRED,
-          xtype: "numberfield",
-          hideTrigger: true,
-          allowDecimal: false,
-          value: 1,
-          name: "colSpan",
-          listeners: {
-            specialkey: {
-              fn: me.onEditSpecialKey,
-              scope: me
-            }
-          }
-        }, {
           id: "PSI_Form_FormDetailColEditForm_editWidthInView",
           fieldLabel: "列宽度",
           allowBlank: false,
@@ -316,6 +299,7 @@ Ext.define("PSI.Form.FormDetailColEditForm", {
           hideTrigger: true,
           allowDecimal: false,
           name: "widthInView",
+          colspan: 1,
           value: entity == null ? 120 : entity.get("widthInView"),
           listeners: {
             specialkey: {
@@ -368,14 +352,13 @@ Ext.define("PSI.Form.FormDetailColEditForm", {
     me.editValueFromColNameDisplay = Ext.getCmp("PSI_Form_FormDetailColEditForm_editValueFromColNameDisplay");
     me.editShowOrder = Ext.getCmp("PSI_Form_FormDetailColEditForm_editShowOrder");
     me.editEditorXtype = Ext.getCmp("PSI_Form_FormDetailColEditForm_editEditorXtype");
-    me.editColSpan = Ext.getCmp("PSI_Form_FormDetailColEditForm_editColSpan");
     me.editMemo = Ext.getCmp("PSI_Form_FormDetailColEditForm_editMemo");
     me.editIsVisible = Ext.getCmp("PSI_Form_FormDetailColEditForm_editIsVisible");
     me.editMustInput = Ext.getCmp("PSI_Form_FormDetailColEditForm_editMustInput");
     me.editWidthInView = Ext.getCmp("PSI_Form_FormDetailColEditForm_editWidthInView");
 
     me.__editorList = [
-      me.editCaption, me.editFieldName, me.editShowOrder, me.editColSpan, me.editWidthInView,
+      me.editCaption, me.editFieldName, me.editShowOrder, me.editWidthInView,
       me.editMemo
     ];
   },
@@ -428,7 +411,6 @@ Ext.define("PSI.Form.FormDetailColEditForm", {
             me.editMustInput.setValue(parseInt(data.mustInput));
             me.editShowOrder.setValue(data.showOrder);
             me.editEditorXtype.setValue(data.editorXtypeValue);
-            me.editColSpan.setValue(data.colSpan);
             me.editWidthInView.setValue(data.widthInView);
             me.editMemo.setValue(data.memo);
           }

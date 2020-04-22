@@ -1836,7 +1836,205 @@ class FormDAO extends PSIBaseExDAO
    */
   public function addFormDetailCol(&$params)
   {
-    return $this->todo();
+    $db = $this->db;
+
+    $formId = $params["formId"];
+    $form = $this->getDetailFormById($formId);
+    if (!$form) {
+      return $this->bad("明细单不存在");
+    }
+    $formName = $form["name"];
+    $tableName = $form["tableName"];
+
+    $caption = $params["caption"];
+    $fieldName = $params["fieldName"];
+    $fieldType = $params["fieldType"];
+    $fieldLength = $params["fieldLength"];
+    $fieldDecimal = $params["fieldDecimal"];
+    $valueFrom = $params["valueFrom"];
+    $valueFromTableName = $params["valueFromTableName"];
+    $valueFromColName = $params["valueFromColName"];
+    $valueFromColNameDisplay = $params["valueFromColNameDisplay"];
+    $isVisible = $params["isVisible"];
+    $mustInput = $params["mustInput"];
+    $showOrder = $params["showOrder"];
+    $editorXtype = $params["editorXtype"];
+    $widthInView = $params["widthInView"];
+    $memo = $params["memo"];
+
+    // 检查字段名是否合法
+    $rc = $this->checkFieldName($fieldName);
+    if ($rc) {
+      return $rc;
+    }
+
+    // 检查数据库中码表是否已经存在该字段了
+    $dbUtilDAO = new DBUtilDAO($db);
+    if ($dbUtilDAO->columnExists($tableName, $fieldName)) {
+      return $this->bad("在表[{$tableName}]中已经存在字段[{$fieldName}]了");
+    }
+
+    // 检查字段类型
+    if ($fieldType == "varchar") {
+      $fieldLength = intval($fieldLength);
+      if ($fieldLength <= 0) {
+        $fieldLength = 255;
+      }
+    } else if ($fieldType == "int") {
+      $fieldLength = 11;
+    } else if ($fieldType == "decimal") {
+      $fieldLength = 19;
+      $fieldDecimal = intval($fieldDecimal);
+      if ($fieldDecimal < 0) {
+        $fieldDecimal = 0;
+      }
+      if ($fieldDecimal > 8) {
+        return $this->bad("字段类型[decimal]的小数位数不能超过8位");
+      }
+    } else {
+      return $this->bad("字段类型[{$fieldType}]目前还不支持");
+    }
+
+    // 检查字段值来源
+    if ($valueFrom < 1 || $valueFrom > 5) {
+      return $this->bad("字段值来源没有正确设置");
+    }
+
+    if ($valueFrom == 2) {
+      // 引用系统数据字典
+      // 检查系统数据字典是否存在
+      $sql = "select count(*) as cnt from t_dict_table_md where table_name = '%s' ";
+      $data = $db->query($sql, $valueFromTableName);
+      $cnt = $data[0]["cnt"];
+      if ($cnt == 0) {
+        return $this->bad("系统数据字典[{$valueFromTableName}]的元数据不存在");
+      }
+      if (!$dbUtilDAO->tableExists($valueFromTableName)) {
+        return $this->bad("系统数据字典[{$valueFromTableName}]在数据库中不存在");
+      }
+      if (!$dbUtilDAO->columnExists($valueFromTableName, $valueFromColName)) {
+        return $this->bad("系统数据字典[{$valueFromTableName}]中不存在列[{$valueFromColName}]");
+      }
+      if (!$valueFromColNameDisplay) {
+        // 没有设置显示字段，就默认取关联字段
+        $valueFromColNameDisplay = $valueFromColName;
+      } else {
+        if (!$dbUtilDAO->columnExists($valueFromTableName, $valueFromColNameDisplay)) {
+          return $this->bad("系统数据字典[{$valueFromTableName}]中不存在列[{$valueFromColNameDisplay}]");
+        }
+      }
+    }
+    if ($valueFrom == 3) {
+      // 引用码表
+
+      // 检查码表是否存在
+      $sql = "select id from t_code_table_md where table_name = '%s' ";
+      $data = $db->query($sql, $valueFromTableName);
+      if (!$data) {
+        return $this->bad("码表[{$valueFromTableName}]的元数据不存在");
+      }
+      $valueFromTableId = $data[0]["id"];
+      $sql = "select count(*) as cnt from t_code_table_cols_md where table_id = '%s' and db_field_name = '%s' ";
+      $data = $db->query($sql, $valueFromTableId, $valueFromColName);
+      $cnt = $data[0]["cnt"];
+      if ($cnt == 0) {
+        return $this->bad("码表[$valueFromTableName]的列[{$valueFromColName}]的元数据不存在");
+      }
+      if (!$dbUtilDAO->tableExists($valueFromTableName)) {
+        return $this->bad("码表[{$valueFromTableName}]在数据库中不存在");
+      }
+      if (!$dbUtilDAO->columnExists($valueFromTableName, $valueFromColName)) {
+        return $this->bad("码表[{$valueFromTableName}]中不存在列[{$valueFromColName}]");
+      }
+      if (!$valueFromColNameDisplay) {
+        // 没有设置显示字段，就默认取关联字段
+        $valueFromColNameDisplay = $valueFromColName;
+      } else {
+        if (!$dbUtilDAO->columnExists($valueFromTableName, $valueFromColNameDisplay)) {
+          return $this->bad("码表[{$valueFromTableName}]中不存在列[{$valueFromColNameDisplay}]");
+        }
+      }
+    }
+
+    // 生成data_index
+    $sql = "select count(*) as cnt from t_form_detail_cols where detail_id = '%s' ";
+    $data = $db->query($sql, $formId);
+    $cnt = $data[0]["cnt"];
+    $dataIndex = "f{$cnt}";
+    // 检查dataIndex是否存在
+    while (true) {
+      // 因为删除字段的时候，会使dataIndex 断号
+      $sql = "select * from t_form_detail_cols where detail_id = '%s' and data_index = '%ss' ";
+      $data = $db->query($sql, $formId, $dataIndex);
+      if ($data) {
+        // dataIndex存在，流水号加一后继续查找
+        $cnt++;
+        $dataIndex = "f{$cnt}";
+      } else {
+        // dataIndex不存在了，跳出无限循环
+        break;
+      }
+    }
+
+    // 写入字段元数据
+    $id = $this->newId();
+    $sql = "insert into t_form_detail_cols(id, detail_id, caption, 
+              db_field_name, db_field_type, db_field_length, db_field_decimal,
+              show_order, value_from, value_from_table_name, value_from_col_name,
+              must_input, sys_col, is_visible, width_in_view, note, 
+              editor_xtype, value_from_col_name_display, data_index)
+            values ('%s', '%s', '%s',
+              '%s', '%s', %d, %d,
+              %d, %d, '%s', '%s',
+              %d, %d, %d, %d, '%s',
+              '%s', '%s', '%s')";
+    $rc = $db->execute(
+      $sql,
+      $id,
+      $formId,
+      $caption,
+      $fieldName,
+      $fieldType,
+      $fieldLength,
+      $fieldDecimal,
+      $showOrder,
+      $valueFrom,
+      $valueFromTableName,
+      $valueFromColName,
+      $mustInput,
+      2,
+      $isVisible,
+      $widthInView,
+      $memo,
+      $editorXtype,
+      $valueFromColNameDisplay,
+      $dataIndex
+    );
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+
+    // 在数据库表中创建字段
+    $sql = "alter table {$tableName} add {$fieldName} ";
+    if ($fieldType == "varchar") {
+      $sql .= " varchar({$fieldLength}) ";
+    } else if ($fieldType == "int") {
+      $sql .= " int(11) ";
+    } else if ($fieldType = "decimal") {
+      $sql .= " decimal({$fieldLength}, {$fieldDecimal}) ";
+    } else {
+      return $this->bad("字段类型[{$fieldType}]还不支持");
+    }
+    $sql .= " default null;";
+    $rc = $db->execute($sql);
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+
+    //操作成功
+    $params["log"] = "新增明细单[{$formName}]列 ：{$caption}";
+    $params["id"] = $id;
+    return null;
   }
 
   /**

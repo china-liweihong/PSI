@@ -1618,7 +1618,99 @@ class FormDAO extends PSIBaseExDAO
    */
   public function updateFormCol(&$params)
   {
-    return $this->todo();
+    $db = $this->db;
+    $formId = $params["formId"];
+    $id = $params["id"];
+
+    $form = $this->getFormById($formId);
+    if (!$form) {
+      return $this->bad("表单不存在");
+    }
+    $formName = $form["name"];
+
+    $sql = "select sys_col, caption
+            from t_form_cols
+            where id = '%s' ";
+    $data = $db->query($sql, $id);
+    if (!$data) {
+      return $this->bad("要编辑的主表列不存在");
+    }
+    $sysCol = $data[0]["sys_col"];
+
+    $caption = $params["caption"];
+    $valueFrom = $params["valueFrom"];
+    $valueFromTableName = $params["valueFromTableName"];
+    $valueFromColName = $params["valueFromColName"];
+    $valueFromColNameDisplay = $params["valueFromColNameDisplay"];
+    $isVisible = $params["isVisible"];
+    $mustInput = $params["mustInput"];
+    $showOrder = $params["showOrder"];
+    $editorXtype = $params["editorXtype"];
+    $colSpan = $params["colSpan"];
+    $widthInView = $params["widthInView"];
+    $showOrderInView = $params["showOrderInView"];
+    $memo = $params["memo"];
+
+    if ($sysCol == 1) {
+      // 系统字段
+      $sql = "update t_form_cols
+              set caption = '%s', value_from = '%s', value_from_table_name = '%s', value_from_col_name = '%s',
+                value_from_col_name_display = '%s', is_visible = %d, must_input = %d, show_order = %d,
+                col_span = %d, width_in_view = %d, show_order_in_view = %d, note = '%s'
+              where id = '%s' ";
+      $rc = $db->execute(
+        $sql,
+        $caption,
+        $valueFrom,
+        $valueFromTableName,
+        $valueFromColName,
+        $valueFromColNameDisplay,
+        $isVisible,
+        $mustInput,
+        $showOrder,
+        $colSpan,
+        $widthInView,
+        $showOrderInView,
+        $memo,
+        $id
+      );
+      if ($rc === false) {
+        return $this->sqlError(__METHOD__, __LINE__);
+      }
+    } else {
+      // 用户自定义字段
+      $sql = "update t_form_cols
+              set caption = '%s', value_from = '%s', value_from_table_name = '%s', value_from_col_name = '%s',
+                value_from_col_name_display = '%s', is_visible = %d, must_input = %d, show_order = %d,
+                col_span = %d, width_in_view = %d, show_order_in_view = %d, note = '%s',
+                editor_xtype = '%s'
+              where id = '%s' ";
+      $rc = $db->execute(
+        $sql,
+        $caption,
+        $valueFrom,
+        $valueFromTableName,
+        $valueFromColName,
+        $valueFromColNameDisplay,
+        $isVisible,
+        $mustInput,
+        $showOrder,
+        $colSpan,
+        $widthInView,
+        $showOrderInView,
+        $memo,
+        $editorXtype,
+        $id
+      );
+      if ($rc === false) {
+        return $this->sqlError(__METHOD__, __LINE__);
+      }
+    }
+
+    // 操作成功
+    $log = "编辑表单[{$formName}]主表列[{$caption}]的元数据";
+    $params["log"] = $log;
+    return null;
   }
 
   /**

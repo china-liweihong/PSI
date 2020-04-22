@@ -2041,6 +2041,93 @@ class FormDAO extends PSIBaseExDAO
    */
   public function updateFormDetailCol(&$params)
   {
-    return $this->todo();
+    $db = $this->db;
+
+    $formId = $params["formId"];
+    $id = $params["id"];
+
+    $form = $this->getDetailFormById($formId);
+    if (!$form) {
+      return $this->bad("明细表不存在");
+    }
+    $formName = $form["name"];
+
+    $sql = "select sys_col, caption
+            from t_form_detail_cols
+            where id = '%s' ";
+    $data = $db->query($sql, $id);
+    if (!$data) {
+      return $this->bad("要编辑的明细表列不存在");
+    }
+    $sysCol = $data[0]["sys_col"];
+
+    $caption = $params["caption"];
+    $valueFrom = $params["valueFrom"];
+    $valueFromTableName = $params["valueFromTableName"];
+    $valueFromColName = $params["valueFromColName"];
+    $valueFromColNameDisplay = $params["valueFromColNameDisplay"];
+    $isVisible = $params["isVisible"];
+    $mustInput = $params["mustInput"];
+    $showOrder = $params["showOrder"];
+    $editorXtype = $params["editorXtype"];
+    $widthInView = $params["widthInView"];
+    $memo = $params["memo"];
+
+    if ($sysCol == 1) {
+      // 系统字段
+      $sql = "update t_form_detail_cols
+              set caption = '%s', value_from = '%s', value_from_table_name = '%s', value_from_col_name = '%s',
+                value_from_col_name_display = '%s', is_visible = %d, must_input = %d, show_order = %d,
+                width_in_view = %d, note = '%s'
+              where id = '%s' ";
+      $rc = $db->execute(
+        $sql,
+        $caption,
+        $valueFrom,
+        $valueFromTableName,
+        $valueFromColName,
+        $valueFromColNameDisplay,
+        $isVisible,
+        $mustInput,
+        $showOrder,
+        $widthInView,
+        $memo,
+        $id
+      );
+      if ($rc === false) {
+        return $this->sqlError(__METHOD__, __LINE__);
+      }
+    } else {
+      // 用户自定义字段
+      $sql = "update t_form_detail_cols
+              set caption = '%s', value_from = '%s', value_from_table_name = '%s', value_from_col_name = '%s',
+                value_from_col_name_display = '%s', is_visible = %d, must_input = %d, show_order = %d,
+                width_in_view = %d, note = '%s',
+                editor_xtype = '%s'
+              where id = '%s' ";
+      $rc = $db->execute(
+        $sql,
+        $caption,
+        $valueFrom,
+        $valueFromTableName,
+        $valueFromColName,
+        $valueFromColNameDisplay,
+        $isVisible,
+        $mustInput,
+        $showOrder,
+        $widthInView,
+        $memo,
+        $editorXtype,
+        $id
+      );
+      if ($rc === false) {
+        return $this->sqlError(__METHOD__, __LINE__);
+      }
+    }
+
+    // 操作成功
+    $log = "编辑明细表[{$formName}]列[{$caption}]的元数据";
+    $params["log"] = $log;
+    return null;
   }
 }

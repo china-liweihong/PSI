@@ -408,4 +408,41 @@ class FormController extends PSIBaseController
       $this->ajaxReturn($service->formDetailColInfo($params));
     }
   }
+
+  /**
+   * 新增或编辑表单明细表列
+   */
+  public function editFormDetailCol()
+  {
+    if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::FORM_SYSTEM)) {
+        die("没有权限");
+      }
+
+      $params = [
+        "id" => I("post.id"),
+        "formId" => I("post.formId"),
+        "caption" => I("post.caption"),
+        "fieldName" => I("post.fieldName"),
+        "fieldType" => I("post.fieldType"),
+        "fieldLength" => I("post.fieldLength"),
+        "fieldDecimal" => I("post.fieldDecimal"),
+        "valueFrom" => I("post.valueFrom"),
+        "valueFromTableName" => I("post.valueFromTableName"),
+        "valueFromColName" => I("post.valueFromColName"),
+        "valueFromColNameDisplay" => I("post.valueFromColNameDisplay"),
+        "isVisible" => I("post.isVisible"),
+        "mustInput" => I("post.mustInput"),
+        "showOrder" => I("post.showOrder"),
+        "editorXtype" => I("post.editorXtype"),
+        "colSpan" => I("post.colSpan"),
+        "widthInView" => I("post.widthInView"),
+        "memo" => I("post.memo")
+      ];
+
+      $service = new FormService();
+      $this->ajaxReturn($service->editFormDetailCol($params));
+    }
+  }
 }

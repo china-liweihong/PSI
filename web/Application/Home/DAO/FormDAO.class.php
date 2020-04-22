@@ -1811,4 +1811,20 @@ class FormDAO extends PSIBaseExDAO
 
     return $result;
   }
+
+  /**
+   * 新增明细表列
+   */
+  public function addFormDetailCol(&$params)
+  {
+    return $this->todo();
+  }
+
+  /**
+   * 编辑明细表列
+   */
+  public function updateFormDetailCol(&$params)
+  {
+    return $this->todo();
+  }
 }

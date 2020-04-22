@@ -377,4 +377,17 @@ class FormService extends PSIBaseExService
 
     return $this->ok();
   }
+
+  /**
+   * 返回表单主表列的信息
+   */
+  public function formDetailColInfo($params)
+  {
+    if ($this->isNotOnline()) {
+      return $this->emptyResult();
+    }
+
+    $dao = new FormDAO($this->db());
+    return $dao->formDetailColInfo($params);
+  }
 }

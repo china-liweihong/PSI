@@ -525,7 +525,7 @@ Ext.define("PSI.Form.FormDetailColEditForm", {
 
     if (me.__lastId) {
       if (me.getParentForm()) {
-        me.getParentForm().refreshColsGrid(me.__lastId);
+        me.getParentForm().refreshDetailColsGrid(me.__lastId);
       }
     }
   },

@@ -1159,6 +1159,7 @@ Ext.define("PSI.Form.MainForm", {
     me.confirm(info, funcConfirm);
   },
 
+  // 新增明细表
   onAddFormDetail: function () {
     var me = this;
     me.showInfo("TODO");
@@ -1174,9 +1175,23 @@ Ext.define("PSI.Form.MainForm", {
     me.showInfo("TODO");
   },
 
+  // 新增明细表的列
   onAddDetailCol: function () {
     var me = this;
-    me.showInfo("TODO");
+
+    var item = me.getDetailGrid().getSelectionModel().getSelection();
+    if (item == null || item.length != 1) {
+      me.showInfo("请先选择明细单");
+      return;
+    }
+
+    var fm = item[0];
+
+    var form = Ext.create("PSI.Form.FormDetailColEditForm", {
+      parentForm: me,
+      form: fm
+    });
+    form.show();
   },
 
   onEditDetailCol: function () {

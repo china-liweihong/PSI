@@ -17,7 +17,7 @@ class CodeTableDAO extends PSIBaseExDAO
   {
     $db = $this->db;
 
-    $sql = "select id, code, name
+    $sql = "select id, code, name, is_system
             from t_code_table_category
             order by code";
     $data = $db->query($sql);
@@ -27,7 +27,9 @@ class CodeTableDAO extends PSIBaseExDAO
       $result[] = [
         "id" => $v["id"],
         "code" => $v["code"],
-        "name" => $v["name"]
+        "name" => $v["name"],
+        "isSystem" => $v["is_system"],
+        "isSystemCaption" => $v["is_system"] == 1 ? "系统固有分类" : "",
       ];
     }
 

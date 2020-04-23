@@ -104,7 +104,7 @@ Ext.define("PSI.CodeTable.MainForm", {
 
     Ext.define(modelName, {
       extend: "Ext.data.Model",
-      fields: ["id", "code", "name"]
+      fields: ["id", "code", "name", "isSystem", "isSystemCaption"]
     });
 
     me.__categoryGrid = Ext.create("Ext.grid.Panel", {
@@ -134,6 +134,11 @@ Ext.define("PSI.CodeTable.MainForm", {
         header: "码表分类",
         dataIndex: "name",
         width: 200,
+        menuDisabled: true,
+        sortable: false
+      }, {
+        header: "系统固有",
+        dataIndex: "isSystemCaption",
         menuDisabled: true,
         sortable: false
       }],
@@ -437,14 +442,18 @@ Ext.define("PSI.CodeTable.MainForm", {
   onEditCategory: function () {
     var me = this;
 
-    var item = me.getCategoryGrid().getSelectionModel()
-      .getSelection();
+    var item = me.getCategoryGrid().getSelectionModel().getSelection();
     if (item == null || item.length != 1) {
       me.showInfo("请选择要编辑的码表分类");
       return;
     }
 
     var category = item[0];
+
+    if (category.get("isSystem") == 1) {
+      me.showInfo("不能编辑系统分类");
+      return;
+    }
 
     var form = Ext.create("PSI.CodeTable.CategoryEditForm", {
       parentForm: me,
@@ -464,6 +473,10 @@ Ext.define("PSI.CodeTable.MainForm", {
     }
 
     var category = item[0];
+    if (category.get("isSystem") == 1) {
+      me.showInfo("不能删除系统分类");
+      return;
+    }
 
     var store = me.getCategoryGrid().getStore();
     var index = store.findExact("id", category.get("id"));

@@ -799,6 +799,10 @@ class CodeTableDAO extends PSIBaseExDAO
     $handlerClassName = $params["handlerClassName"];
     $memo = $params["memo"] ?? "";
 
+    if ($id == "AFB52688-851E-11EA-B071-E86A641ED142") {
+      return $this->bad("t_org的元数据不允许修改");
+    }
+
     if (!$this->getCodeTableCategoryById($categoryId)) {
       return $this->bad("码表分类不存在");
     }
@@ -1744,6 +1748,10 @@ class CodeTableDAO extends PSIBaseExDAO
     $editorXtype = $params["editorXtype"];
     $memo = $params["memo"];
 
+    if ($codeTableId == "AFB52688-851E-11EA-B071-E86A641ED142") {
+      return $this->bad("t_org不允许新建字段");
+    }
+
     // 检查码表是否存在
     $codeTable = $this->getCodeTableById($codeTableId);
     if (!$codeTable) {
@@ -1943,6 +1951,10 @@ class CodeTableDAO extends PSIBaseExDAO
       return $this->badParam("codeTableId");
     }
     $codeTableName = $codeTable["name"];
+
+    if ($codeTableId == "AFB52688-851E-11EA-B071-E86A641ED142") {
+      return $this->bad("t_org不允许编辑字段");
+    }
 
     // 检查码表列元数据是否存在
     $sql = "select sys_col from t_code_table_cols_md 

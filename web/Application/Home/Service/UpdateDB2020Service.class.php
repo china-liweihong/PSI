@@ -65,6 +65,34 @@ class UpdateDB2020Service extends PSIBaseService
     $this->update_20200422_01();
     $this->update_20200423_01();
     $this->update_20200423_02();
+    $this->update_20200423_03();
+  }
+
+  private function update_20200423_03()
+  {
+    // 本次更新：初始化t_org的码表元数据
+    $db = $this->db;
+
+    $sql = "DELETE FROM `t_code_table_md` where `id` = 'AFB52688-851E-11EA-B071-E86A641ED142';
+            DELETE FROM `t_code_table_cols_md` where `table_id` = 'AFB52688-851E-11EA-B071-E86A641ED142' and `sys_col` = 1;
+            INSERT INTO `t_code_table_md` (`id`, `code`, `name`, `table_name`, `category_id`, `memo`, `py`, `fid`, `md_version`, `is_fixed`, `enable_parent_id`, `handler_class_name`) VALUES
+            ('AFB52688-851E-11EA-B071-E86A641ED142', 'PSI-0001-01', '组织机构', 't_org', 'F9D80BD6-8519-11EA-B071-E86A641ED142', '', '', '', 1, 1, 1, '');
+            INSERT INTO `t_code_table_cols_md` (`id`, `table_id`, `caption`, `db_field_name`, `db_field_type`, `db_field_length`, `db_field_decimal`, `show_order`, `value_from`, `value_from_table_name`, `value_from_col_name`, `value_from_col_name_display`, `must_input`, `sys_col`, `is_visible`, `width_in_view`, `note`, `show_order_in_view`, `editor_xtype`) VALUES
+            ('AFB552D4-851E-11EA-B071-E86A641ED142', 'AFB52688-851E-11EA-B071-E86A641ED142', 'id', 'id', 'varchar', 255, 0, -1000, 1, '', '', '', 1, 1, 2, 0, NULL, -1000, 'textfield'),
+            ('AFB57C6D-851E-11EA-B071-E86A641ED142', 'AFB52688-851E-11EA-B071-E86A641ED142', '编码', 'code', 'varchar', 255, 0, 0, 1, '', '', '', 2, 1, 1, 120, NULL, 0, 'textfield'),
+            ('AFB58EDB-851E-11EA-B071-E86A641ED142', 'AFB52688-851E-11EA-B071-E86A641ED142', '名称', 'name', 'varchar', 255, 0, 1, 1, '', '', '', 2, 1, 1, 200, NULL, 1, 'textfield'),
+            ('AFB5A12F-851E-11EA-B071-E86A641ED142', 'AFB52688-851E-11EA-B071-E86A641ED142', '拼音字头', 'py', 'varchar', 255, 0, -900, 1, '', '', '', 1, 1, 2, 0, NULL, -1000, 'textfield'),
+            ('AFB5B1D0-851E-11EA-B071-E86A641ED142', 'AFB52688-851E-11EA-B071-E86A641ED142', '数据域', 'data_org', 'varchar', 255, 0, -800, 1, '', '', '', 1, 1, 2, 0, NULL, -1000, 'textfield'),
+            ('AFB5C1E8-851E-11EA-B071-E86A641ED142', 'AFB52688-851E-11EA-B071-E86A641ED142', '公司id', 'company_id', 'varchar', 255, 0, -700, 1, '', '', '', 1, 1, 2, 0, NULL, -1000, 'textfield'),
+            ('AFB5D22F-851E-11EA-B071-E86A641ED142', 'AFB52688-851E-11EA-B071-E86A641ED142', '记录创建时间', 'date_created', 'datetime', 0, 0, -699, 1, '', '', '', 1, 1, 2, 0, NULL, -1000, 'textfield'),
+            ('AFB5E0A0-851E-11EA-B071-E86A641ED142', 'AFB52688-851E-11EA-B071-E86A641ED142', '记录创建人id', 'create_user_id', 'varchar', 255, 0, -698, 1, '', '', '', 1, 1, 2, 0, NULL, -1000, 'textfield'),
+            ('AFB5EEA3-851E-11EA-B071-E86A641ED142', 'AFB52688-851E-11EA-B071-E86A641ED142', '最后一次编辑时间', 'update_dt', 'datetime', 0, 0, -697, 1, '', '', '', 1, 1, 2, 0, NULL, -1000, 'textfield'),
+            ('AFB5FCDA-851E-11EA-B071-E86A641ED142', 'AFB52688-851E-11EA-B071-E86A641ED142', '最后一次编辑人id', 'update_user_id', 'varchar', 255, 0, -696, 1, '', '', '', 1, 1, 2, 0, NULL, -1000, 'textfield'),
+            ('AFB60A25-851E-11EA-B071-E86A641ED142', 'AFB52688-851E-11EA-B071-E86A641ED142', '状态', 'record_status', 'int', 11, 0, 2, 2, 't_sysdict_record_status', 'code_int', 'name', 2, 1, 1, 80, NULL, 2, 'textfield'),
+            ('AFB617D7-851E-11EA-B071-E86A641ED142', 'AFB52688-851E-11EA-B071-E86A641ED142', '上级', 'parent_id', 'varchar', 255, 0, 4, 4, 't_ct_org', 'id', 'full_name', 0, 1, 1, 0, NULL, -1000, 'psi_codetable_parentidfield'),
+            ('AFB625A6-851E-11EA-B071-E86A641ED142', 'AFB52688-851E-11EA-B071-E86A641ED142', '全名', 'full_name', 'varchar', 1000, 0, -1000, 5, '', '', '', 0, 1, 2, 300, NULL, 3, 'textfield');
+            ";
+    $db->execute($sql);
   }
 
   private function update_20200423_02()

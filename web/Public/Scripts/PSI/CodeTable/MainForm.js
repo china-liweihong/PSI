@@ -529,10 +529,10 @@ Ext.define("PSI.CodeTable.MainForm", {
 
   refreshMainGrid: function (id) {
     var me = this;
+    me.getColsGrid().setTitle(me.formatGridHeaderTitle("码表列"));
     me.getColsGrid().getStore().removeAll();
 
-    var item = me.getCategoryGrid().getSelectionModel()
-      .getSelection();
+    var item = me.getCategoryGrid().getSelectionModel().getSelection();
     if (item == null || item.length != 1) {
       me.getMainGrid().setTitle(me.formatGridHeaderTitle("码表"));
       return;

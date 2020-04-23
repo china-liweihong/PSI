@@ -2604,7 +2604,7 @@ class InstallService extends PSIBaseExService
             ('AFB5EEA3-851E-11EA-B071-E86A641ED142', 'AFB52688-851E-11EA-B071-E86A641ED142', '最后一次编辑时间', 'update_dt', 'datetime', 0, 0, -697, 1, '', '', '', 1, 1, 2, 0, NULL, -1000, 'textfield'),
             ('AFB5FCDA-851E-11EA-B071-E86A641ED142', 'AFB52688-851E-11EA-B071-E86A641ED142', '最后一次编辑人id', 'update_user_id', 'varchar', 255, 0, -696, 1, '', '', '', 1, 1, 2, 0, NULL, -1000, 'textfield'),
             ('AFB60A25-851E-11EA-B071-E86A641ED142', 'AFB52688-851E-11EA-B071-E86A641ED142', '状态', 'record_status', 'int', 11, 0, 2, 2, 't_sysdict_record_status', 'code_int', 'name', 2, 1, 1, 80, NULL, 2, 'textfield'),
-            ('AFB617D7-851E-11EA-B071-E86A641ED142', 'AFB52688-851E-11EA-B071-E86A641ED142', '上级', 'parent_id', 'varchar', 255, 0, 4, 4, 't_ct_org', 'id', 'full_name', 0, 1, 1, 0, NULL, -1000, 'psi_codetable_parentidfield'),
+            ('AFB617D7-851E-11EA-B071-E86A641ED142', 'AFB52688-851E-11EA-B071-E86A641ED142', '上级', 'parent_id', 'varchar', 255, 0, 4, 4, 't_org', 'id', 'full_name', 0, 1, 1, 0, NULL, -1000, 'psi_codetable_parentidfield'),
             ('AFB625A6-851E-11EA-B071-E86A641ED142', 'AFB52688-851E-11EA-B071-E86A641ED142', '全名', 'full_name', 'varchar', 1000, 0, -1000, 5, '', '', '', 0, 1, 2, 300, NULL, 3, 'textfield');
             ";
     $db->execute($sql);

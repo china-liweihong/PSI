@@ -100,6 +100,11 @@ class CodeTableDAO extends PSIBaseExDAO
     if (!$category) {
       return $this->bad("要编辑的码表分类不存在");
     }
+    $isSystem = $category["isSystem"];
+    if ($isSystem == 1) {
+      $n = $category["name"];
+      return $this->bad("分类[{$n}]是系统固有分类，不能编辑");
+    }
 
     // 检查编码是否存在
     if ($code) {
@@ -140,12 +145,13 @@ class CodeTableDAO extends PSIBaseExDAO
   {
     $db = $this->db;
 
-    $sql = "select code, name from t_code_table_category where id = '%s' ";
+    $sql = "select code, name, is_system from t_code_table_category where id = '%s' ";
     $data = $db->query($sql, $id);
     if ($data) {
       return [
         "code" => $data[0]["code"],
-        "name" => $data[0]["name"]
+        "name" => $data[0]["name"],
+        "isSystem" => $data[0]["is_system"],
       ];
     } else {
       return null;
@@ -166,6 +172,10 @@ class CodeTableDAO extends PSIBaseExDAO
       return $this->bad("要删除的码表分类不存在");
     }
     $name = $category["name"];
+    $isSystem = $category["isSystem"];
+    if ($isSystem == 1) {
+      return $this->bad("分类[{$name}]是系统固有分类，不能删除");
+    }
 
     // 查询该分类是否被使用了
     $sql = "select count(*) as cnt from t_code_table_md

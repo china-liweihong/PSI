@@ -187,7 +187,7 @@ Ext.define("PSI.CodeTable.MainForm", {
       columns: [{
         header: "编码",
         dataIndex: "code",
-        width: 80,
+        width: 120,
         menuDisabled: true,
         sortable: false
       }, {

@@ -63,6 +63,20 @@ class UpdateDB2020Service extends PSIBaseService
     $this->update_20200419_01();
     $this->update_20200421_01();
     $this->update_20200422_01();
+    $this->update_20200423_01();
+  }
+
+  private function update_20200423_01()
+  {
+    // 本次更新：t_code_table_category新增字段is_system
+    $db = $this->db;
+
+    $tableName = "t_code_table_category";
+    $columnName = "is_system";
+    if (!$this->columnExists($db, $tableName, $columnName)) {
+      $sql = "alter table {$tableName} add {$columnName} int(11) NOT NULL DEFAULT 2;";
+      $db->execute($sql);
+    }
   }
 
   private function update_20200422_01()

@@ -606,6 +606,16 @@ INSERT INTO `t_sysdict_form_editor_xtype` (`id`, `code`, `code_int`, `name`, `py
 ('BF6F569E-843D-11EA-8C00-E86A641ED142', '4', 4, 'displayfield', 'displayfield', '不使用编辑器', 4),
 ('CD0B859B-843D-11EA-8C00-E86A641ED142', '5', 5, 'psi_userfield', 'psi_userfield', '用户字段编辑器', 5);
 
+TRUNCATE TABLE `t_code_table_category`;
+INSERT INTO `t_code_table_category` (`id`, `code`, `name`, `parent_id`, `is_system`) VALUES
+('F9D80BD6-8519-11EA-B071-E86A641ED142', 'PSI-0001', '用户', NULL, 1),
+('58BF84A3-8517-11EA-B071-E86A641ED142', 'PSI-0002', '商品', NULL, 1),
+('05717096-851A-11EA-B071-E86A641ED142', 'PSI-0003', '仓库', NULL, 1),
+('0F8C175C-851A-11EA-B071-E86A641ED142', 'PSI-0004', '供应商', NULL, 1),
+('19DFD9E7-851A-11EA-B071-E86A641ED142', 'PSI-0005', '客户', NULL, 1),
+('2FCB8D75-851A-11EA-B071-E86A641ED142', 'PSI-0006', '工厂', NULL, 1);
+
+
 TRUNCATE TABLE `t_psi_db_version`;
 INSERT INTO `t_psi_db_version` (`db_version`, `update_dt`) VALUES
 ('20200423-01', now());

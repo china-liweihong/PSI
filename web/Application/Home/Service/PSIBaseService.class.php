@@ -190,5 +190,5 @@ class PSIBaseService
   /**
    * 当前数据库表结构版本
    */
-  protected $CURRENT_DB_VERSION = "20200424-03";
+  protected $CURRENT_DB_VERSION = "20200424-04";
 }

@@ -685,7 +685,7 @@ INSERT INTO `t_code_table_cols_md` (`id`, `table_id`, `caption`, `db_field_name`
 DELETE FROM `t_code_table_md` where `id` = 'C68DBABE-860B-11EA-A0E2-E86A641ED142';
 DELETE FROM `t_code_table_cols_md` where `table_id` = 'C68DBABE-860B-11EA-A0E2-E86A641ED142' and `sys_col` = 1;
 INSERT INTO `t_code_table_md` (`id`, `code`, `name`, `table_name`, `category_id`, `memo`, `py`, `fid`, `md_version`, `is_fixed`, `enable_parent_id`, `handler_class_name`) VALUES
-('C68DBABE-860B-11EA-A0E2-E86A641ED142', 'PSI-0002-01', '商品分类', 't_goods_category', '58BF84A3-8517-11EA-B071-E86A641ED142', '', 'SPFL', 'ct20200424171252', 1, 2, 1, '');
+('C68DBABE-860B-11EA-A0E2-E86A641ED142', 'PSI-0002-01', '商品分类', 't_goods_category', '58BF84A3-8517-11EA-B071-E86A641ED142', '', '', '', 1, 1, 1, '');
 INSERT INTO `t_code_table_cols_md` (`id`, `table_id`, `caption`, `db_field_name`, `db_field_type`, `db_field_length`, `db_field_decimal`, `show_order`, `value_from`, `value_from_table_name`, `value_from_col_name`, `value_from_col_name_display`, `must_input`, `sys_col`, `is_visible`, `width_in_view`, `note`, `show_order_in_view`, `editor_xtype`) VALUES
 ('C68F8441-860B-11EA-A0E2-E86A641ED142', 'C68DBABE-860B-11EA-A0E2-E86A641ED142', 'id', 'id', 'varchar', 255, 0, -1000, 1, '', '', '', 1, 1, 2, 0, NULL, -1000, 'textfield'),
 ('C68F9A48-860B-11EA-A0E2-E86A641ED142', 'C68DBABE-860B-11EA-A0E2-E86A641ED142', '编码', 'code', 'varchar', 255, 0, 0, 1, '', '', '', 2, 1, 1, 120, NULL, 0, 'textfield'),
@@ -705,7 +705,7 @@ INSERT INTO `t_code_table_cols_md` (`id`, `table_id`, `caption`, `db_field_name`
 
 TRUNCATE TABLE `t_psi_db_version`;
 INSERT INTO `t_psi_db_version` (`db_version`, `update_dt`) VALUES
-('20200424-02', now());
+('20200424-03', now());
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

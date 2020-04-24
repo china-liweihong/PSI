@@ -2207,6 +2207,7 @@ class CodeTableDAO extends PSIBaseExDAO
       ["id" => "AFB52688-851E-11EA-B071-E86A641ED142", "tableName" => "t_org"],
       ["id" => "1C7AE1C9-85CC-11EA-A819-E86A641ED142", "tableName" => "t_user"],
       ["id" => "49F3F27F-8607-11EA-A0E2-E86A641ED142", "tableName" => "t_warehouse"],
+      ["id" => "C68DBABE-860B-11EA-A0E2-E86A641ED142", "tableName" => "t_goods_category"],
     ];
 
     foreach ($list as $v) {

@@ -805,6 +805,9 @@ class CodeTableDAO extends PSIBaseExDAO
     if ($id == "1C7AE1C9-85CC-11EA-A819-E86A641ED142") {
       return $this->bad("t_user的元数据不允许修改");
     }
+    if ($id == "49F3F27F-8607-11EA-A0E2-E86A641ED142") {
+      return $this->bad("t_warehouse的元数据不允许修改");
+    }
 
     if (!$this->getCodeTableCategoryById($categoryId)) {
       return $this->bad("码表分类不存在");
@@ -1757,6 +1760,9 @@ class CodeTableDAO extends PSIBaseExDAO
     if ($codeTableId == "1C7AE1C9-85CC-11EA-A819-E86A641ED142") {
       return $this->bad("t_user不允许新建字段");
     }
+    if ($codeTableId == "49F3F27F-8607-11EA-A0E2-E86A641ED142") {
+      return $this->bad("t_warehouse不允许新建字段");
+    }
 
     // 检查码表是否存在
     $codeTable = $this->getCodeTableById($codeTableId);
@@ -1963,6 +1969,9 @@ class CodeTableDAO extends PSIBaseExDAO
     }
     if ($codeTableId == "1C7AE1C9-85CC-11EA-A819-E86A641ED142") {
       return $this->bad("t_user不允许编辑字段");
+    }
+    if ($codeTableId == "49F3F27F-8607-11EA-A0E2-E86A641ED142") {
+      return $this->bad("t_warehouse不允许编辑字段");
     }
 
     // 检查码表列元数据是否存在

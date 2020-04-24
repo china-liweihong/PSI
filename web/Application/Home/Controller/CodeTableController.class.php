@@ -68,6 +68,11 @@ class CodeTableController extends PSIBaseController
   public function categoryList()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::CODE_TABLE)) {
+        die("没有权限");
+      }
+
       $params = [];
 
       $service = new CodeTableService();
@@ -81,6 +86,11 @@ class CodeTableController extends PSIBaseController
   public function editCodeTableCategory()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::CODE_TABLE)) {
+        die("没有权限");
+      }
+
       $params = [
         "id" => I("post.id"),
         "code" => I("post.code"),
@@ -98,6 +108,11 @@ class CodeTableController extends PSIBaseController
   public function deleteCodeTableCategory()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::CODE_TABLE)) {
+        die("没有权限");
+      }
+
       $params = [
         "id" => I("post.id")
       ];
@@ -113,6 +128,11 @@ class CodeTableController extends PSIBaseController
   public function codeTableList()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::CODE_TABLE)) {
+        die("没有权限");
+      }
+
       $params = [
         "categoryId" => I("post.categoryId")
       ];
@@ -128,6 +148,11 @@ class CodeTableController extends PSIBaseController
   public function queryDataForCategory()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::CODE_TABLE)) {
+        die("没有权限");
+      }
+
       $params = [
         "queryKey" => I("post.queryKey")
       ];
@@ -143,6 +168,11 @@ class CodeTableController extends PSIBaseController
   public function editCodeTable()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::CODE_TABLE)) {
+        die("没有权限");
+      }
+
       $params = [
         "id" => I("post.id"),
         "categoryId" => I("post.categoryId"),
@@ -165,6 +195,11 @@ class CodeTableController extends PSIBaseController
   public function codeTableColsList()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::CODE_TABLE)) {
+        die("没有权限");
+      }
+
       $params = [
         "id" => I("post.id")
       ];
@@ -179,6 +214,11 @@ class CodeTableController extends PSIBaseController
   public function editCodeTableCol()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::CODE_TABLE)) {
+        die("没有权限");
+      }
+
       $params = [
         "id" => I("post.id"),
         "codeTableId" => I("post.codeTableId"),
@@ -211,6 +251,11 @@ class CodeTableController extends PSIBaseController
   public function deleteCodeTableCol()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::CODE_TABLE)) {
+        die("没有权限");
+      }
+
       $params = [
         "tableId" => I("post.tableId"),
         "id" => I("post.id")
@@ -227,6 +272,11 @@ class CodeTableController extends PSIBaseController
   public function deleteCodeTable()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::CODE_TABLE)) {
+        die("没有权限");
+      }
+
       $params = [
         "id" => I("post.id")
       ];
@@ -242,6 +292,11 @@ class CodeTableController extends PSIBaseController
   public function codeTableInfo()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::CODE_TABLE)) {
+        die("没有权限");
+      }
+
       $params = [
         "id" => I("post.id")
       ];
@@ -257,8 +312,15 @@ class CodeTableController extends PSIBaseController
   public function getMetaDataForRuntime()
   {
     if (IS_POST) {
+      $fid = I("post.fid");
+
+      $us = new UserService();
+      if (!$us->hasPermission($fid)) {
+        die("没有权限");
+      }
+
       $params = [
-        "fid" => I("post.fid")
+        "fid" => $fid
       ];
 
       $service = new CodeTableService();
@@ -272,8 +334,15 @@ class CodeTableController extends PSIBaseController
   public function editCodeTableRecord()
   {
     if (IS_POST) {
+      $fid = I("post.fid");
+
+      $us = new UserService();
+      if (!$us->hasPermission($fid)) {
+        die("没有权限");
+      }
+
       $params = [
-        "fid" => I("post.fid")
+        "fid" => $fid
       ];
 
       $service = new CodeTableService();
@@ -301,9 +370,16 @@ class CodeTableController extends PSIBaseController
   public function deleteCodeTableRecord()
   {
     if (IS_POST) {
+      $fid = I("post.fid");
+
+      $us = new UserService();
+      if (!$us->hasPermission($fid)) {
+        die("没有权限");
+      }
+
       $params = [
         "id" => I("post.id"),
-        "fid" => I("post.fid")
+        "fid" => $fid
       ];
 
       $service = new CodeTableService();
@@ -317,8 +393,15 @@ class CodeTableController extends PSIBaseController
   public function codeTableRecordList()
   {
     if (IS_POST) {
+      $fid = I("post.fid");
+
+      $us = new UserService();
+      if (!$us->hasPermission($fid)) {
+        die("没有权限");
+      }
+
       $params = [
-        "fid" => I("post.fid")
+        "fid" => $fid
       ];
 
       $service = new CodeTableService();
@@ -333,8 +416,15 @@ class CodeTableController extends PSIBaseController
   public function codeTableRecordListForTreeView()
   {
     if (IS_POST) {
+      $fid = I("post.fid");
+
+      $us = new UserService();
+      if (!$us->hasPermission($fid)) {
+        die("没有权限");
+      }
+
       $params = [
-        "fid" => I("post.fid")
+        "fid" => $fid
       ];
 
       $service = new CodeTableService();
@@ -348,9 +438,16 @@ class CodeTableController extends PSIBaseController
   public function recordInfo()
   {
     if (IS_POST) {
+      $fid = I("post.fid");
+
+      $us = new UserService();
+      if (!$us->hasPermission($fid)) {
+        die("没有权限");
+      }
+
       $params = [
         "id" => I("post.id"),
-        "fid" => I("post.fid")
+        "fid" => $fid
       ];
 
       $service = new CodeTableService();
@@ -364,6 +461,11 @@ class CodeTableController extends PSIBaseController
   public function codeTableColInfo()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::CODE_TABLE)) {
+        die("没有权限");
+      }
+
       $params = [
         "tableId" => I("post.tableId"),
         "id" => I("post.id")
@@ -380,9 +482,16 @@ class CodeTableController extends PSIBaseController
   public function queryDataForRecordRef()
   {
     if (IS_POST) {
+      $fid = I("post.fid");
+
+      $us = new UserService();
+      if (!$us->hasPermission($fid)) {
+        die("没有权限");
+      }
+
       $params = [
         "queryKey" => I("post.queryKey"),
-        "fid" => I("post.fid")
+        "fid" => $fid
       ];
 
       $service = new CodeTableService();

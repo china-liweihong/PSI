@@ -700,7 +700,7 @@ INSERT INTO `t_code_table_cols_md` (`id`, `table_id`, `caption`, `db_field_name`
 ('C6901758-860B-11EA-A0E2-E86A641ED142', 'C68DBABE-860B-11EA-A0E2-E86A641ED142', '状态', 'record_status', 'int', 11, 0, 2, 2, 't_sysdict_record_status', 'code_int', 'name', 2, 1, 1, 80, NULL, 2, 'textfield'),
 ('C69022E3-860B-11EA-A0E2-E86A641ED142', 'C68DBABE-860B-11EA-A0E2-E86A641ED142', '上级', 'parent_id', 'varchar', 255, 0, 4, 4, 't_goods_category', 'id', 'full_name', 0, 1, 1, 0, NULL, -1000, 'psi_codetable_parentidfield'),
 ('C6902FD8-860B-11EA-A0E2-E86A641ED142', 'C68DBABE-860B-11EA-A0E2-E86A641ED142', '全名', 'full_name', 'varchar', 1000, 0, -1000, 5, '', '', '', 0, 1, 2, 300, NULL, 3, 'textfield'),
-('F04C6359-860B-11EA-A0E2-E86A641ED142', 'C68DBABE-860B-11EA-A0E2-E86A641ED142', '税率', 'tax_rate', 'decimal', 19, 2, 8, 1, '', '', '', 1, 2, 1, 120, '', 8, 'numberfield');
+('F04C6359-860B-11EA-A0E2-E86A641ED142', 'C68DBABE-860B-11EA-A0E2-E86A641ED142', '税率', 'tax_rate', 'decimal', 19, 2, 8, 1, '', '', '', 1, 1, 1, 120, '', 8, 'numberfield');
 
 
 TRUNCATE TABLE `t_psi_db_version`;

@@ -703,6 +703,25 @@ INSERT INTO `t_code_table_cols_md` (`id`, `table_id`, `caption`, `db_field_name`
 ('F04C6359-860B-11EA-A0E2-E86A641ED142', 'C68DBABE-860B-11EA-A0E2-E86A641ED142', '税率', 'tax_rate', 'decimal', 19, 2, 8, 1, '', '', '', 1, 1, 1, 120, '', 8, 'numberfield');
 
 
+# 码表：t_goods_unit
+DELETE FROM `t_code_table_md` where `id` = '8BD2B19E-8623-11EA-B463-E86A641ED142';
+DELETE FROM `t_code_table_cols_md` where `table_id` = '8BD2B19E-8623-11EA-B463-E86A641ED142' and `sys_col` = 1;
+INSERT INTO `t_code_table_md` (`id`, `code`, `name`, `table_name`, `category_id`, `memo`, `py`, `fid`, `md_version`, `is_fixed`, `enable_parent_id`, `handler_class_name`) VALUES
+('8BD2B19E-8623-11EA-B463-E86A641ED142', 'PSI-0002-02', '商品计量单位', 't_goods_unit', '58BF84A3-8517-11EA-B071-E86A641ED142', '', '', '', 1, 1, 0, '');
+INSERT INTO `t_code_table_cols_md` (`id`, `table_id`, `caption`, `db_field_name`, `db_field_type`, `db_field_length`, `db_field_decimal`, `show_order`, `value_from`, `value_from_table_name`, `value_from_col_name`, `value_from_col_name_display`, `must_input`, `sys_col`, `is_visible`, `width_in_view`, `note`, `show_order_in_view`, `editor_xtype`) VALUES
+('8BD477BD-8623-11EA-B463-E86A641ED142', '8BD2B19E-8623-11EA-B463-E86A641ED142', 'id', 'id', 'varchar', 255, 0, -1000, 1, '', '', '', 1, 1, 2, 0, NULL, -1000, 'textfield'),
+('8BD49349-8623-11EA-B463-E86A641ED142', '8BD2B19E-8623-11EA-B463-E86A641ED142', '编码', 'code', 'varchar', 255, 0, 0, 1, '', '', '', 2, 1, 1, 120, NULL, 0, 'textfield'),
+('8BD4A5B2-8623-11EA-B463-E86A641ED142', '8BD2B19E-8623-11EA-B463-E86A641ED142', '名称', 'name', 'varchar', 255, 0, 1, 1, '', '', '', 2, 1, 1, 200, NULL, 1, 'textfield'),
+('8BD4B6D7-8623-11EA-B463-E86A641ED142', '8BD2B19E-8623-11EA-B463-E86A641ED142', '拼音字头', 'py', 'varchar', 255, 0, -900, 1, '', '', '', 1, 1, 2, 0, NULL, -1000, 'textfield'),
+('8BD4C711-8623-11EA-B463-E86A641ED142', '8BD2B19E-8623-11EA-B463-E86A641ED142', '数据域', 'data_org', 'varchar', 255, 0, -800, 1, '', '', '', 1, 1, 2, 0, NULL, -1000, 'textfield'),
+('8BD4D4AF-8623-11EA-B463-E86A641ED142', '8BD2B19E-8623-11EA-B463-E86A641ED142', '公司id', 'company_id', 'varchar', 255, 0, -700, 1, '', '', '', 1, 1, 2, 0, NULL, -1000, 'textfield'),
+('8BD4E2A3-8623-11EA-B463-E86A641ED142', '8BD2B19E-8623-11EA-B463-E86A641ED142', '记录创建时间', 'date_created', 'datetime', 0, 0, -699, 1, '', '', '', 1, 1, 2, 0, NULL, -1000, 'textfield'),
+('8BD4EFF4-8623-11EA-B463-E86A641ED142', '8BD2B19E-8623-11EA-B463-E86A641ED142', '记录创建人id', 'create_user_id', 'varchar', 255, 0, -698, 1, '', '', '', 1, 1, 2, 0, NULL, -1000, 'textfield'),
+('8BD4FEA4-8623-11EA-B463-E86A641ED142', '8BD2B19E-8623-11EA-B463-E86A641ED142', '最后一次编辑时间', 'update_dt', 'datetime', 0, 0, -697, 1, '', '', '', 1, 1, 2, 0, NULL, -1000, 'textfield'),
+('8BD50B33-8623-11EA-B463-E86A641ED142', '8BD2B19E-8623-11EA-B463-E86A641ED142', '最后一次编辑人id', 'update_user_id', 'varchar', 255, 0, -696, 1, '', '', '', 1, 1, 2, 0, NULL, -1000, 'textfield'),
+('8BD5173E-8623-11EA-B463-E86A641ED142', '8BD2B19E-8623-11EA-B463-E86A641ED142', '状态', 'record_status', 'int', 11, 0, 2, 2, 't_sysdict_record_status', 'code_int', 'name', 2, 1, 1, 80, NULL, 2, 'textfield');
+
+
 TRUNCATE TABLE `t_psi_db_version`;
 INSERT INTO `t_psi_db_version` (`db_version`, `update_dt`) VALUES
 ('20200424-03', now());

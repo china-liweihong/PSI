@@ -2219,4 +2219,12 @@ class CodeTableDAO extends PSIBaseExDAO
     // 不是固有码表
     return null;
   }
+
+  /**
+   * 把码表转化为系统固有码表
+   */
+  public function convertCodeTable($params)
+  {
+    return $this->todo();
+  }
 }

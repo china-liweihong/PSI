@@ -389,4 +389,24 @@ class CodeTableController extends PSIBaseController
       $this->ajaxReturn($service->queryDataForRecordRef($params));
     }
   }
+
+  /**
+   * 把码表转化为系统固有码表
+   */
+  public function convertCodeTable()
+  {
+    if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::CODE_TABLE)) {
+        die("没有权限");
+      }
+
+      $params = [
+        "id" => I("post.id")
+      ];
+
+      $service = new CodeTableService();
+      $this->ajaxReturn($service->convertCodeTable($params));
+    }
+  }
 }

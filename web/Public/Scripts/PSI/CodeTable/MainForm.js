@@ -81,6 +81,13 @@ Ext.define("PSI.CodeTable.MainForm", {
       handler: me.onDeleteCodeTable,
       scope: me
     }, "-", {
+      text: "工具",
+      menu: [{
+        text: "把码表转化为系统固有码表",
+        scope: me,
+        handler: me.onConvertToSys
+      }]
+    }, "-", {
       text: "帮助",
       handler: function () {
         me.showInfo("TODO");
@@ -816,6 +823,53 @@ Ext.define("PSI.CodeTable.MainForm", {
             if (data.success) {
               me.tip("成功完成删除操作");
               me.refreshColsGrid(preIndex);
+            } else {
+              me.showInfo(data.msg);
+            }
+          } else {
+            me.showInfo("网络错误");
+          }
+        }
+      };
+
+      me.ajax(r);
+    };
+
+    me.confirm(info, funcConfirm);
+  },
+
+  onConvertToSys: function () {
+    var me = this;
+    var item = me.getMainGrid().getSelectionModel().getSelection();
+    if (item == null || item.length != 1) {
+      me.showInfo("请选择要操作的码表");
+      return;
+    }
+
+    var codeTable = item[0];
+
+    var info = "请确认是否把码表: <span style='color:red'>"
+      + codeTable.get("name")
+      + "</span> 转化为系统固有码表?";
+    var id = codeTable.get("id");
+
+    var funcConfirm = function () {
+      var el = Ext.getBody();
+      el.mask("正在处理中...");
+
+      var r = {
+        url: me.URL("Home/CodeTable/convertCodeTable"),
+        params: {
+          id: id
+        },
+        callback: function (options, success, response) {
+          el.unmask();
+
+          if (success) {
+            var data = me.decodeJSON(response.responseText);
+            if (data.success) {
+              me.tip("成功完成操作");
+              me.refreshMainGrid(id);
             } else {
               me.showInfo(data.msg);
             }

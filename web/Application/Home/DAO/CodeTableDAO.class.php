@@ -2223,8 +2223,40 @@ class CodeTableDAO extends PSIBaseExDAO
   /**
    * 把码表转化为系统固有码表
    */
-  public function convertCodeTable($params)
+  public function convertCodeTable(&$params)
   {
-    return $this->todo();
+    $db = $this->db;
+    $id = $params["id"];
+
+    $codeTable = $this->getCodeTableById($id);
+    if (!$codeTable) {
+      return $this->bad("要操作的表单不存在");
+    }
+    $isFixed = $codeTable["isFixed"];
+    $codeTableName = $codeTable["name"];
+
+    if ($isFixed == 1) {
+      return $this->bad("[{$codeTableName}]已经是系统固有码表了，不需要再次转换");
+    }
+
+    $sql = "update t_code_table_md
+            set is_fixed = 1
+            where id = '%s' ";
+    $rc = $db->execute($sql, $id);
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+
+    $sql = "update t_code_table_cols_md
+            set sys_col = 1
+            where table_id = '%s' ";
+    $rc = $db->execute($sql, $id);
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+
+    // 操作成功
+    $params["name"] = $codeTableName;
+    return null;
   }
 }

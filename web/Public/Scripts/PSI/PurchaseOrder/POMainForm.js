@@ -308,7 +308,7 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
         "billStatus", "goodsMoney", "dateCreated",
         "paymentType", "tax", "moneyWithTax", "dealDate",
         "dealAddress", "orgName", "confirmUserName",
-        "confirmDate", "billMemo"]
+        "confirmDate", "billMemo", "genPWBill"]
     });
     var store = Ext.create("Ext.data.Store", {
       autoLoad: false,
@@ -378,6 +378,13 @@ Ext.define("PSI.PurchaseOrder.POMainForm", {
           header: "采购订单号",
           dataIndex: "ref",
           width: 110
+        }, {
+          header: "入库单?",
+          dataIndex: "genPWBill",
+          width: 70,
+          align: "center",
+          menuDisabled: true,
+          sortable: false
         }, {
           header: "交货日期",
           dataIndex: "dealDate"

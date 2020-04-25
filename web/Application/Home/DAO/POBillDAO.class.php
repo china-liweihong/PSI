@@ -124,7 +124,7 @@ class POBillDAO extends PSIBaseExDAO
     $queryParams[] = $start;
     $queryParams[] = $limit;
     $data = $db->query($sql, $queryParams);
-    foreach ($data as $v) {
+    foreach ($data as $i => $v) {
       $confirmUserName = null;
       $confirmDate = null;
       $confirmUserId = $v["confirm_user_id"];
@@ -159,6 +159,14 @@ class POBillDAO extends PSIBaseExDAO
         "confirmUserName" => $confirmUserName,
         "confirmDate" => $confirmDate
       ];
+
+      // 查询是否生成了采购入库单
+      $sql = "select count(*) as cnt from t_po_pw
+            where po_id = '%s' ";
+      $d = $db->query($sql, $v["id"]);
+      $cnt = $d[0]["cnt"];
+      $genPWBill = $cnt > 0 ? "▲" : "";
+      $result[$i]["genPWBill"] = $genPWBill;
     }
 
     $sql = "select count(*) as cnt

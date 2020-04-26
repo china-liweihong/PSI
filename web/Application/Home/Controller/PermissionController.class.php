@@ -46,6 +46,11 @@ class PermissionController extends PSIBaseController
   public function roleList()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::PERMISSION_MANAGEMENT)) {
+        die("没有权限");
+      }
+
       $params = [
         "loginName" => I("post.queryLoginName"),
         "name" => I("post.queryName")
@@ -62,6 +67,11 @@ class PermissionController extends PSIBaseController
   public function permissionList()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::PERMISSION_MANAGEMENT)) {
+        die("没有权限");
+      }
+
       $ps = new PermissionService();
       $roleId = I("post.roleId");
 
@@ -77,6 +87,11 @@ class PermissionController extends PSIBaseController
   public function userList()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::PERMISSION_MANAGEMENT)) {
+        die("没有权限");
+      }
+
       $ps = new PermissionService();
       $roleId = I("post.roleId");
 
@@ -97,14 +112,12 @@ class PermissionController extends PSIBaseController
       if (I("post.id")) {
         // 编辑角色
         if (!$us->hasPermission(FIdConst::PERMISSION_MANAGEMENT_EDIT)) {
-          $this->ajaxReturn($this->noPermission("编辑角色"));
-          return;
+          die("没有权限");
         }
       } else {
         // 新增角色
         if (!$us->hasPermission(FIdConst::PERMISSION_MANAGEMENT_ADD)) {
-          $this->ajaxReturn($this->noPermission("新增角色"));
-          return;
+          die("没有权限");
         }
       }
 
@@ -128,6 +141,11 @@ class PermissionController extends PSIBaseController
   public function selectPermission()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::PERMISSION_MANAGEMENT)) {
+        die("没有权限");
+      }
+
       $idList = I("post.idList");
 
       $ps = new PermissionService();
@@ -143,6 +161,11 @@ class PermissionController extends PSIBaseController
   public function selectUsers()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::PERMISSION_MANAGEMENT)) {
+        die("没有权限");
+      }
+
       $idList = I("post.idList");
 
       $this->ajaxReturn((new PermissionService())->selectUsers($idList));
@@ -158,8 +181,7 @@ class PermissionController extends PSIBaseController
       // 检查权限
       $us = new UserService();
       if (!$us->hasPermission(FIdConst::PERMISSION_MANAGEMENT_DELETE)) {
-        $this->ajaxReturn($this->noPermission("删除角色"));
-        return;
+        die("没有权限");
       }
 
       $id = I("post.id");
@@ -177,6 +199,11 @@ class PermissionController extends PSIBaseController
   public function dataOrgList()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::PERMISSION_MANAGEMENT)) {
+        die("没有权限");
+      }
+
       $ps = new PermissionService();
       $params = array(
         "roleId" => I("post.roleId"),
@@ -193,6 +220,11 @@ class PermissionController extends PSIBaseController
   public function selectDataOrg()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::PERMISSION_MANAGEMENT)) {
+        die("没有权限");
+      }
+
       $ps = new PermissionService();
 
       $this->ajaxReturn($ps->selectDataOrg());
@@ -205,6 +237,11 @@ class PermissionController extends PSIBaseController
   public function permissionCategory()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::PERMISSION_MANAGEMENT)) {
+        die("没有权限");
+      }
+
       $ps = new PermissionService();
 
       $this->ajaxReturn($ps->permissionCategory());
@@ -217,6 +254,11 @@ class PermissionController extends PSIBaseController
   public function permissionByCategory()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::PERMISSION_MANAGEMENT)) {
+        die("没有权限");
+      }
+
       $params = array(
         "category" => I("post.category")
       );

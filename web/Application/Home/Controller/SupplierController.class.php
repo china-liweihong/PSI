@@ -55,6 +55,11 @@ class SupplierController extends PSIBaseController
   public function categoryList()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::SUPPLIER)) {
+        die("没有权限");
+      }
+
       $params = array(
         "code" => I("post.code"),
         "name" => I("post.name"),
@@ -76,6 +81,11 @@ class SupplierController extends PSIBaseController
   public function supplierList()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::SUPPLIER)) {
+        die("没有权限");
+      }
+
       $params = array(
         "categoryId" => I("post.categoryId"),
         "code" => I("post.code"),
@@ -104,14 +114,12 @@ class SupplierController extends PSIBaseController
       if (I("post.id")) {
         // 编辑供应商分类
         if (!$us->hasPermission(FIdConst::SUPPLIER_CATEGORY_EDIT)) {
-          $this->ajaxReturn($this->noPermission("编辑供应商分类"));
-          return;
+          die("没有权限");
         }
       } else {
         // 新增供应商分类
         if (!$us->hasPermission(FIdConst::SUPPLIER_CATEGORY_ADD)) {
-          $this->ajaxReturn($this->noPermission("新增供应商分类"));
-          return;
+          die("没有权限");
         }
       }
 
@@ -133,8 +141,7 @@ class SupplierController extends PSIBaseController
     if (IS_POST) {
       $us = new UserService();
       if (!$us->hasPermission(FIdConst::SUPPLIER_CATEGORY_DELETE)) {
-        $this->ajaxReturn($this->noPermission("删除供应商分类"));
-        return;
+        die("没有权限");
       }
 
       $params = array(
@@ -155,14 +162,12 @@ class SupplierController extends PSIBaseController
       if (I("post.id")) {
         // 编辑供应商档案
         if (!$us->hasPermission(FIdConst::SUPPLIER_EDIT)) {
-          $this->ajaxReturn($this->noPermission("编辑供应商档案"));
-          return;
+          die("没有权限");
         }
       } else {
         // 新增供应商档案
         if (!$us->hasPermission(FIdConst::SUPPLIER_ADD)) {
-          $this->ajaxReturn($this->noPermission("新增供应商档案"));
-          return;
+          die("没有权限");
         }
       }
 
@@ -205,8 +210,7 @@ class SupplierController extends PSIBaseController
     if (IS_POST) {
       $us = new UserService();
       if (!$us->hasPermission(FIdConst::SUPPLIER_DELETE)) {
-        $this->ajaxReturn($this->noPermission("删除供应商档案"));
-        return;
+        die("没有权限");
       }
 
       $params = array(
@@ -235,6 +239,11 @@ class SupplierController extends PSIBaseController
   public function supplierInfo()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::SUPPLIER)) {
+        die("没有权限");
+      }
+
       $params = array(
         "id" => I("post.id")
       );
@@ -249,6 +258,11 @@ class SupplierController extends PSIBaseController
   public function addGRCategory()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::SUPPLIER)) {
+        die("没有权限");
+      }
+
       $params = [
         "id" => I("post.id"),
         "categoryId" => I("post.categoryId")
@@ -264,6 +278,11 @@ class SupplierController extends PSIBaseController
   public function grCategoryList()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::SUPPLIER)) {
+        die("没有权限");
+      }
+
       $params = [
         "id" => I("post.id")
       ];
@@ -278,6 +297,11 @@ class SupplierController extends PSIBaseController
   public function deleteGRCategory()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::SUPPLIER)) {
+        die("没有权限");
+      }
+
       $params = [
         "id" => I("post.id"),
         "idList" => I("post.idList")
@@ -293,6 +317,11 @@ class SupplierController extends PSIBaseController
   public function grGoodsList()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::SUPPLIER)) {
+        die("没有权限");
+      }
+
       $params = [
         "id" => I("post.id")
       ];
@@ -307,6 +336,11 @@ class SupplierController extends PSIBaseController
   public function addGRGoods()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::SUPPLIER)) {
+        die("没有权限");
+      }
+
       $params = [
         "id" => I("post.id"),
         "goodsId" => I("post.goodsId")
@@ -322,6 +356,11 @@ class SupplierController extends PSIBaseController
   public function deleteGRGoods()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::SUPPLIER)) {
+        die("没有权限");
+      }
+
       $params = [
         "id" => I("post.id"),
         "idList" => I("post.idList")

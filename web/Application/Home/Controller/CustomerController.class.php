@@ -57,6 +57,11 @@ class CustomerController extends PSIBaseController
   public function categoryList()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::CUSTOMER)) {
+        die("没有权限");
+      }
+
       $cs = new CustomerService();
       $params = array(
         "code" => I("post.code"),
@@ -83,14 +88,12 @@ class CustomerController extends PSIBaseController
       if (I("post.id")) {
         // 编辑客户分类
         if (!$us->hasPermission(FIdConst::CUSTOMER_CATEGORY_EDIT)) {
-          $this->ajaxReturn($this->noPermission("编辑客户分类"));
-          return;
+          die("没有权限");
         }
       } else {
         // 新增客户分类
         if (!$us->hasPermission(FIdConst::CUSTOMER_CATEGORY_ADD)) {
-          $this->ajaxReturn($this->noPermission("新增客户分类"));
-          return;
+          die("没有权限");
         }
       }
 
@@ -113,8 +116,7 @@ class CustomerController extends PSIBaseController
     if (IS_POST) {
       $us = new UserService();
       if (!$us->hasPermission(FIdConst::CUSTOMER_CATEGORY_DELETE)) {
-        $this->ajaxReturn($this->noPermission("删除客户分类"));
-        return;
+        die("没有权限");
       }
 
       $params = array(
@@ -135,14 +137,12 @@ class CustomerController extends PSIBaseController
       if (I("post.id")) {
         // 编辑客户
         if (!$us->hasPermission(FIdConst::CUSTOMER_EDIT)) {
-          $this->ajaxReturn($this->noPermission("编辑客户"));
-          return;
+          die("没有权限");
         }
       } else {
         // 新增客户
         if (!$us->hasPermission(FIdConst::CUSTOMER_ADD)) {
-          $this->ajaxReturn($this->noPermission("新增客户"));
-          return;
+          die("没有权限");
         }
       }
 
@@ -182,6 +182,11 @@ class CustomerController extends PSIBaseController
   public function customerList()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::CUSTOMER)) {
+        die("没有权限");
+      }
+
       $params = array(
         "categoryId" => I("post.categoryId"),
         "code" => I("post.code"),
@@ -208,8 +213,7 @@ class CustomerController extends PSIBaseController
     if (IS_POST) {
       $us = new UserService();
       if (!$us->hasPermission(FIdConst::CUSTOMER_DELETE)) {
-        $this->ajaxReturn($this->noPermission("删除客户"));
-        return;
+        die("没有权限");
       }
 
       $params = array(
@@ -240,6 +244,11 @@ class CustomerController extends PSIBaseController
   public function customerInfo()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::CUSTOMER)) {
+        die("没有权限");
+      }
+
       $id = I("post.id");
       $cs = new CustomerService();
       $this->ajaxReturn($cs->customerInfo($id));
@@ -252,6 +261,11 @@ class CustomerController extends PSIBaseController
   public function import()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::CUSTOMER_IMPORT)) {
+        die("没有权限");
+      }
+
       $us = new UserService();
       if (!$us->hasPermission(FIdConst::CUSTOMER_IMPORT)) {
         $this->ajaxReturn($this->noPermission("导入客户"));

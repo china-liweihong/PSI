@@ -159,6 +159,11 @@ class UserController extends PSIBaseController
   public function allOrgs()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::USR_MANAGEMENT)) {
+        die("没有权限");
+      }
+
       $params = [
         "loginName" => I("post.queryLoginName"),
         "name" => I("post.queryName"),
@@ -178,6 +183,11 @@ class UserController extends PSIBaseController
   public function users()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::USR_MANAGEMENT)) {
+        die("没有权限");
+      }
+
       $us = new UserService();
       $params = array(
         "orgId" => I("post.orgId"),
@@ -208,14 +218,12 @@ class UserController extends PSIBaseController
       if ($id) {
         // 编辑组织机构
         if (!$us->hasPermission(FIdConst::USER_MANAGEMENT_EDIT_ORG)) {
-          $this->ajaxReturn($this->noPermission("编辑组织机构"));
-          return;
+          die("没有权限");
         }
       } else {
         // 新增组织机构
         if (!$us->hasPermission(FIdConst::USER_MANAGEMENT_ADD_ORG)) {
-          $this->ajaxReturn($this->noPermission("新增组织机构"));
-          return;
+          die("没有权限");
         }
       }
 
@@ -248,8 +256,7 @@ class UserController extends PSIBaseController
       $us = new UserService();
 
       if (!$us->hasPermission(FIdConst::USER_MANAGEMENT_DELETE_ORG)) {
-        $this->ajaxReturn($this->noPermission("删除组织机构"));
-        return;
+        die("没有权限");
       }
 
       $id = I("post.id");
@@ -270,14 +277,12 @@ class UserController extends PSIBaseController
       if (I("post.id")) {
         // 编辑用户
         if (!$us->hasPermission(FIdConst::USER_MANAGEMENT_EDIT_USER)) {
-          $this->ajaxReturn($this->noPermission("编辑用户"));
-          return;
+          die("没有权限");
         }
       } else {
         // 新增用户
         if (!$us->hasPermission(FIdConst::USER_MANAGEMENT_ADD_USER)) {
-          $this->ajaxReturn($this->noPermission("新增用户"));
-          return;
+          die("没有权限");
         }
       }
 
@@ -311,8 +316,7 @@ class UserController extends PSIBaseController
       $us = new UserService();
 
       if (!$us->hasPermission(FIdConst::USER_MANAGEMENT_DELETE_USER)) {
-        $this->ajaxReturn($this->noPermission("删除用户"));
-        return;
+        die("没有权限");
       }
 
       $params = array(
@@ -334,8 +338,7 @@ class UserController extends PSIBaseController
       $us = new UserService();
 
       if (!$us->hasPermission(FIdConst::USER_MANAGEMENT_CHANGE_USER_PASSWORD)) {
-        $this->ajaxReturn($this->noPermission("修改用户密码"));
-        return;
+        die("没有权限");
       }
 
       $params = array(
@@ -390,6 +393,11 @@ class UserController extends PSIBaseController
   public function userInfo()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::USR_MANAGEMENT)) {
+        die("没有权限");
+      }
+
       $params = [
         "id" => I("post.id")
       ];

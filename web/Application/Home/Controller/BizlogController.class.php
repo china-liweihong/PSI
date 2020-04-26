@@ -42,6 +42,11 @@ class BizlogController extends PSIBaseController
   public function logList()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::BIZ_LOG)) {
+        die("没有权限");
+      }
+
       $params = [
         "loginName" => I("post.loginName"),
         "userId" => I("post.userId"),
@@ -64,6 +69,11 @@ class BizlogController extends PSIBaseController
   public function getLogCategoryList()
   {
     if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::BIZ_LOG)) {
+        die("没有权限");
+      }
+
       $params = [];
       $service = new BizlogService();
       $this->ajaxReturn($service->getLogCategoryList($params));

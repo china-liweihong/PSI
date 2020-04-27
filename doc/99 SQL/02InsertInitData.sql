@@ -578,13 +578,15 @@ INSERT INTO `t_menu_item_h5` (`id`, `caption`, `fid`, `parent_id`, `show_order`)
 TRUNCATE TABLE `t_dict_table_category`;
 INSERT INTO `t_dict_table_category` (`id`, `code`, `name`, `parent_id`) VALUES
 ('01', '01', '码表', NULL),
-('02', '02', '自定义表单', NULL);
+('02', '02', '自定义表单', NULL),
+('10', '10', '基础数据', NULL);
 
 TRUNCATE TABLE `t_dict_table_md`;
 INSERT INTO `t_dict_table_md` (`id`, `code`, `name`, `table_name`, `category_id`, `memo`, `py`) VALUES
 ('0101', '0101', '码表记录状态', 't_sysdict_record_status', '01', '码表记录的状态', 'MBJLZT'),
 ('0102', '0102', '码表字段编辑器类型', 't_sysdict_editor_xtype', '01', '码表字段编辑器的类型', 'MBZDBJQLX'),
-('0201', '0201', '表单字段编辑器类型', 't_sysdict_form_editor_xtype', '02', '表单字段编辑器的类型', 'BDZDBJQLX');
+('0201', '0201', '表单字段编辑器类型', 't_sysdict_form_editor_xtype', '02', '表单字段编辑器的类型', 'BDZDBJQLX'),
+('1001', '1001', '税率', 't_sysdict_tax_rate', '10', '', 'SL');
 
 TRUNCATE TABLE `t_sysdict_record_status`;
 INSERT INTO `t_sysdict_record_status` (`id`, `code`, `code_int`, `name`, `py`, `memo`, `show_order`) VALUES
@@ -605,6 +607,28 @@ INSERT INTO `t_sysdict_form_editor_xtype` (`id`, `code`, `code_int`, `name`, `py
 ('28D248CD-843D-11EA-8C00-E86A641ED142', '3', 3, 'datefield', 'datefield', '日期字段编辑器', 3),
 ('BF6F569E-843D-11EA-8C00-E86A641ED142', '4', 4, 'displayfield', 'displayfield', '不使用编辑器', 4),
 ('CD0B859B-843D-11EA-8C00-E86A641ED142', '5', 5, 'psi_userfield', 'psi_userfield', '用户字段编辑器', 5);
+
+TRUNCATE TABLE `t_sysdict_tax_rate`;
+INSERT INTO `t_sysdict_tax_rate` (`id`, `code`, `code_int`, `name`, `py`, `memo`, `show_order`) VALUES
+('F2AEB999-8869-11EA-B3D2-E86A641ED142', '-1', -1, '[不设定]', '', '', -1),
+('118BF94A-886A-11EA-B3D2-E86A641ED142', '0', 0, '0%', '', '', 0),
+('1C249830-886A-11EA-B3D2-E86A641ED142', '1', 1, '1%', '', '', 1),
+('24A26BFF-886A-11EA-B3D2-E86A641ED142', '2', 2, '2%', '', '', 2),
+('2D865B3E-886A-11EA-B3D2-E86A641ED142', '3', 3, '3%', '', '', 3),
+('386B7BDB-886A-11EA-B3D2-E86A641ED142', '4', 4, '4%', '', '', 4),
+('43387B7C-886A-11EA-B3D2-E86A641ED142', '5', 5, '5%', '', '', 5),
+('4B158D04-886A-11EA-B3D2-E86A641ED142', '6', 6, '6%', '', '', 6),
+('56D55F4C-886A-11EA-B3D2-E86A641ED142', '7', 7, '7%', '', '', 7),
+('61EA46D7-886A-11EA-B3D2-E86A641ED142', '8', 8, '8%', '', '', 8),
+('6D4CDDB1-886A-11EA-B3D2-E86A641ED142', '9', 9, '9%', '', '', 9),
+('77AA107A-886A-11EA-B3D2-E86A641ED142', '10', 10, '10%', '', '', 10),
+('80D5BB11-886A-11EA-B3D2-E86A641ED142', '11', 11, '11%', '', '', 11),
+('8DFEA286-886A-11EA-B3D2-E86A641ED142', '12', 12, '12%', '', '', 12),
+('9A016A14-886A-11EA-B3D2-E86A641ED142', '13', 13, '13%', '', '', 13),
+('A50DD214-886A-11EA-B3D2-E86A641ED142', '14', 14, '14%', '', '', 14),
+('AF2AFC03-886A-11EA-B3D2-E86A641ED142', '15', 15, '15%', '', '', 15),
+('B8DC0446-886A-11EA-B3D2-E86A641ED142', '16', 16, '16%', '', '', 16),
+('C19955AE-886A-11EA-B3D2-E86A641ED142', '17', 17, '17%', '', '', 17);
 
 DELETE FROM `t_code_table_category` where `id` = 'F9D80BD6-8519-11EA-B071-E86A641ED142';
 INSERT INTO `t_code_table_category` (`id`, `code`, `name`, `parent_id`, `is_system`) VALUES

@@ -70,6 +70,34 @@ class UpdateDB2020Service extends PSIBaseService
     $this->update_20200424_02();
     $this->update_20200424_03();
     $this->update_20200424_04();
+    $this->update_20200427_01();
+  }
+
+  private function update_20200427_01()
+  {
+    // 本次更新：初始化t_goods_brand的码表元数据
+    $db = $this->db;
+
+    $sql = "DELETE FROM `t_code_table_md` where `id` = 'D7D9D328-8834-11EA-8C36-E86A641ED142';
+            DELETE FROM `t_code_table_cols_md` where `table_id` = 'D7D9D328-8834-11EA-8C36-E86A641ED142' and `sys_col` = 1;
+            INSERT INTO `t_code_table_md` (`id`, `code`, `name`, `table_name`, `category_id`, `memo`, `py`, `fid`, `md_version`, `is_fixed`, `enable_parent_id`, `handler_class_name`) VALUES
+            ('D7D9D328-8834-11EA-8C36-E86A641ED142', 'PSI-0002-03', '商品品牌', 't_goods_brand', '58BF84A3-8517-11EA-B071-E86A641ED142', '', '', '', 1, 1, 1, '');
+            INSERT INTO `t_code_table_cols_md` (`id`, `table_id`, `caption`, `db_field_name`, `db_field_type`, `db_field_length`, `db_field_decimal`, `show_order`, `value_from`, `value_from_table_name`, `value_from_col_name`, `value_from_col_name_display`, `must_input`, `sys_col`, `is_visible`, `width_in_view`, `note`, `show_order_in_view`, `editor_xtype`) VALUES
+            ('D7DA0F07-8834-11EA-8C36-E86A641ED142', 'D7D9D328-8834-11EA-8C36-E86A641ED142', 'id', 'id', 'varchar', 255, 0, -1000, 1, '', '', '', 1, 1, 2, 0, NULL, -1000, 'textfield'),
+            ('D7DA2831-8834-11EA-8C36-E86A641ED142', 'D7D9D328-8834-11EA-8C36-E86A641ED142', '编码', 'code', 'varchar', 255, 0, 0, 1, '', '', '', 2, 1, 1, 120, NULL, 0, 'textfield'),
+            ('D7DA38C1-8834-11EA-8C36-E86A641ED142', 'D7D9D328-8834-11EA-8C36-E86A641ED142', '名称', 'name', 'varchar', 255, 0, 1, 1, '', '', '', 2, 1, 1, 200, NULL, 1, 'textfield'),
+            ('D7DA46DE-8834-11EA-8C36-E86A641ED142', 'D7D9D328-8834-11EA-8C36-E86A641ED142', '拼音字头', 'py', 'varchar', 255, 0, -900, 1, '', '', '', 1, 1, 2, 0, NULL, -1000, 'textfield'),
+            ('D7DA5596-8834-11EA-8C36-E86A641ED142', 'D7D9D328-8834-11EA-8C36-E86A641ED142', '数据域', 'data_org', 'varchar', 255, 0, -800, 1, '', '', '', 1, 1, 2, 0, NULL, -1000, 'textfield'),
+            ('D7DA6187-8834-11EA-8C36-E86A641ED142', 'D7D9D328-8834-11EA-8C36-E86A641ED142', '公司id', 'company_id', 'varchar', 255, 0, -700, 1, '', '', '', 1, 1, 2, 0, NULL, -1000, 'textfield'),
+            ('D7DA6ED9-8834-11EA-8C36-E86A641ED142', 'D7D9D328-8834-11EA-8C36-E86A641ED142', '记录创建时间', 'date_created', 'datetime', 0, 0, -699, 1, '', '', '', 1, 1, 2, 0, NULL, -1000, 'textfield'),
+            ('D7DA7DA5-8834-11EA-8C36-E86A641ED142', 'D7D9D328-8834-11EA-8C36-E86A641ED142', '记录创建人id', 'create_user_id', 'varchar', 255, 0, -698, 1, '', '', '', 1, 1, 2, 0, NULL, -1000, 'textfield'),
+            ('D7DA8BEF-8834-11EA-8C36-E86A641ED142', 'D7D9D328-8834-11EA-8C36-E86A641ED142', '最后一次编辑时间', 'update_dt', 'datetime', 0, 0, -697, 1, '', '', '', 1, 1, 2, 0, NULL, -1000, 'textfield'),
+            ('D7DA9B13-8834-11EA-8C36-E86A641ED142', 'D7D9D328-8834-11EA-8C36-E86A641ED142', '最后一次编辑人id', 'update_user_id', 'varchar', 255, 0, -696, 1, '', '', '', 1, 1, 2, 0, NULL, -1000, 'textfield'),
+            ('D7DAA800-8834-11EA-8C36-E86A641ED142', 'D7D9D328-8834-11EA-8C36-E86A641ED142', '状态', 'record_status', 'int', 11, 0, 2, 2, 't_sysdict_record_status', 'code_int', 'name', 2, 1, 1, 80, NULL, 2, 'textfield'),
+            ('D7DAB56C-8834-11EA-8C36-E86A641ED142', 'D7D9D328-8834-11EA-8C36-E86A641ED142', '上级', 'parent_id', 'varchar', 255, 0, 4, 4, 't_goods_brand', 'id', 'full_name', 0, 1, 1, 0, NULL, -1000, 'psi_codetable_parentidfield'),
+            ('D7DAC2CD-8834-11EA-8C36-E86A641ED142', 'D7D9D328-8834-11EA-8C36-E86A641ED142', '全名', 'full_name', 'varchar', 1000, 0, -1000, 5, '', '', '', 0, 1, 2, 300, NULL, 3, 'textfield');
+            ";
+    $db->execute($sql);
   }
 
   private function update_20200424_04()

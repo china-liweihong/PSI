@@ -38,7 +38,7 @@ Ext.define("PSI.CodeTable.MainForm", {
           xtype: "panel",
           region: "west",
           layout: "fit",
-          width: 300,
+          width: 370,
           split: true,
           collapsible: true,
           header: false,
@@ -147,6 +147,8 @@ Ext.define("PSI.CodeTable.MainForm", {
         header: "系统固有",
         dataIndex: "isSystemCaption",
         menuDisabled: true,
+        width: 80,
+        align: "center",
         sortable: false
       }],
       store: Ext.create("Ext.data.Store", {
@@ -177,7 +179,7 @@ Ext.define("PSI.CodeTable.MainForm", {
     Ext.define(modelName, {
       extend: "Ext.data.Model",
       fields: ["id", "code", "name", "tableName",
-        "memo", "fid", "mdVersion", "isFixed", "enableParentId",
+        "memo", "fid", "mdVersion", "isFixed", "isFixedName", "enableParentId",
         "handlerClassName"]
     });
 
@@ -229,13 +231,11 @@ Ext.define("PSI.CodeTable.MainForm", {
         sortable: false
       }, {
         header: "系统固有",
-        dataIndex: "isFixed",
+        dataIndex: "isFixedName",
         width: 80,
         menuDisabled: true,
         sortable: false,
-        renderer: function (value) {
-          return parseInt(value) == 1 ? "是" : "否";
-        }
+        align: "center"
       }, {
         header: "层级数据",
         dataIndex: "enableParentId",

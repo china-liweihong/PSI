@@ -29,7 +29,7 @@ class CodeTableDAO extends PSIBaseExDAO
         "code" => $v["code"],
         "name" => $v["name"],
         "isSystem" => $v["is_system"],
-        "isSystemCaption" => $v["is_system"] == 1 ? "系统固有分类" : "",
+        "isSystemCaption" => $v["is_system"] == 1 ? "▲" : "",
       ];
     }
 
@@ -226,6 +226,7 @@ class CodeTableDAO extends PSIBaseExDAO
         "memo" => $v["memo"],
         "mdVersion" => $v["md_version"],
         "isFixed" => $v["is_fixed"],
+        "isFixedName" => $v["is_fixed"] == 1 ? "▲" : "",
         "enableParentId" => $v["enable_parent_id"],
         "handlerClassName" => $v["handler_class_name"]
       ];

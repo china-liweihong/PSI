@@ -1922,6 +1922,20 @@ class InstallService extends PSIBaseExService
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
             ";
     $db->execute($sql);
+
+    // t_sysdict_tax_rate
+    $sql = "CREATE TABLE IF NOT EXISTS `t_sysdict_tax_rate` (
+              `id` varchar(255) NOT NULL,
+              `code` varchar(255) NOT NULL,
+              `code_int` int(11) NOT NULL,
+              `name` varchar(255) NOT NULL,
+              `py` varchar(255) NOT NULL,
+              `memo` varchar(255) NOT NULL,
+              `show_order` int(11) DEFAULT NULL,
+              PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+            ";
+    $db->execute($sql);
   }
 
   /**

@@ -71,6 +71,28 @@ class UpdateDB2020Service extends PSIBaseService
     $this->update_20200424_03();
     $this->update_20200424_04();
     $this->update_20200427_01();
+    $this->update_20200427_02();
+  }
+
+  private function update_20200427_02()
+  {
+    // 本次更新：新建表t_sysdict_tax_rate
+    $db = $this->db;
+    $tableName = "t_sysdict_tax_rate";
+    if (!$this->tableExists($db, $tableName)) {
+      $sql = "CREATE TABLE IF NOT EXISTS `t_sysdict_tax_rate` (
+                `id` varchar(255) NOT NULL,
+                `code` varchar(255) NOT NULL,
+                `code_int` int(11) NOT NULL,
+                `name` varchar(255) NOT NULL,
+                `py` varchar(255) NOT NULL,
+                `memo` varchar(255) NOT NULL,
+                `show_order` int(11) DEFAULT NULL,
+                PRIMARY KEY (`id`)
+              ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+              ";
+      $db->execute($sql);
+    }
   }
 
   private function update_20200427_01()

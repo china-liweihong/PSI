@@ -6,7 +6,8 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
   border: 0,
 
   config: {
-    fid: null
+    fid: null,
+    pDesignTool: null
   },
 
   initComponent: function () {
@@ -96,7 +97,22 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
       text: "刷新",
       handler: me.onRefreshCodeTableRecord,
       scope: me
-    }, "-", {
+    }]);
+
+    // 开发者工具
+    if (me.getPDesignTool() == "1") {
+      toolBar.add(["-", {
+        text: "开发者工具",
+        menu: [{
+          text: "保存列视图布局",
+          scope: me,
+          handler: me.onSaveViewLayout
+        }
+        ]
+      }]);
+    }
+
+    toolBar.add(["-", {
       text: "关闭",
       handler: function () {
         me.closeWindow();
@@ -435,5 +451,11 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
     };
 
     me.ajax(r);
+  },
+
+  // 保存列视图布局
+  onSaveViewLayout: function () {
+    var me = this;
+    me.showInfo("TODO")
   }
 });

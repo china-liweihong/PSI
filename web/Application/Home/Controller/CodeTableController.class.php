@@ -44,6 +44,10 @@ class CodeTableController extends PSIBaseController
     if ($us->hasPermission($fid)) {
       $this->initVar();
 
+      // 按钮权限：设计工具下的各个按钮权限
+      $this->assign("pDesignTool", $us->hasPermission(FIdConst::CODE_TABLE) ? "1" : "0");
+
+
       $service = new CodeTableService();
       $md = $service->getMetaDataByFid($fid);
 

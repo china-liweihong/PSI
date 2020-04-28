@@ -15,6 +15,7 @@ Ext.define("PSI.Funds.PayMainForm", {
     Ext.apply(me, {
       tbar: [{
         xtype: "displayfield",
+        margin: "5 0 0 0",
         value: "往来单位："
       }, {
         cls: "PSI-toolbox",
@@ -38,6 +39,7 @@ Ext.define("PSI.Funds.PayMainForm", {
         }
       }, {
         xtype: "displayfield",
+        margin: "5 0 0 0",
         value: "分类"
       }, {
         cls: "PSI-toolbox",
@@ -55,6 +57,7 @@ Ext.define("PSI.Funds.PayMainForm", {
       }, " ", "-", " ", {
         id: "editQueryLabel",
         xtype: "displayfield",
+        margin: "5 0 0 0",
         value: "供应商 "
       }, {
         cls: "PSI-toolbox",

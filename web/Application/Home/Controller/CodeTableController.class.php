@@ -534,7 +534,10 @@ class CodeTableController extends PSIBaseController
         die("没有权限");
       }
 
-      $params = ["fid" => I("post.fid")];
+      $params = [
+        "fid" => I("post.fid"),
+        "json" => I("post.json")
+      ];
 
       $service = new CodeTableService();
       $this->ajaxReturn($service->saveColViewLayout($params));

@@ -2268,6 +2268,38 @@ class CodeTableDAO extends PSIBaseExDAO
    */
   public function saveColViewLayout(&$params)
   {
-    return $this->todo();
+    $db = $this->db;
+
+    $fid = $params["fid"];
+    $json = $params["json"];
+    $layout = json_decode(html_entity_decode($json), true);
+    if (!$layout) {
+      return $this->badParam("json");
+    }
+
+    $sql = "select id, name
+            from t_code_table_md
+            where fid = '%s' ";
+    $data = $db->query($sql, $fid);
+    if (!$data) {
+      return $this->badParam("fid");
+    }
+    $v = $data[0];
+    $codeTableName = $v["name"];
+    $id = $v["id"];
+
+    foreach ($layout as $i => $v) {
+      $sql = "update t_code_table_cols_md
+              set show_order_in_view = %d, width_in_view = %d
+              where table_id = '%s' and db_field_name = '%s' ";
+      $rc = $db->execute($sql, $i, $v["width"], $id, $v["dataIndex"]);
+      if ($rc === false) {
+        return $this->sqlError(__METHOD__, __LINE__);
+      }
+    }
+
+    // 操作成功
+    $params["name"] = $codeTableName;
+    return null;
   }
 }

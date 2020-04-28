@@ -458,6 +458,15 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
     var me = this;
     var md = me.getMetaData();
 
+    var grid = me.getMainGrid();
+    var cols = grid.columnManager.columns;
+    var layout = [];
+    for (var i = 0; i < cols.length; i++) {
+      var c = cols[i];
+      layout.push({ dataIndex: c.dataIndex, width: c.width });
+    }
+    var json = Ext.JSON.encode(layout);
+
     var info = "请确认是否保存视图布局?";
 
     var funcConfirm = function () {
@@ -466,7 +475,8 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
       var r = {
         url: me.URL("Home/CodeTable/saveColViewLayout"),
         params: {
-          fid: md.fid
+          fid: md.fid,
+          json: json
         },
         method: "POST",
         callback: function (options, success, response) {

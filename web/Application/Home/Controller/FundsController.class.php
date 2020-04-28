@@ -210,15 +210,21 @@ class FundsController extends PSIBaseController
   public function rvList()
   {
     if (IS_POST) {
-      $params = array(
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::RECEIVING)) {
+        die("没有权限");
+      }
+
+      $params = [
         "caType" => I("post.caType"),
         "categoryId" => I("post.categoryId"),
         "customerId" => I("post.customerId"),
         "supplierId" => I("post.supplierId"),
+        "hasBalance" => I("post.hasBalance"),
         "page" => I("post.page"),
         "start" => I("post.start"),
         "limit" => I("post.limit")
-      );
+      ];
       $rs = new ReceivablesService();
       $this->ajaxReturn($rs->rvList($params));
     }

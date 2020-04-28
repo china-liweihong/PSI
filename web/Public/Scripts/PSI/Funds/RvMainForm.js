@@ -15,6 +15,7 @@ Ext.define("PSI.Funds.RvMainForm", {
     Ext.apply(me, {
       tbar: [{
         xtype: "displayfield",
+        margin: "5 0 0 0",
         value: "往来单位："
       }, {
         cls: "PSI-toolbox",
@@ -37,6 +38,7 @@ Ext.define("PSI.Funds.RvMainForm", {
         }
       }, {
         xtype: "displayfield",
+        margin: "5 0 0 0",
         value: "分类"
       }, {
         cls: "PSI-toolbox",
@@ -51,8 +53,9 @@ Ext.define("PSI.Funds.RvMainForm", {
           autoLoad: false,
           data: []
         })
-      }, " ", "-", " ", {
+      }, {
         id: "editQueryLabel",
+        margin: "5 0 0 0",
         xtype: "displayfield",
         value: "客户 "
       }, {
@@ -69,6 +72,20 @@ Ext.define("PSI.Funds.RvMainForm", {
         width: 200,
         showModal: true
       }, {
+        xtype: "checkbox",
+        boxLabel: "只显示有未收的记录",
+        inputValue: "1",
+        id: "editQueryHasBalance",
+        margin: "5 0 0 0",
+        listeners: {
+          change: {
+            fn: function () {
+              me.onQuery();
+            },
+            scoep: me
+          }
+        }
+      }, " ", "-", {
         text: "查询",
         iconCls: "PSI-button-refresh",
         handler: me.onQuery,
@@ -150,12 +167,10 @@ Ext.define("PSI.Funds.RvMainForm", {
     store.on("beforeload", function () {
       Ext.apply(store.proxy.extraParams, {
         caType: Ext.getCmp("comboCA").getValue(),
-        categoryId: Ext.getCmp("comboCategory")
-          .getValue(),
-        customerId: Ext.getCmp("editCustomerQuery")
-          .getIdValue(),
-        supplierId: Ext.getCmp("editSupplierQuery")
-          .getIdValue()
+        categoryId: Ext.getCmp("comboCategory").getValue(),
+        customerId: Ext.getCmp("editCustomerQuery").getIdValue(),
+        supplierId: Ext.getCmp("editSupplierQuery").getIdValue(),
+        hasBalance: Ext.getCmp("editQueryHasBalance").getValue() ? 1 : 0
       });
     });
 

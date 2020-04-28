@@ -90,6 +90,7 @@ class ReceivablesDAO extends PSIBaseExDAO
     $categoryId = $params["categoryId"];
     $customerId = $params["customerId"];
     $supplierId = $params["supplierId"];
+    $hasBalance = $params["hasBalance"];
     $start = $params["start"];
     $limit = $params["limit"];
 
@@ -113,6 +114,9 @@ class ReceivablesDAO extends PSIBaseExDAO
       } else if ($categoryId) {
         $sql .= " and c.category_id = '%s' ";
         $queryParams[] = $categoryId;
+      }
+      if ($hasBalance == 1) {
+        $sql .= " and r.balance_money > 0";
       }
       $sql .= " order by c.code
                 limit %d , %d ";
@@ -150,6 +154,9 @@ class ReceivablesDAO extends PSIBaseExDAO
       } else if ($categoryId) {
         $sql .= " and c.category_id = '%s' ";
         $queryParams[] = $categoryId;
+      }
+      if ($hasBalance == 1) {
+        $sql .= " and r.balance_money > 0";
       }
       $data = $db->query($sql, $queryParams);
       $cnt = $data[0]["cnt"];
@@ -177,6 +184,9 @@ class ReceivablesDAO extends PSIBaseExDAO
         $sql .= " and c.category_id = '%s' ";
         $queryParams[] = $categoryId;
       }
+      if ($hasBalance == 1) {
+        $sql .= " and r.balance_money > 0";
+      }
       $sql .= " order by c.code
                 limit %d , %d ";
       $queryParams[] = $start;
@@ -213,13 +223,16 @@ class ReceivablesDAO extends PSIBaseExDAO
         $sql .= " and c.category_id = '%s' ";
         $queryParams[] = $categoryId;
       }
+      if ($hasBalance == 1) {
+        $sql .= " and r.balance_money > 0";
+      }
       $data = $db->query($sql, $queryParams);
       $cnt = $data[0]["cnt"];
 
-      return array(
+      return [
         "dataList" => $result,
         "totalCount" => $cnt
-      );
+      ];
     }
   }
 

@@ -523,4 +523,35 @@ class CodeTableService extends PSIBaseExService
 
     return $this->ok();
   }
+
+  /**
+   * 保存列视图布局
+   */
+  public function saveColViewLayout($params)
+  {
+    if ($this->isNotOnline()) {
+      return $this->notOnlineError();
+    }
+
+    $db = $this->db();
+    $db->startTrans();
+
+    $dao = new CodeTableDAO($db);
+    $rc = $dao->saveColViewLayout($params);
+    if ($rc) {
+      $db->rollback();
+      return $rc;
+    }
+
+    $name = $params["name"];
+    $log = "保存码表[{$name}]列视图布局";
+
+    // 记录业务日志
+    $bs = new BizlogService($db);
+    $bs->insertBizlog($log, $this->LOG_CATEGORY);
+
+    $db->commit();
+
+    return $this->ok();
+  }
 }

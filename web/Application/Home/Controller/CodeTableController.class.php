@@ -522,4 +522,22 @@ class CodeTableController extends PSIBaseController
       $this->ajaxReturn($service->convertCodeTable($params));
     }
   }
+
+  /**
+   * 保存列视图布局
+   */
+  public function saveColViewLayout()
+  {
+    if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::CODE_TABLE)) {
+        die("没有权限");
+      }
+
+      $params = ["fid" => I("post.fid")];
+
+      $service = new CodeTableService();
+      $this->ajaxReturn($service->saveColViewLayout($params));
+    }
+  }
 }

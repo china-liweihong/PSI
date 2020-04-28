@@ -456,6 +456,37 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
   // 保存列视图布局
   onSaveViewLayout: function () {
     var me = this;
-    me.showInfo("TODO")
+    var md = me.getMetaData();
+
+    var info = "请确认是否保存视图布局?";
+
+    var funcConfirm = function () {
+      var el = Ext.getBody();
+      el && el.mask(PSI.Const.LOADING);
+      var r = {
+        url: me.URL("Home/CodeTable/saveColViewLayout"),
+        params: {
+          fid: md.fid
+        },
+        method: "POST",
+        callback: function (options, success, response) {
+          el && el.unmask();
+          if (success) {
+            var data = me.decodeJSON(response.responseText);
+            if (data.success) {
+              me.tip("成功完成操作");
+            } else {
+              me.showInfo(data.msg);
+            }
+          } else {
+            me.showInfo("网络错误");
+          }
+        }
+      };
+
+      me.ajax(r);
+    }
+
+    me.confirm(info, funcConfirm);
   }
 });

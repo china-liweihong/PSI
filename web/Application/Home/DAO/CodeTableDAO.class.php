@@ -2262,4 +2262,12 @@ class CodeTableDAO extends PSIBaseExDAO
     $params["name"] = $codeTableName;
     return null;
   }
+
+  /**
+   * 保存列视图布局
+   */
+  public function saveColViewLayout(&$params)
+  {
+    return $this->todo();
+  }
 }

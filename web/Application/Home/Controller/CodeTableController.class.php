@@ -5,6 +5,7 @@ namespace Home\Controller;
 use Home\Common\FIdConst;
 use Home\Service\UserService;
 use Home\Service\CodeTableService;
+use Home\Service\PinyinService;
 
 /**
  * 码表Controller
@@ -177,6 +178,8 @@ class CodeTableController extends PSIBaseController
         die("没有权限");
       }
 
+      $py = new PinyinService();
+
       $params = [
         "id" => I("post.id"),
         "categoryId" => I("post.categoryId"),
@@ -186,7 +189,8 @@ class CodeTableController extends PSIBaseController
         "tableName" => I("post.tableName"),
         "enableParentId" => I("post.enableParentId"),
         "handlerClassName" => I("post.handlerClassName"),
-        "memo" => I("post.memo")
+        "memo" => I("post.memo"),
+        "py" => $py->toPY(I("post.moduleName")),
       ];
 
       $service = new CodeTableService();

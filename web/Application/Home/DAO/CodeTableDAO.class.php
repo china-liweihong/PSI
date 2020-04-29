@@ -815,6 +815,7 @@ class CodeTableDAO extends PSIBaseExDAO
     $categoryId = $params["categoryId"];
     $handlerClassName = $params["handlerClassName"];
     $memo = $params["memo"] ?? "";
+    $py = $params["py"];
 
     $t = $this->isPSISystemCodeTable($id);
     if ($t) {
@@ -829,6 +830,7 @@ class CodeTableDAO extends PSIBaseExDAO
     if (!$codeTable) {
       return $this->bad("要编辑的码表不存在");
     }
+    $fid = $codeTable["fid"];
 
     if ($handlerClassName) {
       // 判断后台业务处理类是否已经存在
@@ -836,7 +838,6 @@ class CodeTableDAO extends PSIBaseExDAO
         return $this->bad("后台业务逻辑处理类[{$handlerClassName}]不存在");
       }
     }
-
 
     $sql = "update t_code_table_md
             set code = '%s', name = '%s', module_name = '%s',
@@ -848,6 +849,26 @@ class CodeTableDAO extends PSIBaseExDAO
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
     }
+
+    // fid
+    $sql = "update t_fid_plus
+              set name = '%s', py = '%s'
+            where fid = '%s'";
+    $rc = $db->execute($sql, $moduleName, $py, $fid);
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+
+    // 权限
+    $sql = "update t_permission_plus
+              set category = '%s', name = '%s',
+                note = '%s', py = '%s' 
+            where fid = '%s' ";
+    $rc = $db->execute($sql, $moduleName, $moduleName, "模块权限：通过菜单进入{$moduleName}模块的权限", $py, $fid);
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+    // TODO: 处理按钮权限
 
     // 操作成功
     return null;

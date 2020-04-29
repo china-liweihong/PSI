@@ -111,9 +111,20 @@ Ext.define("PSI.CodeTable.CodeTableEditForm", {
               fn: me.onEditSpecialKey,
               scope: me
             }
-          },
-          colspan: 2,
-          width: 510
+          }
+        }, {
+          id: "PSI_CodeTable_CodeTableEditForm_editModuleName",
+          fieldLabel: "模块名称",
+          allowBlank: false,
+          blankText: "没有输入模块名称",
+          beforeLabelTextTpl: PSI.Const.REQUIRED,
+          name: "moduleName",
+          listeners: {
+            specialkey: {
+              fn: me.onEditSpecialKey,
+              scope: me
+            }
+          }
         }, {
           id: "PSI_CodeTable_CodeTableEditForm_editTableName",
           fieldLabel: "数据库表名",
@@ -195,12 +206,15 @@ Ext.define("PSI.CodeTable.CodeTableEditForm", {
     me.editCategory = Ext.getCmp("PSI_CodeTable_CodeTableEditForm_editCategory");
     me.editCode = Ext.getCmp("PSI_CodeTable_CodeTableEditForm_editCode");
     me.editName = Ext.getCmp("PSI_CodeTable_CodeTableEditForm_editName");
+    me.editModuleName = Ext.getCmp("PSI_CodeTable_CodeTableEditForm_editModuleName");
     me.editTableName = Ext.getCmp("PSI_CodeTable_CodeTableEditForm_editTableName");
     me.editEnableParentId = Ext.getCmp("PSI_CodeTable_CodeTableEditForm_editEnableParentId");
     me.editHandlerClassName = Ext.getCmp("PSI_CodeTable_CodeTableEditForm_editHandlerClassName");
     me.editMemo = Ext.getCmp("PSI_CodeTable_CodeTableEditForm_editMemo");
 
-    me.__editorList = [me.editCategory, me.editCode, me.editName, me.editTableName, me.editHandlerClassName, me.editMemo];
+    me.__editorList = [
+      me.editCategory, me.editCode, me.editName, me.editModuleName,
+      me.editTableName, me.editHandlerClassName, me.editMemo];
 
     var c = me.getCategory();
     if (c) {
@@ -235,6 +249,7 @@ Ext.define("PSI.CodeTable.CodeTableEditForm", {
             me.editCategory.setValue(data.categoryName);
             me.editCode.setValue(data.code);
             me.editName.setValue(data.name);
+            me.editModuleName.setValue(data.moduleName);
             me.editTableName.setValue(data.tableName);
             me.editEnableParentId.setValue(parseInt(data.enableParentId));
             me.editEnableParentId.setReadOnly(true);

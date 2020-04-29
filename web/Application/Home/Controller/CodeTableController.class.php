@@ -182,6 +182,7 @@ class CodeTableController extends PSIBaseController
         "categoryId" => I("post.categoryId"),
         "code" => I("post.code"),
         "name" => I("post.name"),
+        "moduleName" => I("post.moduleName"),
         "tableName" => I("post.tableName"),
         "enableParentId" => I("post.enableParentId"),
         "handlerClassName" => I("post.handlerClassName"),

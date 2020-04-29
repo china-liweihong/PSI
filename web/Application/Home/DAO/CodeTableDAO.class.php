@@ -209,7 +209,7 @@ class CodeTableDAO extends PSIBaseExDAO
     $categoryId = $params["categoryId"];
 
     $sql = "select id, code, name, table_name, memo, fid, md_version, is_fixed,
-              enable_parent_id, handler_class_name
+              enable_parent_id, handler_class_name, module_name
             from t_code_table_md
             where category_id = '%s' 
             order by code, table_name";
@@ -221,6 +221,7 @@ class CodeTableDAO extends PSIBaseExDAO
         "id" => $v["id"],
         "code" => $v["code"],
         "name" => $v["name"],
+        "moduleName" => $v["module_name"],
         "tableName" => $v["table_name"],
         "fid" => $v["fid"],
         "memo" => $v["memo"],
@@ -796,6 +797,7 @@ class CodeTableDAO extends PSIBaseExDAO
     $id = $params["id"];
     $code = strtoupper($params["code"]) ?? "";
     $name = $params["name"];
+    $moduleName = $params["moduleName"];
     $categoryId = $params["categoryId"];
     $handlerClassName = $params["handlerClassName"];
     $memo = $params["memo"] ?? "";
@@ -823,12 +825,12 @@ class CodeTableDAO extends PSIBaseExDAO
 
 
     $sql = "update t_code_table_md
-            set code = '%s', name = '%s',
+            set code = '%s', name = '%s', module_name = '%s',
               category_id = '%s', memo = '%s',
               handler_class_name = '%s',
               md_version = md_version + 1
             where id = '%s' ";
-    $rc = $db->execute($sql, $code, $name, $categoryId, $memo, $handlerClassName, $id);
+    $rc = $db->execute($sql, $code, $name, $moduleName, $categoryId, $memo, $handlerClassName, $id);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
     }
@@ -1008,7 +1010,7 @@ class CodeTableDAO extends PSIBaseExDAO
 
     $sql = "select c.name as category_name, d.code, d.name,
               d.table_name, d.category_id, d.memo, d.enable_parent_id,
-              d.handler_class_name
+              d.handler_class_name, d.module_name
             from t_code_table_md d, t_code_table_category c
             where d.id = '%s' and d.category_id = c.id ";
     $data = $db->query($sql, $id);
@@ -1017,6 +1019,7 @@ class CodeTableDAO extends PSIBaseExDAO
       return [
         "code" => $v["code"],
         "name" => $v["name"],
+        "moduleName" => $v["module_name"],
         "tableName" => $v["table_name"],
         "categoryId" => $v["category_id"],
         "categoryName" => $v["category_name"],

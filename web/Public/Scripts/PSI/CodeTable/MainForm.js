@@ -178,7 +178,7 @@ Ext.define("PSI.CodeTable.MainForm", {
 
     Ext.define(modelName, {
       extend: "Ext.data.Model",
-      fields: ["id", "code", "name", "tableName",
+      fields: ["id", "code", "name", "moduleName", "tableName",
         "memo", "fid", "mdVersion", "isFixed", "isFixedName", "enableParentId",
         "handlerClassName"]
     });
@@ -202,6 +202,12 @@ Ext.define("PSI.CodeTable.MainForm", {
       }, {
         header: "码表名称",
         dataIndex: "name",
+        width: 200,
+        menuDisabled: true,
+        sortable: false
+      }, {
+        header: "模块名称",
+        dataIndex: "moduleName",
         width: 200,
         menuDisabled: true,
         sortable: false

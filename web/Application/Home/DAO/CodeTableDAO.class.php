@@ -580,6 +580,7 @@ class CodeTableDAO extends PSIBaseExDAO
 
     $code = strtoupper($params["code"] ?? "");
     $name = $params["name"];
+    $moduleName = $params["moduleName"] ?? $name;
     $memo = $params["memo"] ?? "";
     $py = $params["py"];
     $tableName = strtolower($params["tableName"]);
@@ -640,10 +641,23 @@ class CodeTableDAO extends PSIBaseExDAO
     $fid = "ct" . date("YmdHis");
 
     $sql = "insert into t_code_table_md (id, category_id, code, name, table_name, py, memo, fid,
-              enable_parent_id, handler_class_name)
+              enable_parent_id, handler_class_name, module_name)
             values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
-              %d, '%s')";
-    $rc = $db->execute($sql, $id, $categoryId, $code, $name, $tableName, $py, $memo, $fid, $enableParetnId, $handlerClassName);
+              %d, '%s', '%s')";
+    $rc = $db->execute(
+      $sql,
+      $id,
+      $categoryId,
+      $code,
+      $name,
+      $tableName,
+      $py,
+      $memo,
+      $fid,
+      $enableParetnId,
+      $handlerClassName,
+      $moduleName
+    );
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
     }
@@ -738,7 +752,7 @@ class CodeTableDAO extends PSIBaseExDAO
     // 权限: t_permission_plus
     $sql = "insert into t_permission_plus (id, fid, name, note, category, py, show_order)
             values ('%s', '%s', '%s', '%s', '%s','%s', %d)";
-    $rc = $db->execute($sql, $fid, $fid, $name, "模块权限：通过菜单进入{$name}模块的权限", $name, "", 100);
+    $rc = $db->execute($sql, $fid, $fid, $moduleName, "模块权限：通过菜单进入{$moduleName}模块的权限", $moduleName, "", 100);
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
     }

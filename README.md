@@ -1,20 +1,16 @@
 # 关于PSI
 
-PSI是企业管理软件和Low Code应用平台。
+PSI是企业管理软件和LowCode(低代码)应用平台。
 
 1. 2015年，PSI以进销存为切入点，在开源社区的帮助下成为国内开源企业管理软件中的一员。
 
-2. 2020年，PSI正式启动Low Code应用平台的研发工作。
+2. 2020年，PSI正式启动LowCode应用平台的研发工作。
 
-3. 100%开源实现Low Code应用平台。
+3. 100%开源实现LowCode应用平台。
 
-4. 自食其力(Eat our own dog food)，用Low Code应用平台实现全部PSI业务模块。
+4. 自食其力(Eat our own dog food)，用LowCode应用平台实现全部PSI业务模块。
 
-5. Low Code应用平台面向的业务领域：ERP
-
-> 关于Low Code应用平台，参见一个国内的闭源产品来帮助理解：https://h3yun.com/
-
-> PSI不是上述闭源产品的模仿，举例只是帮助大家理解Low Code应用平台
+5. LowCode应用平台面向的业务领域：ERP
 
 # PSI演示
 

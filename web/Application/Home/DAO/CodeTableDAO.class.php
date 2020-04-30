@@ -1147,7 +1147,6 @@ class CodeTableDAO extends PSIBaseExDAO
         "isVisible" => $isVisible,
         "widthInView" => $isVisible ? ($v["width_in_view"] ?? 100) : null,
         "mustInput" => $v["must_input"] == 2,
-        "valueFromExtData" => $valueFromExtData,
         "valueFrom" => $v["value_from"],
         "valueFromColName" => $v["value_from_col_name"],
         "isSysCol" => $v["sys_col"] == 1,
@@ -1166,6 +1165,7 @@ class CodeTableDAO extends PSIBaseExDAO
             "name" => $item["name"]
           ];
         }
+        $col["valueFromExtData"] = $valueFromExtData;
       } else if ($valueFrom == 3) {
         // 引用其他码表
         $sql = "select fid from t_code_table_md where table_name = '%s' ";

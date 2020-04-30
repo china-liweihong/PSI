@@ -366,7 +366,6 @@ Ext.define("PSI.CodeTable.RuntimeEditForm", {
           } else {
             if (parseInt(colMd.valueFrom) == 3) {
               // 码表
-              console.log(data, "KKKKKK")
               edit.setValue(data[fieldName + "_display_value"]);
               edit.setIdValue(data[fieldName]);
             } else {

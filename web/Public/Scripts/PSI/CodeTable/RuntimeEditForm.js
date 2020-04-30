@@ -192,7 +192,15 @@ Ext.define("PSI.CodeTable.RuntimeEditForm", {
           });
         } else if (parseInt(colMd.valueFrom) == 3) {
           // 引用其他码表
+          // hiddenId用来在提交Form的时候向后台传递码表id
+          var hiddenId = Ext.create("Ext.form.field.Hidden", {
+            id: me.buildEditId(colMd.fieldName + "_hidden_id"),
+            name: colMd.fieldName
+          });
+          result.push(hiddenId);
           Ext.apply(item, {
+            id: me.buildEditId(colMd.fieldName + "_display"),
+            name: colMd.fieldName + "display",
             fid: colMd.valueFromFid
           });
         }
@@ -218,6 +226,20 @@ Ext.define("PSI.CodeTable.RuntimeEditForm", {
 	 */
   onOK: function (thenAdd) {
     var me = this;
+
+    var md = me.getMetaData();
+    var colsMd = md.cols;
+    var colsCount = colsMd.length;
+    for (var i = 0; i < colsCount; i++) {
+      var colMd = colsMd[i];
+      if (parseInt(colMd.valueFrom) == 3) {
+        // 当前字段是引用其他码表，需要赋值id给对应的hidden
+        var fieldName = colMd.fieldName;
+        var hidden = Ext.getCmp(me.buildEditId(fieldName + "_hidden_id"));
+        var editor = Ext.getCmp(me.buildEditId(fieldName + "_display"));
+        hidden.setValue(editor.getIdValue());
+      }
+    }
 
     var f = me.editForm;
     var el = f.getEl();

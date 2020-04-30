@@ -2317,7 +2317,7 @@ class CodeTableDAO extends PSIBaseExDAO
     $tableName = $data[0]["table_name"];
 
     $sql = "select id, code, name from {$tableName}
-            where (code like '%s' or name like '%s' or py like '%s')";
+            where (code like '%s' or name like '%s' or py like '%s') and (record_status = 1000) ";
     $queryParams = [];
     $queryParams[] = "%{$queryKey}%";
     $queryParams[] = "%{$queryKey}%";

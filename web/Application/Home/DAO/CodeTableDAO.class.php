@@ -2161,6 +2161,20 @@ class CodeTableDAO extends PSIBaseExDAO
       }
     }
 
+    // 处理码表
+    foreach ($md["cols"] as $colMd) {
+      if ($colMd["valueFrom"] == 3) {
+        $valueFromTableName = $colMd["valueFromTableName"];
+        $valueFromColName = $colMd["valueFromColName"];
+        $valueFromColNameDisplay = $colMd["valueFromColNameDisplay"];
+        $sql = "select {$valueFromColNameDisplay} as nd from {$valueFromTableName}
+                where {$valueFromColName} = '%s' ";
+        $d = $db->query($sql, $result[$colMd["fieldName"]]);
+        if ($d) {
+          $result[$colMd["fieldName"] . "_display_value"] = $d[0]["nd"];
+        }
+      }
+    }
 
     return $result;
   }

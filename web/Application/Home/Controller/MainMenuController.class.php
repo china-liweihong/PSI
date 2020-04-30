@@ -281,6 +281,8 @@ class MainMenuController extends PSIBaseController
           // 采购入库明细表
           redirect(__ROOT__ . "/Home/Report/purchaseDetail");
           break;
+          /*
+        2020-04-30: 废弃现有的【物料】相关模块，为用LowCode实现做准备
         case FIdConst::MATERIAL_UNIT:
           // 物料单位
           redirect(__ROOT__ . "/Home/Material/unitIndex");
@@ -289,6 +291,7 @@ class MainMenuController extends PSIBaseController
           // 原材料
           redirect(__ROOT__ . "/Home/Material/rmIndex");
           break;
+        */
         default:
           redirect(__ROOT__ . "/Home");
       }

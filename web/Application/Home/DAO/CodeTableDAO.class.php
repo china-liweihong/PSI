@@ -2,6 +2,8 @@
 
 namespace Home\DAO;
 
+use Home\Common\FIdConst;
+
 /**
  * 码表DAO
  *
@@ -1138,6 +1140,20 @@ class CodeTableDAO extends PSIBaseExDAO
       $valueFromTableName = $v["value_from_table_name"];
       $valueFromColName = $v["value_from_col_name"];
       $valueFromExtData = [];
+
+      $col = [
+        "caption" => $v["caption"],
+        "fieldName" => $v["db_field_name"],
+        "isVisible" => $isVisible,
+        "widthInView" => $isVisible ? ($v["width_in_view"] ?? 100) : null,
+        "mustInput" => $v["must_input"] == 2,
+        "valueFromExtData" => $valueFromExtData,
+        "valueFrom" => $v["value_from"],
+        "valueFromColName" => $v["value_from_col_name"],
+        "isSysCol" => $v["sys_col"] == 1,
+        "editorXtype" => $v["editor_xtype"]
+      ];
+
       if ($valueFrom == 2) {
         // 引用系统数据字典
         $sql = "select %s as col_1, name
@@ -1150,20 +1166,16 @@ class CodeTableDAO extends PSIBaseExDAO
             "name" => $item["name"]
           ];
         }
+      } else if ($valueFrom == 3) {
+        // 引用其他码表
+        $sql = "select fid from t_code_table_md where table_name = '%s' ";
+        $d = $db->query($sql, $valueFromTableName);
+        if ($d) {
+          $col["valueFromFid"] = $d[0]["fid"];
+        }
       }
 
-      $cols[] = [
-        "caption" => $v["caption"],
-        "fieldName" => $v["db_field_name"],
-        "isVisible" => $isVisible,
-        "widthInView" => $isVisible ? ($v["width_in_view"] ?? 100) : null,
-        "mustInput" => $v["must_input"] == 2,
-        "valueFromExtData" => $valueFromExtData,
-        "valueFrom" => $v["value_from"],
-        "valueFromColName" => $v["value_from_col_name"],
-        "isSysCol" => $v["sys_col"] == 1,
-        "editorXtype" => $v["editor_xtype"]
-      ];
+      $cols[] = $col;
     }
     $result["cols"] = $cols;
 
@@ -2229,8 +2241,43 @@ class CodeTableDAO extends PSIBaseExDAO
   public function queryDataForRecordRef($params)
   {
     $db = $this->db;
+    $fid = $params["fid"];
+    $queryKey = $params["queryKey"];
+    $loginUserId = $params["loginUserId"];
 
-    return $this->emptyResult();
+    $sql = "select table_name from t_code_table_md where fid = '%s' ";
+    $data = $db->query($sql, $fid);
+
+    if (!$data) {
+      return $this->emptyResult();
+    }
+    $tableName = $data[0]["table_name"];
+
+    $sql = "select id, code, name from {$tableName}
+            where (code like '%s' or name like '%s' or py like '%s')";
+    $queryParams = [];
+    $queryParams[] = "%{$queryKey}%";
+    $queryParams[] = "%{$queryKey}%";
+    $queryParams[] = "%{$queryKey}%";
+    $ds = new DataOrgDAO($db);
+    $rs = $ds->buildSQL(FIdConst::GL_BANK_ACCOUNT, "b", $loginUserId);
+    if ($rs) {
+      $sql .= " and " . $rs[0];
+      $queryParams = array_merge($queryParams, $rs[1]);
+    }
+    $sql .= " order by code limit 20 ";
+
+    $data = $db->query($sql, $queryParams);
+
+    $result = [];
+    foreach ($data as $v) {
+      $result[] = [
+        "id" => $v["id"],
+        "code" => $v["code"],
+        "name" => $v["name"],
+      ];
+    }
+    return $result;
   }
 
   /**

@@ -86,8 +86,8 @@ Ext.define("PSI.CodeTable.CodeTableRecordRefField", {
     var wnd = Ext.create("Ext.window.Window", {
       title: "选择 - 记录",
       modal: me.getShowModal(),
-      width: 420,
-      height: 390,
+      width: 500,
+      height: 320,
       header: false,
       border: 0,
       layout: "border",

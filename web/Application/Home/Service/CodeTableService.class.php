@@ -489,6 +489,8 @@ class CodeTableService extends PSIBaseExService
       return $this->emptyResult();
     }
 
+    $params["loginUserId"] = $this->getLoginUserId();
+
     $dao = new CodeTableDAO($this->db());
     return $dao->queryDataForRecordRef($params);
   }

@@ -1336,7 +1336,7 @@ class CodeTableDAO extends PSIBaseExDAO
     $code = $params["code"];
     $name = $params["name"];
     $params["id"] = $id;
-    $params["log"] = "新增{$codeTableName}记录 ：{$code}-{$name}";
+    $params["log"] = "新增{$codeTableName} ：{$code}-{$name}";
     $params["logCategory"] = $codeTableName;
     return null;
   }
@@ -1495,7 +1495,7 @@ class CodeTableDAO extends PSIBaseExDAO
     $code = $params["code"];
     $name = $params["name"];
     $params["id"] = $id;
-    $params["log"] = "编辑{$codeTableName}记录 ：{$code}-{$name}";
+    $params["log"] = "编辑{$codeTableName} ：{$code}-{$name}";
     $params["logCategory"] = $codeTableName;
     return null;
   }

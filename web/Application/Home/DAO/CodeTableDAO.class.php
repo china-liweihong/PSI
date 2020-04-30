@@ -1128,7 +1128,7 @@ class CodeTableDAO extends PSIBaseExDAO
     $sql = "select caption, 
               db_field_name, db_field_type, db_field_length, db_field_decimal,
               sys_col, is_visible, width_in_view, must_input, value_from,
-              value_from_table_name, value_from_col_name, editor_xtype
+              value_from_table_name, value_from_col_name, editor_xtype, value_from_col_name_display
             from t_code_table_cols_md
             where table_id = '%s' 
             order by show_order";
@@ -1148,7 +1148,9 @@ class CodeTableDAO extends PSIBaseExDAO
         "widthInView" => $isVisible ? ($v["width_in_view"] ?? 100) : null,
         "mustInput" => $v["must_input"] == 2,
         "valueFrom" => $v["value_from"],
+        "valueFromTableName" => $v["value_from_table_name"],
         "valueFromColName" => $v["value_from_col_name"],
+        "valueFromColNameDisplay" => $v["value_from_col_name_display"],
         "isSysCol" => $v["sys_col"] == 1,
         "editorXtype" => $v["editor_xtype"]
       ];
@@ -1661,8 +1663,55 @@ class CodeTableDAO extends PSIBaseExDAO
     $sql .= " order by code";
 
     $data = $db->query($sql, $queryParams);
+    $result = [];
+    foreach ($data as $v) {
+      $item = [
+        "id" => $v["id"],
+        "code" => $v["code"],
+        "name" => $v["name"],
+        "record_status" => $v["record_status"],
+      ];
 
-    return $data;
+      foreach ($md["cols"] as $colMd) {
+        if ($colMd["isSysCol"]) {
+          continue;
+        }
+
+        if ($colMd["isVisible"]) {
+          $fieldName = $colMd["fieldName"];
+
+          $item[$fieldName] = $v[$fieldName];
+        }
+
+        $valueFrom = $colMd["valueFrom"];
+        $valueFromTableName = $colMd["valueFromTableName"];
+        $valueFromColName = $colMd["valueFromColName"];
+        $valueFromColNameDisplay = $colMd["valueFromColNameDisplay"];
+        if ($valueFrom == 2) {
+          //系统数据字典
+          $sql = "select {$valueFromColNameDisplay} as nv from {$valueFromTableName}
+                  where {$valueFromColName} = '%s' ";
+          $d = $db->query($sql, $v[$fieldName]);
+          if ($d) {
+            $item[$fieldName] = $d[0]["nv"];
+          }
+        } else if ($valueFrom == 3) {
+          // 引用其他码表
+          $sql = "select {$valueFromColNameDisplay} as nv from {$valueFromTableName}
+                  where {$valueFromColName} = '%s' ";
+          $d = $db->query($sql, $v[$fieldName]);
+          if ($d) {
+            $item[$fieldName] = $d[0]["nv"];
+          } else {
+            $item[$fieldName] = null;
+          }
+        }
+      }
+
+
+      $result[] = $item;
+    }
+    return $result;
   }
 
   private function codeTableRecordListForTreeViewInternal($db, $id, $md, $rs)

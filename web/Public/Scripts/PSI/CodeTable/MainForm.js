@@ -298,7 +298,8 @@ Ext.define("PSI.CodeTable.MainForm", {
         "valueFrom", "valueFromTableName",
         "valueFromColName", "valueFromColNameDisplay", "mustInput",
         "showOrder", "sysCol", "isVisible",
-        "widthInView", "note", "showOrderInView", "editorXtype"]
+        "widthInView", "note", "showOrderInView", "editorXtype",
+        "colSpan"]
     });
 
     me.__colsGrid = Ext.create("Ext.grid.Panel", {
@@ -380,6 +381,10 @@ Ext.define("PSI.CodeTable.MainForm", {
           header: "必须录入",
           dataIndex: "mustInput",
           width: 70
+        }, {
+          header: "编辑器列占位",
+          dataIndex: "colSpan",
+          width: 100
         }, {
           header: "列视图宽度(px)",
           dataIndex: "widthInView",

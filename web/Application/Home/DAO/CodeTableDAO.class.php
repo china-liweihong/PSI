@@ -908,7 +908,8 @@ class CodeTableDAO extends PSIBaseExDAO
     $sql = "select id, caption, db_field_name, db_field_type, db_field_length,
               db_field_decimal, show_order, value_from, value_from_table_name,
               value_from_col_name, must_input, sys_col, is_visible, width_in_view,
-              note, show_order_in_view, editor_xtype, value_from_col_name_display
+              note, show_order_in_view, editor_xtype, value_from_col_name_display,
+              col_span
             from t_code_table_cols_md
             where table_id = '%s' 
             order by show_order";
@@ -935,7 +936,8 @@ class CodeTableDAO extends PSIBaseExDAO
         "widthInView" => $isVisible ? ($v["width_in_view"] ?? 100) : null,
         "note" => $v["note"],
         "showOrderInView" => $v["show_order_in_view"],
-        "editorXtype" => $v["editor_xtype"]
+        "editorXtype" => $v["editor_xtype"],
+        "colSpan" => $v["col_span"],
       ];
     }
 

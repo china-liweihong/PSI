@@ -180,7 +180,7 @@ Ext.define("PSI.CodeTable.MainForm", {
       extend: "Ext.data.Model",
       fields: ["id", "code", "name", "moduleName", "tableName",
         "memo", "fid", "mdVersion", "isFixed", "isFixedName", "enableParentId",
-        "handlerClassName"]
+        "handlerClassName", "editColCnt"]
     });
 
     me.__mainGrid = Ext.create("Ext.grid.Panel", {
@@ -224,6 +224,13 @@ Ext.define("PSI.CodeTable.MainForm", {
         menuDisabled: true,
         sortable: false
       }, {
+        header: "编辑布局列数",
+        dataIndex: "editColCnt",
+        width: 100,
+        align: "right",
+        menuDisabled: true,
+        sortable: false
+      }, {
         header: "备注",
         dataIndex: "memo",
         width: 300,
@@ -233,6 +240,7 @@ Ext.define("PSI.CodeTable.MainForm", {
         header: "版本",
         dataIndex: "mdVersion",
         width: 90,
+        align: "rigth",
         menuDisabled: true,
         sortable: false
       }, {

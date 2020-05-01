@@ -3,6 +3,7 @@
 namespace Home\Controller;
 
 use Home\Common\DemoConst;
+use Home\Common\FIdConst;
 use Home\Service\UserService;
 use Home\Service\FormViewService;
 
@@ -45,15 +46,14 @@ class FormViewController extends PSIBaseController
   {
     $us = new UserService();
 
-    // 开发助手只允许admin访问
-    if ($us->getLoginUserId() == DemoConst::ADMIN_USER_ID) {
+    if ($us->hasPermission(FIdConst::FORM_VIEW_SYSTEM_DEV)) {
       $this->initVar();
 
-      $this->assign("title", "表单视图开发助手");
+      $this->assign("title", "视图开发助手");
 
       $this->display();
     } else {
-      redirect(__ROOT__ . "/Home");
+      $this->gotoLoginPage("/Home/FormView/devIndex");
     }
   }
 

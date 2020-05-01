@@ -23,7 +23,7 @@ class FIdConst
   const FORM_VIEW_SYSTEM = "-7998";
 
   /**
-   * 表单视图开发助手
+   * 视图开发助手
    *
    * @var string
    */

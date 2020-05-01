@@ -247,7 +247,8 @@ class CodeTableController extends PSIBaseController
         "showOrderInView" => I("post.showOrderInView"),
         "isVisible" => I("post.isVisible"),
         "editorXtype" => I("post.editorXtype"),
-        "memo" => I("post.memo")
+        "memo" => I("post.memo"),
+        "colSpan" => I("post.colSpan"),
       ];
 
       $service = new CodeTableService();

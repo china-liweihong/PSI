@@ -1912,6 +1912,10 @@ class CodeTableDAO extends PSIBaseExDAO
     $isVisible = $params["isVisible"];
     $editorXtype = $params["editorXtype"];
     $memo = $params["memo"];
+    $colSpan = intval($params["colSpan"]);
+    if ($colSpan < 1) {
+      $colSpan = 1;
+    }
 
     $t = $this->isPSISystemCodeTable($codeTableId);
     if ($t) {
@@ -2049,12 +2053,14 @@ class CodeTableDAO extends PSIBaseExDAO
               db_field_name, db_field_type, db_field_length, db_field_decimal,
               show_order, value_from, value_from_table_name, value_from_col_name,
               must_input, sys_col, is_visible, width_in_view, note, 
-              show_order_in_view, editor_xtype, value_from_col_name_display)
+              show_order_in_view, editor_xtype, value_from_col_name_display,
+              col_span)
             values ('%s', '%s', '%s',
               '%s', '%s', %d, %d,
               %d, %d, '%s', '%s',
               %d, %d, %d, %d, '%s',
-              %d, '%s', '%s')";
+              %d, '%s', '%s',
+              %d)";
     $rc = $db->execute(
       $sql,
       $id,
@@ -2075,7 +2081,8 @@ class CodeTableDAO extends PSIBaseExDAO
       $memo,
       $showOrderInView,
       $editorXtype,
-      $valueFromColNameDisplay
+      $valueFromColNameDisplay,
+      $colSpan
     );
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -2138,13 +2145,27 @@ class CodeTableDAO extends PSIBaseExDAO
     $showOrder = $params["showOrder"];
     $showOrderInView = $params["showOrderInView"];
     $note = $params["memo"];
+    $colSpan = intval($params["colSpan"]);
+    if ($colSpan < 1) {
+      $colSpan = 1;
+    }
+
     if ($sysCol == 1) {
       // 系统列
       $sql = "update t_code_table_cols_md
               set caption = '%s', width_in_view = %d, show_order = %d,
-                show_order_in_view = %d, note = '%s'
+                show_order_in_view = %d, note = '%s', col_span = %d
               where id = '%s' ";
-      $rc = $db->execute($sql, $caption, $widthInView, $showOrder, $showOrderInView, $note, $id);
+      $rc = $db->execute(
+        $sql,
+        $caption,
+        $widthInView,
+        $showOrder,
+        $showOrderInView,
+        $note,
+        $colSpan,
+        $id
+      );
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
       }
@@ -2274,7 +2295,7 @@ class CodeTableDAO extends PSIBaseExDAO
                 db_field_decimal, note, show_order, value_from, 
                 value_from_table_name, value_from_col_name, value_from_col_name_display,
                 must_input, sys_col, is_visible, width_in_view, show_order_in_view,
-                editor_xtype
+                editor_xtype, col_span
               from t_code_table_cols_md
               where id = '%s' ";
       $data = $db->query($sql, $id);
@@ -2297,7 +2318,8 @@ class CodeTableDAO extends PSIBaseExDAO
           "isVisible" => $v["is_visible"],
           "widthInView" => $v["width_in_view"],
           "showOrderInView" => $v["show_order_in_view"],
-          "editorXtype" => $v["editor_xtype"]
+          "editorXtype" => $v["editor_xtype"],
+          "colSpan" => $v["col_span"],
         ];
       }
     }

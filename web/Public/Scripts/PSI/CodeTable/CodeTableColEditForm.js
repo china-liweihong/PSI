@@ -24,12 +24,12 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
       },
       scope: me
     }, {
-        text: entity == null ? "关闭" : "取消",
-        handler: function () {
-          me.close();
-        },
-        scope: me
-      });
+      text: entity == null ? "关闭" : "取消",
+      handler: function () {
+        me.close();
+      },
+      scope: me
+    });
 
     var t = entity == null ? "新增码表列" : "编辑码表列";
     var f = entity == null
@@ -299,6 +299,24 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
             }
           }
         }, {
+          id: "PSI_CodeTable_CodeTableColEditForm_editColSpan",
+          fieldLabel: "编辑器列占位",
+          allowBlank: false,
+          blankText: "没有输入编辑器列占位",
+          beforeLabelTextTpl: PSI.Const.REQUIRED,
+          xtype: "numberfield",
+          hideTrigger: true,
+          allowDecimal: false,
+          minValue: 1,
+          name: "colSpan",
+          value: 1,
+          listeners: {
+            specialkey: {
+              fn: me.onEditSpecialKey,
+              scope: me
+            }
+          }
+        }, {
           id: "PSI_CodeTable_CodeTableColEditForm_editShowOrderInView",
           fieldLabel: "视图界面显示次序",
           allowBlank: false,
@@ -314,7 +332,7 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
               scope: me
             }
           },
-          colspan: 2
+          colspan: 1
         }, {
           id: "PSI_CodeTable_CodeTableColEditForm_editEditorXtype",
           xtype: "combo",
@@ -381,6 +399,7 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
     me.editValueFromColNameDisplay = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editValueFromColNameDisplay");
     me.editWidthInView = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editWidthInView");
     me.editShowOrder = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editShowOrder");
+    me.editColSpan = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editColSpan");
     me.editShowOrderInView = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editShowOrderInView");
     me.editEditorXtype = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editEditorXtype");
     me.editMemo = Ext.getCmp("PSI_CodeTable_CodeTableColEditForm_editMemo");
@@ -389,7 +408,7 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
 
     me.__editorList = [
       me.editCaption, me.editFieldName, me.editWidthInView, me.editShowOrder,
-      me.editShowOrderInView, me.editMemo
+      me.editColSpan, me.editShowOrderInView, me.editMemo
     ];
   },
 
@@ -458,6 +477,7 @@ Ext.define("PSI.CodeTable.CodeTableColEditForm", {
               me.editMustInput.setValue(parseInt(col.mustInput));
               me.editWidthInView.setValue(col.widthInView);
               me.editShowOrder.setValue(col.showOrder);
+              me.editColSpan.setValue(col.colSpan);
               me.editShowOrderInView.setValue(col.showOrderInView);
               me.editEditorXtype.setValue(col.editorXtype);
               me.editMemo.setValue(col.memo);

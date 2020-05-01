@@ -101,7 +101,7 @@ Ext.define("PSI.CodeTable.RuntimeEditForm", {
         bodyPadding: 5,
         defaultType: 'textfield',
         fieldDefaults: {
-          labelWidth: 60,
+          labelWidth: 80,
           labelAlign: "right",
           labelSeparator: "",
           msgTarget: 'side',
@@ -156,6 +156,11 @@ Ext.define("PSI.CodeTable.RuntimeEditForm", {
             }
           }
         };
+        if (colMd.editorXtype == "numberfield") {
+          Ext.apply(item, {
+            hideTrigger: true
+          });
+        }
 
         if (md.treeView && colMd.fieldName == "parent_id") {
           // hiddenParentId用来在提交Form的时候向后台传递上级id

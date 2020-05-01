@@ -1583,7 +1583,40 @@ class CodeTableDAO extends PSIBaseExDAO
       }
     }
 
-    //TODO 表单引用了当前记录也需要处理，这个需要以后再补充进来
+    // 表单主表是否有引用该码表记录
+    $sql = "select distinct f.name, f.table_name, c.db_field_name
+            from t_form_cols c, t_form f
+            where c.value_from_table_name = '%s' and c.form_id = f.id";
+    $data = $db->query($sql, $tableName);
+    foreach ($data as $v) {
+      $foreignName = $v["name"];
+      $foreignTableName = $v["table_name"];
+      $foreignFieldName = $v["db_field_name"];
+      $sql = "select count(*) as cnt from %s where %s = '%s'";
+      $d = $db->query($sql, $foreignTableName, $foreignFieldName, $id);
+      $cnt = $d[0]["cnt"];
+      if ($cnt > 0) {
+        return $this->bad("表单[{$foreignName}]主表中引用了当前记录，所以不能删除当前记录");
+      }
+    }
+
+    // 表单明细表列是否有引用该码表记录
+    $sql = "select distinct f.name, f.table_name, c.db_field_name, fm.name as form_name
+            from t_form_detail_cols c, t_form_detail f, t_form fm
+            where c.value_from_table_name = '%s' and c.detail_id = f.id and f.form_id = fm.id";
+    $data = $db->query($sql, $tableName);
+    foreach ($data as $v) {
+      $formName = $v["form_name"];
+      $foreignName = $v["name"];
+      $foreignTableName = $v["table_name"];
+      $foreignFieldName = $v["db_field_name"];
+      $sql = "select count(*) as cnt from %s where %s = '%s'";
+      $d = $db->query($sql, $foreignTableName, $foreignFieldName, $id);
+      $cnt = $d[0]["cnt"];
+      if ($cnt > 0) {
+        return $this->bad("表单[{$formName}]的[{$foreignName}]表中引用了当前记录，所以不能删除当前记录");
+      }
+    }
 
     $handlerClassName = $md["handlerClassName"];
     if ($handlerClassName) {

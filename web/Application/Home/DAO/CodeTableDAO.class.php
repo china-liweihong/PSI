@@ -2174,12 +2174,20 @@ class CodeTableDAO extends PSIBaseExDAO
       }
     } else {
       // 用户自定义列
-      // TODO 未完成
       $sql = "update t_code_table_cols_md
               set caption = '%s', width_in_view = %d, show_order = %d,
-                show_order_in_view = %d, note = '%s'
+                show_order_in_view = %d, note = '%s', col_span = %d
               where id = '%s' ";
-      $rc = $db->execute($sql, $caption, $widthInView, $showOrder, $showOrderInView, $note, $id);
+      $rc = $db->execute(
+        $sql,
+        $caption,
+        $widthInView,
+        $showOrder,
+        $showOrderInView,
+        $note,
+        $colSpan,
+        $id
+      );
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
       }

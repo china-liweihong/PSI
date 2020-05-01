@@ -191,6 +191,7 @@ class CodeTableController extends PSIBaseController
         "handlerClassName" => I("post.handlerClassName"),
         "memo" => I("post.memo"),
         "py" => $py->toPY(I("post.moduleName")),
+        "editColCnt" => I("post.editColCnt"),
       ];
 
       $service = new CodeTableService();

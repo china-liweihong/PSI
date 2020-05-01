@@ -594,6 +594,13 @@ class CodeTableDAO extends PSIBaseExDAO
     }
     $handlerClassName = $params["handlerClassName"];
 
+    $editColCnt = intval($params["editColCnt"]);
+    if ($editColCnt < 1) {
+      $editColCnt = 1;
+    } else if ($editColCnt > 4) {
+      return $this->bad("编辑布局列数不能超过4");
+    }
+
     // 检查编码是否已经存在
     if ($code) {
       $sql = "select count(*) as cnt from t_code_table_md
@@ -644,9 +651,9 @@ class CodeTableDAO extends PSIBaseExDAO
     $fid = "ct" . date("YmdHis");
 
     $sql = "insert into t_code_table_md (id, category_id, code, name, table_name, py, memo, fid,
-              enable_parent_id, handler_class_name, module_name)
+              enable_parent_id, handler_class_name, module_name, edit_col_cnt)
             values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
-              %d, '%s', '%s')";
+              %d, '%s', '%s', %d)";
     $rc = $db->execute(
       $sql,
       $id,
@@ -659,7 +666,8 @@ class CodeTableDAO extends PSIBaseExDAO
       $fid,
       $enableParetnId,
       $handlerClassName,
-      $moduleName
+      $moduleName,
+      $editColCnt
     );
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -825,6 +833,14 @@ class CodeTableDAO extends PSIBaseExDAO
       return $this->bad("{$t}的元数据不允许修改");
     }
 
+    $editColCnt = intval($params["editColCnt"]);
+    if ($editColCnt < 1) {
+      $editColCnt = 1;
+    } else if ($editColCnt > 4) {
+      return $this->bad("编辑布局列数不能超过4");
+    }
+
+
     if (!$this->getCodeTableCategoryById($categoryId)) {
       return $this->bad("码表分类不存在");
     }
@@ -846,9 +862,20 @@ class CodeTableDAO extends PSIBaseExDAO
             set code = '%s', name = '%s', module_name = '%s',
               category_id = '%s', memo = '%s',
               handler_class_name = '%s',
-              md_version = md_version + 1
+              md_version = md_version + 1,
+              edit_col_cnt = %d
             where id = '%s' ";
-    $rc = $db->execute($sql, $code, $name, $moduleName, $categoryId, $memo, $handlerClassName, $id);
+    $rc = $db->execute(
+      $sql,
+      $code,
+      $name,
+      $moduleName,
+      $categoryId,
+      $memo,
+      $handlerClassName,
+      $editColCnt,
+      $id
+    );
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
     }

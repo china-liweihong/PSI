@@ -153,8 +153,25 @@ Ext.define("PSI.CodeTable.CodeTableEditForm", {
             data: [[0, "否"], [1, "是"]]
           }),
           value: 0,
-          colspan: 2,
           name: "enableParentId"
+        }, {
+          id: "PSI_CodeTable_CodeTableEditForm_editEditColCnt",
+          fieldLabel: "编辑布局列数",
+          allowBlank: false,
+          blankText: "没有输入编辑布局列数",
+          beforeLabelTextTpl: PSI.Const.REQUIRED,
+          xtype: "numberfield",
+          hideTrigger: true,
+          allowDecimal: false,
+          minValue: 1,
+          name: "editColCnt",
+          value: entity == null ? 1 : entity.get("editColCnt"),
+          listeners: {
+            specialkey: {
+              fn: me.onEditSpecialKey,
+              scope: me
+            }
+          }
         }, {
           id: "PSI_CodeTable_CodeTableEditForm_editHandlerClassName",
           fieldLabel: "业务逻辑类名",
@@ -209,12 +226,13 @@ Ext.define("PSI.CodeTable.CodeTableEditForm", {
     me.editModuleName = Ext.getCmp("PSI_CodeTable_CodeTableEditForm_editModuleName");
     me.editTableName = Ext.getCmp("PSI_CodeTable_CodeTableEditForm_editTableName");
     me.editEnableParentId = Ext.getCmp("PSI_CodeTable_CodeTableEditForm_editEnableParentId");
+    me.editEditColCnt = Ext.getCmp("PSI_CodeTable_CodeTableEditForm_editEditColCnt");
     me.editHandlerClassName = Ext.getCmp("PSI_CodeTable_CodeTableEditForm_editHandlerClassName");
     me.editMemo = Ext.getCmp("PSI_CodeTable_CodeTableEditForm_editMemo");
 
     me.__editorList = [
       me.editCategory, me.editCode, me.editName, me.editModuleName,
-      me.editTableName, me.editHandlerClassName, me.editMemo];
+      me.editTableName, me.editEditColCnt, me.editHandlerClassName, me.editMemo];
 
     var c = me.getCategory();
     if (c) {
@@ -254,6 +272,7 @@ Ext.define("PSI.CodeTable.CodeTableEditForm", {
             me.editEnableParentId.setValue(parseInt(data.enableParentId));
             me.editEnableParentId.setReadOnly(true);
             me.editTableName.setReadOnly(true);
+            me.editEditColCnt.setValue(data.editColCnt);
             me.editHandlerClassName.setValue(data.handlerClassName);
             me.editMemo.setValue(data.memo);
           }

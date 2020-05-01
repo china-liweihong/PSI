@@ -1132,7 +1132,7 @@ class CodeTableDAO extends PSIBaseExDAO
 
     $fid = $params["fid"];
 
-    $sql = "select id, name, table_name, enable_parent_id";
+    $sql = "select id, name, table_name, enable_parent_id, edit_col_cnt ";
     if ($forBackend) {
       $sql .= ",handler_class_name ";
     }
@@ -1149,7 +1149,8 @@ class CodeTableDAO extends PSIBaseExDAO
       "fid" => $fid,
       "tableName" => $v["table_name"],
       "name" => $v["name"],
-      "treeView" => $v["enable_parent_id"] == 1
+      "treeView" => $v["enable_parent_id"] == 1,
+      "editColCnt" => $v["edit_col_cnt"],
     ];
     if ($forBackend) {
       $result["handlerClassName"] = $v["handler_class_name"];
@@ -1159,7 +1160,8 @@ class CodeTableDAO extends PSIBaseExDAO
     $sql = "select caption, 
               db_field_name, db_field_type, db_field_length, db_field_decimal,
               sys_col, is_visible, width_in_view, must_input, value_from,
-              value_from_table_name, value_from_col_name, editor_xtype, value_from_col_name_display
+              value_from_table_name, value_from_col_name, editor_xtype, value_from_col_name_display,
+              col_span
             from t_code_table_cols_md
             where table_id = '%s' 
             order by show_order";
@@ -1183,7 +1185,8 @@ class CodeTableDAO extends PSIBaseExDAO
         "valueFromColName" => $v["value_from_col_name"],
         "valueFromColNameDisplay" => $v["value_from_col_name_display"],
         "isSysCol" => $v["sys_col"] == 1,
-        "editorXtype" => $v["editor_xtype"]
+        "editorXtype" => $v["editor_xtype"],
+        "colSpan" => $v["col_span"],
       ];
 
       if ($valueFrom == 2) {

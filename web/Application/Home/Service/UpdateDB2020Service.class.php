@@ -76,6 +76,21 @@ class UpdateDB2020Service extends PSIBaseService
     $this->update_20200428_01();
     $this->update_20200430_01();
     $this->update_20200501_01();
+    $this->update_20200501_02();
+  }
+
+  private function update_20200501_02()
+  {
+    // 本次更新：t_code_table_md新增字段edit_col_cnt
+    $db = $this->db;
+    $db = $this->db;
+
+    $tableName = "t_code_table_md";
+    $columnName = "edit_col_cnt";
+    if (!$this->columnExists($db, $tableName, $columnName)) {
+      $sql = "alter table {$tableName} add {$columnName} int(11) DEFAULT 1;";
+      $db->execute($sql);
+    }
   }
 
   private function update_20200501_01()

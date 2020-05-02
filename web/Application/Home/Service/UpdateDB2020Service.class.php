@@ -79,6 +79,28 @@ class UpdateDB2020Service extends PSIBaseService
     $this->update_20200501_02();
     $this->update_20200501_03();
     $this->update_20200502_01();
+    $this->update_20200502_02();
+  }
+
+  private function update_20200502_02()
+  {
+    // 本次更新：新增表t_code_table_buttons
+    $db = $this->db;
+
+    $tableName = "t_code_table_buttons";
+    if (!$this->tableExists($db, $tableName)) {
+      $sql = "CREATE TABLE IF NOT EXISTS `t_code_table_buttons` (
+                `id` varchar(255) NOT NULL,
+                `table_id` varchar(255) NOT NULL,
+                `caption` varchar(255) NOT NULL,
+                `fid` varchar(255) NOT NULL,
+                `on_click_frontend` varchar(255) DEFAULT NULL,
+                `on_click_backend` varchar(255) DEFAULT NULL,
+                PRIMARY KEY (`id`)
+              ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+              ";
+      $db->execute($sql);
+    }
   }
 
   private function update_20200502_01()

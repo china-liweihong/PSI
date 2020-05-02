@@ -323,6 +323,10 @@ Ext.define("PSI.CodeTable.MainForm", {
         text: "删除列",
         handler: me.onDeleteCol,
         scope: me
+      }, "-", {
+        text: "调整编辑界面字段顺序",
+        handler: me.onChangeEditShowOrder,
+        scope: me
       }],
       columnLines: true,
       columns: {
@@ -902,5 +906,8 @@ Ext.define("PSI.CodeTable.MainForm", {
     };
 
     me.confirm(info, funcConfirm);
-  }
+  },
+
+  // 调整编辑界面字段显示次序
+  onChangeEditShowOrder: function () { }
 });

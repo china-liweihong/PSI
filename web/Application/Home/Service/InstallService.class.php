@@ -1940,6 +1940,19 @@ class InstallService extends PSIBaseExService
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
             ";
     $db->execute($sql);
+
+    // t_code_table_buttons
+    $sql = "CREATE TABLE IF NOT EXISTS `t_code_table_buttons` (
+              `id` varchar(255) NOT NULL,
+              `table_id` varchar(255) NOT NULL,
+              `caption` varchar(255) NOT NULL,
+              `fid` varchar(255) NOT NULL,
+              `on_click_frontend` varchar(255) DEFAULT NULL,
+              `on_click_backend` varchar(255) DEFAULT NULL,
+              PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+            ";
+    $db->execute($sql);
   }
 
   /**

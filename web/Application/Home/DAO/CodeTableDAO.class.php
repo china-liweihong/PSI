@@ -1098,6 +1098,25 @@ class CodeTableDAO extends PSIBaseExDAO
   }
 
   /**
+   * 返回码表的默认按钮
+   */
+  private function getDefaultButtons($fid, $moduleName)
+  {
+    $result = [];
+
+    // 新增
+    $result[] = [
+      "caption" => "新增{$moduleName}",
+      "showOrder" => 1,
+    ];
+    // 编辑
+    //删除
+    // 刷新
+
+    return $result;
+  }
+
+  /**
    * 查询码表主表元数据
    */
   public function codeTableInfo($params)

@@ -5,7 +5,7 @@ Ext.define("PSI.CodeTable.CodeTableEditColShowOrderForm", {
   extend: "PSI.AFX.BaseDialogForm",
 
   config: {
-    fid: null
+    codeTable: null
   },
 
   initComponent: function () {
@@ -37,10 +37,20 @@ Ext.define("PSI.CodeTable.CodeTableEditColShowOrderForm", {
         title: me.formatTitle("调整编辑界面字段显示次序"),
         height: 40
       },
-      width: 550,
-      height: 340,
+      width: 900,
+      height: 200,
       layout: "border",
-      items: [{ region: "center" }],
+      items: [{
+        region: "north",
+        border: 0,
+        html: "<h1>拖动列来调整显示次序</h1>"
+      }, {
+        region: "center",
+        layout: "fit",
+        border: 0,
+        id: "CodeTableEditColShowOrderForm_panelMain",
+        items: []
+      }],
       buttons: buttons,
       listeners: {
         show: {
@@ -55,12 +65,16 @@ Ext.define("PSI.CodeTable.CodeTableEditColShowOrderForm", {
     });
 
     me.callParent(arguments);
+
+    me.__mainPanel = Ext.getCmp("CodeTableEditColShowOrderForm_panelMain");
   },
 
   onWndShow: function () {
     var me = this;
 
     Ext.get(window).on('beforeunload', me.onWindowBeforeUnload);
+
+    me.__mainPanel.add(me.createMainGrid());
   },
 
   onOK: function () {
@@ -75,5 +89,34 @@ Ext.define("PSI.CodeTable.CodeTableEditColShowOrderForm", {
     var me = this;
 
     Ext.get(window).un('beforeunload', me.onWindowBeforeUnload);
+  },
+
+  createMainGrid: function (md) {
+    var me = this;
+
+    var modelName = "PSICodeTableEditColShowOrder";
+
+    Ext.define(modelName, {
+      extend: "Ext.data.Model",
+      fields: []
+    });
+
+    var columns = [];
+    if (!md) {
+      columns.push({});
+    } else {
+
+    }
+
+    return Ext.create("Ext.grid.Panel", {
+      columnLines: true,
+      columns: {
+        defaults: {
+          menuDisabled: true,
+          sortable: false
+
+        }, items: columns
+      }
+    });
   }
 });

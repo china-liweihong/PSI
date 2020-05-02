@@ -413,7 +413,9 @@ class CodeTableController extends PSIBaseController
       }
 
       $params = [
-        "fid" => $fid
+        "fid" => $fid,
+        "start" => I("post.start"),
+        "limit" => I("post.limit"),
       ];
 
       $service = new CodeTableService();

@@ -76,6 +76,10 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
       return;
     }
 
+    // MainGrid
+    me.__mainGrid = md.treeView ? me.createMainTreeGrid(md) : me.createMainGrid(md);
+    me.__panelMain.add(me.__mainGrid);
+
     // 按钮
     var toolBar = me.__toolBar;
     toolBar.add([{
@@ -99,6 +103,46 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
       scope: me
     }]);
 
+    if (md.viewPaging == "1") {
+      var store = me.getMainGrid().getStore();
+
+      toolBar.add(["-", {
+        cls: "PSI-toolbox",
+        id: "pagingToobar",
+        xtype: "pagingtoolbar",
+        border: 0,
+        store: store
+      }, "-", {
+          xtype: "displayfield",
+          value: "每页显示"
+        }, {
+          cls: "PSI-toolbox",
+          id: "comboCountPerPage",
+          xtype: "combobox",
+          editable: false,
+          width: 60,
+          store: Ext.create("Ext.data.ArrayStore", {
+            fields: ["text"],
+            data: [["20"], ["50"], ["100"], ["300"],
+            ["1000"]]
+          }),
+          value: 20,
+          listeners: {
+            change: {
+              fn: function () {
+                store.pageSize = Ext.getCmp("comboCountPerPage").getValue();
+                store.currentPage = 1;
+                Ext.getCmp("pagingToobar").doRefresh();
+              },
+              scope: me
+            }
+          }
+        }, {
+          xtype: "displayfield",
+          value: "条记录"
+        }]);
+    }
+
     // 开发者工具
     if (me.getPDesignTool() == "1") {
       toolBar.add(["-", {
@@ -119,14 +163,11 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
       }
     }]);
 
-    // MainGrid
-    me.__mainGrid = md.treeView ? me.createMainTreeGrid(md) : me.createMainGrid(md);
-    me.__panelMain.add(me.__mainGrid);
-
     me.refreshMainGrid();
   },
 
   createMainGrid: function (md) {
+    var me = this;
     var modelName = "PSICodeTableRuntime_" + md.tableName;
 
     var fields = [];
@@ -151,6 +192,32 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
       fields: fields
     });
 
+    var store = Ext.create("Ext.data.Store", {
+      autoLoad: false,
+      model: modelName,
+      data: [],
+      pageSize: 20,
+      proxy: {
+        type: "ajax",
+        actionMethods: {
+          read: "POST"
+        },
+        url: me.URL("Home/CodeTable/codeTableRecordList"),
+        reader: {
+          root: 'dataList',
+          totalProperty: 'totalCount'
+        }
+      }
+    });
+    store.on("beforeload", function () {
+      store.proxy.extraParams = me.getQueryParam();
+    });
+    store.on("load", function (e, records, successful) {
+      if (successful) {
+        me.gotoMainGridRecord(me.__lastId);
+      }
+    });
+
     return Ext.create("Ext.grid.Panel", {
       cls: "PSI",
       viewConfig: {
@@ -159,13 +226,37 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
       columnLines: true,
       border: 0,
       columns: cols,
-      store: Ext.create("Ext.data.Store", {
-        model: modelName,
-        autoLoad: false,
-        data: []
-      })
+      store: store
     });
   },
+
+  getQueryParam: function () {
+    var me = this;
+
+    var result = {
+      fid: me.getMetaData().fid
+    };
+
+    return result;
+  },
+
+  gotoMainGridRecord: function (id) {
+    var me = this;
+    var grid = me.getMainGrid();
+    grid.getSelectionModel().deselectAll();
+    var store = grid.getStore();
+    if (id) {
+      var r = store.findExact("id", id);
+      if (r != -1) {
+        grid.getSelectionModel().select(r);
+      } else {
+        grid.getSelectionModel().select(0);
+      }
+    } else {
+      grid.getSelectionModel().select(0);
+    }
+  },
+
 
   createMainTreeGrid: function (md) {
     var me = this;
@@ -414,43 +505,11 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
         expanded: true
       });
       me.__lastRecordId = id;
-      return;
+    } else {
+      var store = me.getMainGrid().getStore();
+      store.reload();
+      me.__lastRecordId = id;
     }
-
-    var grid = me.getMainGrid();
-    var el = grid.getEl() || Ext.getBody();
-    el.mask(PSI.Const.LOADING);
-    var r = {
-      url: me.URL("Home/CodeTable/codeTableRecordList"),
-      params: {
-        fid: me.getFid()
-      },
-      callback: function (options, success, response) {
-        var store = grid.getStore();
-
-        store.removeAll();
-
-        if (success) {
-          var data = me.decodeJSON(response.responseText);
-          store.add(data);
-
-          if (store.getCount() > 0) {
-            if (id) {
-              var r = store.findExact("id", id);
-              if (r != -1) {
-                grid.getSelectionModel().select(r);
-              }
-            } else {
-              grid.getSelectionModel().select(0);
-            }
-          }
-        }
-
-        el.unmask();
-      }
-    };
-
-    me.ajax(r);
   },
 
   // 保存列视图布局

@@ -1717,6 +1717,8 @@ class CodeTableDAO extends PSIBaseExDAO
 
     $tableName = $md["tableName"];
 
+    $viewPaging = $md["viewPaging"] == 1;
+
     $sql = "select cr.id, cr.code, cr.name, u.name as create_user_name, r.name as record_status";
 
     foreach ($md["cols"] as $colMd) {
@@ -1743,6 +1745,13 @@ class CodeTableDAO extends PSIBaseExDAO
     }
 
     $sql .= " order by code";
+    if ($viewPaging) {
+      $start = $params["start"];
+      $limit = $params["limit"];
+      $sql .= " limit %d, %d ";
+      $queryParams[] = $start;
+      $queryParams[] = $limit;
+    }
 
     $data = $db->query($sql, $queryParams);
     $result = [];
@@ -1790,10 +1799,28 @@ class CodeTableDAO extends PSIBaseExDAO
         }
       }
 
-
       $result[] = $item;
     }
-    return $result;
+
+    $cnt = 0;
+    if ($viewPaging) {
+      $sql = "select count(*) as cnt from %s cr where (1 =1 ) ";
+      $queryParams = [];
+      $queryParams[] = $tableName;
+
+      // 数据域
+      $ds = new DataOrgDAO($db);
+      $rs = $ds->buildSQL($fid, "cr", $loginUserId);
+      if ($rs) {
+        $sql .= " and " . $rs[0];
+        $queryParams = array_merge($queryParams, $rs[1]);
+      }
+      $data = $db->query($sql, $queryParams);
+      $cnt = $data[0]["cnt"];
+    } else {
+      $cnt = count($result);
+    }
+    return ["dataList" => $result, "totalCount" => $cnt];
   }
 
   private function codeTableRecordListForTreeViewInternal($db, $id, $md, $rs)

@@ -78,6 +78,20 @@ class UpdateDB2020Service extends PSIBaseService
     $this->update_20200501_01();
     $this->update_20200501_02();
     $this->update_20200501_03();
+    $this->update_20200502_01();
+  }
+
+  private function update_20200502_01()
+  {
+    // 本次更新：t_code_table_md新增字段view_paging
+    $db = $this->db;
+
+    $tableName = "t_code_table_md";
+    $columnName = "view_paging";
+    if (!$this->columnExists($db, $tableName, $columnName)) {
+      $sql = "alter table {$tableName} add {$columnName} int(11) NOT NULL DEFAULT 2;";
+      $db->execute($sql);
+    }
   }
 
   private function update_20200501_03()

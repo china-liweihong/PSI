@@ -1709,6 +1709,7 @@ CREATE TABLE IF NOT EXISTS `t_code_table_buttons` (
   `fid` varchar(255) NOT NULL,
   `on_click_frontend` varchar(255) DEFAULT NULL,
   `on_click_backend` varchar(255) DEFAULT NULL,
+  `show_order` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

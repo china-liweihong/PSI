@@ -2562,6 +2562,52 @@ class CodeTableDAO extends PSIBaseExDAO
             where table_id = '%s' and is_visible = 1 
             order by show_order";
     $data = $db->query($sql, $id);
-    return $data;
+    $result = [];
+    foreach ($data as $v) {
+      $result[] = [
+        "caption" => $v["caption"],
+        "dataIndex" => $v["db_field_name"],
+      ];
+    }
+    return $result;
+  }
+
+  /**
+   * 保存编辑界面字段显示次序
+   */
+  public function saveColEditShowOrder($params)
+  {
+    $db = $this->db;
+
+    $id = $params["id"];
+    $json = $params["json"];
+    $layout = json_decode(html_entity_decode($json), true);
+    if (!$layout) {
+      return $this->badParam("json");
+    }
+
+    $sql = "select name
+            from t_code_table_md
+            where id = '%s' ";
+    $data = $db->query($sql, $id);
+    if (!$data) {
+      return $this->bad("码表不存在");
+    }
+    $v = $data[0];
+    $codeTableName = $v["name"];
+
+    foreach ($layout as $i => $v) {
+      $sql = "update t_code_table_cols_md
+              set show_order = %d
+              where table_id = '%s' and db_field_name = '%s' ";
+      $rc = $db->execute($sql, $i, $id, $v["dataIndex"]);
+      if ($rc === false) {
+        return $this->sqlError(__METHOD__, __LINE__);
+      }
+    }
+
+    // 操作成功
+    $params["name"] = $codeTableName;
+    return null;
   }
 }

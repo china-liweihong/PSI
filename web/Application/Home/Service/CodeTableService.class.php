@@ -569,4 +569,35 @@ class CodeTableService extends PSIBaseExService
     $dao = new CodeTableDAO($this->db());
     return $dao->queryCodeTableEditColShowOrder($params);
   }
+
+  /**
+   * 保存编辑界面字段显示次序
+   */
+  public function saveColEditShowOrder($params)
+  {
+    if ($this->isNotOnline()) {
+      return $this->notOnlineError();
+    }
+
+    $db = $this->db();
+    $db->startTrans();
+
+    $dao = new CodeTableDAO($db);
+    $rc = $dao->saveColEditShowOrder($params);
+    if ($rc) {
+      $db->rollback();
+      return $rc;
+    }
+
+    $name = $params["name"];
+    $log = "保存码表[{$name}]编辑界面字段显示次序";
+
+    // 记录业务日志
+    $bs = new BizlogService($db);
+    $bs->insertBizlog($log, $this->LOG_CATEGORY);
+
+    $db->commit();
+
+    return $this->ok();
+  }
 }

@@ -33,6 +33,7 @@ Ext.define("PSI.CodeTable.CodeTableEditColShowOrderForm", {
 
 
     Ext.apply(me, {
+      resizable: true,
       header: {
         title: me.formatTitle("调整编辑界面字段显示次序"),
         height: 40
@@ -87,7 +88,6 @@ Ext.define("PSI.CodeTable.CodeTableEditColShowOrderForm", {
           el && el.unmask();
 
           var data = Ext.JSON.decode(response.responseText);
-
           me.__mainPanel.add(me.createMainGrid(data));
         }
       }
@@ -97,6 +97,49 @@ Ext.define("PSI.CodeTable.CodeTableEditColShowOrderForm", {
 
   onOK: function () {
     var me = this;
+
+    var grid = me.getMainGrid();
+    var cols = grid.columnManager.columns;
+    var layout = [];
+    for (var i = 0; i < cols.length; i++) {
+      var c = cols[i];
+      layout.push({ dataIndex: c.dataIndex });
+    }
+    var json = Ext.JSON.encode(layout);
+
+    var info = "请确认是否保存编辑字段显示次序?";
+
+    var funcConfirm = function () {
+      var el = Ext.getBody();
+      el && el.mask(PSI.Const.LOADING);
+      var r = {
+        url: me.URL("Home/CodeTable/saveColEditShowOrder"),
+        params: {
+          id: me.getCodeTable().get("id"),
+          json: json
+        },
+        method: "POST",
+        callback: function (options, success, response) {
+          el && el.unmask();
+          if (success) {
+            var data = me.decodeJSON(response.responseText);
+            if (data.success) {
+              me.tip("成功完成操作");
+              me.getParentForm().refreshColsGrid();
+              me.close();
+            } else {
+              me.showInfo(data.msg);
+            }
+          } else {
+            me.showInfo("网络错误");
+          }
+        }
+      };
+
+      me.ajax(r);
+    }
+
+    me.confirm(info, funcConfirm);
   },
 
   onWindowBeforeUnload: function (e) {
@@ -109,29 +152,38 @@ Ext.define("PSI.CodeTable.CodeTableEditColShowOrderForm", {
     Ext.get(window).un('beforeunload', me.onWindowBeforeUnload);
   },
 
+  getMainGrid: function () {
+    var me = this;
+    return me.__mainGrid;
+  },
+
   createMainGrid: function (cols) {
     var me = this;
 
-    var modelName = "PSICodeTableEditColShowOrder";
 
-    Ext.define(modelName, {
-      extend: "Ext.data.Model",
-      fields: []
-    });
-
+    var fields = [];
     var columns = [];
     if (!cols) {
       columns.push({});
     } else {
       for (var i = 0; i < cols.length; i++) {
+        var col = cols[i];
         columns.push({
-          header: cols[i].caption,
-          dataIndex: cols[i].dataIndex
+          header: col.caption,
+          dataIndex: col.dataIndex
         });
+        fields.push(col.dataIndex);
       }
     }
 
-    return Ext.create("Ext.grid.Panel", {
+    var modelName = "PSICodeTableEditColShowOrder";
+
+    Ext.define(modelName, {
+      extend: "Ext.data.Model",
+      fields: fields
+    });
+
+    me.__mainGrid = Ext.create("Ext.grid.Panel", {
       columnLines: true,
       columns: {
         defaults: {
@@ -141,5 +193,7 @@ Ext.define("PSI.CodeTable.CodeTableEditColShowOrderForm", {
         }, items: columns
       }
     });
+
+    return me.__mainGrid;
   }
 });

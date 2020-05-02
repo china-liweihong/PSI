@@ -74,7 +74,25 @@ Ext.define("PSI.CodeTable.CodeTableEditColShowOrderForm", {
 
     Ext.get(window).on('beforeunload', me.onWindowBeforeUnload);
 
-    me.__mainPanel.add(me.createMainGrid());
+    var el = me.getEl();
+    el && el.mask(PSI.Const.LOADING);
+    Ext.Ajax.request({
+      url: me.URL("Home/CodeTable/queryCodeTableEditColShowOrder"),
+      params: {
+        tableId: me.getCodeTable().get("id")
+      },
+      method: "POST",
+      callback: function (options, success, response) {
+        if (success) {
+          el && el.unmask();
+
+          var data = Ext.JSON.decode(response.responseText);
+
+          me.__mainPanel.add(me.createMainGrid(data));
+        }
+      }
+    });
+
   },
 
   onOK: function () {
@@ -91,7 +109,7 @@ Ext.define("PSI.CodeTable.CodeTableEditColShowOrderForm", {
     Ext.get(window).un('beforeunload', me.onWindowBeforeUnload);
   },
 
-  createMainGrid: function (md) {
+  createMainGrid: function (cols) {
     var me = this;
 
     var modelName = "PSICodeTableEditColShowOrder";
@@ -102,10 +120,15 @@ Ext.define("PSI.CodeTable.CodeTableEditColShowOrderForm", {
     });
 
     var columns = [];
-    if (!md) {
+    if (!cols) {
       columns.push({});
     } else {
-
+      for (var i = 0; i < cols.length; i++) {
+        columns.push({
+          header: cols[i].caption,
+          dataIndex: cols[i].dataIndex
+        });
+      }
     }
 
     return Ext.create("Ext.grid.Panel", {

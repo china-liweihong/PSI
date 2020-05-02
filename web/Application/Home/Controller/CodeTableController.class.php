@@ -550,4 +550,22 @@ class CodeTableController extends PSIBaseController
       $this->ajaxReturn($service->saveColViewLayout($params));
     }
   }
+
+  /**
+   * 查询码表编辑界面字段的显示次序
+   */
+  public function queryCodeTableEditColShowOrder()
+  {
+    if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::CODE_TABLE)) {
+        die("没有权限");
+      }
+
+      $params = ["id" => I("post.tableId")];
+
+      $service = new CodeTableService();
+      $this->ajaxReturn($service->queryCodeTableEditColShowOrder($params));
+    }
+  }
 }

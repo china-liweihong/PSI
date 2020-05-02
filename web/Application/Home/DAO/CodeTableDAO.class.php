@@ -2547,4 +2547,21 @@ class CodeTableDAO extends PSIBaseExDAO
     $params["name"] = $codeTableName;
     return null;
   }
+
+  /**
+   * 查询码表编辑界面字段的显示次序
+   */
+  public function queryCodeTableEditColShowOrder($params)
+  {
+    $db = $this->db;
+
+    $id = $params["id"];
+
+    $sql = "select caption, db_field_name
+            from t_code_table_cols_md
+            where table_id = '%s' and is_visible = 1 
+            order by show_order";
+    $data = $db->query($sql, $id);
+    return $data;
+  }
 }

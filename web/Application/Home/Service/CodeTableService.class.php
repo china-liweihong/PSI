@@ -556,4 +556,17 @@ class CodeTableService extends PSIBaseExService
 
     return $this->ok();
   }
+
+  /**
+   * 查询码表编辑界面字段的显示次序
+   */
+  public function queryCodeTableEditColShowOrder($params)
+  {
+    if ($this->isNotOnline()) {
+      return $this->emptyResult();
+    }
+
+    $dao = new CodeTableDAO($this->db());
+    return $dao->queryCodeTableEditColShowOrder($params);
+  }
 }

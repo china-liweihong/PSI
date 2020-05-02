@@ -607,6 +607,11 @@ class CodeTableDAO extends PSIBaseExDAO
     if ($viewPaging != 1 && $viewPaging != 2) {
       $viewPaging = 2;
     }
+    if ($enableParetnId == 1) {
+      if ($viewPaging == 1) {
+        return $this->bad("层级数据视图不能分页");
+      }
+    }
 
     // 检查编码是否已经存在
     if ($code) {
@@ -861,6 +866,12 @@ class CodeTableDAO extends PSIBaseExDAO
       return $this->bad("要编辑的码表不存在");
     }
     $fid = $codeTable["fid"];
+    $enableParentId = $codeTable["enableParentId"];
+    if ($enableParentId == 1) {
+      if ($viewPaging == 1) {
+        return $this->bad("层级数据视图不能分页");
+      }
+    }
 
     if ($handlerClassName) {
       // 判断后台业务处理类是否已经存在
@@ -987,7 +998,7 @@ class CodeTableDAO extends PSIBaseExDAO
   {
     $db = $this->db;
 
-    $sql = "select code, name, fid, is_fixed, table_name 
+    $sql = "select code, name, fid, is_fixed, table_name, enable_parent_id 
             from t_code_table_md where id = '%s' ";
     $data = $db->query($sql, $id);
     if ($data) {
@@ -996,7 +1007,8 @@ class CodeTableDAO extends PSIBaseExDAO
         "name" => $data[0]["name"],
         "fid" => $data[0]["fid"],
         "isFixed" => $data[0]["is_fixed"],
-        "tableName" => $data[0]["table_name"]
+        "tableName" => $data[0]["table_name"],
+        "enableParentId" => $data[0]["enable_parent_id"],
       ];
     } else {
       return null;

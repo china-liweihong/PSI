@@ -180,7 +180,7 @@ Ext.define("PSI.CodeTable.MainForm", {
       extend: "Ext.data.Model",
       fields: ["id", "code", "name", "moduleName", "tableName",
         "memo", "fid", "mdVersion", "isFixed", "isFixedName", "enableParentId",
-        "handlerClassName", "editColCnt"]
+        "handlerClassName", "editColCnt", "viewPaging"]
     });
 
     me.__mainGrid = Ext.create("Ext.grid.Panel", {
@@ -198,13 +198,15 @@ Ext.define("PSI.CodeTable.MainForm", {
         dataIndex: "code",
         width: 120,
         menuDisabled: true,
-        sortable: false
+        sortable: false,
+        locked: true
       }, {
         header: "码表名称",
         dataIndex: "name",
         width: 200,
         menuDisabled: true,
-        sortable: false
+        sortable: false,
+        locked: true
       }, {
         header: "模块名称",
         dataIndex: "moduleName",
@@ -231,9 +233,10 @@ Ext.define("PSI.CodeTable.MainForm", {
         menuDisabled: true,
         sortable: false
       }, {
-        header: "备注",
-        dataIndex: "memo",
-        width: 300,
+        header: "视图分页",
+        dataIndex: "viewPaging",
+        width: 100,
+        align: "center",
         menuDisabled: true,
         sortable: false
       }, {
@@ -256,12 +259,19 @@ Ext.define("PSI.CodeTable.MainForm", {
         width: 80,
         menuDisabled: true,
         sortable: false,
+        align: "center",
         renderer: function (value) {
-          return parseInt(value) == 1 ? "是" : "否";
+          return parseInt(value) == 1 ? "▲" : "";
         }
       }, {
         header: "业务逻辑类名",
         dataIndex: "handlerClassName",
+        width: 300,
+        menuDisabled: true,
+        sortable: false
+      }, {
+        header: "备注",
+        dataIndex: "memo",
         width: 300,
         menuDisabled: true,
         sortable: false

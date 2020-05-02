@@ -40,7 +40,7 @@ Ext.define("PSI.CodeTable.CodeTableEditForm", {
         height: 40
       },
       width: 550,
-      height: 340,
+      height: 370,
       layout: "border",
       items: [{
         region: "north",
@@ -173,6 +173,21 @@ Ext.define("PSI.CodeTable.CodeTableEditForm", {
             }
           }
         }, {
+          id: "PSI_CodeTable_CodeTableEditForm_editViewPaging",
+          xtype: "combo",
+          queryMode: "local",
+          editable: false,
+          valueField: "id",
+          fieldLabel: "视图分页",
+          beforeLabelTextTpl: PSI.Const.REQUIRED,
+          store: Ext.create("Ext.data.ArrayStore", {
+            fields: ["id", "text"],
+            data: [[1, "分页"], [2, "不分页"]]
+          }),
+          value: 2,
+          name: "viewPaging",
+          colspan: 2
+        }, {
           id: "PSI_CodeTable_CodeTableEditForm_editHandlerClassName",
           fieldLabel: "业务逻辑类名",
           name: "handlerClassName",
@@ -229,6 +244,7 @@ Ext.define("PSI.CodeTable.CodeTableEditForm", {
     me.editEditColCnt = Ext.getCmp("PSI_CodeTable_CodeTableEditForm_editEditColCnt");
     me.editHandlerClassName = Ext.getCmp("PSI_CodeTable_CodeTableEditForm_editHandlerClassName");
     me.editMemo = Ext.getCmp("PSI_CodeTable_CodeTableEditForm_editMemo");
+    me.editViewPaging = Ext.getCmp("PSI_CodeTable_CodeTableEditForm_editViewPaging");
 
     me.__editorList = [
       me.editCategory, me.editCode, me.editName, me.editModuleName,
@@ -275,6 +291,7 @@ Ext.define("PSI.CodeTable.CodeTableEditForm", {
             me.editEditColCnt.setValue(data.editColCnt);
             me.editHandlerClassName.setValue(data.handlerClassName);
             me.editMemo.setValue(data.memo);
+            me.editViewPaging.setValue(parseInt(data.viewPaging));
           }
 
           el && el.unmask();

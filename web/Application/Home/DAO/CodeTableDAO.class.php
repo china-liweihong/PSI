@@ -211,7 +211,8 @@ class CodeTableDAO extends PSIBaseExDAO
     $categoryId = $params["categoryId"];
 
     $sql = "select id, code, name, table_name, memo, fid, md_version, is_fixed,
-              enable_parent_id, handler_class_name, module_name, edit_col_cnt
+              enable_parent_id, handler_class_name, module_name, edit_col_cnt,
+              view_paging
             from t_code_table_md
             where category_id = '%s' 
             order by code, table_name";
@@ -230,6 +231,7 @@ class CodeTableDAO extends PSIBaseExDAO
         "mdVersion" => $v["md_version"],
         "isFixed" => $v["is_fixed"],
         "isFixedName" => $v["is_fixed"] == 1 ? "▲" : "",
+        "viewPaging" => $v["view_paging"] == 1 ? "▲" : "",
         "enableParentId" => $v["enable_parent_id"],
         "handlerClassName" => $v["handler_class_name"],
         "editColCnt" => $v["edit_col_cnt"],
@@ -601,6 +603,11 @@ class CodeTableDAO extends PSIBaseExDAO
       return $this->bad("编辑布局列数不能超过4");
     }
 
+    $viewPaging = intval($params["viewPaging"]);
+    if ($viewPaging != 1 && $viewPaging != 2) {
+      $viewPaging = 2;
+    }
+
     // 检查编码是否已经存在
     if ($code) {
       $sql = "select count(*) as cnt from t_code_table_md
@@ -651,9 +658,9 @@ class CodeTableDAO extends PSIBaseExDAO
     $fid = "ct" . date("YmdHis");
 
     $sql = "insert into t_code_table_md (id, category_id, code, name, table_name, py, memo, fid,
-              enable_parent_id, handler_class_name, module_name, edit_col_cnt)
+              enable_parent_id, handler_class_name, module_name, edit_col_cnt, view_paging)
             values ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
-              %d, '%s', '%s', %d)";
+              %d, '%s', '%s', %d, %d)";
     $rc = $db->execute(
       $sql,
       $id,
@@ -667,7 +674,8 @@ class CodeTableDAO extends PSIBaseExDAO
       $enableParetnId,
       $handlerClassName,
       $moduleName,
-      $editColCnt
+      $editColCnt,
+      $viewPaging
     );
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -839,7 +847,10 @@ class CodeTableDAO extends PSIBaseExDAO
     } else if ($editColCnt > 4) {
       return $this->bad("编辑布局列数不能超过4");
     }
-
+    $viewPaging = intval($params["viewPaging"]);
+    if ($viewPaging != 1 && $viewPaging != 2) {
+      $viewPaging = 2;
+    }
 
     if (!$this->getCodeTableCategoryById($categoryId)) {
       return $this->bad("码表分类不存在");
@@ -863,7 +874,7 @@ class CodeTableDAO extends PSIBaseExDAO
               category_id = '%s', memo = '%s',
               handler_class_name = '%s',
               md_version = md_version + 1,
-              edit_col_cnt = %d
+              edit_col_cnt = %d, view_paging = %d
             where id = '%s' ";
     $rc = $db->execute(
       $sql,
@@ -874,6 +885,7 @@ class CodeTableDAO extends PSIBaseExDAO
       $memo,
       $handlerClassName,
       $editColCnt,
+      $viewPaging,
       $id
     );
     if ($rc === false) {
@@ -1077,7 +1089,8 @@ class CodeTableDAO extends PSIBaseExDAO
 
     $sql = "select c.name as category_name, d.code, d.name,
               d.table_name, d.category_id, d.memo, d.enable_parent_id,
-              d.handler_class_name, d.module_name, d.edit_col_cnt
+              d.handler_class_name, d.module_name, d.edit_col_cnt,
+              d.view_paging
             from t_code_table_md d, t_code_table_category c
             where d.id = '%s' and d.category_id = c.id ";
     $data = $db->query($sql, $id);
@@ -1094,6 +1107,7 @@ class CodeTableDAO extends PSIBaseExDAO
         "handlerClassName" => $v["handler_class_name"],
         "memo" => $v["memo"],
         "editColCnt" => $v["edit_col_cnt"],
+        "viewPaging" => $v["view_paging"],
       ];
     } else {
       return $this->emptyResult();

@@ -781,7 +781,37 @@ class CodeTableDAO extends PSIBaseExDAO
       return $this->sqlError(__METHOD__, __LINE__);
     }
 
-    // TODO 权限细化到按钮
+    // 按钮
+    $defaultButtons = $this->getDefaultButtons($fid, $name);
+    foreach ($defaultButtons as $v) {
+      $sql = "insert into t_code_table_buttons(id, table_id, caption, fid, on_click_frontend, show_order)
+              values ('%s', '%s', '%s', '%s', '%s', %d)";
+      $rc = $db->execute($sql, $this->newId(), $id, $v["caption"], $v["fid"], $v["onClick"], $v["showOrder"]);
+      if ($rc === false) {
+        return $this->sqlError(__METHOD__, __LINE__);
+      }
+
+      if ($v["fid"] != $fid) {
+        // 按钮权限
+        $sql = "insert into t_permission_plus (id, parent_fid, fid, name, note, category, py, show_order)
+        values ('%s', '%s', '%s', '%s', '%s', '%s','%s', %d)";
+        $buttonCaption = $v["caption"];
+        $rc = $db->execute(
+          $sql,
+          $v["fid"],
+          $fid,
+          $v["fid"],
+          $buttonCaption,
+          "按钮权限：{$moduleName}模块[{$buttonCaption}]按钮的权限",
+          $moduleName,
+          "",
+          200 + intval($v["showOrder"])
+        );
+        if ($rc === false) {
+          return $this->sqlError(__METHOD__, __LINE__);
+        }
+      }
+    }
 
     // 创建数据库表
     $sql = "CREATE TABLE IF NOT EXISTS `{$tableName}` (";
@@ -1100,18 +1130,47 @@ class CodeTableDAO extends PSIBaseExDAO
   /**
    * 返回码表的默认按钮
    */
-  private function getDefaultButtons($fid, $moduleName)
+  private function getDefaultButtons($fid, $name)
   {
     $result = [];
 
     // 新增
     $result[] = [
-      "caption" => "新增{$moduleName}",
+      "caption" => "新增{$name}",
       "showOrder" => 1,
+      "fid" => "{$fid}-add",
+      "onClick" => "onAddCodeTableRecord",
     ];
     // 编辑
+    $result[] = [
+      "caption" => "编辑{$name}",
+      "showOrder" => 2,
+      "fid" => "{$fid}-update",
+      "onClick" => "onEditCodeTableRecord",
+    ];
     //删除
+    $result[] = [
+      "caption" => "删除{$name}",
+      "showOrder" => 3,
+      "fid" => "{$fid}-delete",
+      "onClick" => "onDeleteCodeTableRecord",
+    ];
+
+    // 分隔符
+    $result[] = [
+      "caption" => "-",
+      "showOrder" => 4,
+      "fid" => $fid,
+      "onClick" => "",
+    ];
+
     // 刷新
+    $result[] = [
+      "caption" => "刷新",
+      "showOrder" => 5,
+      "fid" => $fid,
+      "onClick" => "onRefreshCodeTableRecord",
+    ];
 
     return $result;
   }

@@ -1620,6 +1620,7 @@ class InstallService extends PSIBaseExService
               `handler_class_name` varchar(255) DEFAULT NULL,
               `module_name` varchar(255) DEFAULT NULL,
               `edit_col_cnt` int(11) NOT NULL DEFAULT 1,
+              `view_paging` int(11) NOT NULL DEFAULT 2,
               PRIMARY KEY (`id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
             ";

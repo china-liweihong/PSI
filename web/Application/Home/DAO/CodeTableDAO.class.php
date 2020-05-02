@@ -1146,7 +1146,7 @@ class CodeTableDAO extends PSIBaseExDAO
 
     $fid = $params["fid"];
 
-    $sql = "select id, name, table_name, enable_parent_id, edit_col_cnt ";
+    $sql = "select id, name, table_name, enable_parent_id, edit_col_cnt, view_paging ";
     if ($forBackend) {
       $sql .= ",handler_class_name ";
     }
@@ -1165,6 +1165,7 @@ class CodeTableDAO extends PSIBaseExDAO
       "name" => $v["name"],
       "treeView" => $v["enable_parent_id"] == 1,
       "editColCnt" => $v["edit_col_cnt"],
+      "viewPaging" => $v["view_paging"],
     ];
     if ($forBackend) {
       $result["handlerClassName"] = $v["handler_class_name"];

@@ -1085,6 +1085,13 @@ class CodeTableDAO extends PSIBaseExDAO
       return $this->sqlError(__METHOD__, __LINE__);
     }
 
+    // 删除按钮
+    $sql = "delete from t_code_table_buttons where table_id = '%s' ";
+    $rc = $db->execute($sql, $id);
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+
     // 操作成功
     $params["name"] = $name;
     return null;

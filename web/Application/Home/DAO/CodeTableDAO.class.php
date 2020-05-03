@@ -794,7 +794,7 @@ class CodeTableDAO extends PSIBaseExDAO
       if ($v["fid"] != $fid) {
         // 按钮权限
         $sql = "insert into t_permission_plus (id, parent_fid, fid, name, note, category, py, show_order)
-        values ('%s', '%s', '%s', '%s', '%s', '%s','%s', %d)";
+                values ('%s', '%s', '%s', '%s', '%s', '%s','%s', %d)";
         $buttonCaption = $v["caption"];
         $rc = $db->execute(
           $sql,
@@ -812,6 +812,28 @@ class CodeTableDAO extends PSIBaseExDAO
         }
       }
     }
+
+    // 码表数据权限
+    // ('1001-01', '1001-01', '商品在业务单据中的使用权限', '数据域权限：商品在业务单据中的使用权限', '商品', 'SPZYWDJZDSYQX', 300),
+    $sql = "insert into t_permission_plus (id, parent_fid, fid, name, note, category, py, show_order)
+            values ('%s', '%s', '%s', '%s', '%s', '%s','%s', %d)";
+    $buttonCaption = $v["caption"];
+    $fidData  = $fid . "-dataorg";
+    $rc = $db->execute(
+      $sql,
+      $fidData,
+      $fid,
+      $fidData,
+      "{$name}在业务单据中的使用权限",
+      "数据域权限：{$name}在业务单据中的使用权限",
+      $moduleName,
+      "",
+      300
+    );
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+
 
     // 创建数据库表
     $sql = "CREATE TABLE IF NOT EXISTS `{$tableName}` (";

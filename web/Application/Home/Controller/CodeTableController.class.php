@@ -349,8 +349,16 @@ class CodeTableController extends PSIBaseController
       $fid = I("post.fid");
 
       $us = new UserService();
-      if (!$us->hasPermission($fid)) {
-        die("没有权限");
+      if (I("post.id")) {
+        // 编辑
+        if (!$us->hasPermission("{$fid}-update")) {
+          die("没有权限");
+        }
+      } else {
+        // 新增
+        if (!$us->hasPermission("{$fid}-add")) {
+          die("没有权限");
+        }
       }
 
       $params = [
@@ -385,7 +393,7 @@ class CodeTableController extends PSIBaseController
       $fid = I("post.fid");
 
       $us = new UserService();
-      if (!$us->hasPermission($fid)) {
+      if (!$us->hasPermission("{$fid}-delete")) {
         die("没有权限");
       }
 

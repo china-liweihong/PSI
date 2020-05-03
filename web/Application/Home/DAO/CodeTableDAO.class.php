@@ -814,7 +814,6 @@ class CodeTableDAO extends PSIBaseExDAO
     }
 
     // 码表数据权限
-    // ('1001-01', '1001-01', '商品在业务单据中的使用权限', '数据域权限：商品在业务单据中的使用权限', '商品', 'SPZYWDJZDSYQX', 300),
     $sql = "insert into t_permission_plus (id, parent_fid, fid, name, note, category, py, show_order)
             values ('%s', '%s', '%s', '%s', '%s', '%s','%s', %d)";
     $buttonCaption = $v["caption"];
@@ -973,7 +972,64 @@ class CodeTableDAO extends PSIBaseExDAO
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
     }
-    // TODO: 处理按钮权限
+
+    // 按钮及权限
+    $sql = "select fid
+            from t_code_table_buttons
+            where table_id = '%s'
+            order by show_order";
+    $data = $db->query($sql, $id);
+    foreach ($data as $v) {
+      $fidButton = $v["fid"];
+      $buttonCaption = "";
+
+      if ($fidButton == $fid) {
+        // 不需要处理额外处理权限的按钮，其权限是进入模块的权限
+        continue;
+      } else
+      if ($fidButton == $fid . "-add") {
+        $buttonCaption = "新增{$name}";
+      } else if ($fidButton == $fid . "-update") {
+        $buttonCaption = "编辑{$name}";
+      } else if ($fidButton == $fid . "-delete") {
+        $buttonCaption = "删除{$name}";
+      } else {
+        return $this->badParam("fidButton");
+      }
+
+      $sql = "update t_permission_plus
+              set category = '%s', name = '%s',
+                note = '%s' 
+              where parent_fid = '%s' and fid = '%s'";
+      $rc = $db->execute(
+        $sql,
+        $moduleName,
+        $buttonCaption,
+        "按钮权限：{$moduleName}模块[{$buttonCaption}]按钮的权限",
+        $fid,
+        $fidButton
+      );
+      if ($rc === false) {
+        return $this->sqlError(__METHOD__, __LINE__);
+      }
+    }
+
+    // 数据源权限
+    $sql = "update t_permission_plus
+            set category = '%s', name = '%s',
+              note = '%s' 
+            where parent_fid = '%s' and fid = '%s'";
+    $rc = $db->execute(
+      $sql,
+      $moduleName,
+      "{$name}在业务单据中的使用权限",
+      "数据域权限：{$name}在业务单据中的使用权限",
+      $fid,
+      $fid . "-dataorg"
+    );
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
 
     // 操作成功
     return null;

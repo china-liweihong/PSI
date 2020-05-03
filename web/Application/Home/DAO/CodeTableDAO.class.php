@@ -2811,7 +2811,7 @@ class CodeTableDAO extends PSIBaseExDAO
   /**
    * 保存编辑界面字段显示次序
    */
-  public function saveColEditShowOrder($params)
+  public function saveColEditShowOrder(&$params)
   {
     $db = $this->db;
 

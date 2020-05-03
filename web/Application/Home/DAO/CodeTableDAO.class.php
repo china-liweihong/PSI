@@ -1235,7 +1235,7 @@ class CodeTableDAO extends PSIBaseExDAO
   /**
    * 查询码表元数据 - 运行界面用
    */
-  public function getMetaDataForRuntime(&$params, $forBackend = false)
+  public function getMetaDataForRuntime($params, $forBackend = false)
   {
     $db = $this->db;
 

@@ -1235,7 +1235,7 @@ class CodeTableDAO extends PSIBaseExDAO
   /**
    * 查询码表元数据 - 运行界面用
    */
-  public function getMetaDataForRuntime($params)
+  public function getMetaDataForRuntime(&$params)
   {
     $db = $this->db;
 
@@ -1341,6 +1341,36 @@ class CodeTableDAO extends PSIBaseExDAO
       ];
     }
     $result["colsForView"] = $colsForView;
+
+    // 按钮
+    $loginUserId = $params["loginUserId"];
+    $us = $params["userService"];
+    $buttons = [];
+    $sql = "select fid, caption, on_click_frontend
+            from t_code_table_buttons
+            where table_id = '%s'
+            order by show_order";
+    $data = $db->query($sql, $id);
+    foreach ($data as $v) {
+      $caption = $v["caption"];
+      $fid = $v["fid"];
+      if ($caption != "-") {
+        // 检查权限
+        if ($us->hasPermission($loginUserId, $fid)) {
+          $buttons[] = [
+            "fid" => $fid,
+            "caption" => $caption,
+            "onClick" => $v["on_click_frontend"],
+          ];
+        }
+      } else {
+        $buttons[] = [
+          "caption" => "-"
+        ];
+      }
+    }
+
+    $result["buttons"] = $buttons;
 
     return $result;
   }

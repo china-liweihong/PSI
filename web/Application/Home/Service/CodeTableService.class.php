@@ -263,6 +263,9 @@ class CodeTableService extends PSIBaseExService
       return $this->emptyResult();
     }
 
+    $params["loginUserId"] = $this->getLoginUserId();
+    $params["userService"] = new UserService();
+
     $dao = new CodeTableDAO($this->db());
     return $dao->getMetaDataForRuntime($params);
   }
@@ -325,6 +328,8 @@ class CodeTableService extends PSIBaseExService
     }
 
     $params["loginUserId"] = $this->getLoginUserId();
+    $params["userService"] = new UserService();
+
     $dao = new CodeTableDAO($this->db());
     return $dao->codeTableRecordList($params);
   }
@@ -339,6 +344,7 @@ class CodeTableService extends PSIBaseExService
     }
 
     $params["loginUserId"] = $this->getLoginUserId();
+    $params["userService"] = new UserService();
     $dao = new CodeTableDAO($this->db());
     return $dao->codeTableRecordListForTreeView($params);
   }

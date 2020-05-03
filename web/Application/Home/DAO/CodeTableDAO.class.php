@@ -1143,6 +1143,7 @@ class CodeTableDAO extends PSIBaseExDAO
     if ($isFixed == 1) {
       return $this->bad("码表[$name]是系统固有码表，不能删除");
     }
+    $tableName = $codeTable["tableName"];
 
     // 检查fid是否在菜单中使用了
     $sql = "select count(*) as cnt from t_menu_item where fid = '%s' ";
@@ -1156,6 +1157,15 @@ class CodeTableDAO extends PSIBaseExDAO
     $cnt = $data[0]["cnt"];
     if ($cnt > 0) {
       return $this->bad("当前码表已经挂接在主菜单中了<br/>在菜单项没有从主菜单中删除之前，码表也不能删除");
+    }
+
+    // 码表有了数据，也不能删除元数据
+    // 这样限制，是为了在系统上线后，减少误删元数据的情形发生
+    $sql = "select count(*) as cnt from {$tableName}";
+    $data = $db->query($sql);
+    $cnt = $data[0]["cnt"];
+    if ($cnt > 0) {
+      return $this->bad("当前码表已经有数据，这时不能删除元数据");
     }
 
     // 列

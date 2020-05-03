@@ -253,7 +253,8 @@ INSERT INTO `t_menu_item` (`id`, `caption`, `fid`, `parent_id`, `show_order`, `p
 ('090505', '系统数据字典', '-7994', '0905', 5, 'XTSJZD', ''),
 ('10', '帮助', NULL, NULL, 12, '', ''),
 ('1001', '使用帮助', '-9995', '10', 1, 'SYBZ', ''),
-('1003', '关于', '-9994', '10', 3, 'GY', '');
+('1003', '关于', '-9994', '10', 3, 'GY', ''),
+('13', 'LowCode演示', NULL, NULL, 13, '', '');
 
 TRUNCATE TABLE `t_org`;
 INSERT INTO `t_org` (`id`, `full_name`, `name`, `org_code`, `data_org`, `parent_id`) VALUES

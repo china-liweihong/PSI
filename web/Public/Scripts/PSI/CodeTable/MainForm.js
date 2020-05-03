@@ -86,6 +86,10 @@ Ext.define("PSI.CodeTable.MainForm", {
         text: "把码表转化为系统固有码表",
         scope: me,
         handler: me.onConvertToSys
+      }, "-", {
+        text: "生成SQL语句",
+        scope: me,
+        handler: me.onGenSQL
       }]
     }, "-", {
       text: "帮助",
@@ -935,6 +939,22 @@ Ext.define("PSI.CodeTable.MainForm", {
       parentForm: me
     });
     form.show();
+  },
 
+  // 生成SQL语句
+  onGenSQL: function () {
+    var me = this;
+    var item = me.getMainGrid().getSelectionModel().getSelection();
+    if (item == null || item.length != 1) {
+      me.showInfo("请选择码表");
+      return;
+    }
+
+    var codeTable = item[0];
+
+    var form = Ext.create("PSI.CodeTable.CodeTableGenSQLForm", {
+      codeTable: codeTable
+    });
+    form.show();
   }
 });

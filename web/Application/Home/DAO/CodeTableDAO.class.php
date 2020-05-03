@@ -1354,7 +1354,7 @@ class CodeTableDAO extends PSIBaseExDAO
       $fid = $v["fid"];
       if ($caption != "-") {
         // 检查权限
-        if ($us->hasPermission($loginUserId, $fid)) {
+        if ($us->hasPermission($fid)) {
           $buttons[] = [
             "fid" => $fid,
             "caption" => $caption,

@@ -411,9 +411,9 @@ class MainMenuDAO extends PSIBaseExDAO
     }
 
     if ($isDemo) {
-      // 在演示环境中，菜单只能挂在基础数据下
-      if ($parentMenuId != "08") {
-        return $this->bad("在演示环境中，自定义菜单只能设置在[基础数据]菜单项下");
+      // 在演示环境中，菜单只能挂在【LowCode演示】下
+      if ($parentMenuId != "13") {
+        return $this->bad("在演示环境中，自定义菜单只能设置在[LowCode演示]菜单项下");
       }
     }
 

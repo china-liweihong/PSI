@@ -517,6 +517,11 @@ class CodeTableService extends PSIBaseExService
       return $this->notOnlineError();
     }
 
+    if ($this->isDemo()) {
+      return $this->bad("在演示环境下，不能使用本功能，请见谅");
+    }
+
+
     $db = $this->db();
     $db->startTrans();
 

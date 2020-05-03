@@ -2864,15 +2864,48 @@ class CodeTableDAO extends PSIBaseExDAO
   {
     $db = $this->db;
     $id = $params["id"];
-    $sql = "select fid
+    $sql = "select code, name, table_name, category_id, memo,
+              py, fid, md_version, is_fixed, enable_parent_id, handler_class_name,
+              module_name, edit_col_cnt, view_paging
             from t_code_table_md 
             where id = '%s' ";
     $data = $db->query($sql, $id);
     if (!$data) {
       return $this->bad("码表不存在");
     }
+    $v = $data[0];
 
-    $result = "TODO";
+    // t_code_table_md
+    $code = $v["code"];
+    $name = $v["name"];
+    $tableName = $v["table_name"];
+    $categoryId = $v["category_id"];
+    $memo = $v["memo"];
+    $py = $v["py"];
+    $fid = $v["fid"];
+    $mdVersion = $v["md_version"];
+    $isFixed = $v["is_fixed"];
+    $enableParentId = $v["enable_parent_id"];
+    $handlerClassName = $v["handler_class_name"];
+    $moduleName = $v["module_name"];
+    $editColCnt = $v["edit_col_cnt"];
+    $viewPaging = $v["view_paging"];
+    $result .= "# 码表：{$name}\n";
+    $result .= "DELETE FROM t_code_table_md where id = '{$id}';\n";
+    $result .= "INSERT INTO t_code_table_md(`id`, `code`, `name`, `table_name`, `category_id`, `memo`,";
+    $result .= " `py`, `fid`, `md_version`, `is_fixed`, `enable_parent_id`, `handler_class_name`,";
+    $result .= " `module_name`, `edit_col_cnt`, `view_paging`)\n";
+    $result .= "VALUES ('{$id}', '{$code}', '{$name}', '{$tableName}', '{$categoryId}', '{$memo}',";
+    $result .= " '{$py}', '{$fid}', $mdVersion, $isFixed, $enableParentId, '{$handlerClassName}',";
+    $result .= " '{$moduleName}', $editColCnt, $viewPaging);";
+
+    // t_code_table_cols_md
+
+    // t_code_table_buttons
+
+    // t_fid_plus
+
+    // t_permission_plus
 
     return ["sql" => $result, "success" => true];
   }

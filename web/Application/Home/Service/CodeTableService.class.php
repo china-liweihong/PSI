@@ -618,4 +618,17 @@ class CodeTableService extends PSIBaseExService
 
     return $this->ok();
   }
+
+  /**
+   * 码表生成SQL
+   */
+  public function codeTableGenSQL($params)
+  {
+    if ($this->isNotOnline()) {
+      return $this->emptyResult();
+    }
+
+    $dao = new CodeTableDAO($this->db());
+    return $dao->codeTableGenSQL($params);
+  }
 }

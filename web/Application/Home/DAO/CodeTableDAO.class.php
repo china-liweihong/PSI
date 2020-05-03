@@ -2856,4 +2856,24 @@ class CodeTableDAO extends PSIBaseExDAO
     $params["name"] = $codeTableName;
     return null;
   }
+
+  /**
+   * 码表生成SQL
+   */
+  public function codeTableGenSQL($params)
+  {
+    $db = $this->db;
+    $id = $params["id"];
+    $sql = "select fid
+            from t_code_table_md 
+            where id = '%s' ";
+    $data = $db->query($sql, $id);
+    if (!$data) {
+      return $this->bad("码表不存在");
+    }
+
+    $result = "TODO";
+
+    return ["sql" => $result, "success" => true];
+  }
 }

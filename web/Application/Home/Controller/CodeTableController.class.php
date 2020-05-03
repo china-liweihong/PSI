@@ -600,4 +600,24 @@ class CodeTableController extends PSIBaseController
       $this->ajaxReturn($service->saveColEditShowOrder($params));
     }
   }
+
+  /**
+   * 码表生成SQL
+   */
+  public function codeTableGenSQL()
+  {
+    if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::CODE_TABLE)) {
+        die("没有权限");
+      }
+
+      $params = [
+        "id" => I("post.id"),
+      ];
+
+      $service = new CodeTableService();
+      $this->ajaxReturn($service->codeTableGenSQL($params));
+    }
+  }
 }

@@ -2137,7 +2137,8 @@ class InstallService extends PSIBaseExService
     $db->execute($sql);
 
     // t_menu_item
-    $sql = "INSERT INTO `t_menu_item` (`id`, `caption`, `fid`, `parent_id`, `show_order`, `py`, `memo`) VALUES
+    $sql = "TRUNCATE TABLE `t_menu_item`;
+            INSERT INTO `t_menu_item` (`id`, `caption`, `fid`, `parent_id`, `show_order`, `py`, `memo`) VALUES
             ('01', '文件', NULL, NULL, 1, '', ''),
             ('0101', '首页', '-9997', '01', 1, 'SY', ''),
             ('0102', '重新登录', '-9999', '01', 2, '', ''),
@@ -2215,7 +2216,8 @@ class InstallService extends PSIBaseExService
             ('090505', '系统数据字典', '-7994', '0905', 5, 'XTSJZD', ''),
             ('10', '帮助', NULL, NULL, 12, '', ''),
             ('1001', '使用帮助', '-9995', '10', 1, 'SYBZ', ''),
-            ('1003', '关于', '-9994', '10', 3, 'GY', '');
+            ('1003', '关于', '-9994', '10', 3, 'GY', ''),
+            ('13', 'LowCode演示', NULL, NULL, 13, '', '');
             ";
     $db->execute($sql);
 

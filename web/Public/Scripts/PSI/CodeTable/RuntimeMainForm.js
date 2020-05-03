@@ -82,26 +82,19 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
 
     // 按钮
     var toolBar = me.__toolBar;
-    toolBar.add([{
-      text: "新增" + name,
-      id: "buttonAddCodeTableRecord",
-      handler: me.onAddCodeTableRecord,
-      scope: me
-    }, {
-      text: "编辑" + name,
-      id: "buttonEditCodeTableRecord",
-      handler: me.onEditCodeTableRecord,
-      scope: me
-    }, {
-      text: "删除" + name,
-      id: "buttonDeleteCodeTableRecord",
-      handler: me.onDeleteCodeTableRecord,
-      scope: me
-    }, "-", , {
-      text: "刷新",
-      handler: me.onRefreshCodeTableRecord,
-      scope: me
-    }]);
+    var buttons = md.buttons;
+    for (var i = 0; i < buttons.length; i++) {
+      var btn = buttons[i];
+      if (btn.caption == "-") {
+        toolBar.add("-");
+      } else {
+        toolBar.add({
+          text: btn.caption,
+          handler: me[btn.onClick],
+          scope: me
+        });
+      }
+    }
 
     if (md.viewPaging == "1") {
       var store = me.getMainGrid().getStore();

@@ -284,6 +284,7 @@ class CodeTableService extends PSIBaseExService
     $params["companyId"] = $this->getCompanyId();
     $params["loginUserId"] = $this->getLoginUserId();
     $params["dataOrg"] = $this->getLoginUserDataOrg();
+    $params["userService"] = new UserService();
 
     $db = $this->db();
     $db->startTrans();
@@ -407,6 +408,9 @@ class CodeTableService extends PSIBaseExService
       return $this->emptyResult();
     }
 
+    $params["loginUserId"] = $this->getLoginUserId();
+    $params["userService"] = new UserService();
+
     $dao = new CodeTableDAO($this->db());
     return $dao->recordInfo($params);
   }
@@ -420,6 +424,9 @@ class CodeTableService extends PSIBaseExService
     if ($this->isNotOnline()) {
       return $this->notOnlineError();
     }
+
+    $params["loginUserId"] = $this->getLoginUserId();
+    $params["userService"] = new UserService();
 
     $db = $this->db();
     $db->startTrans();

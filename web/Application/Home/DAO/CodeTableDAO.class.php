@@ -1398,10 +1398,7 @@ class CodeTableDAO extends PSIBaseExDAO
       return $this->badParam("companyId");
     }
 
-    $fid = $params["fid"];
-    $md = $this->getMetaDataForRuntime([
-      "fid" => $fid
-    ]);
+    $md = $this->getMetaDataForRuntime($params);
 
     if (!$md) {
       return $this->badParam("fid");
@@ -1543,10 +1540,7 @@ class CodeTableDAO extends PSIBaseExDAO
       return $this->badParam("loginUserId");
     }
 
-    $fid = $params["fid"];
-    $md = $this->getMetaDataForRuntime([
-      "fid" => $fid
-    ]);
+    $md = $this->getMetaDataForRuntime($params);
 
     if (!$md) {
       return $this->badParam("fid");
@@ -1697,10 +1691,7 @@ class CodeTableDAO extends PSIBaseExDAO
   {
     $db = $this->db;
     $fid = $params["fid"];
-    $md = $this->getMetaDataForRuntime([
-      "fid" => $fid,
-      "forBackend" => true
-    ]);
+    $md = $this->getMetaDataForRuntime($params);
 
     if (!$md) {
       return $this->badParam("fid");

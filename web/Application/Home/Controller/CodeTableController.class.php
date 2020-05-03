@@ -507,7 +507,7 @@ class CodeTableController extends PSIBaseController
       $fid = I("post.fid");
 
       $us = new UserService();
-      if (!$us->hasPermission($fid)) {
+      if (!$us->hasPermission($fid . "-dataorg")) {
         die("没有权限");
       }
 

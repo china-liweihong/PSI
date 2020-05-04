@@ -2909,11 +2909,13 @@ class CodeTableDAO extends PSIBaseExDAO
             where table_id = '%s'";
     $data = $db->query($sql, $id);
     $cnt = count($data);
-    $result .= "INSERT INTO `t_code_table_cols_md` (`id`, `table_id`, `caption`, `db_field_name`,";
-    $result .= " `db_field_type`, `db_field_length`, `db_field_decimal`, `show_order`, `value_from`,";
-    $result .= " `value_from_table_name`, `value_from_col_name`, `value_from_col_name_display`,";
-    $result .= " `must_input`, `sys_col`, `is_visible`, `width_in_view`, `note`, `show_order_in_view`,";
-    $result .= " `editor_xtype`, `col_span`) VALUES\n";
+    if ($cnt > 0) {
+      $result .= "INSERT INTO `t_code_table_cols_md` (`id`, `table_id`, `caption`, `db_field_name`,";
+      $result .= " `db_field_type`, `db_field_length`, `db_field_decimal`, `show_order`, `value_from`,";
+      $result .= " `value_from_table_name`, `value_from_col_name`, `value_from_col_name_display`,";
+      $result .= " `must_input`, `sys_col`, `is_visible`, `width_in_view`, `note`, `show_order_in_view`,";
+      $result .= " `editor_xtype`, `col_span`) VALUES\n";
+    }
     foreach ($data as $i => $v) {
       $colId = $v["id"];
       $caption = $v["caption"];
@@ -2946,6 +2948,28 @@ class CodeTableDAO extends PSIBaseExDAO
     $result .= "\n";
 
     // t_code_table_buttons
+    $result .= "DELETE FROM `t_code_table_buttons` where `table_id` = '{$id}';\n";
+    $sql = "select id, caption, fid, on_click_frontend, on_click_backend, show_order
+            from t_code_table_buttons
+            where table_id = '%s' ";
+    $data = $db->query($sql, $id);
+    $cnt = count($data);
+    if ($cnt > 0) {
+      $result .= "INSERT INTO `t_code_table_buttons` (`id`, `table_id`, `caption`, `fid`,";
+      $result .= " `on_click_frontend`, `on_click_backend`, `show_order`) VALUES\n";
+    }
+    foreach ($data as $i => $v) {
+      $btnId = $v["id"];
+      $caption = $v["caption"];
+      $btnFid = $v["fid"];
+      $onClickFrontend = $v["on_click_frontend"];
+      $onClickBackend = $v["on_click_backend"];
+      $showOrder = $v["show_order"];
+      $result .= "('{$btnId}', '{$id}', '{$caption}', '{$btnFid}',";
+      $result .= " '{$onClickFrontend}', '{$onClickBackend}', $showOrder)";
+      $result .= $i < $cnt - 1 ? "," : ";";
+      $result .= "\n";
+    }
 
     // t_fid_plus
 

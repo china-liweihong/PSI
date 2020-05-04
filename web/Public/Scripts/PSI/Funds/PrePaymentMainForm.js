@@ -24,6 +24,7 @@ Ext.define("PSI.Funds.PrePaymentMainForm", {
         scope: me
       }, "-", {
         xtype: "displayfield",
+        margin: "5 0 0 0",
         value: "供应商分类"
       }, {
         cls: "PSI-toolbox",
@@ -41,6 +42,7 @@ Ext.define("PSI.Funds.PrePaymentMainForm", {
       }, " ", "-", " ", {
         id: "editQueryLabel",
         xtype: "displayfield",
+        margin: "5 0 0 0",
         value: "供应商 "
       }, {
         cls: "PSI-toolbox",

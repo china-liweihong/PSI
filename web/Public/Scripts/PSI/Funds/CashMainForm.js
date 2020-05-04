@@ -10,6 +10,7 @@ Ext.define("PSI.Funds.CashMainForm", {
     Ext.apply(me, {
       tbar: [{
         xtype: "displayfield",
+        margin: "5 0 0 0",
         value: "业务日期 从"
       }, {
         cls: "PSI-toolbox",
@@ -19,6 +20,7 @@ Ext.define("PSI.Funds.CashMainForm", {
         width: 100
       }, {
         xtype: "displayfield",
+        margin: "5 0 0 0",
         value: " 到 "
       }, {
         cls: "PSI-toolbox",

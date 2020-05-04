@@ -82,6 +82,33 @@ class UpdateDB2020Service extends PSIBaseService
     $this->update_20200502_02();
     $this->update_20200503_01();
     $this->update_20200504_01();
+    $this->update_20200504_02();
+  }
+
+  private function update_20200504_02()
+  {
+    // 本次更新：新增表t_fv
+    $db = $this->db;
+
+    $tableName = "t_fv";
+    if (!$this->tableExists($db, $tableName)) {
+      $sql = "CREATE TABLE IF NOT EXISTS `t_fv` (
+                `id` varchar(255) NOT NULL,
+                `code` varchar(255) NOT NULL,
+                `name` varchar(255) NOT NULL,
+                `category_id` varchar(255) NOT NULL,
+                `memo` varchar(1000) DEFAULT NULL,
+                `py` varchar(255) DEFAULT NULL,
+                `fid` varchar(255) DEFAULT NULL,
+                `md_version` int(11) NOT NULL DEFAULT 1,
+                `is_fixed` int(11) NOT NULL DEFAULT 2,
+                `parent_id` varchar(255) DEFAULT NULL,
+                `module_name` varchar(255) DEFAULT NULL,
+                PRIMARY KEY (`id`)
+              ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+              ";
+      $db->execute($sql);
+    }
   }
 
   private function update_20200504_01()

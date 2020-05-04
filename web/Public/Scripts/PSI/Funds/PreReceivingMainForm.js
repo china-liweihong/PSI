@@ -24,6 +24,7 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
         scope: me
       }, "-", {
         xtype: "displayfield",
+        margin: "5 0 0 0",
         value: "客户分类"
       }, {
         cls: "PSI-toolbox",
@@ -40,6 +41,7 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
         })
       }, " ", "-", " ", {
         xtype: "displayfield",
+        margin: "5 0 0 0",
         value: "客户 "
       }, {
         cls: "PSI-toolbox",

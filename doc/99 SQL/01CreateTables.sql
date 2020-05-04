@@ -1723,6 +1723,22 @@ CREATE TABLE IF NOT EXISTS `t_fv_category` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `t_fv`;
+CREATE TABLE IF NOT EXISTS `t_fv` (
+  `id` varchar(255) NOT NULL,
+  `code` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `category_id` varchar(255) NOT NULL,
+  `memo` varchar(1000) DEFAULT NULL,
+  `py` varchar(255) DEFAULT NULL,
+  `fid` varchar(255) DEFAULT NULL,
+  `md_version` int(11) NOT NULL DEFAULT 1,
+  `is_fixed` int(11) NOT NULL DEFAULT 2,
+  `parent_id` varchar(255) DEFAULT NULL,
+  `module_name` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

@@ -161,5 +161,29 @@ Ext.define("PSI.FormView.MainForm", {
     });
 
     form.show();
+  },
+
+  onEditCategory: function () {
+    var me = this;
+
+    var item = me.getCategoryGrid().getSelectionModel().getSelection();
+    if (item == null || item.length != 1) {
+      me.showInfo("请选择要编辑的视图分类");
+      return;
+    }
+
+    var category = item[0];
+
+    if (category.get("isSystem") == 1) {
+      me.showInfo("不能编辑系统分类");
+      return;
+    }
+
+    var form = Ext.create("PSI.FormView.CategoryEditForm", {
+      parentForm: me,
+      entity: category
+    });
+
+    form.show();
   }
 });

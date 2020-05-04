@@ -2982,11 +2982,43 @@ class CodeTableDAO extends PSIBaseExDAO
       $py = $v["py"];
       $memo = $v["memo"];
       $result .= "INSERT INTO `t_fid_plus` (`fid`, `name`, `py`, `memo`) VALUES\n";
-      $result .= "('{$fid}', '{$name}', '{$py}', '{$memo}');";
+      $result .= "('{$fid}', '{$name}', '{$py}', '{$memo}');\n";
     }
     $result .= "\n";
 
     // t_permission_plus
+    $result .= "DELETE FROM `t_permission_plus` where fid = '{$fid}' or parent_fid = '{$fid}';\n";
+
+    $sql = "select id, fid, name, note, category, py, show_order, parent_fid
+            from t_permission_plus
+            where fid = '%s' or parent_fid = '%s'
+            order by show_order";
+    $data = $db->query($sql, $fid, $fid);
+    $cnt = count($data);
+    if ($cnt > 0) {
+      $result .= "INSERT INTO `t_permission_plus` (`id`, `fid`, `name`, `note`, `category`,";
+      $result .= " `py`, `show_order`, `parent_fid`) VALUES\n";
+    }
+    foreach ($data as $i => $v) {
+      $permissionId = $v["id"];
+      $permissionFid = $v["fid"];
+      $name = $v["name"];
+      $note = $v["note"];
+      $category = $v["category"];
+      $py = $v["py"];
+      $showOrder = $v["show_order"];
+      $parentFid = $v["parent_fid"];
+      $result .= "('{$permissionId}', '{$permissionFid}', '{$name}', '{$note}', '{$category}',";
+      $result .= " '{$py}', $showOrder,";
+      if ($parentFid) {
+        $result .= " '{$parentFid}'";
+      } else {
+        $result .= " null";
+      }
+      $result .= ")";
+      $result .= $i < $cnt - 1 ? "," : ";";
+      $result .= "\n";
+    }
 
     return ["sql" => $result, "success" => true];
   }

@@ -2891,15 +2891,59 @@ class CodeTableDAO extends PSIBaseExDAO
     $editColCnt = $v["edit_col_cnt"];
     $viewPaging = $v["view_paging"];
     $result .= "# 码表：{$name}\n";
-    $result .= "DELETE FROM t_code_table_md where id = '{$id}';\n";
-    $result .= "INSERT INTO t_code_table_md(`id`, `code`, `name`, `table_name`, `category_id`, `memo`,";
+    $result .= "DELETE FROM `t_code_table_md` where `id` = '{$id}';\n";
+    $result .= "INSERT INTO `t_code_table_md` (`id`, `code`, `name`, `table_name`, `category_id`, `memo`,";
     $result .= " `py`, `fid`, `md_version`, `is_fixed`, `enable_parent_id`, `handler_class_name`,";
     $result .= " `module_name`, `edit_col_cnt`, `view_paging`)\n";
     $result .= "VALUES ('{$id}', '{$code}', '{$name}', '{$tableName}', '{$categoryId}', '{$memo}',";
     $result .= " '{$py}', '{$fid}', $mdVersion, $isFixed, $enableParentId, '{$handlerClassName}',";
-    $result .= " '{$moduleName}', $editColCnt, $viewPaging);";
+    $result .= " '{$moduleName}', $editColCnt, $viewPaging);\n\n";
 
     // t_code_table_cols_md
+    $result .= "DELETE FROM `t_code_table_cols_md` where `table_id` = '{$id}';\n";
+    $sql = "select id, caption, db_field_name, db_field_type, db_field_length, db_field_decimal,
+              show_order, value_from, value_from_table_name, value_from_col_name,
+              value_from_col_name_display, must_input, sys_col, is_visible, width_in_view,
+              note, show_order_in_view, editor_xtype, col_span
+            from t_code_table_cols_md
+            where table_id = '%s'";
+    $data = $db->query($sql, $id);
+    $cnt = count($data);
+    $result .= "INSERT INTO `t_code_table_cols_md` (`id`, `table_id`, `caption`, `db_field_name`,";
+    $result .= " `db_field_type`, `db_field_length`, `db_field_decimal`, `show_order`, `value_from`,";
+    $result .= " `value_from_table_name`, `value_from_col_name`, `value_from_col_name_display`,";
+    $result .= " `must_input`, `sys_col`, `is_visible`, `width_in_view`, `note`, `show_order_in_view`,";
+    $result .= " `editor_xtype`, `col_span`) VALUES\n";
+    foreach ($data as $i => $v) {
+      $colId = $v["id"];
+      $caption = $v["caption"];
+      $fieldName = $v["db_field_name"];
+      $fieldType = $v["db_field_type"];
+      $fieldLength = $v["db_field_length"];
+      $fieldDecimal = $v["db_field_decimal"];
+      $showOrder = $v["show_order"];
+      $valueFrom = $v["value_from"];
+      $valueFromTableName = $v["value_from_table_name"];
+      $valueFromColName = $v["value_from_col_name"];
+      $valueFromColNameDisplay = $v["value_from_col_name_display"];
+      $mustInput = $v["must_input"];
+      $sysCol = $v["sys_col"];
+      $isVisible = $v["is_visible"];
+      $widthInView = $v["width_in_view"];
+      $note = $v["note"];
+      $showOrderInView = $v["show_order_in_view"];
+      $editorXtype = $v["editor_xtype"];
+      $colSpan = $v["col_span"];
+
+      $result .= "('{$colId}', '{$id}', '{$caption}', '{$fieldName}',";
+      $result .= " '{$fieldType}', {$fieldLength}, {$fieldDecimal}, {$showOrder}, {$valueFrom},";
+      $result .= " '{$valueFromTableName}', '{$valueFromColName}', '{$valueFromColNameDisplay}',";
+      $result .= " {$mustInput}, {$sysCol}, {$isVisible}, {$widthInView}, '{$note}', {$showOrderInView},";
+      $result .= " '{$editorXtype}', {$colSpan})";
+      $result .= $i < $cnt - 1 ? "," : ";";
+      $result .= "\n";
+    }
+    $result .= "\n";
 
     // t_code_table_buttons
 

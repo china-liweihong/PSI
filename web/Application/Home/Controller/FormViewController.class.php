@@ -33,4 +33,22 @@ class FormViewController extends PSIBaseController
       $this->gotoLoginPage("/Home/FormView/index");
     }
   }
+
+  /**
+   * 视图分类列表
+   */
+  public function categoryList()
+  {
+    if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::FORM_VIEW_SYSTEM_DEV)) {
+        die("没有权限");
+      }
+
+      $params = [];
+
+      $service = new FormViewService();
+      $this->ajaxReturn($service->categoryList($params));
+    }
+  }
 }

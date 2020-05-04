@@ -25,11 +25,25 @@ Ext.define("PSI.FormView.MainForm", {
     });
 
     me.callParent(arguments);
+
+    me.refreshCategoryGrid();
   },
 
   getToolbarCmp: function () {
     var me = this;
     return [{
+      text: "新增视图分类",
+      handler: me.onAddCategory,
+      scope: me
+    }, {
+      text: "编辑视图分类",
+      handler: me.onEditCategory,
+      scope: me
+    }, {
+      text: "删除视图分类",
+      handler: me.onDeleteCategory,
+      scope: me
+    }, "-", {
       text: "关闭",
       handler: function () {
         me.closeWindow();
@@ -102,5 +116,40 @@ Ext.define("PSI.FormView.MainForm", {
     });
 
     return me.__categoryGrid;
+  },
+
+  refreshCategoryGrid: function (id) {
+    var me = this;
+    var grid = me.getCategoryGrid();
+    var el = grid.getEl() || Ext.getBody();
+    el.mask(PSI.Const.LOADING);
+    var r = {
+      url: me.URL("Home/FormView/categoryList"),
+      callback: function (options, success, response) {
+        var store = grid.getStore();
+
+        store.removeAll();
+
+        if (success) {
+          var data = me.decodeJSON(response.responseText);
+          store.add(data);
+
+          if (store.getCount() > 0) {
+            if (id) {
+              var r = store.findExact("id", id);
+              if (r != -1) {
+                grid.getSelectionModel().select(r);
+              }
+            } else {
+              grid.getSelectionModel().select(0);
+            }
+          }
+        }
+
+        el.unmask();
+      }
+    };
+
+    me.ajax(r);
   }
 });

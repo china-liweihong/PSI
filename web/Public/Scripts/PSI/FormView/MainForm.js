@@ -151,5 +151,15 @@ Ext.define("PSI.FormView.MainForm", {
     };
 
     me.ajax(r);
+  },
+
+  onAddCategory: function () {
+    var me = this;
+
+    var form = Ext.create("PSI.FormView.CategoryEditForm", {
+      parentForm: me
+    });
+
+    form.show();
   }
 });

@@ -2970,8 +2970,21 @@ class CodeTableDAO extends PSIBaseExDAO
       $result .= $i < $cnt - 1 ? "," : ";";
       $result .= "\n";
     }
+    $result .= "\n";
 
     // t_fid_plus
+    $result .= "DELETE FROM `t_fid_plus` where `fid` = '{$fid}';\n";
+    $sql = "select name ,py, memo from t_fid_plus where fid = '%s' ";
+    $data = $db->query($sql, $fid);
+    if ($data) {
+      $v = $data[0];
+      $name = $v["name"];
+      $py = $v["py"];
+      $memo = $v["memo"];
+      $result .= "INSERT INTO `t_fid_plus` (`fid`, `name`, `py`, `memo`) VALUES\n";
+      $result .= "('{$fid}', '{$name}', '{$py}', '{$memo}');";
+    }
+    $result .= "\n";
 
     // t_permission_plus
 

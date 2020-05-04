@@ -238,8 +238,8 @@ class MainMenuController extends PSIBaseController
           redirect(__ROOT__ . "/Home/Bank/index");
           break;
         case FIdConst::FORM_VIEW_SYSTEM_DEV:
-          // 表单视图开发助手
-          redirect(__ROOT__ . "/Home/FormView/devIndex");
+          // 视图开发助手
+          redirect(__ROOT__ . "/Home/FormView/index");
           break;
         case FIdConst::GL_PERIOD:
           // 会计期间

@@ -209,8 +209,8 @@ Ext.define("PSI.FormView.MainForm", {
     var modelName = "PSIGoodsCategory";
     Ext.define(modelName, {
       extend: "Ext.data.Model",
-      fields: ["id", "text", "code", "leaf",
-        "children"]
+      fields: ["id", "text", "code", "fid", "memo", "mdVersion", "isFixed",
+        "moduleName", "leaf", "children"]
     });
 
     var store = Ext.create("Ext.data.TreeStore", {
@@ -261,6 +261,22 @@ Ext.define("PSI.FormView.MainForm", {
         }, {
           text: "编码",
           dataIndex: "code",
+          width: 100
+        }, {
+          text: "fid",
+          dataIndex: "fid",
+          width: 100
+        }, {
+          text: "版本",
+          dataIndex: "mdVersion",
+          width: 100
+        }, {
+          text: "系统固有",
+          dataIndex: "isFixed",
+          width: 100
+        }, {
+          text: "模块名称",
+          dataIndex: "moduleName",
           width: 100
         }]
       },

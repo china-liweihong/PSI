@@ -73,4 +73,21 @@ class FormViewController extends PSIBaseController
       $this->ajaxReturn($service->editViewCategory($params));
     }
   }
+
+  /**
+   * 视图的列表
+   */
+  public function fvList()
+  {
+    if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::FORM_VIEW_SYSTEM_DEV)) {
+        die("没有权限");
+      }
+
+      $params = [];
+      $service = new FormViewService();
+      $this->ajaxReturn($service->fvList($params));
+    }
+  }
 }

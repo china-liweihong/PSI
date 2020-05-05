@@ -19,8 +19,20 @@ Ext.define("PSI.FormView.MainForm", {
       }, {
         border: 0,
         region: "center",
-        layout: "fit",
-        items: []
+        layout: "border",
+        items: [{
+          region: "north",
+          border: 0,
+          layout: "fit",
+          items: [me.getMainGrid()]
+        }, {
+          region: "south",
+          border: 0,
+          height: "60%",
+          split: true,
+          layout: "fit",
+          items: []
+        }]
       }]
     });
 
@@ -185,5 +197,88 @@ Ext.define("PSI.FormView.MainForm", {
     });
 
     form.show();
-  }
+  },
+
+  getMainGrid: function () {
+    var me = this;
+    if (me.__mainGrid) {
+      return me.__mainGrid;
+    }
+
+    var modelName = "PSIGoodsCategory";
+    Ext.define(modelName, {
+      extend: "Ext.data.Model",
+      fields: ["id", "text", "code", "leaf",
+        "children"]
+    });
+
+    var store = Ext.create("Ext.data.TreeStore", {
+      model: modelName,
+      proxy: {
+        type: "ajax",
+        actionMethods: {
+          read: "POST"
+        },
+        url: me.URL("Home/FormView/fvList")
+      },
+      listeners: {
+        beforeload: {
+          fn: function () {
+            store.proxy.extraParams = me.getQueryParamForMainGrid();
+          },
+          scope: me
+        }
+      }
+
+    });
+
+    store.on("load", me.onMainGridStoreLoad, me);
+
+    me.__mainGrid = Ext.create("Ext.tree.Panel", {
+      cls: "PSI",
+      header: {
+        height: 30,
+        title: me.formatGridHeaderTitle("视图列表")
+      },
+      store: store,
+      rootVisible: false,
+      useArrows: true,
+      viewConfig: {
+        loadMask: true
+      },
+      columns: {
+        defaults: {
+          sortable: false,
+          menuDisabled: true,
+          draggable: false
+        },
+        items: [{
+          xtype: "treecolumn",
+          text: "名称",
+          dataIndex: "text",
+          width: 220
+        }, {
+          text: "编码",
+          dataIndex: "code",
+          width: 100
+        }]
+      },
+      listeners: {
+        select: {
+          fn: function (rowModel, record) {
+            me.onMainGridNodeSelect(record);
+          },
+          scope: me
+        }
+      }
+    });
+
+    return me.__mainGrid;
+  },
+
+  getQueryParamForMainGrid: function () {
+    return {};
+  },
+
+  onMainGridStoreLoad: function () { }
 });

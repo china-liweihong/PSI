@@ -159,4 +159,12 @@ class FormViewDAO extends PSIBaseExDAO
     // 操作成功
     return null;
   }
+
+  /**
+   * 视图的列表
+   */
+  public function fvList($params)
+  {
+    return [];
+  }
 }

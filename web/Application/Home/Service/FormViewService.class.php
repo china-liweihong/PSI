@@ -72,4 +72,17 @@ class FormViewService extends PSIBaseExService
 
     return $this->ok($id);
   }
+
+  /**
+   * 视图的列表
+   */
+  public function fvList($params)
+  {
+    if ($this->isNotOnline()) {
+      return $this->emptyResult();
+    }
+
+    $dao = new FormViewDAO($this->db());
+    return $dao->fvList($params);
+  }
 }

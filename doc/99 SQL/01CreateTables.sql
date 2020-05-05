@@ -1736,6 +1736,9 @@ CREATE TABLE IF NOT EXISTS `t_fv` (
   `is_fixed` int(11) NOT NULL DEFAULT 2,
   `parent_id` varchar(255) DEFAULT NULL,
   `module_name` varchar(255) DEFAULT NULL,
+  `xtype` varchar(255) NOT NULL,
+  `region` varchar(255) DEFAULT NULL,
+  `width_or_height` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

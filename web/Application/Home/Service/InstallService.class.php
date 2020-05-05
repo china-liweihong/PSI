@@ -870,22 +870,23 @@ class InstallService extends PSIBaseExService
 
     // t_pre_receiving_detail
     $sql = "CREATE TABLE IF NOT EXISTS `t_pre_receiving_detail` (
-				  `id` varchar(255) NOT NULL,
-				  `customer_id` varchar(255) NOT NULL,
-				  `in_money` decimal(19,2) DEFAULT NULL,
-				  `out_money` decimal(19,2) DEFAULT NULL,
-				  `balance_money` decimal(19,2) NOT NULL,
-				  `biz_date` datetime DEFAULT NULL,
-				  `date_created` datetime DEFAULT NULL,
-				  `ref_number` varchar(255) NOT NULL,
-				  `ref_type` varchar(255) NOT NULL,
-				  `biz_user_id` varchar(255) NOT NULL,
-				  `input_user_id` varchar(255) NOT NULL,
-				  `data_org` varchar(255) DEFAULT NULL,
-				  `company_id` varchar(255) DEFAULT NULL,
-				  PRIMARY KEY (`id`)
-				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-		";
+              `id` varchar(255) NOT NULL,
+              `customer_id` varchar(255) NOT NULL,
+              `in_money` decimal(19,2) DEFAULT NULL,
+              `out_money` decimal(19,2) DEFAULT NULL,
+              `balance_money` decimal(19,2) NOT NULL,
+              `biz_date` datetime DEFAULT NULL,
+              `date_created` datetime DEFAULT NULL,
+              `ref_number` varchar(255) NOT NULL,
+              `ref_type` varchar(255) NOT NULL,
+              `biz_user_id` varchar(255) NOT NULL,
+              `input_user_id` varchar(255) NOT NULL,
+              `data_org` varchar(255) DEFAULT NULL,
+              `company_id` varchar(255) DEFAULT NULL,
+              `memo` varchar(1000) DEFAULT NULL,
+              PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+            ";
     $db->execute($sql);
 
     // t_pre_payment
@@ -904,22 +905,23 @@ class InstallService extends PSIBaseExService
 
     // t_pre_payment_detail
     $sql = "CREATE TABLE IF NOT EXISTS `t_pre_payment_detail` (
-				  `id` varchar(255) NOT NULL,
-				  `supplier_id` varchar(255) NOT NULL,
-				  `in_money` decimal(19,2) DEFAULT NULL,
-				  `out_money` decimal(19,2) DEFAULT NULL,
-				  `balance_money` decimal(19,2) NOT NULL,
-				  `biz_date` datetime DEFAULT NULL,
-				  `date_created` datetime DEFAULT NULL,
-				  `ref_number` varchar(255) NOT NULL,
-				  `ref_type` varchar(255) NOT NULL,
-				  `biz_user_id` varchar(255) NOT NULL,
-				  `input_user_id` varchar(255) NOT NULL,
-				  `data_org` varchar(255) DEFAULT NULL,
-				  `company_id` varchar(255) DEFAULT NULL,
-				  PRIMARY KEY (`id`)
-				) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-		";
+              `id` varchar(255) NOT NULL,
+              `supplier_id` varchar(255) NOT NULL,
+              `in_money` decimal(19,2) DEFAULT NULL,
+              `out_money` decimal(19,2) DEFAULT NULL,
+              `balance_money` decimal(19,2) NOT NULL,
+              `biz_date` datetime DEFAULT NULL,
+              `date_created` datetime DEFAULT NULL,
+              `ref_number` varchar(255) NOT NULL,
+              `ref_type` varchar(255) NOT NULL,
+              `biz_user_id` varchar(255) NOT NULL,
+              `input_user_id` varchar(255) NOT NULL,
+              `data_org` varchar(255) DEFAULT NULL,
+              `company_id` varchar(255) DEFAULT NULL,
+              `memo` varchar(1000) DEFAULT NULL,
+              PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+            ";
     $db->execute($sql);
 
     // t_po_bill

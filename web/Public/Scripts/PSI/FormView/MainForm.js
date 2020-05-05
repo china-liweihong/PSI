@@ -21,7 +21,7 @@ Ext.define("PSI.FormView.MainForm", {
         region: "center",
         layout: "border",
         items: [{
-          region: "north",
+          region: "center",
           border: 0,
           layout: "fit",
           items: [me.getMainGrid()]

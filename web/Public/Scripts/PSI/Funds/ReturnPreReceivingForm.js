@@ -25,7 +25,7 @@ Ext.define("PSI.Funds.ReturnPreReceivingForm", {
         height: 40
       },
       width: 400,
-      height: 310,
+      height: 340,
       layout: "border",
       defaultFocus: "editCustomer",
       listeners: {
@@ -117,14 +117,24 @@ Ext.define("PSI.Funds.ReturnPreReceivingForm", {
           name: "bizUserId"
         }, {
           id: "editBizUser",
-          fieldLabel: "收款人",
+          fieldLabel: "付款人",
           xtype: "psi_userfield",
           allowBlank: false,
-          blankText: "没有输入收款人",
+          blankText: "没有输入付款人",
           beforeLabelTextTpl: PSI.Const.REQUIRED,
           listeners: {
             specialkey: {
               fn: me.onEditBizUserSpecialKey,
+              scope: me
+            }
+          }
+        }, {
+          fieldLabel: "备注",
+          name: "memo",
+          id: "editMemo",
+          listeners: {
+            specialkey: {
+              fn: me.onEditMemoSpecialKey,
               scope: me
             }
           }
@@ -239,6 +249,12 @@ Ext.define("PSI.Funds.ReturnPreReceivingForm", {
   },
 
   onEditBizUserSpecialKey: function (field, e) {
+    if (e.getKey() == e.ENTER) {
+      Ext.getCmp("editMemo").focus();
+    }
+  },
+
+  onEditMemoSpecialKey: function (field, e) {
     if (e.getKey() == e.ENTER) {
       var f = Ext.getCmp("editForm");
       if (f.getForm().isValid()) {

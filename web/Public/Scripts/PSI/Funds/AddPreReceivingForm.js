@@ -25,7 +25,7 @@ Ext.define("PSI.Funds.AddPreReceivingForm", {
         height: 40
       },
       width: 400,
-      height: 310,
+      height: 340,
       layout: "border",
       defaultFocus: "editCustomer",
       listeners: {
@@ -128,6 +128,16 @@ Ext.define("PSI.Funds.AddPreReceivingForm", {
               scope: me
             }
           }
+        }, {
+          fieldLabel: "备注",
+          name: "memo",
+          id: "editMemo",
+          listeners: {
+            specialkey: {
+              fn: me.onEditMemoSpecialKey,
+              scope: me
+            }
+          }
         }],
         buttons: [{
           text: "保存",
@@ -176,12 +186,9 @@ Ext.define("PSI.Funds.AddPreReceivingForm", {
         if (success) {
           var data = Ext.JSON.decode(response.responseText);
 
-          Ext.getCmp("editBizUserId")
-            .setValue(data.bizUserId);
-          Ext.getCmp("editBizUser")
-            .setValue(data.bizUserName);
-          Ext.getCmp("editBizUser")
-            .setIdValue(data.bizUserId);
+          Ext.getCmp("editBizUserId").setValue(data.bizUserId);
+          Ext.getCmp("editBizUser").setValue(data.bizUserName);
+          Ext.getCmp("editBizUser").setIdValue(data.bizUserId);
         } else {
           PSI.MsgBox.showInfo("网络错误")
         }
@@ -192,10 +199,8 @@ Ext.define("PSI.Funds.AddPreReceivingForm", {
   // private
   onOK: function () {
     var me = this;
-    Ext.getCmp("editBizUserId").setValue(Ext.getCmp("editBizUser")
-      .getIdValue());
-    Ext.getCmp("editCustomerId").setValue(Ext.getCmp("editCustomer")
-      .getIdValue());
+    Ext.getCmp("editBizUserId").setValue(Ext.getCmp("editBizUser").getIdValue());
+    Ext.getCmp("editCustomerId").setValue(Ext.getCmp("editCustomer").getIdValue());
 
     var f = Ext.getCmp("editForm");
     var el = f.getEl();
@@ -238,6 +243,12 @@ Ext.define("PSI.Funds.AddPreReceivingForm", {
   },
 
   onEditBizUserSpecialKey: function (field, e) {
+    if (e.getKey() == e.ENTER) {
+      Ext.getCmp("editMemo").focus();
+    }
+  },
+
+  onEditMemoSpecialKey: function (field, e) {
     if (e.getKey() == e.ENTER) {
       var f = Ext.getCmp("editForm");
       if (f.getForm().isValid()) {

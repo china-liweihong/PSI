@@ -219,7 +219,7 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
       extend: "Ext.data.Model",
       fields: ["id", "inMoney", "outMoney", "balanceMoney",
         "refType", "refNumber", "bizDT", "dateCreated",
-        "bizUserName", "inputUserName"]
+        "bizUserName", "inputUserName", "memo"]
     });
 
     var store = Ext.create("Ext.data.Store", {
@@ -354,6 +354,12 @@ Ext.define("PSI.Funds.PreReceivingMainForm", {
         menuDisabled: true,
         sortable: false,
         width: 120
+      }, {
+        header: "备注",
+        dataIndex: "memo",
+        menuDisabled: true,
+        sortable: false,
+        width: 300
       }],
       store: store
     });

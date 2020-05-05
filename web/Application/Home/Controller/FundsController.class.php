@@ -433,7 +433,8 @@ class FundsController extends PSIBaseController
         "customerId" => I("post.customerId"),
         "bizUserId" => I("post.bizUserId"),
         "bizDT" => I("post.bizDT"),
-        "inMoney" => I("post.inMoney")
+        "inMoney" => I("post.inMoney"),
+        "memo" => I("post.memo"),
       );
 
       $ps = new PreReceivingService();
@@ -451,7 +452,8 @@ class FundsController extends PSIBaseController
         "customerId" => I("post.customerId"),
         "bizUserId" => I("post.bizUserId"),
         "bizDT" => I("post.bizDT"),
-        "outMoney" => I("post.outMoney")
+        "outMoney" => I("post.outMoney"),
+        "memo" => I("post.memo"),
       );
 
       $ps = new PreReceivingService();

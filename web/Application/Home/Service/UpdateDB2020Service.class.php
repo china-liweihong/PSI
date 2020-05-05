@@ -84,6 +84,29 @@ class UpdateDB2020Service extends PSIBaseService
     $this->update_20200504_01();
     $this->update_20200504_02();
     $this->update_20200505_01();
+    $this->update_20200505_02();
+  }
+
+  private function update_20200505_02()
+  {
+    // 本次更新：t_pre_payment_detail和t_pre_receiving_detail新增字段memo
+    $db = $this->db;
+
+    // t_pre_payment_detail
+    $tableName = "t_pre_payment_detail";
+    $columnName = "memo";
+    if (!$this->columnExists($db, $tableName, $columnName)) {
+      $sql = "alter table {$tableName} add {$columnName} varchar(1000) DEFAULT NULL;";
+      $db->execute($sql);
+    }
+
+    // t_pre_receiving_detail
+    $tableName = "t_pre_receiving_detail";
+    $columnName = "memo";
+    if (!$this->columnExists($db, $tableName, $columnName)) {
+      $sql = "alter table {$tableName} add {$columnName} varchar(1000) DEFAULT NULL;";
+      $db->execute($sql);
+    }
   }
 
   private function update_20200505_01()

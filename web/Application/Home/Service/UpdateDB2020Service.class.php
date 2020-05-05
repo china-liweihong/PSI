@@ -83,6 +83,32 @@ class UpdateDB2020Service extends PSIBaseService
     $this->update_20200503_01();
     $this->update_20200504_01();
     $this->update_20200504_02();
+    $this->update_20200505_01();
+  }
+
+  private function update_20200505_01()
+  {
+    // 本次更新：t_fv新增字段：xtype、region、width_or_height
+    $db = $this->db;
+
+    $tableName = "t_fv";
+    $columnName = "xtype";
+    if (!$this->columnExists($db, $tableName, $columnName)) {
+      $sql = "alter table {$tableName} add {$columnName} varchar(255) NOT NULL;";
+      $db->execute($sql);
+    }
+
+    $columnName = "region";
+    if (!$this->columnExists($db, $tableName, $columnName)) {
+      $sql = "alter table {$tableName} add {$columnName} varchar(255) DEFAULT NULL;";
+      $db->execute($sql);
+    }
+
+    $columnName = "width_or_height";
+    if (!$this->columnExists($db, $tableName, $columnName)) {
+      $sql = "alter table {$tableName} add {$columnName} varchar(255) DEFAULT NULL;";
+      $db->execute($sql);
+    }
   }
 
   private function update_20200504_02()

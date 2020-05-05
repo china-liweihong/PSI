@@ -161,6 +161,45 @@ class FormViewDAO extends PSIBaseExDAO
   }
 
   /**
+   * 删除视图分类
+   */
+  public function deleteViewCategory(&$params)
+  {
+    $db = $this->db;
+
+    $id = $params["id"];
+
+    $category = $this->getViewCategoryById($id);
+    if (!$category) {
+      return $this->bad("要删除的视图分类不存在");
+    }
+    $name = $category["name"];
+    $isSystem = $category["isSystem"];
+    if ($isSystem == 1) {
+      return $this->bad("分类[{$name}]是系统固有分类，不能删除");
+    }
+
+    // 查询该分类是否被使用了
+    $sql = "select count(*) as cnt from t_fv
+            where category_id = '%s' ";
+    $data = $db->query($sql, $id);
+    $cnt = $data[0]["cnt"];
+    if ($cnt > 0) {
+      return $this->bad("视图分类[$name]下还有视图，不能删除");
+    }
+
+    $sql = "delete from t_fv_category where id = '%s' ";
+    $rc = $db->execute($sql, $id);
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+
+    // 操作成功
+    $params["name"] = $name;
+    return null;
+  }
+
+  /**
    * 视图的列表
    */
   public function fvList($params)

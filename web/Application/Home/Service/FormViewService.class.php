@@ -74,6 +74,37 @@ class FormViewService extends PSIBaseExService
   }
 
   /**
+   * 删除视图分类
+   */
+  public function deleteViewCategory($params)
+  {
+    if ($this->isNotOnline()) {
+      return $this->notOnlineError();
+    }
+
+    $db = $this->db();
+    $db->startTrans();
+
+    $dao = new FormViewDAO($db);
+    $rc = $dao->deleteViewCategory($params);
+    if ($rc) {
+      $db->rollback();
+      return $rc;
+    }
+
+    $name = $params["name"];
+    $log = "删除视图分类：{$name}";
+
+    // 记录业务日志
+    $bs = new BizlogService($db);
+    $bs->insertBizlog($log, $this->LOG_CATEGORY);
+
+    $db->commit();
+
+    return $this->ok();
+  }
+
+  /**
    * 视图的列表
    */
   public function fvList($params)

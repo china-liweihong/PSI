@@ -75,6 +75,26 @@ class FormViewController extends PSIBaseController
   }
 
   /**
+   * 删除视图分类
+   */
+  public function deleteViewCategory()
+  {
+    if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::FORM_VIEW_SYSTEM_DEV)) {
+        die("没有权限");
+      }
+
+      $params = [
+        "id" => I("post.id")
+      ];
+
+      $service = new FormViewService();
+      $this->ajaxReturn($service->deleteViewCategory($params));
+    }
+  }
+
+  /**
    * 视图的列表
    */
   public function fvList()

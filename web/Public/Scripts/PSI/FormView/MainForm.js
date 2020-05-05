@@ -232,7 +232,7 @@ Ext.define("PSI.FormView.MainForm", {
       el.mask("正在删除中...");
 
       var r = {
-        url: me.URL("Home/FromView/deleteFvCategory"),
+        url: me.URL("Home/FormView/deleteViewCategory"),
         params: {
           id: category.get("id")
         },

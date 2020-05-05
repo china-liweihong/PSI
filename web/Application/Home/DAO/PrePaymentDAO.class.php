@@ -33,6 +33,7 @@ class PrePaymentDAO extends PSIBaseExDAO
     $bizUserId = $params["bizUserId"];
     $bizDT = $params["bizDT"];
     $inMoney = $params["inMoney"];
+    $memo = $params["memo"];
 
     // 检查供应商
     $supplierDAO = new SupplierDAO($db);
@@ -72,8 +73,8 @@ class PrePaymentDAO extends PSIBaseExDAO
 
       // 明细账
       $sql = "insert into t_pre_payment_detail(id, supplier_id, in_money, balance_money, date_created,
-                ref_number, ref_type, biz_user_id, input_user_id, biz_date, company_id)
-              values('%s', '%s', %f, %f, now(), '', '预付供应商采购货款', '%s', '%s', '%s', '%s')";
+                ref_number, ref_type, biz_user_id, input_user_id, biz_date, company_id, memo)
+              values('%s', '%s', %f, %f, now(), '', '预付供应商采购货款', '%s', '%s', '%s', '%s', '%s')";
       $rc = $db->execute(
         $sql,
         $this->newId(),
@@ -83,7 +84,8 @@ class PrePaymentDAO extends PSIBaseExDAO
         $bizUserId,
         $loginUserId,
         $bizDT,
-        $companyId
+        $companyId,
+        $memo
       );
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -111,8 +113,8 @@ class PrePaymentDAO extends PSIBaseExDAO
 
       // 明细账
       $sql = "insert into t_pre_payment_detail(id, supplier_id, in_money, balance_money, date_created,
-                ref_number, ref_type, biz_user_id, input_user_id, biz_date, company_id)
-              values('%s', '%s', %f, %f, now(), '', '预付供应商采购货款', '%s', '%s', '%s', '%s')";
+                ref_number, ref_type, biz_user_id, input_user_id, biz_date, company_id, memo)
+              values('%s', '%s', %f, %f, now(), '', '预付供应商采购货款', '%s', '%s', '%s', '%s', '%s')";
       $rc = $db->execute(
         $sql,
         $this->newId(),
@@ -122,7 +124,8 @@ class PrePaymentDAO extends PSIBaseExDAO
         $bizUserId,
         $loginUserId,
         $bizDT,
-        $companyId
+        $companyId,
+        $memo
       );
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -158,6 +161,7 @@ class PrePaymentDAO extends PSIBaseExDAO
     $bizUserId = $params["bizUserId"];
     $bizDT = $params["bizDT"];
     $inMoney = $params["inMoney"];
+    $memo = $params["memo"];
 
     // 检查供应商
     $supplierDAO = new SupplierDAO($db);
@@ -216,8 +220,8 @@ class PrePaymentDAO extends PSIBaseExDAO
     // 明细账
     $sql = "insert into t_pre_payment_detail(id, supplier_id, in_money, balance_money,
               biz_date, date_created, ref_number, ref_type, biz_user_id, input_user_id,
-              company_id)
-            values ('%s', '%s', %f, %f, '%s', now(), '', '供应商退回采购预付款', '%s', '%s', '%s')";
+              company_id, memo)
+            values ('%s', '%s', %f, %f, '%s', now(), '', '供应商退回采购预付款', '%s', '%s', '%s', '%s')";
     $rc = $db->execute(
       $sql,
       $this->newId(),
@@ -227,7 +231,8 @@ class PrePaymentDAO extends PSIBaseExDAO
       $bizDT,
       $bizUserId,
       $loginUserId,
-      $companyId
+      $companyId,
+      $memo
     );
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -335,7 +340,7 @@ class PrePaymentDAO extends PSIBaseExDAO
     $dtTo = $params["dtTo"];
 
     $sql = "select d.id, d.ref_type, d.ref_number, d.in_money, d.out_money, d.balance_money,
-              d.biz_date, d.date_created,
+              d.biz_date, d.date_created, d.memo,
               u1.name as biz_user_name, u2.name as input_user_name
             from t_pre_payment_detail d, t_user u1, t_user u2
             where d.supplier_id = '%s' and d.biz_user_id = u1.id and d.input_user_id = u2.id
@@ -357,6 +362,7 @@ class PrePaymentDAO extends PSIBaseExDAO
       $result[$i]["dateCreated"] = $v["date_created"];
       $result[$i]["bizUserName"] = $v["biz_user_name"];
       $result[$i]["inputUserName"] = $v["input_user_name"];
+      $result[$i]["memo"] = $v["memo"];
     }
 
     $sql = "select count(*) as cnt

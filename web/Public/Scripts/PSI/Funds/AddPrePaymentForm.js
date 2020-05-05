@@ -25,7 +25,7 @@ Ext.define("PSI.Funds.AddPrePaymentForm", {
         height: 40
       },
       width: 400,
-      height: 310,
+      height: 340,
       layout: "border",
       defaultFocus: "editSupplier",
       listeners: {
@@ -125,6 +125,16 @@ Ext.define("PSI.Funds.AddPrePaymentForm", {
           listeners: {
             specialkey: {
               fn: me.onEditBizUserSpecialKey,
+              scope: me
+            }
+          }
+        }, {
+          fieldLabel: "备注",
+          name: "memo",
+          id: "editMemo",
+          listeners: {
+            specialkey: {
+              fn: me.onEditMemoSpecialKey,
               scope: me
             }
           }
@@ -238,6 +248,12 @@ Ext.define("PSI.Funds.AddPrePaymentForm", {
   },
 
   onEditBizUserSpecialKey: function (field, e) {
+    if (e.getKey() == e.ENTER) {
+      Ext.getCmp("editMemo").focus();
+    }
+  },
+
+  onEditMemoSpecialKey: function (field, e) {
     if (e.getKey() == e.ENTER) {
       var f = Ext.getCmp("editForm");
       if (f.getForm().isValid()) {

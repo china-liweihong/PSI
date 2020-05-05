@@ -539,7 +539,8 @@ class FundsController extends PSIBaseController
         "supplierId" => I("post.supplierId"),
         "bizUserId" => I("post.bizUserId"),
         "bizDT" => I("post.bizDT"),
-        "inMoney" => I("post.inMoney")
+        "inMoney" => I("post.inMoney"),
+        "memo" => I("post.memo"),
       );
 
       $ps = new PrePaymentService();
@@ -606,7 +607,8 @@ class FundsController extends PSIBaseController
         "supplierId" => I("post.supplierId"),
         "bizUserId" => I("post.bizUserId"),
         "bizDT" => I("post.bizDT"),
-        "inMoney" => I("post.inMoney")
+        "inMoney" => I("post.inMoney"),
+        "memo" => I("post.memo")
       );
 
       $ps = new PrePaymentService();

@@ -31,7 +31,8 @@ Ext.define("PSI.FormView.MainForm", {
           height: "60%",
           split: true,
           layout: "fit",
-          items: []
+          xtype: "tabpanel",
+          items: [{ title: "列" }, { title: "查询条件" }, { title: "业务按钮" }]
         }]
       }]
     });

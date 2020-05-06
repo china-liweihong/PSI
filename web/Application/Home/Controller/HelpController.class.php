@@ -143,6 +143,10 @@ class HelpController extends PSIBaseController
         $bs->insertBizlog("访问帮助页面：系统数据字典", "帮助");
         redirect("/help/08-02.html");
         break;
+      case "codetable":
+        $bs->insertBizlog("访问帮助页面：码表设置", "帮助");
+        redirect("/help/08-03.html");
+        break;
       default:
         $bs->insertBizlog("通过主菜单进入帮助页面", "帮助");
         redirect("/help/index.html");

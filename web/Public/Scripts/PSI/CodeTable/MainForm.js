@@ -94,7 +94,7 @@ Ext.define("PSI.CodeTable.MainForm", {
     }, "-", {
       text: "帮助",
       handler: function () {
-        me.showInfo("TODO");
+        window.open(me.URL("Home/Help/index?t=codetable"));
       }
     }, "-", {
       text: "关闭",

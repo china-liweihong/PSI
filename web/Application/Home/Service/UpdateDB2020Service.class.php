@@ -85,6 +85,20 @@ class UpdateDB2020Service extends PSIBaseService
     $this->update_20200504_02();
     $this->update_20200505_01();
     $this->update_20200505_02();
+    $this->update_20200508_01();
+  }
+
+  private function update_20200508_01()
+  {
+    // 本次更新：t_fv新增字段layout_type
+    $db = $this->db;
+
+    $tableName = "t_fv";
+    $columnName = "layout_type";
+    if (!$this->columnExists($db, $tableName, $columnName)) {
+      $sql = "alter table {$tableName} add {$columnName} int(11) DEFAULT 1;";
+      $db->execute($sql);
+    }
   }
 
   private function update_20200505_02()

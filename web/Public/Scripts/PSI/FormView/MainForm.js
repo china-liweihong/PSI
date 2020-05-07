@@ -57,6 +57,10 @@ Ext.define("PSI.FormView.MainForm", {
       handler: me.onDeleteCategory,
       scope: me
     }, "-", {
+      text: "新增视图",
+      handler: me.onAddFv,
+      scope: me
+    }, "-", {
       text: "关闭",
       handler: function () {
         me.closeWindow();
@@ -356,5 +360,23 @@ Ext.define("PSI.FormView.MainForm", {
     return {};
   },
 
-  onMainGridStoreLoad: function () { }
+  onMainGridStoreLoad: function () { },
+
+  onAddFv: function () {
+    var me = this;
+
+    var item = me.getCategoryGrid().getSelectionModel().getSelection();
+    if (item == null || item.length != 1) {
+      me.showInfo("请选择一个的视图分类");
+      return;
+    }
+
+    var category = item[0];
+
+    var form = Ext.create("PSI.FormView.FvEditForm", {
+      parentForm: me,
+      category: category
+    });
+    form.show();
+  }
 });

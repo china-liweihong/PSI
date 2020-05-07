@@ -125,7 +125,7 @@ Ext.define("PSI.FormView.FvEditForm", {
             }
           }
         }, {
-          id: "PSI_CodeTable_CodeTableEditForm_editMemo",
+          id: "PSI_FormView_FvEditForm_editMemo",
           fieldLabel: "备注",
           name: "memo",
           value: entity == null ? null : entity.get("note"),

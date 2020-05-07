@@ -116,4 +116,17 @@ class FormViewService extends PSIBaseExService
     $dao = new FormViewDAO($this->db());
     return $dao->fvList($params);
   }
+
+  /**
+   * 视图分类自定义字段 - 查询数据
+   */
+  public function queryDataForFvCategory($params)
+  {
+    if ($this->isNotOnline()) {
+      return $this->emptyResult();
+    }
+
+    $dao = new FormViewDAO($this->db());
+    return $dao->queryDataForFvCategory($params);
+  }
 }

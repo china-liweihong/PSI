@@ -95,6 +95,26 @@ class FormViewController extends PSIBaseController
   }
 
   /**
+   * 视图分类自定义字段 - 查询数据
+   */
+  public function queryDataForFvCategory()
+  {
+    if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::FORM_VIEW_SYSTEM_DEV)) {
+        die("没有权限");
+      }
+
+      $params = [
+        "queryKey" => I("post.queryKey")
+      ];
+
+      $service = new FormViewService();
+      $this->ajaxReturn($service->queryDataForFvCategory($params));
+    }
+  }
+
+  /**
    * 视图的列表
    */
   public function fvList()

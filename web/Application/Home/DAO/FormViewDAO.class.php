@@ -236,4 +236,20 @@ class FormViewDAO extends PSIBaseExDAO
   {
     return [];
   }
+
+  /**
+   * 新增视图
+   */
+  public function addFv(&$params)
+  {
+    return $this->todo();
+  }
+
+  /**
+   * 编辑视图
+   */
+  public function updateFv(&$params)
+  {
+    return $this->todo();
+  }
 }

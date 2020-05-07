@@ -2,7 +2,6 @@
 
 namespace Home\Controller;
 
-use Home\Common\DemoConst;
 use Home\Common\FIdConst;
 use Home\Service\UserService;
 use Home\Service\FormViewService;
@@ -128,6 +127,31 @@ class FormViewController extends PSIBaseController
       $params = [];
       $service = new FormViewService();
       $this->ajaxReturn($service->fvList($params));
+    }
+  }
+
+  /**
+   * 新增或编辑视图
+   */
+  public function editFv()
+  {
+    if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::FORM_VIEW_SYSTEM_DEV)) {
+        die("没有权限");
+      }
+
+      $params = [
+        "id" => I("post.id"),
+        "categoryId" => I("post.categoryId"),
+        "code" => I("post.code"),
+        "name" => I("post.name"),
+        "moduleName" => I("post.moduleName"),
+        "memo" => I("post.memo"),
+      ];
+
+      $service = new FormViewService();
+      $this->ajaxReturn($service->editFv($params));
     }
   }
 }

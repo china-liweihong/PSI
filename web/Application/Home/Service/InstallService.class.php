@@ -2590,6 +2590,7 @@ class InstallService extends PSIBaseExService
     $sql = "INSERT INTO `t_dict_table_category` (`id`, `code`, `name`, `parent_id`) VALUES
             ('01', '01', '码表', NULL),
             ('02', '02', '自定义表单', NULL),
+            ('03', '03', '视图', NULL),
             ('10', '10', '基础数据', NULL);
             ";
     $db->execute($sql);
@@ -2599,6 +2600,7 @@ class InstallService extends PSIBaseExService
             ('0101', '0101', '码表记录状态', 't_sysdict_record_status', '01', '码表记录的状态', 'MBJLZT'),
             ('0102', '0102', '码表字段编辑器类型', 't_sysdict_editor_xtype', '01', '码表字段编辑器的类型', 'MBZDBJQLX'),
             ('0201', '0201', '表单字段编辑器类型', 't_sysdict_form_editor_xtype', '02', '表单字段编辑器的类型', 'BDZDBJQLX'),
+            ('0301', '0301', '视图xtype', 't_sysdict_fv_xtype', '03', '视图的组件类型(xtype)', 'STXTYPE'),
             ('1001', '1001', '税率', 't_sysdict_tax_rate', '10', '', 'SL');
             ";
     $db->execute($sql);
@@ -2626,6 +2628,12 @@ class InstallService extends PSIBaseExService
             ('28D248CD-843D-11EA-8C00-E86A641ED142', '3', 3, 'datefield', 'datefield', '日期字段编辑器', 3),
             ('BF6F569E-843D-11EA-8C00-E86A641ED142', '4', 4, 'displayfield', 'displayfield', '不使用编辑器', 4),
             ('CD0B859B-843D-11EA-8C00-E86A641ED142', '5', 5, 'psi_userfield', 'psi_userfield', '用户字段编辑器', 5);
+            ";
+    $db->execute($sql);
+
+    // t_sysdict_fv_xtype
+    $sql = "INSERT INTO `t_sysdict_fv_xtype` (`id`, `code`, `code_int`, `name`, `py`, `memo`, `show_order`) VALUES
+            ('882978F6-90CA-11EA-B303-E86A641ED142', '1', 1, 'psi_codetable_view_cmp', 'psi_codetable_view_cmp', '数据来自码表的视图', 1);
             ";
     $db->execute($sql);
 

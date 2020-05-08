@@ -1923,7 +1923,8 @@ class CodeTableDAO extends PSIBaseExDAO
 
     $viewPaging = $md["viewPaging"] == 1;
 
-    $sql = "select cr.id, cr.code, cr.name, u.name as create_user_name, r.name as record_status";
+    $sql = "select cr.id, cr.code, cr.name, u.name as create_user_name, 
+            r.name as record_status, r.code_int as record_status_code_int";
 
     foreach ($md["cols"] as $colMd) {
       if ($colMd["isSysCol"]) {
@@ -1948,7 +1949,7 @@ class CodeTableDAO extends PSIBaseExDAO
       $queryParams = array_merge($queryParams, $rs[1]);
     }
 
-    $sql .= " order by code";
+    $sql .= " order by cr.record_status desc, cr.code ";
     if ($viewPaging) {
       $start = $params["start"];
       $limit = $params["limit"];
@@ -1965,6 +1966,7 @@ class CodeTableDAO extends PSIBaseExDAO
         "code" => $v["code"],
         "name" => $v["name"],
         "record_status" => $v["record_status"],
+        "record_status_code_int" => $v["record_status_code_int"],
       ];
 
       foreach ($md["cols"] as $colMd) {

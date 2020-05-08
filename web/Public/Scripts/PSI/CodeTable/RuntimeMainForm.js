@@ -163,21 +163,34 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
     var me = this;
     var modelName = "PSICodeTableRuntime_" + md.tableName;
 
-    var fields = [];
+    var fields = ["record_status_code_int"];
     var cols = [];
     var colsLength = md.colsForView.length;
     for (var i = 0; i < colsLength; i++) {
       var mdCol = md.colsForView[i];
 
       fields.push(mdCol.fieldName);
-
-      cols.push({
+      var col = {
         header: mdCol.caption,
         dataIndex: mdCol.fieldName,
         width: parseInt(mdCol.widthInView),
         menuDisabled: true,
         sortable: false
-      });
+      };
+
+      if (mdCol.fieldName == "record_status") {
+        Ext.apply(col, {
+          renderer: function (value, metaData, record) {
+            if (parseInt(record.get("record_status_code_int")) == 1000) {
+              return value;
+            } else {
+              return "<span style='color:red'>" + value + "</span>";
+            }
+          }
+        });
+      }
+
+      cols.push(col);
     }
 
     Ext.define(modelName, {

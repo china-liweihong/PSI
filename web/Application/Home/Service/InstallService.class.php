@@ -1990,6 +1990,20 @@ class InstallService extends PSIBaseExService
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
             ";
     $db->execute($sql);
+
+    // t_sysdict_fv_xtype
+    $sql = "CREATE TABLE IF NOT EXISTS `t_sysdict_fv_xtype` (
+              `id` varchar(255) NOT NULL,
+              `code` varchar(255) NOT NULL,
+              `code_int` int(11) NOT NULL,
+              `name` varchar(255) NOT NULL,
+              `py` varchar(255) NOT NULL,
+              `memo` varchar(255) NOT NULL,
+              `show_order` int(11) DEFAULT NULL,
+              PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+            ";
+    $db->execute($sql);
   }
 
   /**

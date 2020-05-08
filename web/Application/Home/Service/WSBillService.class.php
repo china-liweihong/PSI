@@ -240,6 +240,8 @@ class WSBillService extends PSIBaseExService
 
     ob_start();
 
+    $utilService = new UtilService();
+
     $ps = new PDFService();
     $pdf = $ps->getInstance();
     $pdf->SetTitle("销售出库单，单号：{$ref}");
@@ -267,10 +269,11 @@ class WSBillService extends PSIBaseExService
      */
     $html = '
 				<table>
-					<tr><td colspan="2">单号：' . $ref . '</td></tr>
+					<tr><td>单号：' . $ref . '</td><td>业务日期：' . $bill["bizDT"] . '</td></tr>
 					<tr><td colspan="2">客户：' . $bill["customerName"] . '</td></tr>
-					<tr><td>业务日期：' . $bill["bizDT"] . '</td><td>出库仓库:' . $bill["warehouseName"] . '</td></tr>
-					<tr><td>业务员：' . $bill["bizUserName"] . '</td><td>销售金额:' . $bill["saleMoney"] . ' 价税合计：' . $bill["moneyWithTax"] . '</td></tr>
+					<tr><td>业务员：' . $bill["bizUserName"] . '</td><td>出库仓库:' . $bill["warehouseName"] . '</td></tr>
+          <tr><td>销售金额：' . $bill["saleMoney"] . ' (' . $utilService->moneyToCap($bill["saleMoney"]) . ')</td>'
+      . '<td>价税合计：' . $bill["moneyWithTax"] . ' (' . $utilService->moneyToCap($bill["moneyWithTax"]) . ')</td></tr>
 					<tr><td colspan="2">送货地址:' . $bill["dealAddress"] . '</td></tr>
 					<tr><td colspan="2">备注:' . $bill["memo"] . '</td></tr>
 				</table>

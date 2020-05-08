@@ -2193,6 +2193,10 @@ class CodeTableDAO extends PSIBaseExDAO
       return $this->bad("在表[{$tableName}]中已经存在字段[{$fieldName}]了");
     }
 
+    if ($fieldName == "record_status_code_int") {
+      return $this->bad("[record_status_code_int]是系统保留的字段名，不能使用这个字段名");
+    }
+
     // 检查字段类型
     if ($fieldType == "varchar") {
       $fieldLength = intval($fieldLength);

@@ -353,6 +353,9 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
     }
   },
 
+  // 新增码表记录
+  // onAddCodeTableRecord这个是固定的名称
+  // 和表t_code_table_buttons的on_click_frontend对应
   onAddCodeTableRecord: function () {
     var me = this;
 
@@ -364,6 +367,7 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
     form.show();
   },
 
+  // 编辑码表记录
   onEditCodeTableRecord: function () {
     var me = this;
     var item = me.getMainGrid().getSelectionModel().getSelection();
@@ -421,6 +425,7 @@ Ext.define("PSI.CodeTable.RuntimeMainForm", {
     return null;
   },
 
+  // 删除码表记录
   onDeleteCodeTableRecord: function () {
     var me = this;
     var md = me.getMetaData();

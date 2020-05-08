@@ -252,6 +252,9 @@ Ext.define("PSI.CodeTable.RuntimeEditForm", {
     }
 
     var f = me.editForm;
+    if (!f.isValid()) {
+      return;
+    }
     var el = f.getEl();
     el && el.mask(PSI.Const.SAVING);
     var sf = {

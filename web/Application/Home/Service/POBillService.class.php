@@ -256,6 +256,8 @@ class POBillService extends PSIBaseExService
 
     ob_start();
 
+    $utilService = new UtilService();
+
     $ps = new PDFService();
     $pdf = $ps->getInstance();
     $pdf->SetTitle("采购订单，单号：{$ref}");
@@ -286,8 +288,10 @@ class POBillService extends PSIBaseExService
 					<tr><td colspan="2">单号：' . $ref . '</td></tr>
 					<tr><td colspan="2">供应商：' . $bill["supplierName"] . '</td></tr>
 					<tr><td>交货日期：' . $bill["dealDate"] . '</td><td>交货地址:' . $bill["dealAddress"] . '</td></tr>
-					<tr><td>业务员：' . $bill["bizUserName"] . '</td><td>税金：' . $bill["tax"] . '</td></tr>
-					<tr><td>采购货款:' . $bill["goodsMoney"] . '</td><td>价税合计：' . $bill["moneyWithTax"] . '</td></tr>
+					<tr><td>业务员：' . $bill["bizUserName"] . '</td><td>税金：' . $bill["tax"] . ' (' . $utilService->moneyToCap($bill["tax"]) . ')</td></tr>
+          <tr><td>采购货款:' . $bill["goodsMoney"] . ' (' . $utilService->moneyToCap($bill["goodsMoney"]) . ')</td>
+              <td>价税合计：' . $bill["moneyWithTax"] . ' (' . $utilService->moneyToCap($bill["moneyWithTax"]) . ')</td>
+          </tr>
 				</table>
 				';
     $pdf->writeHTML($html);

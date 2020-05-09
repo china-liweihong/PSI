@@ -249,6 +249,8 @@ class SCBillService extends PSIBaseExService
 
     ob_start();
 
+    $utileService = new UtilService();
+
     $ps = new PDFService();
     $pdf = $ps->getInstance();
     $pdf->SetTitle("销售合同，合同号：{$ref}");
@@ -280,7 +282,9 @@ class SCBillService extends PSIBaseExService
 					<tr><td>甲方客户：' . $bill["customerName"] . '</td><td>乙方组织：' . $bill["orgName"] . '</td></tr>
 					<tr><td>合同签订日期：' . $bill["bizDT"] . '</td><td>业务员：' . $bill["bizUserName"] . '</td></tr>
 					<tr><td>交货日期：' . $bill["dealDate"] . '</td><td>交货地址:' . $bill["dealAddress"] . '</td></tr>
-					<tr><td colspan="2">合同金额:' . $bill["goodsMoney"] . '  税金： ' . $bill["tax"] . '  价税合计：' . $bill["moneyWithTax"] . '</td></tr>
+          <tr><td>合同金额：' . $bill["goodsMoney"] . ' (' . $utileService->moneyToCap($bill["goodsMoney"]) . ')</td>' .
+      '<td>税金： ' . $bill["tax"] . ' (' . $utileService->moneyToCap($bill["tax"]) . ')</td></tr>
+					<tr><td colspan="2">价税合计：' . $bill["moneyWithTax"] . ' (' . $utileService->moneyToCap($bill["moneyWithTax"]) . ')</td></tr>
 					<tr><td colspan="2"></td></tr>
 					<tr><td colspan="2">品质条款</td></tr>
 					<tr><td colspan="2">' . $bill["qualityClause"] . '</td></tr>

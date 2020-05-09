@@ -242,6 +242,8 @@ class PRBillService extends PSIBaseExService
 
     ob_start();
 
+    $utilService = new UtilService();
+
     $ps = new PDFService();
     $pdf = $ps->getInstance();
     $pdf->SetTitle("采购退货出库单，单号：{$ref}");
@@ -273,7 +275,9 @@ class PRBillService extends PSIBaseExService
 					<tr><td colspan="2">供应商：' . $bill["supplierName"] . '</td></tr>
 					<tr><td>业务日期：' . $bill["bizDT"] . '</td><td>出库仓库:' . $bill["warehouseName"] . '</td></tr>
 					<tr><td>业务员：' . $bill["bizUserName"] . '</td><td></td></tr>
-					<tr><td>退货金额：' . $bill["goodsMoney"] . '</td><td>价税合计：' . $bill["moneyWithTax"] . '</td></tr>
+          <tr><td>退货金额：' . $bill["goodsMoney"] . ' (' . $utilService->moneyToCap($bill["goodsMoney"]) . ')</td>
+              <td>价税合计：' . $bill["moneyWithTax"] . ' (' . $utilService->moneyToCap($bill["moneyWithTax"]) . ')</td>
+          </tr>
 				</table>
 				';
     $pdf->writeHTML($html);

@@ -12,10 +12,6 @@ PSI是企业管理软件和LowCode(低代码)应用平台。
 
 5. LowCode应用平台面向的业务领域：ERP
 
-# PSI演示
-
-PSI的演示见：<a target="_blank" href="https://psi.butterfly.mopaasapp.com/">https://psi.butterfly.mopaasapp.com/</a>
-
 # PSI的开源协议
 
 PSI的开源协议为GPL v3

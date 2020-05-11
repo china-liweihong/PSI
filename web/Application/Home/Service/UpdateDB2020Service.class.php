@@ -25,16 +25,6 @@ class UpdateDB2020Service extends PSIBaseService
     $this->db = $db;
   }
 
-  // ============================================
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // 注意：
-  // 如果修改了数据库结构，别忘记了在InstallService中修改相应的SQL语句
-  // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // ============================================
-  private function notForgot()
-  {
-  }
-
   public function update()
   {
     $this->update_20191113_01();

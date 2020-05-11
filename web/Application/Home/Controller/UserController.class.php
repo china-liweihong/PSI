@@ -3,7 +3,6 @@
 namespace Home\Controller;
 
 use Home\Common\FIdConst;
-use Home\Service\InstallService;
 use Home\Service\UserService;
 use Home\Service\BizConfigService;
 use Home\Service\IPService;
@@ -64,10 +63,6 @@ class UserController extends PSIBaseController
       // 已经登录了，就返回首页
       redirect(__ROOT__);
     }
-
-    // 自动初始化数据库
-    $installService = new InstallService();
-    $installService->autoInstallWhenFirstRun();
 
     $this->initVar();
 

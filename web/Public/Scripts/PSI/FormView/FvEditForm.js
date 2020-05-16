@@ -160,6 +160,7 @@ Ext.define("PSI.FormView.FvEditForm", {
           blankText: "没有输入宽度/高度",
           beforeLabelTextTpl: PSI.Const.REQUIRED,
           name: "widthOrHeight",
+          value: "100%",
           listeners: {
             specialkey: {
               fn: me.onEditSpecialKey,

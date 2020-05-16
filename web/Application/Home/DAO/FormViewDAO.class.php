@@ -260,6 +260,16 @@ class FormViewDAO extends PSIBaseExDAO
       return $this->bad("视图分类不存在");
     }
 
+    // 检查code是否重复
+    if ($code) {
+      $sql = "select count(*) as cnt from t_fv where code = '%s' ";
+      $data = $db->query($sql, $code);
+      $cnt = $data[0]["cnt"];
+      if ($cnt > 0) {
+        return $this->bad("编码为[{$code}]的视图已经存在");
+      }
+    }
+
     if ($layout < 1 || $layout > 3) {
       return $this->bad("不支持当前选择的布局");
     }
@@ -343,6 +353,21 @@ class FormViewDAO extends PSIBaseExDAO
       }
     }
 
+    // fid
+    $sql = "insert into t_fid_plus (fid, name, py, memo)
+            values ('%s', '%s', '%s', '%s')";
+    $rc = $db->execute($sql, $fid, $moduleName, $py, $memo);
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+
+    // 权限
+    $sql = "insert into t_permission_plus (id, fid, name, note, category, py, show_order)
+            values ('%s', '%s', '%s', '%s', '%s','%s', %d)";
+    $rc = $db->execute($sql, $fid, $fid, $moduleName, "模块权限：通过菜单进入{$moduleName}模块的权限", $moduleName, "", 100);
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
 
     // 操作成功
     $params["id"] = $id;

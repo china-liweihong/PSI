@@ -249,7 +249,8 @@ class FormViewDAO extends PSIBaseExDAO
         "code" => $v["code"],
         "text" => $v["name"],
         "children" => [],
-        "leaf" => true
+        "leaf" => true,
+        "iconCls" => "PSI-FvCategory",
       ];
     }
 

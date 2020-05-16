@@ -229,6 +229,35 @@ class FormViewDAO extends PSIBaseExDAO
     return $result;
   }
 
+  private function fvListInternal($parentId)
+  {
+    $db = $this->db;
+
+    $sql = "select id, code, name, fid
+            from t_fv
+            where parent_id = '%s'
+            order by code, name";
+    $data = $db->query($sql, $parentId);
+    $result = [];
+    foreach ($data as $v) {
+      $id = $v["id"];
+
+      // 递归调用自己
+      $children = $this->fvListInternal($id);
+
+      $result[] = [
+        "id" => $id,
+        "code" => $v["code"],
+        "text" => $v["name"],
+        "fid" => $v["fid"],
+        "children" => $children,
+        "leaf" => count($children) == 0,
+        "iconCls" => "PSI-FvCategory",
+      ];
+    }
+    return $result;
+  }
+
   /**
    * 视图的列表
    */
@@ -238,7 +267,7 @@ class FormViewDAO extends PSIBaseExDAO
 
     $categoryId = $params["categoryId"];
 
-    $sql = "select code, name, fid, md_version, is_fixed,
+    $sql = "select id, code, name, fid, md_version, is_fixed,
               module_name
             from t_fv
             where category_id = '%s' and parent_id is null
@@ -246,13 +275,17 @@ class FormViewDAO extends PSIBaseExDAO
     $data = $db->query($sql, $categoryId);
     $result = [];
     foreach ($data as $v) {
+      $id = $v["id"];
+      $children = $this->fvListInternal($id);
+
       $result[] = [
+        "id" => $id,
         "code" => $v["code"],
         "text" => $v["name"],
         "fid" => $v["fid"],
         "mdVersion" => $v["md_version"],
-        "children" => [],
-        "leaf" => true,
+        "children" => $children,
+        "leaf" => count($children) == 0,
         "iconCls" => "PSI-FvCategory",
         "isFixed" => $v["is_fixed"] == 1 ? "▲" : "",
         "moduleName" => $v["module_name"],

@@ -339,7 +339,7 @@ Ext.define("PSI.FormView.MainForm", {
         }, {
           text: "fid",
           dataIndex: "fid",
-          width: 130
+          width: 160
         }, {
           text: "版本",
           dataIndex: "mdVersion",

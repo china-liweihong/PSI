@@ -353,6 +353,59 @@ class FormViewDAO extends PSIBaseExDAO
       }
     }
 
+    if ($layout == 3) {
+      // 上下布局
+      $parentId = $id;
+
+      // 上
+      $upId = $this->newId();
+      $upFid = $fid . "-up";
+      $sql = "insert into t_fv (id, category_id, name, fid,
+                module_name, xtype, region, width_or_height, layout_type, parent_id)
+              values ('%s', '%s', '%s', '%s',
+                '%s', '%s', '%s', '%s', %d, '%s')";
+      $rc = $db->execute(
+        $sql,
+        $upId,
+        $categoryId,
+        $name,
+        $upFid,
+        $moduleName,
+        $xtype,
+        "center",
+        "50%",
+        1,
+        $parentId
+      );
+      if ($rc === false) {
+        return $this->sqlError(__METHOD__, __LINE__);
+      }
+
+      // 下 
+      $downId = $this->newId();
+      $downFid = $fid . "-down";
+      $sql = "insert into t_fv (id, category_id, name, fid,
+                module_name, xtype, region, width_or_height, layout_type, parent_id)
+              values ('%s', '%s', '%s', '%s',
+                '%s', '%s', '%s', '%s', %d, '%s')";
+      $rc = $db->execute(
+        $sql,
+        $downId,
+        $categoryId,
+        $name,
+        $downFid,
+        $moduleName,
+        $xtype,
+        "south",
+        "50%",
+        1,
+        $parentId
+      );
+      if ($rc === false) {
+        return $this->sqlError(__METHOD__, __LINE__);
+      }
+    }
+
     // fid
     $sql = "insert into t_fid_plus (fid, name, py, memo)
             values ('%s', '%s', '%s', '%s')";

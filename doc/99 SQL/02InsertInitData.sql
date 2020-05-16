@@ -754,7 +754,7 @@ INSERT INTO `t_code_table_cols_md` (`id`, `table_id`, `caption`, `db_field_name`
 
 TRUNCATE TABLE `t_psi_db_version`;
 INSERT INTO `t_psi_db_version` (`db_version`, `update_dt`) VALUES
-('20200516-01', now());
+('20200517-01', now());
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

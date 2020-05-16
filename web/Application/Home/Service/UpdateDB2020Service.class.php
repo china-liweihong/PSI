@@ -78,6 +78,20 @@ class UpdateDB2020Service extends PSIBaseService
     $this->update_20200508_01();
     $this->update_20200508_02();
     $this->update_20200516_01();
+    $this->update_20200517_01();
+  }
+
+  private function update_20200517_01()
+  {
+    // 本次更新：调整t_sysdict_fv_xtype数据
+    $db = $this->db;
+
+    $sql = "TRUNCATE TABLE `t_sysdict_fv_xtype`;
+            INSERT INTO `t_sysdict_fv_xtype` (`id`, `code`, `code_int`, `name`, `py`, `memo`, `show_order`) VALUES
+            ('7E444093-97CF-11EA-8BF1-E86A641ED142', '-1', -1, 'panel', 'panel', '占位容器', -1),
+            ('882978F6-90CA-11EA-B303-E86A641ED142', '1', 1, 'psi_codetable_view_cmp', 'psi_codetable_view_cmp', '数据来自码表的视图', 1);
+            ";
+    $db->execute($sql);
   }
 
   private function update_20200516_01()

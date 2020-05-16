@@ -285,7 +285,8 @@ Ext.define("PSI.FormView.MainForm", {
     Ext.define(modelName, {
       extend: "Ext.data.Model",
       fields: ["id", "text", "code", "fid", "memo", "mdVersion", "isFixed",
-        "moduleName", "leaf", "children", "xtype"]
+        "moduleName", "leaf", "children", "xtype", "region",
+        "widthOrHeight", "layoutType"]
     });
 
     var store = Ext.create("Ext.data.TreeStore", {
@@ -341,6 +342,19 @@ Ext.define("PSI.FormView.MainForm", {
           text: "fid",
           dataIndex: "fid",
           width: 160
+        }, {
+          text: "位置",
+          dataIndex: "region",
+          width: 100
+        }, {
+          text: "宽度/高度",
+          dataIndex: "widthOrHeight",
+          align: "right",
+          width: 100
+        }, {
+          text: "布局",
+          dataIndex: "layoutType",
+          width: 100
         }, {
           text: "版本",
           dataIndex: "mdVersion",

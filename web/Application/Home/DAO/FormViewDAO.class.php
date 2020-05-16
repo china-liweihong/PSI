@@ -244,11 +244,39 @@ class FormViewDAO extends PSIBaseExDAO
     }
   }
 
+  private function regionCodeToName($code)
+  {
+    switch ($code) {
+      case "center":
+        return "中";
+      case "west":
+        return "左";
+      case "south":
+        return "下";
+      default:
+        return "";
+    }
+  }
+
+  private function layoutCodeToName($code)
+  {
+    switch ($code) {
+      case 1:
+        return "填满整个区域";
+      case 2:
+        return "左右布局";
+      case 3:
+        return "上下布局";
+      default:
+        return "";
+    }
+  }
+
   private function fvListInternal($parentId)
   {
     $db = $this->db;
 
-    $sql = "select id, code, name, fid, xtype
+    $sql = "select id, code, name, fid, xtype, region, width_or_height, layout_type
             from t_fv
             where parent_id = '%s'
             order by code, name";
@@ -269,6 +297,9 @@ class FormViewDAO extends PSIBaseExDAO
         "leaf" => count($children) == 0,
         "iconCls" => "PSI-FvCategory",
         "xtype" => $this->getXtypeName($v["xtype"]),
+        "region" => $this->regionCodeToName($v["region"]),
+        "widthOrHeight" => $v["width_or_height"],
+        "layoutType" => $this->layoutCodeToName($v["layout_type"]),
       ];
     }
     return $result;
@@ -284,7 +315,7 @@ class FormViewDAO extends PSIBaseExDAO
     $categoryId = $params["categoryId"];
 
     $sql = "select id, code, name, fid, md_version, is_fixed,
-              module_name, xtype
+              module_name, xtype, region, width_or_height, layout_type
             from t_fv
             where category_id = '%s' and parent_id is null
             order by code, name";
@@ -306,6 +337,9 @@ class FormViewDAO extends PSIBaseExDAO
         "isFixed" => $v["is_fixed"] == 1 ? "▲" : "",
         "moduleName" => $v["module_name"],
         "xtype" => $this->getXtypeName($v["xtype"]),
+        "region" => $this->regionCodeToName($v["region"]),
+        "widthOrHeight" => $v["width_or_height"],
+        "layoutType" => $this->layoutCodeToName($v["layout_type"]),
       ];
     }
 

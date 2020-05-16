@@ -234,7 +234,26 @@ class FormViewDAO extends PSIBaseExDAO
    */
   public function fvList($params)
   {
-    return [];
+    $db = $this->db;
+
+    $categoryId = $params["categoryId"];
+
+    $sql = "select code, name
+            from t_fv
+            where category_id = '%s' and parent_id is null
+            order by code";
+    $data = $db->query($sql, $categoryId);
+    $result = [];
+    foreach ($data as $v) {
+      $result[] = [
+        "code" => $v["code"],
+        "text" => $v["name"],
+        "children" => [],
+        "leaf" => true
+      ];
+    }
+
+    return $result;
   }
 
   /**

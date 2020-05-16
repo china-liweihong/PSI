@@ -170,7 +170,16 @@ Ext.define("PSI.FormView.MainForm", {
     me.ajax(r);
   },
 
-  refreshMainGrid: function (id) { },
+  refreshMainGrid: function (id) {
+    var me = this;
+
+    me.getMainGrid().getStore().reload();
+  },
+
+  onCategoryGridSelect: function () {
+    var me = this;
+    me.refreshMainGrid();
+  },
 
   onAddCategory: function () {
     var me = this;
@@ -359,7 +368,15 @@ Ext.define("PSI.FormView.MainForm", {
   },
 
   getQueryParamForMainGrid: function () {
-    return {};
+    var me = this;
+    var item = me.getCategoryGrid().getSelectionModel().getSelection();
+    if (item == null || item.length != 1) {
+      return { categoryId: "" };
+    }
+
+    var category = item[0];
+
+    return { categoryId: category.get("id") };
   },
 
   onMainGridStoreLoad: function () { },

@@ -124,7 +124,9 @@ class FormViewController extends PSIBaseController
         die("没有权限");
       }
 
-      $params = [];
+      $params = [
+        "categoryId" => I("post.categoryId")
+      ];
       $service = new FormViewService();
       $this->ajaxReturn($service->fvList($params));
     }

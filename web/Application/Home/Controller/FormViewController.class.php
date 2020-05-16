@@ -192,7 +192,19 @@ class FormViewController extends PSIBaseController
     if ($us->hasPermission($fid)) {
       $this->initVar();
 
-      $this->display();
+      $service = new FormViewService();
+
+      $params = ["fid" => $fid];
+      $md = $service->getMetadataForRuntimeInit($params);
+      if ($md) {
+        $this->assign("title", $md["title"]);
+        $this->assign("fid", $fid);
+
+        $this->display();
+      } else {
+        // 错误的fid，跳转到首页
+        $this->gotoLoginPage("/Home");
+      }
     } else {
       $this->gotoLoginPage("/Home");
     }

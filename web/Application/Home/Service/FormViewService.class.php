@@ -193,4 +193,17 @@ class FormViewService extends PSIBaseExService
     $dao = new FormViewDAO($this->db());
     return $dao->fvInfo($params);
   }
+
+  /**
+   * 查询$fid的元数据
+   */
+  public function getMetadataForRuntimeInit($params)
+  {
+    if ($this->isNotOnline()) {
+      return null;
+    }
+
+    $dao = new FormViewDAO($this->db());
+    return $dao->getMetadataForRuntimeInit($params);
+  }
 }

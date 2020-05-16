@@ -195,7 +195,7 @@ class FormViewService extends PSIBaseExService
   }
 
   /**
-   * 查询$fid的元数据
+   * 查询某个fid的元数据
    */
   public function getMetadataForRuntimeInit($params)
   {

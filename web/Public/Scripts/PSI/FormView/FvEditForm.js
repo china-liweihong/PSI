@@ -179,7 +179,7 @@ Ext.define("PSI.FormView.FvEditForm", {
             data: [[1, "填满整个区域"], [2, "左右布局"], [3, "上下布局"]]
           }),
           name: "layout",
-          value: 1,
+          value: 2,
           width: 510,
           colspan: 2
         }, {

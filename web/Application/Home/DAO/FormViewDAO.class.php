@@ -601,14 +601,38 @@ class FormViewDAO extends PSIBaseExDAO
 
     $fid = $params["fid"];
 
-    $sql = "select module_name from t_fv where fid = '%s' ";
+    $sql = "select id, module_name, layout_type 
+            from t_fv where fid = '%s' ";
     $data = $db->query($sql, $fid);
     if (!$data) {
       return null;
     }
     $v = $data[0];
 
-    $result = ["title" => $v["module_name"]];
+    $id = $v["id"];
+    $layoutType = $v["layout_type"];
+
+    $result = [
+      "title" => $v["module_name"],
+      "layoutType" => $layoutType
+    ];
+
+    if ($layoutType > 1) {
+      // 子视图
+      // TODO: 需要改成递归算法
+      $sql = "select region, width_or_height
+              from t_fv where parent_id = '%s' ";
+      $data = $db->query($sql, $id);
+      $subView = [];
+      foreach ($data as $v) {
+        $subView[] = [
+          "region" => $v["region"],
+          "widthOrHeight" => $v["width_or_height"],
+        ];
+      }
+
+      $result["subView"] = $subView;
+    }
 
 
     return $result;

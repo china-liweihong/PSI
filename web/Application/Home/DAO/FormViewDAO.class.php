@@ -251,13 +251,17 @@ class FormViewDAO extends PSIBaseExDAO
     $xtype = $params["xtype"];
     $region = $params["region"];
     $widthOrHeight = $params["widthOrHeight"];
-    $layout = $params["layout"];
+    $layout = intval($params["layout"]);
     $memo = $params["memo"];
     $py = $params["py"];
 
     $category = $this->getViewCategoryById($categoryId);
     if (!$category) {
       return $this->bad("视图分类不存在");
+    }
+
+    if ($layout < 1 || $layout > 3) {
+      return $this->bad("不支持当前选择的布局");
     }
 
     $id = $this->newId();
@@ -284,6 +288,59 @@ class FormViewDAO extends PSIBaseExDAO
     );
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
+    }
+
+    if ($layout == 2) {
+      // 左右布局
+      $parentId = $id;
+
+      // 左
+      $leftId = $this->newId();
+      $leftFid = $fid . "-left";
+      $sql = "insert into t_fv (id, category_id, name, fid,
+                module_name, xtype, region, width_or_height, layout_type, parent_id)
+              values ('%s', '%s', '%s', '%s',
+                '%s', '%s', '%s', '%s', %d, '%s')";
+      $rc = $db->execute(
+        $sql,
+        $leftId,
+        $categoryId,
+        $name,
+        $leftFid,
+        $moduleName,
+        $xtype,
+        "west",
+        "30%",
+        1,
+        $parentId
+      );
+      if ($rc === false) {
+        return $this->sqlError(__METHOD__, __LINE__);
+      }
+
+      // 右
+      $rightId = $this->newId();
+      $rightFid = $fid . "-right";
+      $sql = "insert into t_fv (id, category_id, name, fid,
+                module_name, xtype, region, width_or_height, layout_type, parent_id)
+              values ('%s', '%s', '%s', '%s',
+                '%s', '%s', '%s', '%s', %d, '%s')";
+      $rc = $db->execute(
+        $sql,
+        $rightId,
+        $categoryId,
+        $name,
+        $rightFid,
+        $moduleName,
+        $xtype,
+        "center",
+        "70%",
+        1,
+        $parentId
+      );
+      if ($rc === false) {
+        return $this->sqlError(__METHOD__, __LINE__);
+      }
     }
 
 

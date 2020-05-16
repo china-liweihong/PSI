@@ -229,11 +229,26 @@ class FormViewDAO extends PSIBaseExDAO
     return $result;
   }
 
+  private function getXtypeName($code)
+  {
+    $db = $this->db;
+
+    $sql = "select name, memo from t_sysdict_fv_xtype where code_int = %d";
+    $data = $db->query($sql, $code);
+    if ($data) {
+      $v = $data[0];
+
+      return $v["name"] . " - " . $v["memo"];
+    } else {
+      return "";
+    }
+  }
+
   private function fvListInternal($parentId)
   {
     $db = $this->db;
 
-    $sql = "select id, code, name, fid
+    $sql = "select id, code, name, fid, xtype
             from t_fv
             where parent_id = '%s'
             order by code, name";
@@ -253,6 +268,7 @@ class FormViewDAO extends PSIBaseExDAO
         "children" => $children,
         "leaf" => count($children) == 0,
         "iconCls" => "PSI-FvCategory",
+        "xtype" => $this->getXtypeName($v["xtype"]),
       ];
     }
     return $result;
@@ -268,7 +284,7 @@ class FormViewDAO extends PSIBaseExDAO
     $categoryId = $params["categoryId"];
 
     $sql = "select id, code, name, fid, md_version, is_fixed,
-              module_name
+              module_name, xtype
             from t_fv
             where category_id = '%s' and parent_id is null
             order by code, name";
@@ -289,6 +305,7 @@ class FormViewDAO extends PSIBaseExDAO
         "iconCls" => "PSI-FvCategory",
         "isFixed" => $v["is_fixed"] == 1 ? "▲" : "",
         "moduleName" => $v["module_name"],
+        "xtype" => $this->getXtypeName($v["xtype"]),
       ];
     }
 

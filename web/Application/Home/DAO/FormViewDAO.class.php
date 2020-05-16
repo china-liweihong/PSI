@@ -591,4 +591,26 @@ class FormViewDAO extends PSIBaseExDAO
       return null;
     }
   }
+
+  /**
+   * 查询某个fid的完整元数据，用于创建UI
+   */
+  public function fetchMetaDataForRuntime($params)
+  {
+    $db = $this->db;
+
+    $fid = $params["fid"];
+
+    $sql = "select module_name from t_fv where fid = '%s' ";
+    $data = $db->query($sql, $fid);
+    if (!$data) {
+      return null;
+    }
+    $v = $data[0];
+
+    $result = ["title" => $v["module_name"]];
+
+
+    return $result;
+  }
 }

@@ -209,4 +209,23 @@ class FormViewController extends PSIBaseController
       $this->gotoLoginPage("/Home");
     }
   }
+
+  /**
+   * 查询某个fid的完整元数据，用于创建UI
+   */
+  public function fetchMetaDataForRuntime()
+  {
+    if (IS_POST) {
+      $fid = I("post.fid");
+
+      $us = new UserService();
+      if (!$us->hasPermission($fid)) {
+        die("没有权限");
+      }
+
+      $params = ["fid" => $fid];
+      $service = new FormViewService();
+      $this->ajaxReturn($service->fetchMetaDataForRuntime($params));
+    }
+  }
 }

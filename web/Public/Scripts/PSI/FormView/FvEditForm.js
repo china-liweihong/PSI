@@ -140,6 +140,52 @@ Ext.define("PSI.FormView.FvEditForm", {
           width: 510,
           colspan: 2
         }, {
+          id: "PSI_FormView_FvEditForm_editRegion",
+          xtype: "combo",
+          queryMode: "local",
+          editable: false,
+          valueField: "id",
+          fieldLabel: "位置",
+          beforeLabelTextTpl: PSI.Const.REQUIRED,
+          store: Ext.create("Ext.data.ArrayStore", {
+            fields: ["id", "text"],
+            data: [["center", "中"], ["west", "左"], ["south", "下"]]
+          }),
+          name: "region",
+          value: "center"
+        }, {
+          id: "PSI_FormView_FvEditForm_editWidthOrHeight",
+          fieldLabel: "宽度/高度",
+          allowBlank: false,
+          blankText: "没有输入宽度/高度",
+          beforeLabelTextTpl: PSI.Const.REQUIRED,
+          xtype: "numberfield",
+          hideTrigger: true,
+          allowDecimal: false,
+          name: "widthOrHeight",
+          listeners: {
+            specialkey: {
+              fn: me.onEditSpecialKey,
+              scope: me
+            }
+          }
+        }, {
+          id: "PSI_FormView_FvEditForm_editLayout",
+          xtype: "combo",
+          queryMode: "local",
+          editable: false,
+          valueField: "id",
+          fieldLabel: "布局",
+          beforeLabelTextTpl: PSI.Const.REQUIRED,
+          store: Ext.create("Ext.data.ArrayStore", {
+            fields: ["id", "text"],
+            data: [[1, "填满整个区域"], [2, "左右布局"], [3, "上下布局"]]
+          }),
+          name: "layout",
+          value: 1,
+          width: 510,
+          colspan: 2
+        }, {
           id: "PSI_FormView_FvEditForm_editMemo",
           fieldLabel: "备注",
           name: "memo",
@@ -177,11 +223,14 @@ Ext.define("PSI.FormView.FvEditForm", {
     me.editName = Ext.getCmp("PSI_FormView_FvEditForm_editName");
     me.editModuleName = Ext.getCmp("PSI_FormView_FvEditForm_editModuleName");
     me.editXtype = Ext.getCmp("PSI_FormView_FvEditForm_editXtype");
+    me.editRegion = Ext.getCmp("PSI_FormView_FvEditForm_editRegion");
+    me.editWidthOrHeight = Ext.getCmp("PSI_FormView_FvEditForm_editWidthOrHeight");
+    me.editLayout = Ext.getCmp("PSI_FormView_FvEditForm_editLayout");
     me.editMemo = Ext.getCmp("PSI_FormView_FvEditForm_editMemo");
 
     me.__editorList = [
       me.editCategory, me.editCode, me.editName, me.editModuleName,
-      me.editXtype, me.editMemo];
+      me.editWidthOrHeight, me.editMemo];
 
     var c = me.getCategory();
     if (c) {
@@ -219,6 +268,9 @@ Ext.define("PSI.FormView.FvEditForm", {
             me.editName.setValue(data.name);
             me.editModuleName.setValue(data.moduleName);
             me.editXtype.setValue(parseInt(data.xtype));
+            me.editRegion.setValue(data.region);
+            me.editWidthOrHeight.setValue(data.widthOrHeight);
+            me.editLayout.setValue(data.layout);
             me.editMemo.setValue(data.memo);
           }
         }

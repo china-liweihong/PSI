@@ -238,7 +238,8 @@ class FormViewDAO extends PSIBaseExDAO
 
     $categoryId = $params["categoryId"];
 
-    $sql = "select code, name
+    $sql = "select code, name, fid, md_version, is_fixed,
+              module_name
             from t_fv
             where category_id = '%s' and parent_id is null
             order by code, name";
@@ -248,9 +249,13 @@ class FormViewDAO extends PSIBaseExDAO
       $result[] = [
         "code" => $v["code"],
         "text" => $v["name"],
+        "fid" => $v["fid"],
+        "mdVersion" => $v["md_version"],
         "children" => [],
         "leaf" => true,
         "iconCls" => "PSI-FvCategory",
+        "isFixed" => $v["is_fixed"] == 1 ? "▲" : "",
+        "moduleName" => $v["module_name"],
       ];
     }
 

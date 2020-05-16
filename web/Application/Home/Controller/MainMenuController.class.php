@@ -56,6 +56,9 @@ class MainMenuController extends PSIBaseController
     } else if (substr($fid, 0, 2) == "fm") {
       //自定义表单
       redirect(__ROOT__ . "/Home/Form/run?fid={$fid}");
+    } else if (substr($fid, 0, 2) == "fv") {
+      // 视图
+      redirect(__ROOT__ . "/Home/FormView/run?fid={$fid}");
     } else {
       // 系统模块
       switch ($fid) {

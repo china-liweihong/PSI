@@ -1,0 +1,13 @@
+<layout name="layout" />
+
+<script>
+  Ext.onReady(function () {
+    var app = Ext.create("PSI.App", {
+      userName: "{$loginUserName}",
+      productionName: "{$productionName}",
+      appHeaderInfo: {
+        title: "{$title}"
+      }
+    });
+  });
+</script>

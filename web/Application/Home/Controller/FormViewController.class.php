@@ -180,4 +180,21 @@ class FormViewController extends PSIBaseController
       $this->ajaxReturn($service->fvInfo($params));
     }
   }
+
+  /**
+   * 视图 - 运行主界面
+   */
+  public function run()
+  {
+    $fid = I("get.fid");
+
+    $us = new UserService();
+    if ($us->hasPermission($fid)) {
+      $this->initVar();
+
+      $this->display();
+    } else {
+      $this->gotoLoginPage("/Home");
+    }
+  }
 }

@@ -10,6 +10,7 @@ Ext.define("PSI.FormView.MainForm", {
     Ext.apply(me, {
       tbar: me.getToolbarCmp(),
       items: [{
+        id: "panelCategory",
         border: 0,
         split: true,
         region: "west",

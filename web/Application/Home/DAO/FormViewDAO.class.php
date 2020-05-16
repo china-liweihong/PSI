@@ -241,7 +241,7 @@ class FormViewDAO extends PSIBaseExDAO
     $sql = "select code, name
             from t_fv
             where category_id = '%s' and parent_id is null
-            order by code";
+            order by code, name";
     $data = $db->query($sql, $categoryId);
     $result = [];
     foreach ($data as $v) {

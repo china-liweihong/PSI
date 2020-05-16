@@ -252,4 +252,32 @@ class FormViewDAO extends PSIBaseExDAO
   {
     return $this->todo();
   }
+
+  /**
+   * 某个视图的详情
+   */
+  public function fvInfo($params)
+  {
+    $db = $this->db;
+
+    // 视图id
+    $id = $params["id"];
+
+    $sql = "select code_int, name, memo from t_sysdict_fv_xtype order by show_order";
+    $data = $db->query($sql);
+    $allXtype = [];
+    foreach ($data as $v) {
+      $allXtype[] = [
+        "id" => $v["code_int"],
+        "text" => $v["name"] . " - " . $v["memo"]
+      ];
+    }
+    $result = ["allXtype" => $allXtype];
+
+    if ($id) {
+      // 编辑
+    }
+
+    return $result;
+  }
 }

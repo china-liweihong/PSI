@@ -125,6 +125,21 @@ Ext.define("PSI.FormView.FvEditForm", {
             }
           }
         }, {
+          id: "PSI_FormView_FvEditForm_editXtype",
+          xtype: "combo",
+          queryMode: "local",
+          editable: false,
+          valueField: "id",
+          fieldLabel: "xtype",
+          beforeLabelTextTpl: PSI.Const.REQUIRED,
+          store: Ext.create("Ext.data.ArrayStore", {
+            fields: ["id", "text"],
+            data: []
+          }),
+          name: "xtype",
+          width: 510,
+          colspan: 2
+        }, {
           id: "PSI_FormView_FvEditForm_editMemo",
           fieldLabel: "备注",
           name: "memo",
@@ -161,11 +176,12 @@ Ext.define("PSI.FormView.FvEditForm", {
     me.editCode = Ext.getCmp("PSI_FormView_FvEditForm_editCode");
     me.editName = Ext.getCmp("PSI_FormView_FvEditForm_editName");
     me.editModuleName = Ext.getCmp("PSI_FormView_FvEditForm_editModuleName");
+    me.editXtype = Ext.getCmp("PSI_FormView_FvEditForm_editXtype");
     me.editMemo = Ext.getCmp("PSI_FormView_FvEditForm_editMemo");
 
     me.__editorList = [
       me.editCategory, me.editCode, me.editName, me.editModuleName,
-      me.editMemo];
+      me.editXtype, me.editMemo];
 
     var c = me.getCategory();
     if (c) {
@@ -179,33 +195,37 @@ Ext.define("PSI.FormView.FvEditForm", {
 
     Ext.get(window).on('beforeunload', me.onWindowBeforeUnload);
 
-    if (me.adding) {
-      // 新建
-    } else {
-      // 编辑
-      var el = me.getEl();
-      el && el.mask(PSI.Const.LOADING);
-      Ext.Ajax.request({
-        url: me.URL("Home/FormView/fvInfo"),
-        params: {
-          id: me.getEntity().get("id")
-        },
-        method: "POST",
-        callback: function (options, success, response) {
-          if (success) {
-            var data = Ext.JSON.decode(response.responseText);
+    var el = me.getEl();
+    el && el.mask(PSI.Const.LOADING);
+    me.ajax({
+      url: me.URL("Home/FormView/fvInfo"),
+      params: {
+        id: me.adding ? null : me.getEntity().get("id")
+      },
+      callback: function (options, success, response) {
+        if (success) {
+          var data = Ext.JSON.decode(response.responseText);
+          var store = me.editXtype.getStore();
+          store.removeAll();
+          store.add(data.allXtype);
+
+          if (me.adding) {
+            me.editXtype.setValue(store.getAt(0));
+          } else {
+            // 编辑
             me.editCategory.setIdValue(data.categoryId);
             me.editCategory.setValue(data.categoryName);
             me.editCode.setValue(data.code);
             me.editName.setValue(data.name);
             me.editModuleName.setValue(data.moduleName);
+            me.editXtype.setValue(parseInt(data.xtype));
             me.editMemo.setValue(data.memo);
           }
-
-          el && el.unmask();
         }
-      });
-    }
+
+        el && el.unmask();
+      }
+    });
 
     me.editCode.focus();
     me.editCode.setValue(me.editCode.getValue());

@@ -242,7 +242,54 @@ class FormViewDAO extends PSIBaseExDAO
    */
   public function addFv(&$params)
   {
-    return $this->todo();
+    $db = $this->db;
+
+    $categoryId = $params["categoryId"];
+    $code = $params["code"];
+    $name = $params["name"];
+    $moduleName = $params["moduleName"];
+    $xtype = $params["xtype"];
+    $region = $params["region"];
+    $widthOrHeight = $params["widthOrHeight"];
+    $layout = $params["layout"];
+    $memo = $params["memo"];
+    $py = $params["py"];
+
+    $category = $this->getViewCategoryById($categoryId);
+    if (!$category) {
+      return $this->bad("视图分类不存在");
+    }
+
+    $id = $this->newId();
+    $fid = "fv" . date("YmdHis");
+
+    $sql = "insert into t_fv (id, category_id, code, name, memo, py, fid,
+              module_name, xtype, region, width_or_height, layout_type)
+            values ('%s', '%s', '%s', '%s', '%s', '%s', '%s',
+              '%s', '%s', '%s', '%s', %d)";
+    $rc = $db->execute(
+      $sql,
+      $id,
+      $categoryId,
+      $code,
+      $name,
+      $memo,
+      $py,
+      $fid,
+      $moduleName,
+      $xtype,
+      $region,
+      $widthOrHeight,
+      $layout
+    );
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+
+
+    // 操作成功
+    $params["id"] = $id;
+    return null;
   }
 
   /**

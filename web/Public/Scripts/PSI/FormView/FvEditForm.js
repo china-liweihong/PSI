@@ -159,9 +159,6 @@ Ext.define("PSI.FormView.FvEditForm", {
           allowBlank: false,
           blankText: "没有输入宽度/高度",
           beforeLabelTextTpl: PSI.Const.REQUIRED,
-          xtype: "numberfield",
-          hideTrigger: true,
-          allowDecimal: false,
           name: "widthOrHeight",
           listeners: {
             specialkey: {

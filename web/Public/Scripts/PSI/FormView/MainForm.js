@@ -170,6 +170,8 @@ Ext.define("PSI.FormView.MainForm", {
     me.ajax(r);
   },
 
+  refreshMainGrid: function (id) { },
+
   onAddCategory: function () {
     var me = this;
 

@@ -406,6 +406,25 @@ class FormViewDAO extends PSIBaseExDAO
       return $this->bad("不支持当前选择的数据源");
     }
 
+    // 检查数据源表是否存在
+    if ($dataSourceType == 1) {
+      // 数据源是码表
+      $sql = "select count(*) as cnt from t_code_table_md where table_name = '%s' ";
+      $data = $db->query($sql, $dataSourceTableName);
+      $cnt = $data[0]["cnt"];
+      if ($cnt != 1) {
+        return $this->bad("码表[{$dataSourceTableName}]的元数据不存在");
+      }
+    } else if ($dataSourceType == 2) {
+      // 数据源是表单
+      $sql = "select count(*) as cnt from t_form where table_name = '%s' ";
+      $data = $db->query($sql, $dataSourceTableName);
+      $cnt = $data[0]["cnt"];
+      if ($cnt != 1) {
+        return $this->bad("自定义表单[{$dataSourceTableName}]的元数据不存在");
+      }
+    }
+
     $id = $this->newId();
     $fid = "fv" . date("YmdHis");
 

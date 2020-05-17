@@ -272,11 +272,24 @@ class FormViewDAO extends PSIBaseExDAO
     }
   }
 
+  private function dataSourceCodeToName($code)
+  {
+    switch ($code) {
+      case 1:
+        return "码表";
+      case 2:
+        return "自定义表单";
+      default:
+        return "";
+    }
+  }
+
   private function fvListInternal($parentId)
   {
     $db = $this->db;
 
-    $sql = "select id, code, name, fid, xtype, region, width_or_height, layout_type
+    $sql = "select id, code, name, fid, xtype, region, width_or_height, layout_type,
+              data_source_type, data_source_table_name
             from t_fv
             where parent_id = '%s'
             order by code, name";
@@ -300,6 +313,8 @@ class FormViewDAO extends PSIBaseExDAO
         "region" => $this->regionCodeToName($v["region"]),
         "widthOrHeight" => $v["width_or_height"],
         "layoutType" => $this->layoutCodeToName($v["layout_type"]),
+        "dataSourceType" => $this->dataSourceCodeToName($v["data_source_type"]),
+        "dataSourceTableName" => $v["data_source_table_name"],
       ];
     }
     return $result;
@@ -315,7 +330,8 @@ class FormViewDAO extends PSIBaseExDAO
     $categoryId = $params["categoryId"];
 
     $sql = "select id, code, name, fid, md_version, is_fixed,
-              module_name, xtype, region, width_or_height, layout_type
+              module_name, xtype, region, width_or_height, layout_type,
+              data_source_type, data_source_table_name
             from t_fv
             where category_id = '%s' and parent_id is null
             order by code, name";
@@ -339,6 +355,8 @@ class FormViewDAO extends PSIBaseExDAO
         "xtype" => $this->getXtypeName($v["xtype"]),
         "widthOrHeight" => $v["width_or_height"],
         "layoutType" => $this->layoutCodeToName($v["layout_type"]),
+        "dataSourceType" => $this->dataSourceCodeToName($v["data_source_type"]),
+        "dataSourceTableName" => $v["data_source_table_name"],
       ];
     }
 

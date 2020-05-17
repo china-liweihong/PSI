@@ -79,6 +79,29 @@ class UpdateDB2020Service extends PSIBaseService
     $this->update_20200508_02();
     $this->update_20200516_01();
     $this->update_20200517_01();
+    $this->update_20200517_02();
+  }
+
+  private function update_20200517_02()
+  {
+    // 本次更新：t_fv新增字段data_source_type和data_source_table_name
+    $db = $this->db;
+
+    // data_source_type
+    $tableName = "t_fv";
+    $columnName = "data_source_type";
+    if (!$this->columnExists($db, $tableName, $columnName)) {
+      $sql = "alter table {$tableName} add {$columnName} int(11) NOT NULL DEFAULT 1;";
+      $db->execute($sql);
+    }
+
+    // data_source_table_name
+    $tableName = "t_fv";
+    $columnName = "data_source_table_name";
+    if (!$this->columnExists($db, $tableName, $columnName)) {
+      $sql = "alter table {$tableName} add {$columnName} varchar(255) DEFAULT NULL;";
+      $db->execute($sql);
+    }
   }
 
   private function update_20200517_01()

@@ -1742,6 +1742,8 @@ CREATE TABLE IF NOT EXISTS `t_fv` (
   `region` varchar(255) DEFAULT NULL,
   `width_or_height` varchar(255) DEFAULT NULL,
   `layout_type` int(11) NOT NULL DEFAULT 1,
+  `data_source_type` int(11) NOT NULL DEFAULT 1,
+  `data_source_table_name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

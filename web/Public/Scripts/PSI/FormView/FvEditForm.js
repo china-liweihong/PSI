@@ -180,7 +180,34 @@ Ext.define("PSI.FormView.FvEditForm", {
             data: [[1, "填满整个区域"], [2, "左右布局"], [3, "上下布局"]]
           }),
           name: "layout",
-          value: 2,
+          value: 2
+        }, {
+          id: "PSI_FormView_FvEditForm_editDataSourceType",
+          xtype: "combo",
+          queryMode: "local",
+          editable: false,
+          valueField: "id",
+          fieldLabel: "数据源",
+          beforeLabelTextTpl: PSI.Const.REQUIRED,
+          store: Ext.create("Ext.data.ArrayStore", {
+            fields: ["id", "text"],
+            data: [[1, "码表"], [2, "自定义表单"]]
+          }),
+          name: "dataSourceType",
+          value: 1
+        }, {
+          id: "PSI_FormView_FvEditForm_editDataSouceTableName",
+          fieldLabel: "数据源表名",
+          allowBlank: false,
+          blankText: "没有输入数据源表名",
+          beforeLabelTextTpl: PSI.Const.REQUIRED,
+          name: "dataSourceTableName",
+          listeners: {
+            specialkey: {
+              fn: me.onEditSpecialKey,
+              scope: me
+            }
+          },
           width: 510,
           colspan: 2
         }, {
@@ -224,11 +251,13 @@ Ext.define("PSI.FormView.FvEditForm", {
     me.editRegion = Ext.getCmp("PSI_FormView_FvEditForm_editRegion");
     me.editWidthOrHeight = Ext.getCmp("PSI_FormView_FvEditForm_editWidthOrHeight");
     me.editLayout = Ext.getCmp("PSI_FormView_FvEditForm_editLayout");
+    me.editDataSourceType = Ext.getCmp("PSI_FormView_FvEditForm_editDataSourceType");
+    me.editDataSourceTableName = Ext.getCmp("PSI_FormView_FvEditForm_editDataSouceTableName");
     me.editMemo = Ext.getCmp("PSI_FormView_FvEditForm_editMemo");
 
     me.__editorList = [
       me.editCategory, me.editCode, me.editName, me.editModuleName,
-      me.editWidthOrHeight, me.editMemo];
+      me.editWidthOrHeight, me.editDataSourceTableName, me.editMemo];
 
     var c = me.getCategory();
     if (c) {
@@ -269,6 +298,8 @@ Ext.define("PSI.FormView.FvEditForm", {
             me.editRegion.setValue(data.region);
             me.editWidthOrHeight.setValue(data.widthOrHeight);
             me.editLayout.setValue(data.layout);
+            me.editDataSourceType.setValue(data.dataSourceType);
+            me.editDataSourceTableName.setValue(data.dataSourceTableName);
             me.editMemo.setValue(data.memo);
           }
         }

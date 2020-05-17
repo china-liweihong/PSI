@@ -21,18 +21,6 @@ class PSIBaseService
   }
 
   /**
-   * 判断当前环境是否是MoPaaS
-   *
-   * @return boolean true: 当前运行环境是MoPaaS
-   */
-  public function isMoPaaS()
-  {
-    // VCAP_APPLICATION 是 CloudFoundry 所带的系统环境变量
-    // 所以这个判断方法只是当前的解决办法
-    return getenv("VCAP_APPLICATION") != null;
-  }
-
-  /**
    * 操作成功
    */
   protected function ok($id = null)

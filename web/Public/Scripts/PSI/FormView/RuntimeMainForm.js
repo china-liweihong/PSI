@@ -99,6 +99,24 @@ Ext.define("PSI.FormView.RuntimeMainForm", {
 
         mainPanel.add(item);
       }
+    } else if (md.layoutType == "3") {
+      // 上下布局
+      for (var i = 0; i < md.subView.length; i++) {
+        var sv = md.subView[i];
+        var item = {
+          border: 0,
+          layout: "fit",
+          region: sv.region,
+          height: sv.widthOrHeight
+        };
+        if (sv.region == "south") {
+          Ext.apply(item, {
+            split: true
+          });
+        }
+
+        mainPanel.add(item);
+      }
     }
   }
 });

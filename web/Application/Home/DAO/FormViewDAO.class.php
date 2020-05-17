@@ -620,14 +620,19 @@ class FormViewDAO extends PSIBaseExDAO
     if ($layoutType > 1) {
       // 子视图
       // TODO: 需要改成递归算法
-      $sql = "select region, width_or_height
+      $sql = "select region, width_or_height, xtype
               from t_fv where parent_id = '%s' ";
       $data = $db->query($sql, $id);
       $subView = [];
       foreach ($data as $v) {
+        $sql = "select name from t_sysdict_fv_xtype where code_int = %d";
+        $d = $db->query($sql, $v["xtype"]);
+        $xtype = $d[0]["name"] ?? "panel";
+
         $subView[] = [
           "region" => $v["region"],
           "widthOrHeight" => $v["width_or_height"],
+          "xtype" => $xtype
         ];
       }
 

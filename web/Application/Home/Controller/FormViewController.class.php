@@ -153,6 +153,8 @@ class FormViewController extends PSIBaseController
         "region" => I("post.region"),
         "widthOrHeight" => I("post.widthOrHeight"),
         "layout" => I("post.layout"),
+        "dataSourceType" => I("post.dataSourceType"),
+        "dataSourceTableName" => I("post.dataSourceTableName"),
         "memo" => I("post.memo"),
       ];
 

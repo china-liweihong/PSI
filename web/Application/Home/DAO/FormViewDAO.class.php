@@ -360,6 +360,8 @@ class FormViewDAO extends PSIBaseExDAO
     $region = $params["region"];
     $widthOrHeight = $params["widthOrHeight"];
     $layout = intval($params["layout"]);
+    $dataSourceType = intval($params["dataSourceType"]);
+    $dataSourceTableName = $params["dataSourceTableName"];
     $memo = $params["memo"];
     $py = $params["py"];
 
@@ -382,13 +384,19 @@ class FormViewDAO extends PSIBaseExDAO
       return $this->bad("不支持当前选择的布局");
     }
 
+    if ($dataSourceType < 1 || $dataSourceType > 2) {
+      return $this->bad("不支持当前选择的数据源");
+    }
+
     $id = $this->newId();
     $fid = "fv" . date("YmdHis");
 
     $sql = "insert into t_fv (id, category_id, code, name, memo, py, fid,
-              module_name, xtype, region, width_or_height, layout_type)
+              module_name, xtype, region, width_or_height, layout_type,
+              data_source_type, data_source_table_name)
             values ('%s', '%s', '%s', '%s', '%s', '%s', '%s',
-              '%s', '%s', '%s', '%s', %d)";
+              '%s', '%s', '%s', '%s', %d,
+              %d, '%s')";
     $rc = $db->execute(
       $sql,
       $id,
@@ -402,7 +410,9 @@ class FormViewDAO extends PSIBaseExDAO
       $xtype,
       $region,
       $widthOrHeight,
-      $layout
+      $layout,
+      $dataSourceType,
+      $dataSourceTableName
     );
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);
@@ -416,9 +426,11 @@ class FormViewDAO extends PSIBaseExDAO
       $leftId = $this->newId();
       $leftFid = $fid . "-1";
       $sql = "insert into t_fv (id, category_id, name, fid,
-                module_name, xtype, region, width_or_height, layout_type, parent_id)
+                module_name, xtype, region, width_or_height, layout_type, parent_id,
+                data_source_type, data_source_table_name)
               values ('%s', '%s', '%s', '%s',
-                '%s', '%s', '%s', '%s', %d, '%s')";
+                '%s', '%s', '%s', '%s', %d, '%s',
+                %d, '%s')";
       $rc = $db->execute(
         $sql,
         $leftId,
@@ -430,7 +442,9 @@ class FormViewDAO extends PSIBaseExDAO
         "west",
         "30%",
         1,
-        $parentId
+        $parentId,
+        $dataSourceType,
+        $dataSourceTableName
       );
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -440,9 +454,11 @@ class FormViewDAO extends PSIBaseExDAO
       $rightId = $this->newId();
       $rightFid = $fid . "-2";
       $sql = "insert into t_fv (id, category_id, name, fid,
-                module_name, xtype, region, width_or_height, layout_type, parent_id)
+                module_name, xtype, region, width_or_height, layout_type, parent_id,
+                data_source_type, data_source_table_name)
               values ('%s', '%s', '%s', '%s',
-                '%s', '%s', '%s', '%s', %d, '%s')";
+                '%s', '%s', '%s', '%s', %d, '%s',
+                %d, '%s')";
       $rc = $db->execute(
         $sql,
         $rightId,
@@ -454,7 +470,9 @@ class FormViewDAO extends PSIBaseExDAO
         "center",
         "70%",
         1,
-        $parentId
+        $parentId,
+        $dataSourceType,
+        $dataSourceTableName
       );
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -469,9 +487,11 @@ class FormViewDAO extends PSIBaseExDAO
       $upId = $this->newId();
       $upFid = $fid . "-1";
       $sql = "insert into t_fv (id, category_id, name, fid,
-                module_name, xtype, region, width_or_height, layout_type, parent_id)
+                module_name, xtype, region, width_or_height, layout_type, parent_id,
+                data_source_type, data_source_table_name)
               values ('%s', '%s', '%s', '%s',
-                '%s', '%s', '%s', '%s', %d, '%s')";
+                '%s', '%s', '%s', '%s', %d, '%s',
+                %d, '%s')";
       $rc = $db->execute(
         $sql,
         $upId,
@@ -483,7 +503,9 @@ class FormViewDAO extends PSIBaseExDAO
         "center",
         "50%",
         1,
-        $parentId
+        $parentId,
+        $dataSourceType,
+        $dataSourceTableName
       );
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
@@ -493,9 +515,11 @@ class FormViewDAO extends PSIBaseExDAO
       $downId = $this->newId();
       $downFid = $fid . "-2";
       $sql = "insert into t_fv (id, category_id, name, fid,
-                module_name, xtype, region, width_or_height, layout_type, parent_id)
+                module_name, xtype, region, width_or_height, layout_type, parent_id,
+                data_source_type, data_source_table_name)
               values ('%s', '%s', '%s', '%s',
-                '%s', '%s', '%s', '%s', %d, '%s')";
+                '%s', '%s', '%s', '%s', %d, '%s',
+                %d, '%s')";
       $rc = $db->execute(
         $sql,
         $downId,
@@ -507,7 +531,9 @@ class FormViewDAO extends PSIBaseExDAO
         "south",
         "50%",
         1,
-        $parentId
+        $parentId,
+        $dataSourceType,
+        $dataSourceTableName
       );
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);

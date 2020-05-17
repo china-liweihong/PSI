@@ -248,11 +248,11 @@ class FormViewDAO extends PSIBaseExDAO
   {
     switch ($code) {
       case "center":
-        return "中";
+        return "主体";
       case "west":
-        return "左";
+        return "左边";
       case "south":
-        return "下";
+        return "下边";
       default:
         return "";
     }
@@ -337,7 +337,6 @@ class FormViewDAO extends PSIBaseExDAO
         "isFixed" => $v["is_fixed"] == 1 ? "▲" : "",
         "moduleName" => $v["module_name"],
         "xtype" => $this->getXtypeName($v["xtype"]),
-        "region" => $this->regionCodeToName($v["region"]),
         "widthOrHeight" => $v["width_or_height"],
         "layoutType" => $this->layoutCodeToName($v["layout_type"]),
       ];
@@ -415,7 +414,7 @@ class FormViewDAO extends PSIBaseExDAO
 
       // 左
       $leftId = $this->newId();
-      $leftFid = $fid . "-left";
+      $leftFid = $fid . "-1";
       $sql = "insert into t_fv (id, category_id, name, fid,
                 module_name, xtype, region, width_or_height, layout_type, parent_id)
               values ('%s', '%s', '%s', '%s',
@@ -439,7 +438,7 @@ class FormViewDAO extends PSIBaseExDAO
 
       // 右
       $rightId = $this->newId();
-      $rightFid = $fid . "-right";
+      $rightFid = $fid . "-2";
       $sql = "insert into t_fv (id, category_id, name, fid,
                 module_name, xtype, region, width_or_height, layout_type, parent_id)
               values ('%s', '%s', '%s', '%s',
@@ -468,7 +467,7 @@ class FormViewDAO extends PSIBaseExDAO
 
       // 上
       $upId = $this->newId();
-      $upFid = $fid . "-up";
+      $upFid = $fid . "-1";
       $sql = "insert into t_fv (id, category_id, name, fid,
                 module_name, xtype, region, width_or_height, layout_type, parent_id)
               values ('%s', '%s', '%s', '%s',
@@ -492,7 +491,7 @@ class FormViewDAO extends PSIBaseExDAO
 
       // 下 
       $downId = $this->newId();
-      $downFid = $fid . "-down";
+      $downFid = $fid . "-2";
       $sql = "insert into t_fv (id, category_id, name, fid,
                 module_name, xtype, region, width_or_height, layout_type, parent_id)
               values ('%s', '%s', '%s', '%s',

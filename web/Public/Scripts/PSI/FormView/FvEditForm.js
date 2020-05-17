@@ -149,7 +149,7 @@ Ext.define("PSI.FormView.FvEditForm", {
           beforeLabelTextTpl: PSI.Const.REQUIRED,
           store: Ext.create("Ext.data.ArrayStore", {
             fields: ["id", "text"],
-            data: [["center", "中"], ["west", "左"], ["south", "下"]]
+            data: [["center", "主体"], ["west", "左"], ["south", "下"]]
           }),
           name: "region",
           value: "center"

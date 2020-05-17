@@ -110,7 +110,10 @@ Ext.define("PSI.FormView.RuntimeMainForm", {
           border: 0,
           layout: "fit",
           region: sv.region,
-          height: sv.widthOrHeight
+          height: sv.widthOrHeight,
+          items: [{
+            xtype: sv.xtype
+          }]
         };
         if (sv.region == "south") {
           Ext.apply(item, {

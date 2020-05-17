@@ -345,7 +345,7 @@ Ext.define("PSI.FormView.MainForm", {
         }, {
           text: "位置",
           dataIndex: "region",
-          width: 100
+          width: 70
         }, {
           text: "宽度/高度",
           dataIndex: "widthOrHeight",
@@ -358,7 +358,7 @@ Ext.define("PSI.FormView.MainForm", {
         }, {
           text: "数据源",
           dataIndex: "dataSourceType",
-          width: 100
+          width: 70
         }, {
           text: "数据源表名",
           dataIndex: "dataSourceTableName",
@@ -366,15 +366,16 @@ Ext.define("PSI.FormView.MainForm", {
         }, {
           text: "版本",
           dataIndex: "mdVersion",
-          width: 100
+          width: 70
         }, {
           text: "系统固有",
           dataIndex: "isFixed",
-          width: 100
+          align: "center",
+          width: 80
         }, {
           text: "模块名称",
           dataIndex: "moduleName",
-          width: 100
+          width: 150
         }, {
           text: "xtype",
           dataIndex: "xtype",

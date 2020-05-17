@@ -17,13 +17,20 @@ Ext.define("PSI.FormView.RuntimeMainForm", {
         id: "PSI_FormView_RuntimeMainForm_toolBar",
         xtype: "toolbar"
       },
-      layout: "border",
-      items: []
+      layout: "fit",
+      border: 0,
+      items: [{
+        id: "PSI_FormView_RuntimeMainForm_mainPanel",
+        layout: "border",
+        items: []
+      }]
     });
 
     me.callParent(arguments);
 
     me.__toolBar = Ext.getCmp("PSI_FormView_RuntimeMainForm_toolBar");
+
+    me.__mainPanel = Ext.getCmp("PSI_FormView_RuntimeMainForm_mainPanel");
 
     me.fetchMeatData();
   },
@@ -72,5 +79,26 @@ Ext.define("PSI.FormView.RuntimeMainForm", {
         me.closeWindow();
       }
     }]);
+
+    var mainPanel = me.__mainPanel;
+    if (md.layoutType == "2") {
+      // 左右布局
+      for (var i = 0; i < md.subView.length; i++) {
+        var sv = md.subView[i];
+        var item = {
+          border: 0,
+          layout: "fit",
+          region: sv.region,
+          width: sv.widthOrHeight
+        };
+        if (sv.region == "west") {
+          Ext.apply(item, {
+            split: true
+          });
+        }
+
+        mainPanel.add(item);
+      }
+    }
   }
 });

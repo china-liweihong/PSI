@@ -389,7 +389,7 @@ Ext.define("PSI.FormView.MainForm", {
       listeners: {
         select: {
           fn: function (rowModel, record) {
-            me.onMainGridNodeSelect(record);
+            // me.onMainGridNodeSelect(record);
           },
           scope: me
         }

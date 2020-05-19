@@ -294,11 +294,11 @@ Ext.define("PSI.FormView.FvEditForm", {
             me.editCode.setValue(data.code);
             me.editName.setValue(data.name);
             me.editModuleName.setValue(data.moduleName);
-            me.editXtype.setValue(parseInt(data.xtype));
+            me.editXtype.setValue(data.xtype);
             me.editRegion.setValue(data.region);
             me.editWidthOrHeight.setValue(data.widthOrHeight);
             me.editLayout.setValue(data.layout);
-            me.editDataSourceType.setValue(data.dataSourceType);
+            me.editDataSourceType.setValue(parseInt(data.dataSourceType));
             me.editDataSourceTableName.setValue(data.dataSourceTableName);
             me.editMemo.setValue(data.memo);
           }

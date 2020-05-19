@@ -629,6 +629,28 @@ class FormViewDAO extends PSIBaseExDAO
 
     if ($id) {
       // 编辑
+      $sql = "select c.id as category_id, c.name as category_name,
+                f.code, f.name, f.memo, f.module_name, f.xtype,
+                f.region, f.width_or_height, f.layout_type,
+                f.data_source_type, f.data_source_table_name
+              from t_fv f, t_fv_category c 
+              where f.id = '%s' and f.category_id = c.id ";
+      $data = $db->query($sql, $id);
+      if ($data) {
+        $v = $data[0];
+        $result["categoryId"] = $v["category_id"];
+        $result["categoryName"] = $v["category_name"];
+        $result["code"] = $v["code"];
+        $result["name"] = $v["name"];
+        $result["memo"] = $v["memo"];
+        $result["moduleName"] = $v["module_name"];
+        $result["xtype"] = $v["xtype"];
+        $result["region"] = $v["region"];
+        $result["widthOrHeight"] = $v["width_or_height"];
+        $result["layout"] = $v["layout_type"];
+        $result["dataSourceType"] = $v["data_source_type"];
+        $result["dataSourceTableName"] = $v["data_source_table_name"];
+      }
     }
 
     return $result;

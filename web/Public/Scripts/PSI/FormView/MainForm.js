@@ -61,6 +61,10 @@ Ext.define("PSI.FormView.MainForm", {
       text: "新增视图",
       handler: me.onAddFv,
       scope: me
+    }, {
+      text: "编辑视图",
+      handler: me.onEditFv,
+      scope: me
     }, "-", {
       text: "关闭",
       handler: function () {
@@ -425,5 +429,11 @@ Ext.define("PSI.FormView.MainForm", {
       category: category
     });
     form.show();
+  },
+
+  onEditFv: function () {
+    var me = this;
+
+    me.showInfo("TODO")
   }
 });

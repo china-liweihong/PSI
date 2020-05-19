@@ -38,6 +38,9 @@ Ext.define("PSI.FormView.FvCategoryField", {
     me.on({
       render: function (p) {
         p.getEl().on("dblclick", function () {
+          if (me.readOnly) {
+            return;
+          }
           me.onTriggerClick();
         });
       },

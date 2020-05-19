@@ -301,6 +301,9 @@ Ext.define("PSI.FormView.FvEditForm", {
             me.editDataSourceType.setValue(parseInt(data.dataSourceType));
             me.editDataSourceTableName.setValue(data.dataSourceTableName);
             me.editMemo.setValue(data.memo);
+            if (data.parentId) {
+              me.editCategory.setReadOnly(true);
+            }
           }
         }
 

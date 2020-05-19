@@ -434,6 +434,18 @@ Ext.define("PSI.FormView.MainForm", {
   onEditFv: function () {
     var me = this;
 
-    me.showInfo("TODO")
+    var item = me.getMainGrid().getSelectionModel().getSelection();
+    if (item == null || item.length != 1) {
+      me.showInfo("请选择要编辑的视图");
+      return;
+    }
+
+    var view = item[0];
+
+    var form = Ext.create("PSI.FormView.FvEditForm", {
+      parentForm: me,
+      entity: view
+    });
+    form.show();
   }
 });

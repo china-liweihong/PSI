@@ -297,12 +297,20 @@ Ext.define("PSI.FormView.FvEditForm", {
             me.editXtype.setValue(data.xtype);
             me.editRegion.setValue(data.region);
             me.editWidthOrHeight.setValue(data.widthOrHeight);
-            me.editLayout.setValue(data.layout);
+            me.editLayout.setValue(parseInt(data.layout));
             me.editDataSourceType.setValue(parseInt(data.dataSourceType));
             me.editDataSourceTableName.setValue(data.dataSourceTableName);
             me.editMemo.setValue(data.memo);
+
+            me.editLayout.setReadOnly(true);
+            me.editRegion.setReadOnly(true);
+
             if (data.parentId) {
+              // 子视图
               me.editCategory.setReadOnly(true);
+              me.editCode.setReadOnly(true);
+
+              me.editName.focus();
             }
           }
         }

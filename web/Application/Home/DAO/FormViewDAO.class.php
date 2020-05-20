@@ -803,6 +803,78 @@ class FormViewDAO extends PSIBaseExDAO
    */
   public function deleteFv(&$params)
   {
-    return $this->todo();
+    $db = $this->db;
+
+    $id = $params["id"];
+
+    $sql = "select name, parent_id, fid from t_fv where id = '%s' ";
+    $data = $db->query($sql, $id);
+    if (!$data) {
+      return $this->bad("要删除的视图不存在");
+    }
+    $v = $data[0];
+    $name = $v["name"];
+    $fid = $v["fid"];
+    $parentId = $v["parent_id"];
+    if ($parentId) {
+      return $this->bad("请选择顶级视图来删除整个视图");
+    }
+
+    // 检查视图是否已经挂接到主菜单了
+    $sql = "select count(*) as cnt from t_menu_item_plus where fid = '%s' ";
+    $data = $db->query($sql, $fid);
+    $cnt = $data[0]["cnt"];
+    if ($cnt > 0) {
+      return $this->bad("视图[$name]已经挂接到主菜单了，不能删除");
+    }
+    $sql = "select count(*) as cnt from t_menu_item where fid = '%s' ";
+    $data = $db->query($sql, $fid);
+    $cnt = $data[0]["cnt"];
+    if ($cnt > 0) {
+      return $this->bad("视图[$name]已经挂接到主菜单了，不能删除");
+    }
+
+    // 删除视图
+    $sql = "delete from t_fv where id = '%s' ";
+    $rc = $db->execute($sql, $id);
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+
+    // 删除子视图
+    // TODO: 目前只处理了一级子视图
+    $sql = "delete from t_fv where parent_id = '%s' ";
+    $rc = $db->execute($sql, $id);
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+
+    // TODO
+    // 删除列
+    // 删除查询条件
+    // 删除按钮
+
+    // 删除fid
+    $sql = "delete from t_fid_plus where fid = '%s' ";
+    $rc = $db->execute($sql, $fid);
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+
+    // 删除权限
+    $sql = "delete from t_permission_plus where fid = '%s' ";
+    $rc = $db->execute($sql, $fid);
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+    $sql = "delete from t_permission_plus where parent_fid = '%s' ";
+    $rc = $db->execute($sql, $fid);
+    if ($rc === false) {
+      return $this->sqlError(__METHOD__, __LINE__);
+    }
+
+    // 操作成功
+    $params["name"] = $name;
+    return null;
   }
 }

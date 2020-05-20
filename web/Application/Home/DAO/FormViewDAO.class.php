@@ -603,7 +603,75 @@ class FormViewDAO extends PSIBaseExDAO
    */
   public function updateFv(&$params)
   {
-    return $this->todo();
+    $db = $this->db;
+
+    $id = $params["id"];
+    $categoryId = $params["categoryId"];
+    $code = $params["code"];
+    $name = $params["name"];
+    $moduleName = $params["moduleName"];
+    $xtype = $params["xtype"];
+    $widthOrHeight = $params["widthOrHeight"];
+    $dataSourceType = intval($params["dataSourceType"]);
+    $dataSourceTableName = $params["dataSourceTableName"];
+    $memo = $params["memo"];
+    $py = $params["py"];
+
+    $sql = "select name, parent_id
+            from t_fv where id = '%s' ";
+    $data = $db->query($sql, $id);
+    if (!$data) {
+      return $this->bad("要编辑的视图不存在");
+    }
+    $v = $data[0];
+    $parentId = $v["parent_id"];
+    $oldName = $v["name"];
+
+    if ($dataSourceType < 1 || $dataSourceType > 2) {
+      return $this->bad("不支持当前选择的数据源");
+    }
+
+    // 检查数据源表是否存在
+    if ($dataSourceType == 1) {
+      // 数据源是码表
+      $sql = "select count(*) as cnt from t_code_table_md where table_name = '%s' ";
+      $data = $db->query($sql, $dataSourceTableName);
+      $cnt = $data[0]["cnt"];
+      if ($cnt != 1) {
+        return $this->bad("码表[{$dataSourceTableName}]的元数据不存在");
+      }
+    } else if ($dataSourceType == 2) {
+      // 数据源是表单
+      $sql = "select count(*) as cnt from t_form where table_name = '%s' ";
+      $data = $db->query($sql, $dataSourceTableName);
+      $cnt = $data[0]["cnt"];
+      if ($cnt != 1) {
+        return $this->bad("自定义表单[{$dataSourceTableName}]的元数据不存在");
+      }
+    }
+
+    if (!$parentId) {
+    } else {
+      // 子视图
+      $sql = "update t_fv
+              set xtype = '%s', data_source_type = %d,
+                data_source_table_name = '%s',
+                width_or_height = '%s'
+              where id = '%s' ";
+      $rc = $db->execute(
+        $sql,
+        $xtype,
+        $dataSourceType,
+        $dataSourceTableName,
+        $widthOrHeight,
+        $id
+      );
+
+      $params["name"] = $oldName;
+    }
+
+    // 操作成功
+    return null;
   }
 
   /**

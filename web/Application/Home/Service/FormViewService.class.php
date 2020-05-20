@@ -159,6 +159,7 @@ class FormViewService extends PSIBaseExService
         return $rc;
       }
 
+      $name = $params["name"];
       $log = "编辑视图[{$name}]的元数据";
     } else {
       // 新增

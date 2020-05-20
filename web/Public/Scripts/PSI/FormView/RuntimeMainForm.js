@@ -85,11 +85,18 @@ Ext.define("PSI.FormView.RuntimeMainForm", {
       // 左右布局
       for (var i = 0; i < md.subView.length; i++) {
         var sv = md.subView[i];
+        var wh = sv.widthOrHeight;
+        if (!wh.endsWith("%")) {
+          wh = parseInt(wh);
+          if (wh < 50) {
+            wh = 50;
+          }
+        }
         var item = {
           border: 0,
           layout: "fit",
           region: sv.region,
-          width: sv.widthOrHeight,
+          width: wh,
           items: [{
             xtype: sv.xtype
           }]
@@ -106,11 +113,18 @@ Ext.define("PSI.FormView.RuntimeMainForm", {
       // 上下布局
       for (var i = 0; i < md.subView.length; i++) {
         var sv = md.subView[i];
+        var wh = sv.widthOrHeight;
+        if (!wh.endsWith("%")) {
+          wh = parseInt(wh);
+          if (wh < 50) {
+            wh = 50;
+          }
+        }
         var item = {
           border: 0,
           layout: "fit",
           region: sv.region,
-          height: sv.widthOrHeight,
+          height: wh,
           items: [{
             xtype: sv.xtype
           }]

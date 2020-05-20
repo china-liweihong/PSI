@@ -797,4 +797,12 @@ class FormViewDAO extends PSIBaseExDAO
 
     return $result;
   }
+
+  /**
+   * 删除视图
+   */
+  public function deleteFv(&$params)
+  {
+    return $this->todo();
+  }
 }

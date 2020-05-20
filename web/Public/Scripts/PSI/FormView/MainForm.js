@@ -65,6 +65,10 @@ Ext.define("PSI.FormView.MainForm", {
       text: "编辑视图",
       handler: me.onEditFv,
       scope: me
+    }, {
+      text: "删除视图",
+      handler: me.onDeleteFv,
+      scope: me
     }, "-", {
       text: "关闭",
       handler: function () {
@@ -447,5 +451,51 @@ Ext.define("PSI.FormView.MainForm", {
       entity: view
     });
     form.show();
+  },
+
+  onDeleteFv: function () {
+    var me = this;
+
+    var item = me.getMainGrid().getSelectionModel().getSelection();
+    if (item == null || item.length != 1) {
+      me.showInfo("请选择要删除的视图");
+      return;
+    }
+
+    var view = item[0];
+    var info = "请确认是否删除视图: <span style='color:red'>"
+      + view.get("text")
+      + "</span> ?";
+
+    var funcConfirm = function () {
+      var el = Ext.getBody();
+      el.mask("正在删除中...");
+
+      var r = {
+        url: me.URL("Home/FormView/deleteFv"),
+        params: {
+          id: view.get("id")
+        },
+        callback: function (options, success, response) {
+          el.unmask();
+
+          if (success) {
+            var data = me.decodeJSON(response.responseText);
+            if (data.success) {
+              me.tip("成功完成删除操作");
+              me.refreshMainGrid();
+            } else {
+              me.showInfo(data.msg);
+            }
+          } else {
+            me.showInfo("网络错误");
+          }
+        }
+      };
+
+      me.ajax(r);
+    };
+
+    me.confirm(info, funcConfirm);
   }
 });

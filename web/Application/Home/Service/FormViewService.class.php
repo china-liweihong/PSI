@@ -220,4 +220,35 @@ class FormViewService extends PSIBaseExService
     $dao = new FormViewDAO($this->db());
     return $dao->fetchMetaDataForRuntime($params);
   }
+
+  /**
+   * 删除视图
+   */
+  public function deleteFv($params)
+  {
+    if ($this->isNotOnline()) {
+      return $this->notOnlineError();
+    }
+
+    $db = $this->db();
+    $db->startTrans();
+
+    $dao = new FormViewDAO($db);
+    $rc = $dao->deleteFv($params);
+    if ($rc) {
+      $db->rollback();
+      return $rc;
+    }
+
+    $name = $params["name"];
+    $log = "删除视图：{$name}";
+
+    // 记录业务日志
+    $bs = new BizlogService($db);
+    $bs->insertBizlog($log, $this->LOG_CATEGORY);
+
+    $db->commit();
+
+    return $this->ok();
+  }
 }

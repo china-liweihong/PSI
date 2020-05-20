@@ -309,8 +309,10 @@ Ext.define("PSI.FormView.FvEditForm", {
               // 子视图
               me.editCategory.setReadOnly(true);
               me.editCode.setReadOnly(true);
+              me.editName.setReadOnly(true);
+              me.editModuleName.setReadOnly(true);
 
-              me.editName.focus();
+              me.editWidthOrHeight.focus();
             }
           }
         }

@@ -651,6 +651,7 @@ class FormViewDAO extends PSIBaseExDAO
     }
 
     if (!$parentId) {
+      return $this->todo();
     } else {
       // 子视图
       $sql = "update t_fv

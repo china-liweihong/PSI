@@ -412,6 +412,10 @@ class FormViewDAO extends PSIBaseExDAO
     if ($dataSourceType == 0) {
       // 数据源是混合的类型的时候，不指定数据源表名
       $dataSourceTableName = "";
+    } else {
+      if (!$dataSourceTableName) {
+        return $this->bad("没有输入数据源表名");
+      }
     }
 
     // 检查数据源表是否存在
@@ -456,8 +460,8 @@ class FormViewDAO extends PSIBaseExDAO
       $region,
       $widthOrHeight,
       $layout,
-      $dataSourceType,
-      $dataSourceTableName
+      $layout == 1 ? $dataSourceType : 0,
+      $layout == 1 ? $dataSourceTableName : ""
     );
     if ($rc === false) {
       return $this->sqlError(__METHOD__, __LINE__);

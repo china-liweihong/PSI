@@ -33,7 +33,7 @@ Ext.define("PSI.FormView.MainForm", {
           split: true,
           layout: "fit",
           xtype: "tabpanel",
-          items: [{ title: "列" }, { title: "查询条件" }, { title: "业务按钮" }]
+          items: [me.getColsGrid(), { title: "查询条件" }, { title: "业务按钮" }]
         }]
       }]
     });
@@ -142,6 +142,48 @@ Ext.define("PSI.FormView.MainForm", {
     });
 
     return me.__categoryGrid;
+  },
+
+  getColsGrid: function () {
+    var me = this;
+
+    if (me.__colsGrid) {
+      return me.__colsGrid;
+    }
+
+    var modelName = "PSIFvCols";
+
+    Ext.define(modelName, {
+      extend: "Ext.data.Model",
+      fields: ["id", "name"]
+    });
+
+    me.__colsGrid = Ext.create("Ext.grid.Panel", {
+      cls: "PSI",
+      viewConfig: {
+        enableTextSelection: true
+      },
+      title: "列",
+      columnLines: true,
+      columns: {
+        defaults: {
+          menuDisabled: true,
+          sortable: false
+        },
+        items: [{
+          header: "列名",
+          dataIndex: "name",
+          width: 200
+        }]
+      },
+      store: Ext.create("Ext.data.Store", {
+        model: modelName,
+        autoLoad: false,
+        data: []
+      })
+    });
+
+    return me.__colsGrid;
   },
 
   refreshCategoryGrid: function (id) {
@@ -320,8 +362,6 @@ Ext.define("PSI.FormView.MainForm", {
 
     });
 
-    store.on("load", me.onMainGridStoreLoad, me);
-
     me.__mainGrid = Ext.create("Ext.tree.Panel", {
       cls: "PSI",
       header: {
@@ -421,8 +461,6 @@ Ext.define("PSI.FormView.MainForm", {
 
     return { categoryId: category.get("id") };
   },
-
-  onMainGridStoreLoad: function () { },
 
   // 新增视图
   onAddFv: function () {

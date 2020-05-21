@@ -663,7 +663,30 @@ class FormViewDAO extends PSIBaseExDAO
     }
 
     if (!$parentId) {
-      return $this->todo();
+      // 顶级视图
+      // 检查视图分类是否存在
+      $category = $this->getViewCategoryById($categoryId);
+      if (!$category) {
+        return $this->bad("视图分类不存在");
+      }
+
+      $sql = "update t_fv
+              set category_id = '%s', memo = '%s'
+              where id = '%s' ";
+      $rc = $db->execute($sql, $categoryId, $memo, $id);
+      if ($rc === false) {
+        return $this->sqlError(__METHOD__, __LINE__);
+      }
+
+      // 更新子视图的分类id
+      // TODO 目前只处理了一级子视图
+      $sql = "update t_fv
+              set category_id = '%s'
+              where parent_id = '%s' ";
+      $rc = $db->execute($sql, $categoryId, $id);
+      if ($rc === false) {
+        return $this->sqlError(__METHOD__, __LINE__);
+      }
     } else {
       // 子视图
       $sql = "update t_fv
@@ -680,6 +703,9 @@ class FormViewDAO extends PSIBaseExDAO
         $memo,
         $id
       );
+      if ($rc === false) {
+        return $this->sqlError(__METHOD__, __LINE__);
+      }
 
       $params["name"] = $oldName;
     }

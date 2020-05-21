@@ -38,7 +38,7 @@ Ext.define("PSI.FormView.MainForm", {
       }]
     });
 
-    me.callParent(arguments);
+    me.callParent();
 
     me.refreshCategoryGrid();
   },
@@ -190,6 +190,7 @@ Ext.define("PSI.FormView.MainForm", {
     me.refreshMainGrid();
   },
 
+  // 新增分类
   onAddCategory: function () {
     var me = this;
 
@@ -200,6 +201,7 @@ Ext.define("PSI.FormView.MainForm", {
     form.show();
   },
 
+  // 编辑分类
   onEditCategory: function () {
     var me = this;
 
@@ -224,6 +226,7 @@ Ext.define("PSI.FormView.MainForm", {
     form.show();
   },
 
+  // 删除分类
   onDeleteCategory: function () {
     var me = this;
     var item = me.getCategoryGrid().getSelectionModel()
@@ -248,8 +251,8 @@ Ext.define("PSI.FormView.MainForm", {
       preIndex = preItem.get("id");
     }
 
-    var info = "请确认是否删除视图分类: <span style='color:red'>"
-      + category.get("name") + "</span>";
+    var info = Ext.String.format("请确认是否删除视图分类: <span style='color:red'>{0}</span> ?",
+      category.get("name"));
 
     var funcConfirm = function () {
       var el = Ext.getBody();
@@ -421,6 +424,7 @@ Ext.define("PSI.FormView.MainForm", {
 
   onMainGridStoreLoad: function () { },
 
+  // 新增视图
   onAddFv: function () {
     var me = this;
 
@@ -439,6 +443,7 @@ Ext.define("PSI.FormView.MainForm", {
     form.show();
   },
 
+  // 编辑视图
   onEditFv: function () {
     var me = this;
 
@@ -457,6 +462,7 @@ Ext.define("PSI.FormView.MainForm", {
     form.show();
   },
 
+  // 删除视图
   onDeleteFv: function () {
     var me = this;
 
@@ -467,9 +473,8 @@ Ext.define("PSI.FormView.MainForm", {
     }
 
     var view = item[0];
-    var info = "请确认是否删除视图: <span style='color:red'>"
-      + view.get("text")
-      + "</span> ?";
+    var info = Ext.String.format("请确认是否删除视图: <span style='color:red'>{0}</span> ？",
+      view.get("text"));
 
     var funcConfirm = function () {
       var el = Ext.getBody();

@@ -276,7 +276,7 @@ class FormViewDAO extends PSIBaseExDAO
   {
     switch ($code) {
       case 0:
-        return "混合";
+        return "[无]";
       case 1:
         return "码表";
       case 2:

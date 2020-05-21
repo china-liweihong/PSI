@@ -191,7 +191,7 @@ Ext.define("PSI.FormView.FvEditForm", {
           beforeLabelTextTpl: PSI.Const.REQUIRED,
           store: Ext.create("Ext.data.ArrayStore", {
             fields: ["id", "text"],
-            data: [[1, "码表"], [2, "自定义表单"], [0, "混合"]]
+            data: [[1, "码表"], [2, "自定义表单"], [0, "[无]"]]
           }),
           name: "dataSourceType",
           value: 1

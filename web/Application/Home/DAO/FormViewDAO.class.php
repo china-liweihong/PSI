@@ -289,7 +289,7 @@ class FormViewDAO extends PSIBaseExDAO
     $db = $this->db;
 
     $sql = "select id, code, name, fid, xtype, region, width_or_height, layout_type,
-              data_source_type, data_source_table_name
+              data_source_type, data_source_table_name, memo
             from t_fv
             where parent_id = '%s'
             order by code, name";
@@ -315,6 +315,7 @@ class FormViewDAO extends PSIBaseExDAO
         "layoutType" => $this->layoutCodeToName($v["layout_type"]),
         "dataSourceType" => $this->dataSourceCodeToName($v["data_source_type"]),
         "dataSourceTableName" => $v["data_source_table_name"],
+        "memo" => $v["memo"],
       ];
     }
     return $result;
@@ -331,7 +332,7 @@ class FormViewDAO extends PSIBaseExDAO
 
     $sql = "select id, code, name, fid, md_version, is_fixed,
               module_name, xtype, region, width_or_height, layout_type,
-              data_source_type, data_source_table_name
+              data_source_type, data_source_table_name, memo
             from t_fv
             where category_id = '%s' and parent_id is null
             order by code, name";
@@ -357,6 +358,7 @@ class FormViewDAO extends PSIBaseExDAO
         "layoutType" => $this->layoutCodeToName($v["layout_type"]),
         "dataSourceType" => $this->dataSourceCodeToName($v["data_source_type"]),
         "dataSourceTableName" => $v["data_source_table_name"],
+        "memo" => $v["memo"],
       ];
     }
 
@@ -657,7 +659,7 @@ class FormViewDAO extends PSIBaseExDAO
       $sql = "update t_fv
               set xtype = '%s', data_source_type = %d,
                 data_source_table_name = '%s',
-                width_or_height = '%s'
+                width_or_height = '%s', memo = '%s'
               where id = '%s' ";
       $rc = $db->execute(
         $sql,
@@ -665,6 +667,7 @@ class FormViewDAO extends PSIBaseExDAO
         $dataSourceType,
         $dataSourceTableName,
         $widthOrHeight,
+        $memo,
         $id
       );
 

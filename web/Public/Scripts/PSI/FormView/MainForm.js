@@ -335,7 +335,7 @@ Ext.define("PSI.FormView.MainForm", {
         defaults: {
           sortable: false,
           menuDisabled: true,
-          draggable: false
+          draggable: true
         },
         items: [{
           xtype: "treecolumn",
@@ -346,10 +346,6 @@ Ext.define("PSI.FormView.MainForm", {
           text: "编码",
           dataIndex: "code",
           width: 100
-        }, {
-          text: "fid",
-          dataIndex: "fid",
-          width: 160
         }, {
           text: "位置",
           dataIndex: "region",
@@ -388,6 +384,14 @@ Ext.define("PSI.FormView.MainForm", {
           text: "xtype",
           dataIndex: "xtype",
           width: 300
+        }, {
+          text: "fid",
+          dataIndex: "fid",
+          width: 160
+        }, {
+          text: "备注",
+          dataIndex: "memo",
+          width: 200
         }]
       },
       listeners: {

@@ -275,6 +275,8 @@ class FormViewDAO extends PSIBaseExDAO
   private function dataSourceCodeToName($code)
   {
     switch ($code) {
+      case 0:
+        return "混合";
       case 1:
         return "码表";
       case 2:
@@ -332,7 +334,7 @@ class FormViewDAO extends PSIBaseExDAO
 
     $sql = "select id, code, name, fid, md_version, is_fixed,
               module_name, xtype, region, width_or_height, layout_type,
-              data_source_type, data_source_table_name, memo
+              data_source_type, memo
             from t_fv
             where category_id = '%s' and parent_id is null
             order by code, name";
@@ -357,7 +359,6 @@ class FormViewDAO extends PSIBaseExDAO
         "widthOrHeight" => $v["width_or_height"],
         "layoutType" => $this->layoutCodeToName($v["layout_type"]),
         "dataSourceType" => $this->dataSourceCodeToName($v["data_source_type"]),
-        "dataSourceTableName" => $v["data_source_table_name"],
         "memo" => $v["memo"],
       ];
     }
@@ -404,8 +405,13 @@ class FormViewDAO extends PSIBaseExDAO
       return $this->bad("不支持当前选择的布局");
     }
 
-    if ($dataSourceType < 1 || $dataSourceType > 2) {
+    if ($dataSourceType < 0 || $dataSourceType > 2) {
       return $this->bad("不支持当前选择的数据源");
+    }
+
+    if ($dataSourceType == 0) {
+      // 数据源是混合的类型的时候，不指定数据源表名
+      $dataSourceTableName = "";
     }
 
     // 检查数据源表是否存在
@@ -629,7 +635,7 @@ class FormViewDAO extends PSIBaseExDAO
     $parentId = $v["parent_id"];
     $oldName = $v["name"];
 
-    if ($dataSourceType < 1 || $dataSourceType > 2) {
+    if ($dataSourceType < 0 || $dataSourceType > 2) {
       return $this->bad("不支持当前选择的数据源");
     }
 

@@ -621,7 +621,7 @@ class FormViewDAO extends PSIBaseExDAO
     $categoryId = $params["categoryId"];
     $code = $params["code"];
     $name = $params["name"];
-    $moduleName = $params["moduleName"];
+    $moduleName = trim($params["moduleName"]);
     $xtype = $params["xtype"];
     $widthOrHeight = $params["widthOrHeight"];
     $dataSourceType = intval($params["dataSourceType"]);
@@ -629,7 +629,7 @@ class FormViewDAO extends PSIBaseExDAO
     $memo = $params["memo"];
     $py = $params["py"];
 
-    $sql = "select name, parent_id
+    $sql = "select name, parent_id, fid
             from t_fv where id = '%s' ";
     $data = $db->query($sql, $id);
     if (!$data) {
@@ -638,6 +638,7 @@ class FormViewDAO extends PSIBaseExDAO
     $v = $data[0];
     $parentId = $v["parent_id"];
     $oldName = $v["name"];
+    $fid = $v["fid"];
 
     if ($dataSourceType < 0 || $dataSourceType > 2) {
       return $this->bad("不支持当前选择的数据源");
@@ -664,16 +665,32 @@ class FormViewDAO extends PSIBaseExDAO
 
     if (!$parentId) {
       // 顶级视图
+
       // 检查视图分类是否存在
       $category = $this->getViewCategoryById($categoryId);
       if (!$category) {
         return $this->bad("视图分类不存在");
       }
 
+      // 检查code是否重复
+      if ($code) {
+        $sql = "select count(*) as cnt from t_fv where code = '%s' and id <> '%s' ";
+        $data = $db->query($sql, $code, $id);
+        $cnt = $data[0]["cnt"];
+        if ($cnt > 0) {
+          return $this->bad("编码为[{$code}]的视图已经存在");
+        }
+      }
+
+      if (!$moduleName) {
+        return $this->bad("没有输入模块名称");
+      }
+
       $sql = "update t_fv
-              set category_id = '%s', memo = '%s'
+              set category_id = '%s', name = '%s', module_name = '%s', memo = '%s',
+                py = '%s'
               where id = '%s' ";
-      $rc = $db->execute($sql, $categoryId, $memo, $id);
+      $rc = $db->execute($sql, $categoryId, $name, $moduleName, $memo, $py, $id);
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
       }
@@ -687,15 +704,36 @@ class FormViewDAO extends PSIBaseExDAO
       if ($rc === false) {
         return $this->sqlError(__METHOD__, __LINE__);
       }
+
+      // fid
+      $sql = "update t_fid_plus
+              set name = '%s', py = '%s'
+              where fid = '%s' ";
+      $rc = $db->execute($sql, $moduleName, $py, $fid);
+      if ($rc === false) {
+        return $this->sqlError(__METHOD__, __LINE__);
+      }
+
+      // 权限
+      $sql = "update t_permission_plus
+              set name = '%s', note = '%s', category = '%s'
+              where fid = '%s' ";
+      $rc = $db->execute($sql, $moduleName, "通过菜单进入{$moduleName}模块的权限", $moduleName, $fid);
+      if ($rc === false) {
+        return $this->sqlError(__METHOD__, __LINE__);
+      }
+
+      // TODO 还没有处理按钮权限
     } else {
       // 子视图
       $sql = "update t_fv
-              set xtype = '%s', data_source_type = %d,
+              set name = '%s', xtype = '%s', data_source_type = %d,
                 data_source_table_name = '%s',
                 width_or_height = '%s', memo = '%s'
               where id = '%s' ";
       $rc = $db->execute(
         $sql,
+        $name,
         $xtype,
         $dataSourceType,
         $dataSourceTableName,

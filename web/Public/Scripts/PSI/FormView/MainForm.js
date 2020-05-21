@@ -164,6 +164,19 @@ Ext.define("PSI.FormView.MainForm", {
         enableTextSelection: true
       },
       title: "列",
+      tbar: [{
+        text: "新增列",
+        handler: me.onAddCol,
+        scope: me
+      }, "-", {
+        text: "编辑列",
+        handler: me.onEditCol,
+        scope: me
+      }, "-", {
+        text: "删除列",
+        handler: me.onDeleteCol,
+        scope: me
+      }],
       columnLines: true,
       columns: {
         defaults: {
@@ -544,5 +557,23 @@ Ext.define("PSI.FormView.MainForm", {
     };
 
     me.confirm(info, funcConfirm);
+  },
+
+  // 新增列
+  onAddCol: function () {
+    var me = this;
+    me.showInfo("TODO")
+  },
+
+  // 编辑列
+  onEditCol: function () {
+    var me = this;
+    me.showInfo("TODO")
+  },
+
+  // 删除列
+  onDeleteCol: function () {
+    var me = this;
+    me.showInfo("TODO")
   }
 });

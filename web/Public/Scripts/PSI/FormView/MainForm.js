@@ -33,7 +33,7 @@ Ext.define("PSI.FormView.MainForm", {
           split: true,
           layout: "fit",
           xtype: "tabpanel",
-          items: [me.getColsGrid(), { title: "查询条件" }, { title: "业务按钮" }]
+          items: [me.getColsGrid(), me.getQcGrid(), me.getButtonGrid()]
         }]
       }]
     });
@@ -197,6 +197,116 @@ Ext.define("PSI.FormView.MainForm", {
     });
 
     return me.__colsGrid;
+  },
+
+  getButtonGrid: function () {
+    var me = this;
+
+    if (me.__buttonGrid) {
+      return me.__buttonGrid;
+    }
+
+    var modelName = "PSIFvButtons";
+
+    Ext.define(modelName, {
+      extend: "Ext.data.Model",
+      fields: ["id", "caption"]
+    });
+
+    me.__buttonGrid = Ext.create("Ext.grid.Panel", {
+      cls: "PSI",
+      viewConfig: {
+        enableTextSelection: true
+      },
+      title: "业务按钮",
+      tbar: [{
+        text: "新增按钮",
+        handler: me.onAddButton,
+        scope: me
+      }, "-", {
+        text: "编辑按钮",
+        handler: me.onEditButton,
+        scope: me
+      }, "-", {
+        text: "删除按钮",
+        handler: me.onDeleteButton,
+        scope: me
+      }],
+      columnLines: true,
+      columns: {
+        defaults: {
+          menuDisabled: true,
+          sortable: false
+        },
+        items: [{
+          header: "按钮标题",
+          dataIndex: "caption",
+          width: 200
+        }]
+      },
+      store: Ext.create("Ext.data.Store", {
+        model: modelName,
+        autoLoad: false,
+        data: []
+      })
+    });
+
+    return me.__buttonGrid;
+  },
+
+  getQcGrid: function () {
+    var me = this;
+
+    if (me.__qcGrid) {
+      return me.__qcGrid;
+    }
+
+    var modelName = "PSIFvQueryCondition";
+
+    Ext.define(modelName, {
+      extend: "Ext.data.Model",
+      fields: ["id", "caption"]
+    });
+
+    me.__qcGrid = Ext.create("Ext.grid.Panel", {
+      cls: "PSI",
+      viewConfig: {
+        enableTextSelection: true
+      },
+      title: "查询条件",
+      tbar: [{
+        text: "新增查询条件",
+        handler: me.onAddQc,
+        scope: me
+      }, "-", {
+        text: "编辑查询条件",
+        handler: me.onEditQc,
+        scope: me
+      }, "-", {
+        text: "删除查询条件",
+        handler: me.onDeleteQc,
+        scope: me
+      }],
+      columnLines: true,
+      columns: {
+        defaults: {
+          menuDisabled: true,
+          sortable: false
+        },
+        items: [{
+          header: "标题",
+          dataIndex: "caption",
+          width: 200
+        }]
+      },
+      store: Ext.create("Ext.data.Store", {
+        model: modelName,
+        autoLoad: false,
+        data: []
+      })
+    });
+
+    return me.__qcGrid;
   },
 
   refreshCategoryGrid: function (id) {
@@ -573,6 +683,42 @@ Ext.define("PSI.FormView.MainForm", {
 
   // 删除列
   onDeleteCol: function () {
+    var me = this;
+    me.showInfo("TODO")
+  },
+
+  // 新增按钮
+  onAddButton: function () {
+    var me = this;
+    me.showInfo("TODO")
+  },
+
+  // 编辑按钮
+  onEditButton: function () {
+    var me = this;
+    me.showInfo("TODO")
+  },
+
+  // 删除按钮
+  onDeleteButton: function () {
+    var me = this;
+    me.showInfo("TODO")
+  },
+
+  // 新增查询条件
+  onAddQc: function () {
+    var me = this;
+    me.showInfo("TODO")
+  },
+
+  // 编辑查询条件
+  onEditQc: function () {
+    var me = this;
+    me.showInfo("TODO")
+  },
+
+  // 删除查询条件
+  onDeleteQc: function () {
     var me = this;
     me.showInfo("TODO")
   }

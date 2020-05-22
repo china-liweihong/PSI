@@ -1776,6 +1776,23 @@ CREATE TABLE IF NOT EXISTS `t_fv_cols` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP TABLE IF EXISTS `t_fv_qc`;
+CREATE TABLE IF NOT EXISTS `t_fv_qc` (
+  `id` varchar(255) NOT NULL,
+  `fv_id` varchar(255) NOT NULL,
+  `caption` varchar(255) NOT NULL,
+  `show_order` int(11) NOT NULL,
+  `qc_type` int(11) NOT NULL,
+  `value_from_fv_id` varchar(255) DEFAULT NULL,
+  `value_from_col_name` varchar(255) DEFAULT NULL,
+  `xtype` varchar(255) DEFAULT NULL,
+  `qc_php_class_name` varchar(255) DEFAULT NULL,
+  `op` int(11) NOT NULL DEFAULT 1,
+  `op_group` int(11) NOT NULL DEFAULT 1,
+  `parent_id` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

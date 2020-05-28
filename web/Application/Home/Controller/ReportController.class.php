@@ -1260,6 +1260,11 @@ class ReportController extends PSIBaseController
    */
   public function purchaseDetailExcel()
   {
+    $us = new UserService();
+    if (!$us->hasPermission(FIdConst::PURCHASE_DETAIL_REPORT)) {
+      die("没有权限");
+    }
+
     $params = [
       "limit" => I("get.limit"),
       "warehouseId" => I("get.warehouseId"),
@@ -1277,6 +1282,11 @@ class ReportController extends PSIBaseController
    */
   public function purchaseDetailPdf()
   {
+    $us = new UserService();
+    if (!$us->hasPermission(FIdConst::PURCHASE_DETAIL_REPORT)) {
+      die("没有权限");
+    }
+
     $params = [
       "limit" => I("get.limit"),
       "warehouseId" => I("get.warehouseId"),

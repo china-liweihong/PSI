@@ -1092,6 +1092,11 @@ class FIdConst
    */
   const PURCHASE_DETAIL_REPORT = "2037";
 
+  /**
+   * 销售出库明细表
+   */
+  const SALE_DETAIL_REPORT = "2038";
+
   // -------------------------
   // 财务总账系统GL fid使用2100段
   // -------------------------

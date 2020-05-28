@@ -2499,4 +2499,100 @@ class SaleReportService extends PSIBaseExService
     $writer = \PHPExcel_IOFactory::createWriter($excel, "Excel2007");
     $writer->save("php://output");
   }
+
+  /**
+   * 销售出库明细表 - 导出PDF
+   */
+  public function saleDetailPdf($params)
+  {
+    if ($this->isNotOnline()) {
+      return;
+    }
+
+    ini_set('max_execution_time', 300); // 300 seconds = 5 minutes
+
+    $bs = new BizConfigService();
+    $productionName = $bs->getProductionName();
+
+    $params["companyId"] = $this->getCompanyId();
+
+    $dao = new SaleReportDAO($this->db());
+    $data = $dao->saleDetailQueryData($params);
+
+    $items = $data["dataList"];
+
+    // 记录业务日志
+    $log = "销售出库明细表导出PDF文件";
+    $bls = new BizlogService($this->db());
+    $bls->insertBizlog($log, $this->LOG_CATEGORY);
+
+    ob_start();
+
+    $ps = new PDFService();
+    $pdf = $ps->getInstanceForReport();
+    $pdf->SetTitle("销售出库明细表");
+
+    $pdf->setHeaderFont(array(
+      "stsongstdlight",
+      "",
+      16
+    ));
+
+    $pdf->setFooterFont(array(
+      "stsongstdlight",
+      "",
+      14
+    ));
+
+    $pdf->SetHeaderData("", 0, $productionName, "销售出库明细表");
+
+    $pdf->SetFont("stsongstdlight", "", 10);
+    $pdf->AddPage();
+
+    /**
+     * 注意：
+     * TCPDF中，用来拼接HTML的字符串需要用单引号，否则HTML中元素的属性就不会被解析
+     */
+    $html = '<table border="1" cellpadding="1">
+					<tr><td>销售订单号</td><td>出库单单号</td>
+            <td>出库单业务日期</td>
+            <td>出库仓库</td><td>客户</td>
+            <td>商品编码</td><td>商品名称</td>
+						<td>规格型号</td><td>出库数量</td><td>单位</td>
+            <td>销售单价</td><td>销售金额</td>
+            <td>税率(%)</td><td>税金</td>
+            <td>价税合计</td><td>含税价</td><td>备注</td>
+					</tr>
+				';
+    foreach ($items as $v) {
+      $html .= '<tr>';
+      $html .= '<td>' . $v["soBillRef"] . '</td>';
+      $html .= '<td>' . $v["wsBillRef"] . '</td>';
+      $html .= '<td>' . $v["bizDate"] . '</td>';
+      $html .= '<td>' . $v["warehouseName"] . '</td>';
+      $html .= '<td>' . $v["customerName"] . '</td>';
+      $html .= '<td>' . $v["goodsCode"] . '</td>';
+      $html .= '<td>' . $v["goodsName"] . '</td>';
+      $html .= '<td>' . $v["goodsSpec"] . '</td>';
+      $html .= '<td align="right">' . $v["goodsCount"] . '</td>';
+      $html .= '<td>' . $v["unitName"] . '</td>';
+      $html .= '<td align="right">' . $v["goodsPrice"] . '</td>';
+      $html .= '<td align="right">' . $v["goodsMoney"] . '</td>';
+      $html .= '<td align="right">' . $v["taxRate"] . '</td>';
+      $html .= '<td align="right">' . $v["tax"] . '</td>';
+      $html .= '<td align="right">' . $v["moneyWithTax"] . '</td>';
+      $html .= '<td align="right">' . $v["goodsPriceWithTax"] . '</td>';
+      $html .= '<td>' . $v["memo"] . '</td>';
+      $html .= '</tr>';
+    }
+
+    $html .= '</table>';
+    $pdf->writeHTML($html, true, false, true, false, '');
+
+    ob_end_clean();
+
+    $dt = date("YmdHis");
+
+    $pdf->Output("SD_{$dt}.pdf", "I");
+  }
 }

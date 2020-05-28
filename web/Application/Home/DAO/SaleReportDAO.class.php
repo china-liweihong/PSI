@@ -2,6 +2,8 @@
 
 namespace Home\DAO;
 
+use Home\Common\FIdConst;
+
 /**
  * 销售报表 DAO
  *
@@ -1477,5 +1479,148 @@ class SaleReportDAO extends PSIBaseExDAO
       "dataList" => $result,
       "totalCount" => $cnt
     );
+  }
+
+  /**
+   * 销售出库明细表 - 查询数据
+   */
+  public function saleDetailQueryData($params)
+  {
+    $db = $this->db;
+
+    $companyId = $params["companyId"];
+    if ($this->companyIdNotExists($companyId)) {
+      return $this->emptyResult();
+    }
+
+    $loginUserId = $params["loginUserId"];
+
+    $bcDAO = new BizConfigDAO($db);
+    $dataScale = $bcDAO->getGoodsCountDecNumber($companyId);
+    $fmt = "decimal(19, " . $dataScale . ")";
+
+    $customerId = $params["customerId"];
+    $warehouseId = $params["warehouseId"];
+    $fromDT = $params["fromDT"];
+    $toDT = $params["toDT"];
+    $start = $params["start"];
+    $limit = $params["limit"];
+
+    // 显示全部数据，例如用于导出Excel
+    $showAllData = $limit == -1;
+
+    $sql = "select ws.id, ws.ref, ws.bizdt as biz_dt, g.code as goods_code, g.name as goods_name, 
+              g.spec as goods_spec, u.name as unit_name,
+              c.name as customer_name, convert(d.goods_count, $fmt) as goods_count,
+              d.goods_price, d.goods_money, d.tax_rate, d.tax, d.money_with_tax,
+              d.goods_price_with_tax, d.memo, w.name as warehouse_name 
+            from t_ws_bill ws, t_ws_bill_detail d, t_goods g, t_goods_unit u,
+              t_customer c, t_warehouse w
+            where (ws.id = d.wsbill_id) and (d.goods_id = g.id) 
+              and (g.unit_id = u.id) and (ws.customer_id = c.id)
+              and (ws.warehouse_id = w.id) ";
+    $queryParams = [];
+
+    $ds = new DataOrgDAO($db);
+    // 构建数据域SQL
+    $rs = $ds->buildSQL(FIdConst::SALE_DETAIL_REPORT, "ws", $loginUserId);
+    if ($rs) {
+      $sql .= " and " . $rs[0];
+      $queryParams = array_merge($queryParams, $rs[1]);
+    }
+
+    if ($customerId) {
+      $sql .= " and (ws.customer_id = '%s') ";
+      $queryParams[] = $customerId;
+    }
+    if ($warehouseId) {
+      $sql .= " and (ws.warehouse_id = '%s') ";
+      $queryParams[] = $warehouseId;
+    }
+    if ($fromDT) {
+      $sql .= " and (ws.bizdt >= '%s') ";
+      $queryParams[] = $fromDT;
+    }
+    if ($toDT) {
+      $sql .= " and (ws.bizdt <= '%s') ";
+      $queryParams[] = $toDT;
+    }
+    $sql .= " order by ws.ref, d.show_order ";
+    if (!$showAllData) {
+      $sql .= " limit %d, %d";
+      $queryParams[] = $start;
+      $queryParams[] = $limit;
+    }
+
+    $data = $db->query($sql, $queryParams);
+    $result = [];
+    foreach ($data as $v) {
+      $id = $v["id"];
+      // 查询销售订单号
+      $sql = "select s.ref
+              from t_so_bill s, t_so_ws w
+              where s.id = w.so_id and w.ws_id = '%s' ";
+      $d = $db->query($sql, $id);
+      $soBillRef = "";
+      if ($d) {
+        $soBillRef = $d[0]["ref"];
+      }
+      $result[] = [
+        "soBillRef" => $soBillRef,
+        "wsBillRef" => $v["ref"],
+        "bizDate" => $this->toYMD($v["biz_dt"]),
+        "customerName" => $v["customer_name"],
+        "goodsCode" => $v["goods_code"],
+        "goodsName" => $v["goods_name"],
+        "goodsSpec" => $v["goods_spec"],
+        "goodsCount" => $v["goods_count"],
+        "unitName" => $v["unit_name"],
+        "goodsPrice" => $v["goods_price"],
+        "goodsMoney" => $v["goods_money"],
+        "taxRate" => $v["tax_rate"],
+        "tax" => $v["tax"],
+        "moneyWithTax" => $v["money_with_tax"],
+        "goodsPriceWithTax" => $v["goods_price_with_tax"],
+        "memo" => $v["memo"],
+        "warehouseName" => $v["warehouse_name"],
+      ];
+    }
+
+    $sql = "select count(*) as cnt 
+            from t_ws_bill ws, t_ws_bill_detail d, t_goods g, t_goods_unit u,
+              t_customer c, t_warehouse w
+            where (ws.id = d.wsbill_id) and (d.goods_id = g.id) 
+              and (g.unit_id = u.id) and (ws.customer_id = c.id)
+              and (ws.warehouse_id = w.id) ";
+    $queryParams = [];
+    // 构建数据域SQL
+    $rs = $ds->buildSQL(FIdConst::SALE_DETAIL_REPORT, "ws", $loginUserId);
+    if ($rs) {
+      $sql .= " and " . $rs[0];
+      $queryParams = array_merge($queryParams, $rs[1]);
+    }
+    if ($customerId) {
+      $sql .= " and (ws.customer_id = '%s') ";
+      $queryParams[] = $customerId;
+    }
+    if ($warehouseId) {
+      $sql .= " and (ws.warehouse_id = '%s') ";
+      $queryParams[] = $warehouseId;
+    }
+    if ($fromDT) {
+      $sql .= " and (ws.bizdt >= '%s') ";
+      $queryParams[] = $fromDT;
+    }
+    if ($toDT) {
+      $sql .= " and (ws.bizdt <= '%s') ";
+      $queryParams[] = $toDT;
+    }
+    $data = $db->query($sql, $queryParams);
+    $cnt = $data[0]["cnt"];
+
+    return [
+      "dataList" => $result,
+      "totalCount" => $cnt
+    ];
   }
 }

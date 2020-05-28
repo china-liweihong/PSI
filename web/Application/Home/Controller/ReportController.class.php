@@ -1316,4 +1316,30 @@ class ReportController extends PSIBaseController
       $this->gotoLoginPage("/Home/Report/saleDetail");
     }
   }
+
+  /**
+   * 销售出库明细表 - 查询数据
+   */
+  public function saleDetailQueryData()
+  {
+    if (IS_POST) {
+      $us = new UserService();
+      if (!$us->hasPermission(FIdConst::SALE_DETAIL_REPORT)) {
+        die("没有权限");
+      }
+
+      $params = [
+        "customerId" => I("post.customerId"),
+        "warehouseId" => I("post.warehouseId"),
+        "fromDT" => I("post.fromDT"),
+        "toDT" => I("post.toDT"),
+        "start" => I("post.start"),
+        "limit" => I("post.limit")
+      ];
+
+      $service = new SaleReportService();
+
+      $this->ajaxReturn($service->saleDetailQueryData($params));
+    }
+  }
 }

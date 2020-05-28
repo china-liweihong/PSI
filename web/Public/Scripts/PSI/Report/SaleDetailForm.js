@@ -234,7 +234,7 @@ Ext.define("PSI.Report.SaleDetailForm", {
           width: 50
         }, {
           header: "销售订单号",
-          dataIndex: "poBillRef",
+          dataIndex: "soBillRef",
           width: 120,
           renderer: function (value, md, record) {
             return "<a href='"

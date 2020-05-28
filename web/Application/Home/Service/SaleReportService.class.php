@@ -2357,4 +2357,21 @@ class SaleReportService extends PSIBaseExService
     $writer = \PHPExcel_IOFactory::createWriter($excel, "Excel2007");
     $writer->save("php://output");
   }
+
+  /**
+   * 销售出库明细表 - 查询数据
+   */
+  public function saleDetailQueryData($params)
+  {
+    if ($this->isNotOnline()) {
+      return $this->emptyResult();
+    }
+
+    $params["companyId"] = $this->getCompanyId();
+    $params["loginUserId"] = $this->getLoginUserId();
+
+    $dao = new SaleReportDAO($this->db());
+
+    return $dao->saleDetailQueryData($params);
+  }
 }

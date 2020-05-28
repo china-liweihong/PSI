@@ -69,6 +69,9 @@ class BillController extends Controller
       case "采购退货出库":
         redirect(__ROOT__ . "/Home/Bill/viewPRBill?fid={$fid}&ref={$ref}");
         break;
+      case "销售订单":
+        redirect(__ROOT__ . "/Home/Bill/viewSOBill?fid={$fid}&ref={$ref}");
+        break;
       case "销售出库":
         redirect(__ROOT__ . "/Home/Bill/viewWSBill?fid={$fid}&ref={$ref}");
         break;
@@ -430,6 +433,44 @@ class BillController extends Controller
 
       $bs = new BillViewService();
       $this->ajaxReturn($bs->wspBillInfo($ref));
+    }
+  }
+
+  /**
+   * 查看销售订单
+   */
+  public function viewSOBill()
+  {
+    $fid = I("get.fid");
+    if (!$this->hasPermission($fid)) {
+      return;
+    }
+
+    $bcs = new BizConfigService();
+    $this->assign("productionName", $bcs->getProductionName());
+
+    $ref = I("get.ref");
+    $this->assign("ref", $ref);
+
+    $this->assign("title", "查看销售订单");
+    $this->assign("uri", __ROOT__ . "/");
+
+    $dtFlag = getdate();
+    $this->assign("dtFlag", $dtFlag[0]);
+
+    $this->display();
+  }
+
+  /**
+   * 销售订单 - 数据查询
+   */
+  public function soBillInfo()
+  {
+    if (IS_POST) {
+      $ref = I("post.ref");
+
+      $bs = new BillViewService();
+      $this->ajaxReturn($bs->soBillInfo($ref));
     }
   }
 }

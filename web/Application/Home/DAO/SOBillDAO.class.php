@@ -1386,4 +1386,81 @@ class SOBillDAO extends PSIBaseExDAO
     $params["ref"] = $ref;
     return null;
   }
+
+  /**
+   * 根据单号查询销售订单的完整数据，包括明细表的数据
+   */
+  public function getFullBillDataByRef($ref)
+  {
+    $db = $this->db;
+
+    $result = [];
+
+    $sql = "select s.id, s.deal_date, s.deal_address,
+              c.name as customer_name, s.contact, s.tel, s.fax,
+              o.full_name, u.name as biz_user_name,
+              s.receiving_type, s.bill_memo, s.company_id
+            from t_so_bill s, t_customer c, t_user u, t_org o
+            where s.ref = '%s' and s.customer_Id = c.id
+              and s.biz_user_id = u.id
+              and s.org_id = o.id";
+    $data = $db->query($sql, $ref);
+    if (!$data) {
+      return $this->emptyResult();
+    }
+
+    $v = $data[0];
+    $result["dealDate"] = $this->toYMD($v["deal_date"]);
+    $result["dealAddress"] = $v["deal_address"];
+    $result["customerName"] = $v["customer_name"];
+    $result["contact"] = $v["contact"];
+    $result["tel"] = $v["tel"];
+    $result["fax"] = $v["fax"];
+    $result["orgFullName"] = $v["full_name"];
+    $result["bizUserName"] = $v["biz_user_name"];
+    $result["receivingType"] = $v["receiving_type"];
+    $result["billMemo"] = $v["bill_memo"];
+    $result["billStatus"] = $v["bill_status"];
+
+    $companyId = $v["company_id"];
+    $cs = new BizConfigDAO($db);
+    $result["taxRate"] = $cs->getTaxRate($companyId);
+
+    $dataScale = $cs->getGoodsCountDecNumber($companyId);
+    $fmt = "decimal(19, " . $dataScale . ")";
+    // 明细表
+    $id = $v["id"];
+    $sql = "select s.id, s.goods_id, g.code, g.name, g.spec, 
+              convert(s.goods_count, " . $fmt . ") as goods_count, s.goods_price, s.goods_money,
+              s.tax_rate, s.tax, s.money_with_tax, u.name as unit_name, s.memo,
+              s.goods_price_with_tax
+            from t_so_bill_detail s, t_goods g, t_goods_unit u
+            where s.sobill_id = '%s' and s.goods_id = g.id and g.unit_id = u.id
+            order by s.show_order";
+    $items = array();
+    $data = $db->query($sql, $id);
+
+    foreach ($data as $v) {
+      $items[] = [
+        "goodsId" => $v["goods_id"],
+        "goodsCode" => $v["code"],
+        "goodsName" => $v["name"],
+        "goodsSpec" => $v["spec"],
+        "goodsCount" => $v["goods_count"],
+        "goodsPrice" => $v["goods_price"],
+        "goodsMoney" => $v["goods_money"],
+        "taxRate" => $v["tax_rate"],
+        "tax" => $v["tax"],
+        "moneyWithTax" => $v["money_with_tax"],
+        "unitName" => $v["unit_name"],
+        "memo" => $v["memo"],
+        "goodsPriceWithTax" => $$v["goods_price_with_tax"]
+      ];
+    }
+
+    $result["items"] = $items;
+
+
+    return $result;
+  }
 }

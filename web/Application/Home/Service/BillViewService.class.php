@@ -11,6 +11,7 @@ use Home\DAO\ICBillDAO;
 use Home\DAO\WSPBillDAO;
 use Home\DAO\DMWBillDAO;
 use Home\DAO\POBillDAO;
+use Home\DAO\SOBillDAO;
 
 /**
  * 查看单据Service
@@ -162,6 +163,23 @@ class BillViewService extends PSIBaseExService
     }
 
     $dao = new WSPBillDAO($this->db());
+    return $dao->getFullBillDataByRef($ref);
+  }
+
+  /**
+   * 销售订单 - 数据查询
+   *
+   * @param string $ref
+   *        	销售订单单号
+   * @return array|NULL
+   */
+  public function soBillInfo($ref)
+  {
+    if ($this->isNotOnline()) {
+      return $this->emptyResult();
+    }
+
+    $dao = new SOBillDAO($this->db());
     return $dao->getFullBillDataByRef($ref);
   }
 }

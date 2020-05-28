@@ -1298,4 +1298,22 @@ class ReportController extends PSIBaseController
     $service = new PurchaseReportService();
     $service->purchaseDetailPdf($params);
   }
+
+  /**
+   * 销售出库明细表
+   */
+  public function saleDetail()
+  {
+    $us = new UserService();
+
+    if ($us->hasPermission(FIdConst::SALE_DETAIL_REPORT)) {
+      $this->initVar();
+
+      $this->assign("title", "销售出库明细表");
+
+      $this->display();
+    } else {
+      $this->gotoLoginPage("/Home/Report/saleDetail");
+    }
+  }
 }

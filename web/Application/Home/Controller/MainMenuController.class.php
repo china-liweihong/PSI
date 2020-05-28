@@ -295,6 +295,10 @@ class MainMenuController extends PSIBaseController
           redirect(__ROOT__ . "/Home/Material/rmIndex");
           break;
         */
+        case FIdConst::SALE_DETAIL_REPORT:
+          // 销售出库明细表
+          redirect(__ROOT__ . "/Home/Report/saleDetail");
+          break;
         default:
           redirect(__ROOT__ . "/Home");
       }

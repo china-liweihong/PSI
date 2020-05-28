@@ -1342,4 +1342,26 @@ class ReportController extends PSIBaseController
       $this->ajaxReturn($service->saleDetailQueryData($params));
     }
   }
+
+  /**
+   * 销售出库明细表 - 导出Excel
+   */
+  public function saleDetailExcel()
+  {
+    $us = new UserService();
+    if (!$us->hasPermission(FIdConst::SALE_DETAIL_REPORT)) {
+      die("没有权限");
+    }
+
+    $params = [
+      "limit" => I("get.limit"),
+      "warehouseId" => I("get.warehouseId"),
+      "customerId" => I("get.customerId"),
+      "fromDT" => I("get.fromDT"),
+      "toDT" => I("get.toDT")
+    ];
+
+    $service = new SaleReportService();
+    $service->saleDetailExcel($params);
+  }
 }

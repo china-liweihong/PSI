@@ -130,6 +130,7 @@ Ext.define("PSI.SaleContract.SCMainForm", {
       }, "-", {
         text: "单据生成Word",
         id: "buttonWord",
+        iconCls: "PSI-button-word",
         scope: me,
         handler: me.onWord
       }]

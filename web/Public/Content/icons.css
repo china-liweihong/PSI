@@ -70,6 +70,10 @@
     background-image:url(../Images/icons/pdf.png?v=2017061504) !important;
 }
 
+.PSI-button-word {
+  background-image:url(../Images/icons/word.png?v=2020053001) !important;
+}
+
 .PSI-button-barcode {
     background-image:url(../Images/icons/barcode.png?v=2017061504) !important;
 }

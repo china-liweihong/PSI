@@ -369,10 +369,24 @@ class SCBillService extends PSIBaseExService
     // 主表
     $ref = $bill["ref"];
     $tp->setValue("ref", $ref);
+    $tp->setValue("a", $bill["customerName"]);
+    $tp->setValue("b", $bill["orgName"]);
+    $tp->setValue("totalMoneyWithTax", $bill["moneyWithTax"]);
 
     // 明细表
     $items = $bill["items"];
-    $tp->cloneRowAndSetValues("goodsCode", $items);
+    $detail = [];
+    foreach ($items as $v) {
+      $detail[] = [
+        "d1" => $v["goodsCode"],
+        "d2" => $v["goodsName"],
+        "d3" => $v["goodsSpec"],
+        "d4" => $v["goodsCount"],
+        "d5" => $v["unitName"],
+        "d6" => $v["moneyWithTax"],
+      ];
+    }
+    $tp->cloneRowAndSetValues("d2", $detail);
 
     $dt = date("YmdHis");
     $path = __DIR__ . "/tpl/";

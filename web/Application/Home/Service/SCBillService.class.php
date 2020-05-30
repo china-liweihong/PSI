@@ -348,9 +348,9 @@ class SCBillService extends PSIBaseExService
 
     $dao = new SCBillDAO($this->db());
 
-    $bill = $dao->getDataForPDF($params);
+    $bill = $dao->getDataForWord($params);
     if (!$bill) {
-      return;
+      die("销售合同不存在");
     }
 
     // 记录业务日志

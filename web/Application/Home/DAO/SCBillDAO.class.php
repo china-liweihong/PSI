@@ -926,6 +926,14 @@ class SCBillDAO extends PSIBaseExDAO
   }
 
   /**
+   * 为销售合同生成Word文件查询数据
+   */
+  public function getDataForWord($params)
+  {
+    return $this->getDataForPDF($params);
+  }
+
+  /**
    * 为销售合同生成PDF文件查询数据
    *
    * @param array $params

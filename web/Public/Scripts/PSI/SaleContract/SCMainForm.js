@@ -122,11 +122,16 @@ Ext.define("PSI.SaleContract.SCMainForm", {
       hidden: me.getPermission().genPDF == "0",
       text: "导出",
       menu: [{
-        text: "单据生成pdf",
+        text: "单据生成PDF",
         iconCls: "PSI-button-pdf",
         id: "buttonPDF",
         scope: me,
         handler: me.onPDF
+      }, "-", {
+        text: "单据生成Word",
+        id: "buttonWord",
+        scope: me,
+        handler: me.onWord
       }]
     }, {
       hidden: me.getPermission().genPDF == "0",
@@ -1055,6 +1060,19 @@ Ext.define("PSI.SaleContract.SCMainForm", {
     var bill = item[0];
 
     var url = me.URL("Home/SaleContract/scBillPdf?ref=" + bill.get("ref"));
+    window.open(url);
+  },
+
+  onWord: function () {
+    var me = this;
+    var item = me.getMainGrid().getSelectionModel().getSelection();
+    if (item == null || item.length != 1) {
+      me.showInfo("没有选择要生成Word文件的销售合同");
+      return;
+    }
+    var bill = item[0];
+
+    var url = me.URL("Home/SaleContract/scBillWord?ref=" + bill.get("ref"));
     window.open(url);
   },
 

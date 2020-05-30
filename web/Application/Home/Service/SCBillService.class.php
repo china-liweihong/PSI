@@ -3,6 +3,7 @@
 namespace Home\Service;
 
 use Home\DAO\SCBillDAO;
+use PhpOffice\PhpWord\TemplateProcessor;
 
 /**
  * 销售合同Service
@@ -358,8 +359,29 @@ class SCBillService extends PSIBaseExService
     $bls = new BizlogService($this->db());
     $bls->insertBizlog($log, $this->LOG_CATEGORY);
 
-    // TODO
-    echo "TODO";
+    $path = __DIR__ . "/tpl/sc_template.docx";
+    require_once __DIR__ . "/../Common/Word/vendor/autoload.php";
+    $tp = new TemplateProcessor($path);
+
+    // 设置成-1，用来处理大型Word
+    ini_set('pcre.backtrack_limit', -1);
+
+    $ref = $bill["ref"];
+
+    $tp->setValue("ref", $ref);
+
+    $dt = date("YmdHis");
+    $path = __DIR__ . "/tpl/";
+    if (!is_dir($path)) {
+      die("tpl目录不存在");
+    }
+    $fileName = $path . "/sc_{$dt}.docx";
+    $tp->saveAs($fileName);
+
+    (new UtilService())->downloadFile($fileName, "销售合同_{$ref}.docx");
+
+    // 删除临时文件
+    unlink($fileName);
   }
 
   /**

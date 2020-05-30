@@ -16,9 +16,11 @@ PSI是企业管理软件和LowCode(低代码)应用平台。
 
 PSI的开源协议为GPL v3
 
-# 安装
+# 安装与升级
 
-安装说明见：[这里](https://gitee.com/crm8000/PSI/tree/master/doc/04%20%E5%AE%89%E8%A3%85)
+1. 安装说明见：[这里](https://gitee.com/crm8000/PSI/tree/master/doc/04%20%E5%AE%89%E8%A3%85)
+
+2. 如何升级见：[这里](https://gitee.com/crm8000/PSI_Help/blob/master/04.md)
 
 # 商务合作
 1. 二次开发服务

@@ -366,9 +366,13 @@ class SCBillService extends PSIBaseExService
     // 设置成-1，用来处理大型Word
     ini_set('pcre.backtrack_limit', -1);
 
+    // 主表
     $ref = $bill["ref"];
-
     $tp->setValue("ref", $ref);
+
+    // 明细表
+    $items = $bill["items"];
+    $tp->cloneRowAndSetValues("goodsCode", $items);
 
     $dt = date("YmdHis");
     $path = __DIR__ . "/tpl/";

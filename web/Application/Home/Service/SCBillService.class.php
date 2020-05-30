@@ -331,6 +331,38 @@ class SCBillService extends PSIBaseExService
   }
 
   /**
+   * 销售合同生成Word文件
+   */
+  public function word($params)
+  {
+    if ($this->isNotOnline()) {
+      return;
+    }
+
+    $params["companyId"] = $this->getCompanyId();
+
+    $bs = new BizConfigService();
+    $productionName = $bs->getProductionName();
+
+    $ref = $params["ref"];
+
+    $dao = new SCBillDAO($this->db());
+
+    $bill = $dao->getDataForPDF($params);
+    if (!$bill) {
+      return;
+    }
+
+    // 记录业务日志
+    $log = "销售合同(合同号：$ref)生成Word文件";
+    $bls = new BizlogService($this->db());
+    $bls->insertBizlog($log, $this->LOG_CATEGORY);
+
+    // TODO
+    echo "TODO";
+  }
+
+  /**
    * 查询销售合同的数据，用于Lodop打印
    *
    * @param array $params        	

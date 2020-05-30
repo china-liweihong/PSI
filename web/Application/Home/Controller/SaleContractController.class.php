@@ -169,6 +169,19 @@ class SaleContractController extends PSIBaseController
   }
 
   /**
+   * 销售合同生成Word文件
+   */
+  public function scBillWord()
+  {
+    $params = [
+      "ref" => I("get.ref")
+    ];
+
+    $ws = new SCBillService();
+    $ws->word($params);
+  }
+
+  /**
    * 生成打印销售合同的页面
    */
   public function genSCBillPrintPage()
